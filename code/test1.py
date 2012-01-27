@@ -15,6 +15,9 @@ class TutorialApplication(sf.Application):
         node2 = sceneManager.getRootSceneNode().createChildSceneNode ("RobotNode2", ogre.Vector3 (50, 0, 0))
         node2.attachObject (ent2)
 
-if __name__ == '__main__':
+def main():
     ta = TutorialApplication()
     ta.go()
+
+if __name__ == '__main__':
+    main()
