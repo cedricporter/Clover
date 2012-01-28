@@ -1,9 +1,11 @@
-import SampleFramework as sf
-import ogre.renderer.OGRE as ogre
+import sys 
+sys.path.insert(0,'..') 
+import ogre.renderer.OGRE as ogre 
+import SampleFramework as sf 
 import ogre.io.OIS as OIS
 import ogre.gui.CEGUI as CEGUI
 
-# 将OIS的鼠标消息转换成CEGUI的鼠标消息
+# Convert OIS mouse event to CEGUI mouse event
 def convertButton(oisID):
     if oisID == OIS.MB_Left:
         return CEGUI.LeftButton
@@ -14,7 +16,7 @@ def convertButton(oisID):
     else:
         return CEGUI.LeftButton
 
-# Listener类
+# Listener class
 class TutorialListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
     def __init__(self, renderWindow, camera):
@@ -56,17 +58,36 @@ class TutorialListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
     def keyReleased(self, evt):
         CEGUI.System.getSingleton().injectKeyUp(evt.key)
-        return True
- 
-class TutorialApplication(sf.Application):
- 
-    def __del__(self):
-        if self.system:
-            del self.system
-        if self.renderer:
-            del self.renderer
- 
-    def _createScene(self):
+
+# 
+class tri(ogre.ManualObject): 
+    #simplest possible manual object, for testing purposes 
+    #takes 3 tuples A, B, C 
+    def __init__(me, name, A, B, C): 
+        me.A = A 
+        me.B = B 
+        me.C = C 
+        ogre.ManualObject.__init__(me, name) 
+        A, B, C = me.A, me.B, me.C 
+        me.clear() 
+        me.begin("default", ogre.RenderOperation.OT_TRIANGLE_STRIP) 
+        me.position(A[0], A[1], A[2]) 
+        me.normal(0, 0, 1) 
+        me.position(B[0], B[1], B[2]) 
+        me.position(C[0], C[1], C[2]) 
+        me.position(A[0], A[1], A[2]) 
+        me.end() 
+
+class TutorialApplication(sf.Application): 
+
+    def _createScene(self): 
+        sceneManager = self.sceneManager 
+        sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
+        # draw triangle
+        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) ) 
+        node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
+        node1.attachObject (self.ent) 
+
         # initiaslise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
         self.CEGUIRenderer = CEGUI.System.getSingleton()
@@ -81,27 +102,25 @@ class TutorialApplication(sf.Application):
         CEGUI.System.getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow")
         CEGUI.System.getSingleton().setDefaultFont("DejaVuSans-10")
 
-        # load the drive icons imageset
-        #CEGUI.ImagesetManager.getSingleton().create("DriveIcons.imageset")
-
         ## load the initial layout
         CEGUI.System.getSingleton().setGUISheet(
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
-        
 
-    #def _createCamera(self):
-    #    self.camera = self.sceneManager.createCamera("playerCam")
-    #    self.camera.nearClipDistance = 5
- 
     def _createFrameListener(self):
         self.frameListener = TutorialListener(self.renderWindow, self.camera)
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
- 
-if __name__ == '__main__':
-    try:
-        ta = TutorialApplication()
-        ta.go()
-    except ogre.OgreException, e:
-        print e
 
+
+        
+    def __del__ ( self ):
+        del self.ent
+        if self.system:
+            del self.system
+        if self.renderer:
+            del self.renderer
+
+        
+        
+ta = TutorialApplication() 
+ta.go() 
