@@ -85,7 +85,7 @@ class TutorialApplication(sf.Application):
 
         ## load the initial layout
         CEGUI.System.getSingleton().setGUISheet(
-        CEGUI.WindowManager.getSingleton().loadWindowLayout("VanillaWindows.layout"))
+        CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
         
 
     #def _createCamera(self):
