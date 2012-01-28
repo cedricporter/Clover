@@ -66,18 +66,31 @@ class TutorialApplication(sf.Application):
             del self.renderer
  
     def _createScene(self):
-        ## setup GUI system
-        self.renderer = CEGUI.OgreRenderer.bootstrapSystem()
-        self.system = CEGUI.System.getSingleton()
-        ## Select the skin for the CEGUI to use
-        CEGUI.SchemeManager.getSingleton().create("TaharezLookSkin.scheme")
-        self.system.setDefaultMouseCursor("TaharezLook", "MouseArrow")
-        self.system.setDefaultFont("BlueHighway-12")
-        # Do not add this to the program
-        sheet = CEGUI.WindowManager.getSingleton().loadWindowLayout("ogregui.layout")
-        self.system.setGUISheet(sheet)
+        # initiaslise CEGUI Renderer
+        self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
+        self.CEGUIRenderer = CEGUI.System.getSingleton()
+
+        CEGUI.Logger.getSingleton().loggingLevel = CEGUI.Insane
+
+        # load TaharezLook scheme
+        CEGUI.SchemeManager.getSingleton().create("VanillaSkin.scheme")
+
+        # load font and setup default if not loaded via scheme
+        CEGUI.FontManager.getSingleton().create("DejaVuSans-10.font")
+        CEGUI.System.getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow")
+        CEGUI.System.getSingleton().setDefaultFont("DejaVuSans-10")
+
+        # load the drive icons imageset
+        #CEGUI.ImagesetManager.getSingleton().create("DriveIcons.imageset")
+
+        ## load the initial layout
+        CEGUI.System.getSingleton().setGUISheet(
+        CEGUI.WindowManager.getSingleton().loadWindowLayout("VanillaWindows.layout"))
         
 
+    #def _createCamera(self):
+    #    self.camera = self.sceneManager.createCamera("playerCam")
+    #    self.camera.nearClipDistance = 5
  
     def _createFrameListener(self):
         self.frameListener = TutorialListener(self.renderWindow, self.camera)
