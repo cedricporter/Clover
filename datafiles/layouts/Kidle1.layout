@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GUILayout >
+    <Window Type="DefaultWindow" Name="Root" >
+        <Property Name="UnifiedAreaRect" Value="{{0,0},{0,0},{1,0},{1,0}}" />
+        <Window Type="Vanilla/FrameWindow" Name="MenuBox" >
+            <Property Name="Text" Value="MenuBox" />
+            <Property Name="TitlebarFont" Value="DejaVuSans-10" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{0,30},{0,30},{0,150},{0,500}}" />
+            <Property Name="DragMovingEnabled" Value="False" />
+            <Property Name="CloseButtonEnabled" Value="False" />
+            <Window Type="Vanilla/Button" Name="New" >
+                <Property Name="Text" Value="New" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,10},{0,90},{0,40}}" />
+            </Window>
+        </Window>
+        <Window Type="Vanilla/FrameWindow" Name="ToolBox" >
+            <Property Name="Text" Value="ToolBox" />
+            <Property Name="TitlebarFont" Value="DejaVuSans-10" />
+            <Property Name="TitlebarEnabled" Value="True" />
+            <Property Name="UnifiedAreaRect" Value="{{1,-150},{0,30},{1,-30},{0,500}}" />
+            <Property Name="DragMovingEnabled" Value="False" />
+            <Property Name="CloseButtonEnabled" Value="False" />
+            <Window Type="Vanilla/Button" Name="Pick" >
+                <Property Name="Text" Value="Pick" />
+                <Property Name="UnifiedAreaRect" Value="{{0,10},{0,10},{0,90},{0,40}}" />
+            </Window>
+        </Window>
+    </Window>
+</GUILayout>
