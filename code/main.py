@@ -19,7 +19,16 @@ class tri(ogre.ManualObject):
         me.position(B[0], B[1], B[2]) 
         me.position(C[0], C[1], C[2]) 
         me.position(A[0], A[1], A[2]) 
+        me.position(0, 0, 100)
         me.end() 
+
+class Paper(ogre.ManualObject):
+    def __init__(self, name, vertex_list):
+        ogre.ManualObject(self, name)
+        self.clear()
+        self.begin("default", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+
+
 
 class TutorialApplication(sf.Application): 
 
