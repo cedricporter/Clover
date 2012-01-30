@@ -22,20 +22,39 @@ class tri(ogre.ManualObject):
         me.position(0, 0, 100)
         me.end() 
 
+##
+# @brief    use triangle list to draw, three point as a triangle
 class Paper(ogre.ManualObject):
     def __init__(self, name, vertex_list):
-        ogre.ManualObject(self, name)
-        self.clear()
-        self.begin("default", ogre.RenderOperation.OT_TRIANGLE_STRIP)
-
+        ogre.ManualObject.__init__(self, name)
+        m = self
+        m.clear()
+        m.begin("default", ogre.RenderOperation.OT_TRIANGLE_LIST)
+        # draw front face
+        for vertex in vertex_list:
+            m.position(vertex)
+        # draw back face
+        for vertex in reversed(vertex_list):
+            m.position(vertex)
+        m.end()
 
 
 class TutorialApplication(sf.Application): 
 
     def _createScene(self): 
         sceneManager = self.sceneManager 
-        sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
-        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) ) 
+        sceneManager.ambientLight = (0.3,0.3,0.3) 
+        #self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) ) 
+        vertex_list = [
+                (0, 0, 0),
+                (0, 100, 0),
+                (100, 0, 0),
+                
+                (0, 0, 0),
+                (0, 100, 0),
+                (0, 0, 100)
+                ]
+        self.ent = Paper("paper", vertex_list)
         node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
         node1.attachObject (self.ent) 
         
