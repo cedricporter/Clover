@@ -5,6 +5,8 @@ import SampleFramework as sf
 import ogre.io.OIS as OIS
 import ogre.gui.CEGUI as CEGUI
 
+from CubeNav import CubeNavigator
+
 # Convert OIS mouse event to CEGUI mouse event
 def convertButton(oisID):
     if oisID == OIS.MB_Left:
@@ -63,20 +65,19 @@ class TutorialListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
 class tri(ogre.ManualObject): 
     #simplest possible manual object, for testing purposes 
     #takes 3 tuples A, B, C 
-    def __init__(me, name, A, B, C): 
+    def __init__(me, name, A, B, C):
         me.A = A 
         me.B = B 
         me.C = C 
         ogre.ManualObject.__init__(me, name) 
-        A, B, C = me.A, me.B, me.C 
-        me.clear() 
-        me.begin("default", ogre.RenderOperation.OT_TRIANGLE_STRIP) 
+        A, B, C = me.A, me.B, me.C
+        me.begin("default", ogre.RenderOperation.OT_TRIANGLE_STRIP)
         me.position(A[0], A[1], A[2]) 
-        me.normal(0, 0, 1) 
+        me.normal(0, 0, 1)
         me.position(B[0], B[1], B[2]) 
         me.position(C[0], C[1], C[2]) 
         me.position(A[0], A[1], A[2]) 
-        me.end() 
+        me.end()
 
 class TutorialApplication(sf.Application): 
 
@@ -85,25 +86,36 @@ class TutorialApplication(sf.Application):
         sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
 
         # draw triangle
-        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) ) 
-        node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
-        node1.attachObject (self.ent) 
+        #self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
+        #node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
+        #node1.attachObject (self.ent)
+
+        # add by kid ====>
+        # draw a cube navigator
+        self.CubeNav = CubeNavigator()
+        cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
+        cubeNavNode.attachObject(self.CubeNav)
+        #cubeNavNode.setPosition(0, 0, 0)
+        #cubeNavNode.showBoundingBox(True)
+       # cubeNavEnt = sceneManager.createEntity("cubeNavEnt", "unitcube.mesh")
+       # cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
+       # cubeNavNode.attachObject(cubeNavEnt)
+       # cubeNavNode.setScale(100, 100, 100)
+       # cubeNavNode.setPosition(0, 0, 490)
+       # ogre.MaterialManager.getSingleton()
+        #cubeNavNode.showBoundingBox(True)
+        # <==== add by kid
 
         # initiaslise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
         self.CEGUIRenderer = CEGUI.System.getSingleton()
-
-        CEGUI.Logger.getSingleton().loggingLevel = CEGUI.Insane
-
         # load TaharezLook scheme
         CEGUI.SchemeManager.getSingleton().create("VanillaSkin.scheme")
-
         # load font and setup default if not loaded via scheme
         CEGUI.FontManager.getSingleton().create("DejaVuSans-10.font")
         CEGUI.System.getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow")
         CEGUI.System.getSingleton().setDefaultFont("DejaVuSans-10")
-
-        ## load the initial layout
+        # load the layout
         CEGUI.System.getSingleton().setGUISheet(
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
 
