@@ -95,15 +95,6 @@ class TutorialApplication(sf.Application):
         self.CubeNav = CubeNavigator()
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
         cubeNavNode.attachObject(self.CubeNav)
-        #cubeNavNode.setPosition(0, 0, 0)
-        #cubeNavNode.showBoundingBox(True)
-       # cubeNavEnt = sceneManager.createEntity("cubeNavEnt", "unitcube.mesh")
-       # cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
-       # cubeNavNode.attachObject(cubeNavEnt)
-       # cubeNavNode.setScale(100, 100, 100)
-       # cubeNavNode.setPosition(0, 0, 490)
-       # ogre.MaterialManager.getSingleton()
-        #cubeNavNode.showBoundingBox(True)
         # <==== add by kid
 
         # initiaslise CEGUI Renderer
