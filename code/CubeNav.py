@@ -3,11 +3,13 @@
 
 import ogre.renderer.OGRE as ogre
 import ogre.gui.CEGUI as CEGUI
+import math
 
 class CubeNavigator(ogre.ManualObject):
     # when clicked, set focus
     def onPress(self):
         self.focus = True
+        self.lastMousePos = CEGUI.MouseCursor.getSingleton().getPosition()
         
     # when released, set no focus
     def onRelease(self):
@@ -23,18 +25,23 @@ class CubeNavigator(ogre.ManualObject):
         if self.initialized == False:
             self.initialized = True
             self.lastOrientation = self.getParentSceneNode().getOrientation()
-            self.lastMousePos = CEGUI.MouseCursor.getSingleton().getPosition()
+            #self.lastMousePos = CEGUI.MouseCursor.getSingleton().getPosition()
+        # find the rotate axis
         mousePos = CEGUI.MouseCursor.getSingleton().getPosition()
-        #self.getParentSceneNode().yaw((mousePos.d_x - self.lastMousePos.d_x) / 100.0)
-        #self.getParentSceneNode().pitch((mousePos.d_y - self.lastMousePos.d_y) / 100.0)
-        quad = ogre.Quaternion((mousePos.d_y - self.lastMousePos.d_y) / 100.0,
-                               ogre.Vector3(1,0,0))
-        
-        self.getParentSceneNode().rotate(quad * self.lastOrientation)
-        self.lastMousePos = mousePos
-    
-        #quad = self.getParentSceneNode().getOrientation()
-        #print quad
+        mouseOffset = mousePos - self.lastMousePos
+        ogreMouseVec = ogre.Vector3(mouseOffset.d_x, -mouseOffset.d_y, 0)
+        ogreMouseVec.normalise()
+        rotateAxis = ogreMouseVec.crossProduct(ogre.Vector3(0, 0, -1))
+        # determine the rotate degree
+        rotateDegree = math.sqrt(math.pow(mouseOffset.d_x, 2.0)
+                                 + math.pow(mouseOffset.d_y, 2.0)) / 100.0
+        # use the axis and degree to create quaternion
+        quat = ogre.Quaternion(rotateDegree, rotateAxis)
+        quat = self.lastOrientation * quat
+        self.getParentSceneNode().setOrientation(quat)
+        print self.getParentSceneNode().getOrientation() * ogre.Vector3(0,0,-1)
+        #self.getParentSceneNode().rotate(self.lastOrientation)
+        #self.lastMousePos = mousePos'''
         
     # To Create a cube object
     def __init__(self):
@@ -45,6 +52,80 @@ class CubeNavigator(ogre.ManualObject):
         self.focus = False
         self.initialized = False
         # create materials
+        material = ogre.MaterialManager.getSingleton().create("CubeNavMat", "General")
+        ipass = material.getTechnique(0).getPass(0)
+        ipass.setLightingEnabled(False)
+        ipass.setDepthCheckEnabled(False)
+        ipass.createTextureUnitState("CubeNavTex.png")
+        # front
+        self.clear()
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( -20, 20, 20); 
+        self.textureCoord(0.6667, 0);
+        self.position( -20, -20, 20); 
+        self.textureCoord(0.6667, 1);
+        self.position( 20, 20, 20);  
+        self.textureCoord(0.8333, 0);
+        self.position( 20, -20, 20);   
+        self.textureCoord(0.8333, 1);
+        self.end()
+        # back
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( 20, 20, -20); 
+        self.textureCoord(0.8333, 0);
+        self.position( 20, -20, -20); 
+        self.textureCoord(0.8333, 1);
+        self.position( -20, 20, -20);  
+        self.textureCoord(1, 0);
+        self.position( -20, -20, -20);   
+        self.textureCoord(1, 1);
+        self.end()
+        # left
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( -20, 20, -20); 
+        self.textureCoord(0.3333, 0);
+        self.position( -20, -20, -20); 
+        self.textureCoord(0.3333, 1);
+        self.position( -20, 20, 20);  
+        self.textureCoord(0.5, 0);
+        self.position( -20, -20, 20);   
+        self.textureCoord(0.5, 1);
+        self.end()
+        # right
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( 20, 20, 20); 
+        self.textureCoord(0.5, 0);
+        self.position( 20, -20, 20); 
+        self.textureCoord(0.5, 1);
+        self.position( 20, 20, -20);  
+        self.textureCoord(0.6667, 0);
+        self.position( 20, -20, -20);   
+        self.textureCoord(0.6667, 1);
+        self.end()
+        # up
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( -20, 20, -20); 
+        self.textureCoord(0, 0);
+        self.position( -20, 20, 20); 
+        self.textureCoord(0, 1);
+        self.position( 20, 20, -20);  
+        self.textureCoord(0.1667, 0);
+        self.position( 20, 20, 20);   
+        self.textureCoord(0.1667, 1);
+        self.end() 
+        # down
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position( -20, -20, 20); 
+        self.textureCoord(0.1667, 0);
+        self.position( -20, -20, -20); 
+        self.textureCoord(0.1667, 1);
+        self.position( 20, -20, 20);  
+        self.textureCoord(0.3333, 0);
+        self.position( 20, -20, -20);   
+        self.textureCoord(0.3333, 1);
+        self.end()
+        
+        '''# create materials
         material = ogre.MaterialManager.getSingleton().create("ft", "General")
         ipass = material.getTechnique(0).getPass(0)
         ipass.setLightingEnabled(False)
@@ -135,7 +216,7 @@ class CubeNavigator(ogre.ManualObject):
         self.textureCoord(1, 0);
         self.position( 20, -20, -20);   
         self.textureCoord(1, 1);
-        self.end()
+        self.end()'''
 
 
 

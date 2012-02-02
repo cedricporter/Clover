@@ -119,18 +119,33 @@ class TutorialApplication(sf.Application):
         sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
 
         # draw triangle
-        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
-        node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
-        node1.attachObject (self.ent)
+        #self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
+        #node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
+        #node1.attachObject (self.ent)
 
         # add by kid ====>
         # draw a cube navigator
         self.cubeNav = CubeNav.CubeNavigator()
-        cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
+        self.cubeNav.setRenderQueueGroup(105)
+        overlaySceneMgr = ogre.DefaultSceneManager("OverlaySceneManager")
+        cubeNavNode = ogre.SceneNode(overlaySceneMgr, "cubeNavNode")
+        cubeNavNode.setPosition(0, 0, 300)
+        print cubeNavNode.getPosition()
+
+        fuckpig = sceneManager.createEntity("fuckpig", "robot.mesh")
+        fuckpigNode = sceneManager.createSceneNode("fuckpigNode")
+        fuckpigNode.attachObject(fuckpig)
+        fuckpigNode.setPosition(0,0,-100)
+        
+        #cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
         cubeNavNode.attachObject(self.cubeNav)
-        cubeNavNode.setPosition(150, -150, 0)
-        direction = cubeNavNode.getPosition() - self.camera.getPosition()
-        cubeNavNode.setDirection(direction)
+        #cubeNavNode.setPosition(150, -150, 0)
+        #direction = cubeNavNode.getPosition() - self.camera.getPosition()
+        #cubeNavNode.setDirection(direction)
+        overlayMgr = ogre.OverlayManager.getSingleton()
+        overlay = overlayMgr.create("FuckPanel")
+        overlay.add3D(cubeNavNode)
+        overlay.show()
         # <==== add by kid
 
         # initiaslise CEGUI Renderer
@@ -145,7 +160,7 @@ class TutorialApplication(sf.Application):
         # load the layout
         CEGUI.System.getSingleton().setGUISheet(
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
-
+    
     def _createFrameListener(self):
         #self.frameListener = TutorialListener(self.renderWindow, self.camera)
         # add by kid ====>
