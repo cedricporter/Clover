@@ -126,26 +126,33 @@ class TutorialApplication(sf.Application):
         # add by kid ====>
         # draw a cube navigator
         self.cubeNav = CubeNav.CubeNavigator()
-        self.cubeNav.setRenderQueueGroup(105)
-        overlaySceneMgr = ogre.DefaultSceneManager("OverlaySceneManager")
-        cubeNavNode = ogre.SceneNode(overlaySceneMgr, "cubeNavNode")
-        cubeNavNode.setPosition(0, 0, 300)
-        print cubeNavNode.getPosition()
-
-        fuckpig = sceneManager.createEntity("fuckpig", "robot.mesh")
-        fuckpigNode = sceneManager.createSceneNode("fuckpigNode")
-        fuckpigNode.attachObject(fuckpig)
-        fuckpigNode.setPosition(0,0,-100)
-        
-        #cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
+        cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
         cubeNavNode.attachObject(self.cubeNav)
-        #cubeNavNode.setPosition(150, -150, 0)
-        #direction = cubeNavNode.getPosition() - self.camera.getPosition()
-        #cubeNavNode.setDirection(direction)
-        overlayMgr = ogre.OverlayManager.getSingleton()
-        overlay = overlayMgr.create("FuckPanel")
-        overlay.add3D(cubeNavNode)
-        overlay.show()
+        cubeNavNode.setPosition(100, -100, -100)
+        direction = cubeNavNode.getPosition() - self.camera.getPosition()
+        print direction
+        cubeNavNode.setDirection(direction)
+        
+        '''overlayMgr = ogre.OverlayManager.getSingleton()
+        fuckOverlay = overlayMgr.create("FuckPanel")
+        fuckOverlay.add3D(cubeNavNode)
+
+        fuckMat = ogre.MaterialManager.getSingleton().create("fuckMat", "General")
+        fuckPass = fuckMat.getTechnique(0).getPass(0)
+        fuckPass.setLightingEnabled(False)
+        fuckPass.createTextureUnitState("CubeNavTex.png")
+
+        mpic = overlayMgr.createOverlayElement("Panel", "fuck/2d")
+        mpic.setParameter("metrics_mode", "pixels");
+        mpic.setParameter("left", "128")
+        mpic.setParameter("top", "0")
+        mpic.setParameter("width", "768")
+        mpic.setParameter("height", "128")
+        mpic.setMaterialName("fuckMat")
+
+        fuckOverlay.add2D(mpic)
+        
+        fuckOverlay.show()'''
         # <==== add by kid
 
         # initiaslise CEGUI Renderer
@@ -169,6 +176,15 @@ class TutorialApplication(sf.Application):
         # <==== add by kid
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
+
+    # add by kid ====>
+    def _createCamera(self):
+        sf.Application._createCamera(self)
+        self.camera.setAutoAspectRatio(True)
+        self.camera.setFOVy(0.4)
+        print self.camera.getLodBias()
+        print self.camera.getFOVy()
+    # <==== add by kid
         
     def __del__ ( self ):
         del self.ent
