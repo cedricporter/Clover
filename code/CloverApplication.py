@@ -26,6 +26,8 @@ class tri(ogre.ManualObject):
         me.position(A[0], A[1], A[2]) 
         me.end()
 
+##
+# @brief    Clover Application Abstract
 class CloverApplication(sf.Application): 
 
     def _createScene(self): 
@@ -54,7 +56,7 @@ class CloverApplication(sf.Application):
 
         # initiaslise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
-        self.CEGUIRenderer = CEGUI.System.getSingleton()
+        #self.CEGUIRenderer = CEGUI.System.getSingleton()
         # load TaharezLook scheme
         CEGUI.SchemeManager.getSingleton().create("VanillaSkin.scheme")
         # load font and setup default if not loaded via scheme
@@ -85,6 +87,9 @@ class CloverApplication(sf.Application):
         
     def __del__ ( self ):
         del self.ent
+        del self.cubeNav
+        del self.CEGUIRenderer
+        del self.frameListener
         if self.system:
             del self.system
         if self.renderer:
