@@ -39,14 +39,17 @@ class CubeNavigator(ogre.ManualObject):
         quat = ogre.Quaternion(rotateDegree, rotateAxis)
         quat = self.lastOrientation * quat
         self.getParentSceneNode().setOrientation(quat)
-        print self.getParentSceneNode().getOrientation() * ogre.Vector3(0,0,-1)
+        #print self.getParentSceneNode().getOrientation() * ogre.Vector3(0,0,-1)
         #self.getParentSceneNode().rotate(self.lastOrientation)
         #self.lastMousePos = mousePos'''
+        # let the cloverRoot rotate as the cube
+        self.cloverRoot.setOrientation(self.getParentSceneNode().getOrientation())
         
     # To Create a cube object
-    def __init__(self):
+    def __init__(self, cloverRoot):
         # initialize
         ogre.ManualObject.__init__(self, "CubeNav")
+        self.cloverRoot = cloverRoot
         self.lastMousePos = None
         self.lastOrientation = None
         self.focus = False

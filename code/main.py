@@ -118,41 +118,24 @@ class TutorialApplication(sf.Application):
         sceneManager = self.sceneManager 
         sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
 
+        # add by kid ====>
+        # every clover scene node must attach to the root scene node
+        self.cloverRoot = sceneManager.getRootSceneNode().createChildSceneNode("cloverRoot")
+        # <==== add by kid
         # draw triangle
-        #self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
-        #node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
-        #node1.attachObject (self.ent)
+        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
+        node1 = self.cloverRoot.createChildSceneNode ("node1") 
+        node1.attachObject (self.ent)
+        
 
         # add by kid ====>
         # draw a cube navigator
-        self.cubeNav = CubeNav.CubeNavigator()
+        self.cubeNav = CubeNav.CubeNavigator(self.cloverRoot)
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
         cubeNavNode.attachObject(self.cubeNav)
         cubeNavNode.setPosition(100, -100, -100)
         direction = cubeNavNode.getPosition() - self.camera.getPosition()
-        print direction
         cubeNavNode.setDirection(direction)
-        
-        '''overlayMgr = ogre.OverlayManager.getSingleton()
-        fuckOverlay = overlayMgr.create("FuckPanel")
-        fuckOverlay.add3D(cubeNavNode)
-
-        fuckMat = ogre.MaterialManager.getSingleton().create("fuckMat", "General")
-        fuckPass = fuckMat.getTechnique(0).getPass(0)
-        fuckPass.setLightingEnabled(False)
-        fuckPass.createTextureUnitState("CubeNavTex.png")
-
-        mpic = overlayMgr.createOverlayElement("Panel", "fuck/2d")
-        mpic.setParameter("metrics_mode", "pixels");
-        mpic.setParameter("left", "128")
-        mpic.setParameter("top", "0")
-        mpic.setParameter("width", "768")
-        mpic.setParameter("height", "128")
-        mpic.setMaterialName("fuckMat")
-
-        fuckOverlay.add2D(mpic)
-        
-        fuckOverlay.show()'''
         # <==== add by kid
 
         # initiaslise CEGUI Renderer
