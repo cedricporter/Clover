@@ -5,7 +5,7 @@ import SampleFramework as sf
 import ogre.io.OIS as OIS
 import ogre.gui.CEGUI as CEGUI
 
-from CubeNav import CubeNavigator
+import CubeNav
 
 # Convert OIS mouse event to CEGUI mouse event
 def convertButton(oisID):
@@ -21,13 +21,21 @@ def convertButton(oisID):
 # Listener class
 class TutorialListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
-    def __init__(self, renderWindow, camera):
+    #def __init__(self, renderWindow, camera):
+    # add by kid ====>
+    def __init__(self, renderWindow, camera, sceneManager, cubeNav):
+    # <==== add by kid
         sf.FrameListener.__init__(self, renderWindow, camera, True, True)
         OIS.MouseListener.__init__(self)
         OIS.KeyListener.__init__(self)
         self.cont = True
         self.Mouse.setEventCallback(self)
         self.Keyboard.setEventCallback(self)
+        # add by kid ====>
+        self.sceneManager = sceneManager
+        self.raySceneQuery = self.sceneManager.createRayQuery(ogre.Ray())
+        self.cubeNav = cubeNav
+        # <==== add by kid
  
     def frameStarted(self, evt):
         self.Keyboard.capture()
@@ -40,14 +48,39 @@ class TutorialListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
     # MouseListener
     def mouseMoved(self, evt):
+        # add by kid ====>
+        self.cubeNav.onMove()
+        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseMove(evt.get_state().X.rel, evt.get_state().Y.rel)
         return True
  
     def mousePressed(self, evt, id):
+        # add by kid ====>
+        # pick a 3d object
+        
+        # setup the ray scene query, use CEGUI's mouse position 
+        mousePos = CEGUI.MouseCursor.getSingleton().getPosition()
+        mouseRay = self.camera.getCameraToViewportRay(
+            mousePos.d_x / float(evt.get_state().width),
+            mousePos.d_y / float(evt.get_state().height))
+        self.raySceneQuery.setRay(mouseRay)
+        self.raySceneQuery.setSortByDistance(True)
+        # execute query
+        result = self.raySceneQuery.execute()
+        if len(result) > 0:
+            for item in result:
+                print item.movable.getName()
+                if item.movable.getName() == "CubeNav":
+                    self.cubeNav.onPress()
+                    break
+        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseButtonDown(convertButton(id))
         return True
  
     def mouseReleased(self, evt, id):
+        # add by kid ====>
+        self.cubeNav.onRelease()
+        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseButtonUp(convertButton(id))
         return True
  
@@ -86,15 +119,18 @@ class TutorialApplication(sf.Application):
         sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
 
         # draw triangle
-        #self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
-        #node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
-        #node1.attachObject (self.ent)
+        self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
+        node1 = sceneManager.getRootSceneNode().createChildSceneNode ("node1") 
+        node1.attachObject (self.ent)
 
         # add by kid ====>
         # draw a cube navigator
-        self.CubeNav = CubeNavigator()
+        self.cubeNav = CubeNav.CubeNavigator()
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
-        cubeNavNode.attachObject(self.CubeNav)
+        cubeNavNode.attachObject(self.cubeNav)
+        cubeNavNode.setPosition(150, -150, 0)
+        direction = cubeNavNode.getPosition() - self.camera.getPosition()
+        cubeNavNode.setDirection(direction)
         # <==== add by kid
 
         # initiaslise CEGUI Renderer
@@ -111,7 +147,11 @@ class TutorialApplication(sf.Application):
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
 
     def _createFrameListener(self):
-        self.frameListener = TutorialListener(self.renderWindow, self.camera)
+        #self.frameListener = TutorialListener(self.renderWindow, self.camera)
+        # add by kid ====>
+        self.frameListener = TutorialListener(self.renderWindow, self.camera,
+                                              self.sceneManager, self.cubeNav)
+        # <==== add by kid
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
         
