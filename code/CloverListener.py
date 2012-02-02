@@ -25,18 +25,15 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
     #def __init__(self, renderWindow, camera):
     # add by kid ====>
     def __init__(self, renderWindow, camera, sceneManager, cubeNav):
-    # <==== add by kid
         sf.FrameListener.__init__(self, renderWindow, camera, True, True)
         OIS.MouseListener.__init__(self)
         OIS.KeyListener.__init__(self)
         self.cont = True
         self.Mouse.setEventCallback(self)
         self.Keyboard.setEventCallback(self)
-        # add by kid ====>
         self.sceneManager = sceneManager
         self.raySceneQuery = self.sceneManager.createRayQuery(ogre.Ray())
         self.cubeNav = cubeNav
-        # <==== add by kid
  
     def frameStarted(self, evt):
         self.Keyboard.capture()
@@ -49,16 +46,12 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
     # MouseListener
     def mouseMoved(self, evt):
-        # add by kid ====>
         self.cubeNav.onMove()
-        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseMove(evt.get_state().X.rel, evt.get_state().Y.rel)
         return True
  
     def mousePressed(self, evt, id):
-        # add by kid ====>
         # pick a 3d object
-        
         # setup the ray scene query, use CEGUI's mouse position 
         mousePos = CEGUI.MouseCursor.getSingleton().getPosition()
         mouseRay = self.camera.getCameraToViewportRay(
@@ -74,14 +67,11 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
                 if item.movable.getName() == "CubeNav":
                     self.cubeNav.onPress()
                     break
-        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseButtonDown(convertButton(id))
         return True
  
     def mouseReleased(self, evt, id):
-        # add by kid ====>
         self.cubeNav.onRelease()
-        # <==== add by kid
         CEGUI.System.getSingleton().injectMouseButtonUp(convertButton(id))
         return True
  

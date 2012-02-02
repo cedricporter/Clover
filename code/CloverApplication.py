@@ -34,17 +34,12 @@ class CloverApplication(sf.Application):
         sceneManager = self.sceneManager 
         sceneManager.ambientLight = ogre.ColourValue (0.3,0.3,0.3) 
 
-        # add by kid ====>
         # every clover scene node must attach to the root scene node
         self.cloverRoot = sceneManager.getRootSceneNode().createChildSceneNode("cloverRoot")
-        # <==== add by kid
         # draw triangle
         self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
         node1 = self.cloverRoot.createChildSceneNode ("node1") 
         node1.attachObject (self.ent)
-        
-
-        # add by kid ====>
         # draw a cube navigator
         self.cubeNav = CubeNav.CubeNavigator(self.cloverRoot)
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
@@ -52,46 +47,36 @@ class CloverApplication(sf.Application):
         cubeNavNode.setPosition(100, -100, -100)
         direction = cubeNavNode.getPosition() - self.camera.getPosition()
         cubeNavNode.setDirection(direction)
-        # <==== add by kid
-
         # initiaslise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
-        #self.CEGUIRenderer = CEGUI.System.getSingleton()
+        self.CEGUISystem = CEGUI.System.getSingleton()
         # load TaharezLook scheme
         CEGUI.SchemeManager.getSingleton().create("VanillaSkin.scheme")
         # load font and setup default if not loaded via scheme
         CEGUI.FontManager.getSingleton().create("DejaVuSans-10.font")
-        CEGUI.System.getSingleton().setDefaultMouseCursor("Vanilla-Images", "MouseArrow")
-        CEGUI.System.getSingleton().setDefaultFont("DejaVuSans-10")
+        self.CEGUISystem.setDefaultMouseCursor("Vanilla-Images", "MouseArrow")
+        self.CEGUISystem.setDefaultFont("DejaVuSans-10")
         # load the layout
-        CEGUI.System.getSingleton().setGUISheet(
+        self.CEGUISystem.setGUISheet(
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
     
     def _createFrameListener(self):
-        #self.frameListener = TutorialListener(self.renderWindow, self.camera)
-        # add by kid ====>
         self.frameListener = CloverListener.CloverListener(self.renderWindow, self.camera,
                                               self.sceneManager, self.cubeNav)
-        # <==== add by kid
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
 
-    # add by kid ====>
     def _createCamera(self):
         sf.Application._createCamera(self)
         self.camera.setAutoAspectRatio(True)
         self.camera.setFOVy(0.4)
-        print self.camera.getLodBias()
-        print self.camera.getFOVy()
-    # <==== add by kid
         
     def __del__ ( self ):
         del self.ent
         del self.cubeNav
-        del self.CEGUIRenderer
         del self.frameListener
-        if self.system:
+        if self.CEGUISystem:
             del self.system
-        if self.renderer:
+        if self.CEGUIRenderer:
             del self.renderer
 
