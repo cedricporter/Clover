@@ -9,10 +9,14 @@ class BasicPicker:
     #
     def onMove(self):
         print "moving.."
+        if self.overedElement == None:
+            return
     
     #
     def onPress(self):
-        pass
+        self.selectedElement = self.overedElement
+        if self.selectedElement == None:
+            return
     
     #
     def onRelease(self):
@@ -45,9 +49,10 @@ class BasicPicker:
         pass
     
     # constructor
-    def __init__(self):
+    def __init__(self, entity):
         self.overedElement = None
         self.selectedElement = None
+        self.entity = entity
     
     
 

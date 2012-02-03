@@ -49,6 +49,11 @@ class CloverApplication(sf.Application):
         cubeNavNode.setPosition(100, -100, -100)
         direction = cubeNavNode.getPosition() - self.camera.getPosition()
         cubeNavNode.setDirection(direction)
+        # add by kid ======>>
+        # create a simple picker
+        self.simplePicker = SimplePicker(self.ent)
+        print self.ent.getMesh().getNumSubMesh()
+        # <<====== add by kid
         # initialise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
         self.CEGUISystem = CEGUI.System.getSingleton()
@@ -85,9 +90,9 @@ class CloverApplication(sf.Application):
     # <<====== add by kid
     
     # add by kid ======>>
-    def __init__(self):
-        sf.Application.__init__(self)
-        self.simplePicker = SimplePicker()
+    #def __init__(self):
+    #    sf.Application.__init__(self)
+    #    self.simplePicker = SimplePicker()
     # <<====== add by kid
     
     def __del__ ( self ):
