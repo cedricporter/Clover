@@ -18,8 +18,8 @@ class CubeNavigator(ogre.ManualObject):
         self.focus = False
         self.lastOrientation = self.getParentSceneNode().getOrientation()
         
-    # when focused, present navigation
-    def onMove(self):
+    # when draged, present navigation
+    def onDrag(self):
         if self.focus == False:
             return
         if self.initialized == False:

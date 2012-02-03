@@ -5,8 +5,10 @@ import ogre.renderer.OGRE as ogre
 import SampleFramework as sf 
 import ogre.io.OIS as OIS
 import ogre.gui.CEGUI as CEGUI
+
 import CloverListener
 import CubeNav
+from SimplePicker import SimplePicker
 
 # 
 class tri(ogre.ManualObject): 
@@ -38,8 +40,8 @@ class CloverApplication(sf.Application):
         self.cloverRoot = sceneManager.getRootSceneNode().createChildSceneNode("cloverRoot")
         # draw triangle
         self.ent = tri("triangle", (0,0,0), (0,100,0), (100,0,0) )
-        node1 = self.cloverRoot.createChildSceneNode ("node1") 
-        node1.attachObject (self.ent)
+        #node1 = self.cloverRoot.createChildSceneNode ("node1") 
+        self.cloverRoot.attachObject (self.ent)
         # draw a cube navigator
         self.cubeNav = CubeNav.CubeNavigator(self.cloverRoot)
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
@@ -47,7 +49,7 @@ class CloverApplication(sf.Application):
         cubeNavNode.setPosition(100, -100, -100)
         direction = cubeNavNode.getPosition() - self.camera.getPosition()
         cubeNavNode.setDirection(direction)
-        # initiaslise CEGUI Renderer
+        # initialise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
         self.CEGUISystem = CEGUI.System.getSingleton()
         # load TaharezLook scheme
@@ -61,8 +63,13 @@ class CloverApplication(sf.Application):
         CEGUI.WindowManager.getSingleton().loadWindowLayout("Kidle1.layout"))
     
     def _createFrameListener(self):
-        self.frameListener = CloverListener.CloverListener(self.renderWindow, self.camera,
-                                              self.sceneManager, self.cubeNav)
+        #self.frameListener = CloverListener.CloverListener(self.renderWindow, self.camera,
+        #                                      self.sceneManager, self.cubeNav)
+        # add by kid ======>>
+        self.frameListener = CloverListener.CloverListener(self.renderWindow,
+                                             self.camera, self.sceneManager, 
+                                             self.cubeNav, self.simplePicker)
+        # <<====== add by kid
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
 
@@ -71,6 +78,18 @@ class CloverApplication(sf.Application):
         self.camera.setAutoAspectRatio(True)
         self.camera.setFOVy(0.4)
         
+    # add by kid ======>>
+    def _createViewports(self):
+        sf.Application._createViewports(self)
+        self.viewport.BackgroundColour = ogre.ColourValue(1.0,1.0,1.0)
+    # <<====== add by kid
+    
+    # add by kid ======>>
+    def __init__(self):
+        sf.Application.__init__(self)
+        self.simplePicker = SimplePicker()
+    # <<====== add by kid
+    
     def __del__ ( self ):
         del self.ent
         del self.cubeNav
