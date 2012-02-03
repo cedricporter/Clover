@@ -8,7 +8,7 @@ class BasicPicker:
     
     #
     def onMove(self):
-        print "moving.."
+        #print "moving.."
         if self.overedElement == None:
             return
     

@@ -34,18 +34,18 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
  
     #def __init__(self, renderWindow, camera, sceneManager, cubeNav):
     # add by kid ======>>
-    def __init__(self, renderWindow, camera, sceneManager, cubeNav, simplePicker):
+    def __init__(self, app):
     # <<====== add by kid
-        sf.FrameListener.__init__(self, renderWindow, camera, True, True)
+        sf.FrameListener.__init__(self, app.renderWindow, app.camera, True, True)
         OIS.MouseListener.__init__(self)
         OIS.KeyListener.__init__(self)
         self.cont = True
         self.Mouse.setEventCallback(self)
         self.Keyboard.setEventCallback(self)
-        self.sceneManager = sceneManager
+        self.sceneManager = app.sceneManager
         self.raySceneQuery = self.sceneManager.createRayQuery(ogre.Ray())
-        self.cubeNav = cubeNav
-        self.simplePicker = simplePicker
+        self.cubeNav = app.cubeNav
+        self.simplePicker = app.simplePicker
  
     def frameStarted(self, evt):
         self.Keyboard.capture()
@@ -87,8 +87,8 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
             for item in result:
                 entityName = item.movable.getName()
                 nodeName = item.movable.getParentSceneNode().getName()
-                print entityName
-                print nodeName
+                print "object:", entityName
+                print "node:",nodeName
                 if entityName == "CubeNav":
                     self.cubeNav.onPress()
                     break

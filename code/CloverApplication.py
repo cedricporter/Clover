@@ -52,7 +52,6 @@ class CloverApplication(sf.Application):
         # add by kid ======>>
         # create a simple picker
         self.simplePicker = SimplePicker(self.ent)
-        print self.ent.getMesh().getNumSubMesh()
         # <<====== add by kid
         # initialise CEGUI Renderer
         self.CEGUIRenderer = CEGUI.OgreRenderer.bootstrapSystem()
@@ -71,9 +70,7 @@ class CloverApplication(sf.Application):
         #self.frameListener = CloverListener.CloverListener(self.renderWindow, self.camera,
         #                                      self.sceneManager, self.cubeNav)
         # add by kid ======>>
-        self.frameListener = CloverListener.CloverListener(self.renderWindow,
-                                             self.camera, self.sceneManager, 
-                                             self.cubeNav, self.simplePicker)
+        self.frameListener = CloverListener.CloverListener(self)
         # <<====== add by kid
         self.frameListener.showDebugOverlay(True)
         self.root.addFrameListener(self.frameListener)
