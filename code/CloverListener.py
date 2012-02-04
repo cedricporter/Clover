@@ -72,6 +72,8 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
                     if nodeName == "cloverRoot":
                         self.simplePicker.onMove()
                         break
+                    if entityName == "CubeNav":
+                        self.cubeNav.onMove()
         # <<====== add by kid
         self.cubeNav.onDrag()
         #self.cubeNav.onDrag()
