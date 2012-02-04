@@ -21,9 +21,25 @@ import math
 PL = [[-20, 20, 20], [-20, -20, 20], [20, -20, 20], [20, 20, 20],
       [-20, 20, -20], [-20, -20, -20], [20, -20, -20], [20, 20, -20]]
 # index list /ft/bk/lt/rt/up/dn
-IL = [[0,1,2,3], [7,6,5,4],
-      [4,5,1,0], [3,2,6,7],
-      [4,0,3,7], [1,5,6,2]]
+IL = [[0,1,3], [3,1,2],
+      [7,6,4], [4,6,5],
+      [4,5,0], [0,5,1],
+      [3,2,7], [7,2,6],
+      [4,0,7], [7,0,3],
+      [1,5,2], [2,5,6]]
+# texture coordinates list
+TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
+      [[0.8333, 0],[0.6667, 1], [0.8333, 1]],
+      [[0.833, 0], [0.833, 1], [1, 0]], 
+      [[1, 0], [0.833, 1], [1, 1]],
+      [[0.3333, 0], [0.3333, 1], [0.5, 0]], 
+      [[0.5, 0], [0.3333, 1], [0.5, 1]],
+      [[0.5, 0], [0.5, 1], [0.6667, 0]], 
+      [[0.6667, 0], [0.5, 1], [0.6667, 1]],
+      [[0, 0], [0, 1], [0.1667, 0]], 
+      [[0.1667, 0], [0, 1], [0.1667, 1]],
+      [[0.1667, 0], [0.1667, 1], [0.3333, 0]], 
+      [[0.3333, 0], [0.1667, 1], [0.3333, 1]]]
 
 class CubeNavigator(ogre.ManualObject):
     # when over one of the six face, height light
@@ -91,20 +107,14 @@ class CubeNavigator(ogre.ManualObject):
         ipass.setLightingEnabled(False)
         ipass.setDepthCheckEnabled(False)
         ipass.createTextureUnitState("CubeNavTex.png")
-        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_STRIP)
-        # vertices
-        for P in PL:
-            self.position(P[0], P[1], P[2])
-        # front
-        for I in IL:
-            self.quad(I[0], I[1], I[2], I[3])
-        # back
-        # left
-        # right
-        # up
-        # down
+        # draw cube 
+        # sequence: ft/bk/lt/rt/up/dn
+        self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_LIST)
+        for face in range(0, 12):
+            for vertex in range(0, 3):
+                self.position(PL[IL[face][vertex]][0], PL[IL[face][vertex]][1], PL[IL[face][vertex]][2])
+                self.textureCoord(TC[face][vertex][0], TC[face][vertex][1])       
         self.end()
-        #self.position(PL[0][0],PL[0][1],PL[0][2])
         
         """# front
         self.clear()
