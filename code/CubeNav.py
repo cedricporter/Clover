@@ -30,8 +30,6 @@ IL = [[0,1,3], [3,1,2],
 # height light index list
 HIL = [[0,1,3,2], [7,6,4,5], [4,5,0,1],
        [3,2,7,6], [4,0,7,3], [1,5,2,6]]
-# face name
-#FL = ['ft','ft','bk','bk','lt','lt','rt','rt','up','up','dn','dn']
 # texture coordinates list
 TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
       [[0.8333, 0],[0.6667, 1], [0.8333, 1]],
@@ -113,21 +111,13 @@ class CubeNavigator(ogre.ManualObject):
         mousePos = CEGUI.MouseCursor.getSingleton().getPosition()
         mouseOffset = mousePos - self.lastMousePos
         ogreMouseVec = ogre.Vector3(mouseOffset.d_x, -mouseOffset.d_y, 0)
-        #ogreMouseVec.normalise()
         rotateAxis = ogreMouseVec.crossProduct(ogre.Vector3(0, 0, -1))
-        #rotateAxis.normalise()
-        # add by kid ======>>
-        #rotMatrix = self.getParentSceneNode().getLocalAxes()
-        #rotateAxis =  rotMatrix * rotateAxis
         rotateAxis.normalise()
-        #print rotateAxis
-        # <<====== add by kid
-        # determine the rotate degree
         rotateDegree = math.sqrt(math.pow(mouseOffset.d_x, 2.0)
                                  + math.pow(mouseOffset.d_y, 2.0)) / 100.0
         # use the axis and degree to create quaternion
         quat = ogre.Quaternion(rotateDegree, rotateAxis)
-        quat = self.lastOrientation * quat
+        quat = quat * self.lastOrientation
         self.getParentSceneNode().setOrientation(quat)        
         # let the cloverRoot rotate as the cube
         self.cloverRoot.setOrientation(self.getParentSceneNode().getOrientation())
