@@ -47,8 +47,8 @@ class CloverApplication(sf.Application):
         cubeNavNode = sceneManager.getRootSceneNode().createChildSceneNode("cubeNavNode")
         cubeNavNode.attachObject(self.cubeNav)
         cubeNavNode.setPosition(100, -100, -100)
-        direction = cubeNavNode.getPosition() - self.camera.getPosition()
-        cubeNavNode.setDirection(direction)
+        #direction = cubeNavNode.getPosition() - self.camera.getPosition()
+        #cubeNavNode.setDirection(direction)
         # add by kid ======>>
         # create a simple picker
         self.simplePicker = SimplePicker(self.ent)
