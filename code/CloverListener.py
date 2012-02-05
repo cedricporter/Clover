@@ -47,9 +47,11 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
         self.cubeNav = app.cubeNav
         self.simplePicker = app.simplePicker
  
-    def frameStarted(self, evt):
+    #def frameStarted(self, evt):
+    def frameRenderingQueued(self, evt):
         self.Keyboard.capture()
         self.Mouse.capture()
+        self.cubeNav.onIdle()
         return self.cont and not self.Keyboard.isKeyDown(OIS.KC_ESCAPE)
  
     def quit(self, evt):
@@ -94,6 +96,7 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
                 print "object:", entityName
                 print "node:",nodeName
                 if entityName == "CubeNav":
+                    #print item.movable.getParentSceneNode()._getFullTransform()
                     self.cubeNav.onPress()
                     break
         CEGUI.System.getSingleton().injectMouseButtonDown(convertButton(id))

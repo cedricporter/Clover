@@ -46,6 +46,14 @@ TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
       [[0.1667, 0], [0.1667, 1], [0.3333, 0]], 
       [[0.3333, 0], [0.1667, 1], [0.3333, 1]]]
 
+# face quaternion list, quaternion for six face
+FQL = [ogre.Quaternion(1, 0, 0, 0), #ft
+       ogre.Quaternion(0, 0, 1, 0), #bk
+       ogre.Quaternion(math.sqrt(0.5), 0, math.sqrt(0.5), 0), #lt
+       ogre.Quaternion(math.sqrt(0.5), 0, -math.sqrt(0.5), 0), #rt
+       ogre.Quaternion(math.sqrt(0.5), math.sqrt(0.5), 0, 0), #up
+       ogre.Quaternion(math.sqrt(0.5), -math.sqrt(0.5), 0, 0)] #dn
+
 class CubeNavigator(ogre.ManualObject):
     # when over one of the six face, height light the face
     def onMove(self, colPoint, camera):
@@ -65,52 +73,34 @@ class CubeNavigator(ogre.ManualObject):
         for i in range(0,12):
             if math.sqrt(IL[i][0])+math.sqrt(IL[i][1])+math.sqrt(IL[i][2]) == checkSum:
                 self.overedFace = i / 2
-                #print self.overedFace
                 break
         # height light
-        if self.heightLight.getParentSceneNode() == None:
-            self.getParentSceneNode().attachObject(self.heightLight)
+        self.beginUpdate(1)
         if self.overedFace != None:
-            self.beginUpdate(1)
-            #self.begin("CubeHeightLight", ogre.RenderOperation.OT_TRIANGLE_STRIP)
             for vertex in range(0, 4):
                 self.position(PL[HIL[self.overedFace][vertex]][0], 
                               PL[HIL[self.overedFace][vertex]][1], 
                               PL[HIL[self.overedFace][vertex]][2])
-                #self.colour(1,1,0.3)
-            self.end()
         else:
-            self.beginUpdate(1)
             self.position(0,0,0)
-            self.end()
-        
-        """self.getParentSceneNode().getOrientation().ToRotationMatrix(rotMat)
-        viewMat = camera.getViewMatrix()
-        projMat = camera.getProjectionMatrixWithRSDepth()
-        viewPort = camera.getViewport()
-        wp = rotMat*ogre.Vector3(-20,20,20) + self.getParentNode().getPosition()
-        #print viewPort.getActualLeft(), viewPort.getActualTop(), viewPort.getActualWidth(), viewPort.getActualHeight()
-        pos3D = projMat*viewMat*ogre.Vector4(colPoint.x,colPoint.y,colPoint.z,0)
-        print pos3D
-        #print rotMat*ogre.Vector3(-20,20,20) + self.getParentNode().getPosition()
-        #print colPoint
-        pos2D = [0, 0]
-        for i in range(0,2):
-            pos2D[i] = pos3D[i] / pos3D[3]
-        pos2D[0] = (1 + pos2D[0]) * viewPort.getActualWidth() / 2
-        pos2D[1] = (1 + pos2D[1]) * viewPort.getActualHeight() / 2
-        print pos2D"""
+        self.end()
 
-    
     # when clicked, set focus
     def onPress(self):
         self.focus = True
         self.lastMousePos = CEGUI.MouseCursor.getSingleton().getPosition()
+        self.lastOrientation = self.getParentSceneNode().getOrientation()
         
     # when released, set no focus
     def onRelease(self):
         if self.focus == False:
             return
+        # click a face
+        if self.isDraging == False:
+            if self.overedFace != None:
+                self.isClicked = True
+                self.destOrientation = FQL[self.overedFace]
+        self.isDraging = False
         self.focus = False
         self.lastOrientation = self.getParentSceneNode().getOrientation()
         
@@ -118,21 +108,18 @@ class CubeNavigator(ogre.ManualObject):
     def onDrag(self):
         if self.focus == False:
             return
-        if self.initialized == False:
-            self.initialized = True
-            self.lastOrientation = self.getParentSceneNode().getOrientation()
-            #self.lastMousePos = CEGUI.MouseCursor.getSingleton().getPosition()
+        self.isDraging = True
         # find the rotate axis
         mousePos = CEGUI.MouseCursor.getSingleton().getPosition()
         mouseOffset = mousePos - self.lastMousePos
         ogreMouseVec = ogre.Vector3(mouseOffset.d_x, -mouseOffset.d_y, 0)
         #ogreMouseVec.normalise()
         rotateAxis = ogreMouseVec.crossProduct(ogre.Vector3(0, 0, -1))
-        rotateAxis.normalise()
+        #rotateAxis.normalise()
         # add by kid ======>>
-        #rotMat = ogre.Matrix3()
-        #self.lastOrientation.ToRotationMatrix(rotMat)
-        #rotateAxis =  rotMat * rotateAxis
+        #rotMatrix = self.getParentSceneNode().getLocalAxes()
+        #rotateAxis =  rotMatrix * rotateAxis
+        rotateAxis.normalise()
         #print rotateAxis
         # <<====== add by kid
         # determine the rotate degree
@@ -144,6 +131,18 @@ class CubeNavigator(ogre.ManualObject):
         self.getParentSceneNode().setOrientation(quat)        
         # let the cloverRoot rotate as the cube
         self.cloverRoot.setOrientation(self.getParentSceneNode().getOrientation())
+     
+    # when no one touch the cube
+    def onIdle(self):
+        # if clicked, turn to that face
+        if self.isClicked:
+            src = self.getParentSceneNode().getOrientation()
+            dst = self.destOrientation
+            if src.equals(dst, 0.001):
+                self.isClicked = False
+            self.getParentSceneNode().setOrientation(
+                                        ogre.Quaternion.Slerp(0.02, src, dst))
+            self.cloverRoot.setOrientation(self.getParentSceneNode().getOrientation())
         
     # To Create a cube object
     def __init__(self, cloverRoot):
@@ -153,9 +152,10 @@ class CubeNavigator(ogre.ManualObject):
         self.lastMousePos = None
         self.lastOrientation = None
         self.focus = False
-        self.initialized = False
+        self.isDraging = False
+        self.isClicked = False
         self.overedFace = None
-        self.heightLight = ogre.ManualObject("CubeNavHeightLight")
+        self.destOrientation = None
         #self.setUseIdentityProjection(True)
         #self.setUseIdentityView(True)
         # create materials
