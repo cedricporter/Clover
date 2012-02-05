@@ -73,7 +73,9 @@ class CloverListener(sf.FrameListener, OIS.MouseListener, OIS.KeyListener):
                         self.simplePicker.onMove()
                         break
                     if entityName == "CubeNav":
-                        self.cubeNav.onMove()
+                        #print evt.get_state().X.abs, evt.get_state().Y.abs
+                        self.cubeNav.onMove(self.raySceneQuery.getRay().getPoint(item.distance),
+                                            self.sceneManager.getCamera("PlayerCam"))
         # <<====== add by kid
         self.cubeNav.onDrag()
         #self.cubeNav.onDrag()

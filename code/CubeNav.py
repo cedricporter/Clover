@@ -27,6 +27,11 @@ IL = [[0,1,3], [3,1,2],
       [3,2,7], [7,2,6],
       [4,0,7], [7,0,3],
       [1,5,2], [2,5,6]]
+# height light index list
+HIL = [[0,1,3,2], [7,6,4,5], [4,5,0,1],
+       [3,2,7,6], [4,0,7,3], [1,5,2,6]]
+# face name
+#FL = ['ft','ft','bk','bk','lt','lt','rt','rt','up','up','dn','dn']
 # texture coordinates list
 TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
       [[0.8333, 0],[0.6667, 1], [0.8333, 1]],
@@ -42,12 +47,60 @@ TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
       [[0.3333, 0], [0.1667, 1], [0.3333, 1]]]
 
 class CubeNavigator(ogre.ManualObject):
-    # when over one of the six face, height light
-    def onMove(self):
-        #rotMat = ogre.Matrix3()
-        #self.getParentSceneNode().getOrientation().ToRotationMatrix(rotMat)
-        #print rotMat
-        pass
+    # when over one of the six face, height light the face
+    def onMove(self, colPoint, camera):
+        # first determine which face the mouse is on
+        rotMatrix = self.getParentSceneNode().getLocalAxes()
+        worldPos = self.getParentNode().getPosition()
+        # calculate the distance between collition point and all vertices
+        posList = []
+        for i in range(0, 8):
+            tV = ogre.Vector3(PL[i][0],PL[i][1],PL[i][2])
+            tV = rotMatrix * tV + worldPos
+            posList.append([colPoint.distance(tV), i])
+        posList.sort()
+        # use a check sum to verify wich face is hited
+        self.overedFace = None
+        checkSum = math.sqrt(posList[0][1])+math.sqrt(posList[1][1])+math.sqrt(posList[2][1])
+        for i in range(0,12):
+            if math.sqrt(IL[i][0])+math.sqrt(IL[i][1])+math.sqrt(IL[i][2]) == checkSum:
+                self.overedFace = i / 2
+                #print self.overedFace
+                break
+        # height light
+        if self.heightLight.getParentSceneNode() == None:
+            self.getParentSceneNode().attachObject(self.heightLight)
+        if self.overedFace != None:
+            self.beginUpdate(1)
+            #self.begin("CubeHeightLight", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+            for vertex in range(0, 4):
+                self.position(PL[HIL[self.overedFace][vertex]][0], 
+                              PL[HIL[self.overedFace][vertex]][1], 
+                              PL[HIL[self.overedFace][vertex]][2])
+                #self.colour(1,1,0.3)
+            self.end()
+        else:
+            self.beginUpdate(1)
+            self.position(0,0,0)
+            self.end()
+        
+        """self.getParentSceneNode().getOrientation().ToRotationMatrix(rotMat)
+        viewMat = camera.getViewMatrix()
+        projMat = camera.getProjectionMatrixWithRSDepth()
+        viewPort = camera.getViewport()
+        wp = rotMat*ogre.Vector3(-20,20,20) + self.getParentNode().getPosition()
+        #print viewPort.getActualLeft(), viewPort.getActualTop(), viewPort.getActualWidth(), viewPort.getActualHeight()
+        pos3D = projMat*viewMat*ogre.Vector4(colPoint.x,colPoint.y,colPoint.z,0)
+        print pos3D
+        #print rotMat*ogre.Vector3(-20,20,20) + self.getParentNode().getPosition()
+        #print colPoint
+        pos2D = [0, 0]
+        for i in range(0,2):
+            pos2D[i] = pos3D[i] / pos3D[3]
+        pos2D[0] = (1 + pos2D[0]) * viewPort.getActualWidth() / 2
+        pos2D[1] = (1 + pos2D[1]) * viewPort.getActualHeight() / 2
+        print pos2D"""
+
     
     # when clicked, set focus
     def onPress(self):
@@ -101,19 +154,33 @@ class CubeNavigator(ogre.ManualObject):
         self.lastOrientation = None
         self.focus = False
         self.initialized = False
+        self.overedFace = None
+        self.heightLight = ogre.ManualObject("CubeNavHeightLight")
+        #self.setUseIdentityProjection(True)
+        #self.setUseIdentityView(True)
         # create materials
         material = ogre.MaterialManager.getSingleton().create("CubeNavMat", "General")
         ipass = material.getTechnique(0).getPass(0)
         ipass.setLightingEnabled(False)
         ipass.setDepthCheckEnabled(False)
         ipass.createTextureUnitState("CubeNavTex.png")
-        # draw cube 
+        #for height light
+        material = ogre.MaterialManager.getSingleton().create("CubeHeightLight", "General")
+        material.setDepthCheckEnabled(False)
+        material.setLightingEnabled(False)
+        material.setSceneBlending (ogre.SBT_MODULATE)
         # sequence: ft/bk/lt/rt/up/dn
+        self.setDynamic(True)
         self.begin("CubeNavMat", ogre.RenderOperation.OT_TRIANGLE_LIST)
         for face in range(0, 12):
             for vertex in range(0, 3):
                 self.position(PL[IL[face][vertex]][0], PL[IL[face][vertex]][1], PL[IL[face][vertex]][2])
-                self.textureCoord(TC[face][vertex][0], TC[face][vertex][1])       
+                self.textureCoord(TC[face][vertex][0], TC[face][vertex][1])     
+        self.end()
+        #for height light
+        self.begin("CubeHeightLight", ogre.RenderOperation.OT_TRIANGLE_STRIP)
+        self.position(0,0,0); 
+        self.colour(1,1,0.3)  #this value decide the color
         self.end()
         
         """# front
