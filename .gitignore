@@ -6,3 +6,13 @@
 
 /code/.project
 /code/.pydevproject
+/CloverInWpf/Clover/bin
+/CloverInWpf/Clover/obj
+/CloverInWpf/bin/Debug/Clover.exe.config
+/CloverInWpf/bin/Debug/Clover.pdb
+/CloverInWpf/bin/Debug/Clover.vshost.exe
+/CloverInWpf/bin/Debug/Clover.vshost.exe.config
+/CloverInWpf/bin/Debug/Clover.vshost.exe.manifest
+/CloverInWpf/bin/Debug/MogreWpf.Interop.dll
+/CloverInWpf/bin/Debug/Ogre.log
+/CloverInWpf/bin/Debug/OgreLib.pdb
