@@ -3,6 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
+        <!-- Brushed -->
+        <ImageBrush x:Key="AppBgImgBrush" ImageSource="media/texture/AppBackground.jpg"/>
+        <ImageBrush x:Key="CubeNavTexBrush" ImageSource="media/texture/CubeNavTex.png"/>
+        
     </Application.Resources>
 </Application>

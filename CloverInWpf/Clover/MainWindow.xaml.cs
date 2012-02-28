@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-//using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Input;
 
 using Mogre;
-using OgreLib;
+using MogreInWpf;
 
 
 
@@ -24,15 +16,75 @@ namespace Clover
     /// </summary>
     public partial class MainWindow : Window
     {
+        MogreImage mogreImageSource;
+
+        #region 编译选项
+
+        public readonly bool InitMogreAsync = true;
+        public static readonly Size StartupViewportSize = new Size(800, 600);
+        public readonly bool AutoUpdateViewportSize = true;
+
+        #endregion
 
         public SceneManager sceneManager;
         public SceneNode rootSceneNode;
         public SceneNode cloverRoot;
+        public List<Camera> cameras = new List<Camera>();
+
+        public CubeNavigator cubeNav;
+
+        /// <summary>
+        /// 场景创建
+        /// </summary>
+        private void CreateScene()
+        {
+            // 初始化全局变量
+            Root root = MogreRootManager.GetSharedRoot();
+            sceneManager = mogreImageSource.SceneManager = root.CreateSceneManager(SceneType.ST_GENERIC, "mainSceneManager");
+            sceneManager.AmbientLight = new ColourValue(0.5f, 0.5f, 0.5f);
+            rootSceneNode = sceneManager.RootSceneNode;
+            cloverRoot = rootSceneNode.CreateChildSceneNode("cloverRoot");
+
+            //  创建相机，将来或许会用到多相机
+            cameras.Clear();
+            Camera camera = sceneManager.CreateCamera("mainCamera");
+            camera.AutoAspectRatio = true;
+            camera.NearClipDistance = 5;
+            camera.Position = new Vector3(0, 0, 200);
+            camera.LookAt(new Vector3(0));
+            cameras.Add(camera);
+
+            // 创建视口，将来也可能会用到很多视口吗……
+            List<ViewportDefinition> vds = new List<ViewportDefinition>();
+            vds.Add(new ViewportDefinition
+            {
+                Camera = camera,
+                Left = 0,
+                Top = 0,
+                Width = 1,
+                Height = 1,
+                BackgroundColour = new ColourValue(0,0,0,0),
+            });
+            mogreImageSource.ViewportDefinitions = vds.ToArray();
+
+            // 代码写这里
+            cubeNav = new CubeNavigator(this);
+            //this.AddChild(cubeNav);
+        }
+
+        /// <summary>
+        /// 主循环，逻辑处理
+        /// </summary>
+        private void mogreImageSource_PreRender(object sender, EventArgs e)
+        {
+
+        }
+
+        #region 构造和初始化
 
         public MainWindow()
         {
             InitializeComponent();
-            App.Current.Exit += Current_Exit;
         }
 
         /// <summary>
@@ -41,81 +93,87 @@ namespace Clover
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_Initialized(object sender, EventArgs e)
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // 初始化 mogre image
+            try
+            {
+                InitializeImage();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                this.Close();
+            }
             // 初始化ogre
-            OgreRenderTarget.InitOgreAsync();
+            if (InitMogreAsync)
+            {
+                mogreImageSource.InitOgreAsync(System.Threading.ThreadPriority.Normal, new RoutedEventHandler(OnOgreInitComplete));
+            }
+            else
+            {
+                mogreImageSource.InitOgreImage();
+                OnOgreInitComplete(null, null);
+            }
         }
 
         /// <summary>
-        /// 释放Ogre引擎
+        /// 初始化 mogre image
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void Current_Exit(object sender, ExitEventArgs e)
+        private void InitializeImage()
         {
-            RenderTargetControl.Source = null;
-            OgreRenderTarget.Dispose();
+            mogreImageSource = new MogreImage();
+            mogreImageSource.ViewportSize = PreferredMogreViewportSize;
+            // 将下面的值改为true，并注释掉CreateScene，可以显示出一个ogre头……
+            mogreImageSource.CreateDefaultScene = false;
+            CreateScene();
+            MogreImage.Source = mogreImageSource;
         }
 
         /// <summary>
-        /// 当窗口大小发生变化时改变Ogre渲染窗口大小
+        /// 当初始化完毕后希望做的工作
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RenderTargetControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        /// <param name="args"></param>
+        private void OnOgreInitComplete(Object sender, RoutedEventArgs args)
         {
-            if (OgreRenderTarget == null)
-                return;
-            OgreRenderTarget.ViewportSize = e.NewSize;
+            // 比如显示装载已完成……
+
+            // 注册PreRender事件回调函数
+            mogreImageSource.PreRender += new EventHandler(mogreImageSource_PreRender);
+        }
+
+        #endregion
+
+        #region 变更ogre视窗大小
+
+        public Size PreferredMogreViewportSize
+        {
+            get 
+            {
+                if (MogreImage.ActualHeight == 0 || MogreImage.ActualWidth == 0)
+                    return StartupViewportSize;
+                return new Size(MogreImage.ActualWidth, MogreImage.ActualHeight);
+            }
         }
 
         /// <summary>
-        /// 当Ogre加载资源时，可以异步地显示加载进度
+        /// 当MogreImage大小发生改变时
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Ogre_ResourceLoadItemProgress(Object sender, ResourceLoadEventArgs e)
+        private void MogreImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // todo
-            //_progressName.Text = e.Name;
-            //_progressScale.SclaeX = e.Progress;
+            mogreImageSource.ViewportSize = PreferredMogreViewportSize;
         }
 
-        /// <summary>
-        /// Ogre场景创建
-        /// 在这里向Ogre场景中添加物体
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Ogre_InitScene(Object sender, RoutedEventArgs e)
+        #endregion
+
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            // 初始化一些全局变量
-            sceneManager = OgreRenderTarget.SceneManager;
-            rootSceneNode = sceneManager.RootSceneNode;
-            cloverRoot = rootSceneNode.CreateChildSceneNode("cloverRoot");
+            MessageBox.Show("SDF");
         }
 
-        /// <summary>
-        /// Ogre渲染事件，在每一帧被绘制之前调用
-        /// 可以将逻辑写在这里
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Ogre_PreRender(Object sender, System.EventArgs e)
-        {
-            // todo
-        }
-
-        /// <summary>
-        /// 处理鼠标事件，需重写
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RenderTargetControl_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
-        }
 
         
     }
