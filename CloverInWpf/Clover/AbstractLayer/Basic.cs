@@ -30,6 +30,9 @@ namespace Clover
     class Edge
     {
         #region get/set
+        /// <summary>
+        /// 设置父亲不做任何事情
+        /// </summary>
         public Clover.Edge Parent
         {
             get { return parent; }
@@ -55,21 +58,26 @@ namespace Clover
             get { return vertex1; }
             set { vertex1 = value; }
         }
-        public Clover.Edge RightChild
-        {
-            get { return rightChild; }
-            set { rightChild = value; }
-        }
+        /// <summary>
+        /// 设置孩子时会将孩子的父亲置为自己
+        /// </summary>
         public Clover.Edge LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; }
+            set { leftChild = value; leftChild.Parent = this;}
+        }
+        public Clover.Edge RightChild
+        {
+            get { return rightChild; }
+            set { rightChild = value; rightChild.Parent = this;}
         }
         #endregion
+
         public Edge parent;
         public Face face1, face2;
         public Vertex vertex1, vertex2;
         public Edge leftChild, rightChild;
+
         public Edge(Vertex v1, Vertex v2)
         {
             vertex1 = v1;

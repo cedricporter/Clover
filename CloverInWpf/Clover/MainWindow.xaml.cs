@@ -43,6 +43,7 @@ namespace Clover
         {
             // 初始化抽象数据结构，暂时先放在这里，到时再说了
             cloverController.Initialize( 100, 100 );
+
             // 初始化全局变量
             Root root = MogreRootManager.GetSharedRoot();
             sceneManager = mogreImageSource.SceneManager = root.CreateSceneManager(SceneType.ST_GENERIC, "mainSceneManager");
@@ -60,6 +61,7 @@ namespace Clover
             cameras.Add(camera);
 
             // 创建视口，将来也可能会用到很多视口吗……
+            // 嗯，有可能的。。。 —— Cedric Porter
             List<ViewportDefinition> vds = new List<ViewportDefinition>();
             vds.Add(new ViewportDefinition
             {

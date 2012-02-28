@@ -35,12 +35,11 @@ namespace Clover
                     Edge e1 = new Edge( parentEdge.Vertex1, cutVertex );
                     Edge e2 = new Edge( cutVertex, parentEdge.Vertex2 );
 
-                    e1.Parent = e2.Parent = parentEdge;
+                    // 设置左右孩子会自动设置父亲
+                    //e1.Parent = e2.Parent = parentEdge;
 
                     parentEdge.LeftChild = e1;
                     parentEdge.RightChild = e2;
-
-
 
                 }
             }

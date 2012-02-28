@@ -26,16 +26,24 @@ namespace Clover
                 vertexLayer.InsertVertex( v );
             }
 
+            // create a face
+            Face face = new Face();
+
             // creates 4 edges
             Edge[] edges = new Edge[4];
+
+            // create one face and four edges
             for (int i = 0; i < 4; i++)
             {
                 edges[ i ] = new Edge( vertices[ i ], vertices[ i + 1 < 4 ? i + 1 : 0] );
                 EdgeTree tree = new EdgeTree();
                 tree.AddEdge(edges[i]);
                 edgeLayer.AddTree( tree );
+
+                face.AddEdge( edges[ i ] );
             }
 
+            
 
 
 

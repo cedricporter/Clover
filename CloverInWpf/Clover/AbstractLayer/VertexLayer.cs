@@ -51,6 +51,11 @@ namespace Clover
             return VertexCellTable[index][0];
         }
 
+        /// <summary>
+        /// 插入一个全新的顶点，会建立一个新的顶点链表
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <returns></returns>
         public int InsertVertex(Vertex vertex)
         {
             List<Vertex> vl =  new List<Vertex>();
@@ -61,6 +66,12 @@ namespace Clover
             return VertexCellTable.Count - 1;
         }
 
+        /// <summary>
+        /// 更新顶点
+        /// </summary>
+        /// <param name="vertex">插入在下标为index的顶点</param>
+        /// <param name="index">这个顶点的索引</param>
+        /// <remarks>下标越界会抛出异常</remarks>
         public void UpdateVertex(Vertex vertex, int index)
         {
             VertexCellTable[index].Add(vertex);
@@ -75,7 +86,6 @@ namespace Clover
         public void ClearTable()
         {
             VertexCellTable.Clear();
-            return ;
         }
     }
 }
