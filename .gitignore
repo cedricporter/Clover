@@ -16,4 +16,11 @@
 /CloverInWpf/bin/Debug/MogreWpf.Interop.dll
 /CloverInWpf/bin/Debug/Ogre.log
 /CloverInWpf/bin/Debug/OgreLib.pdb
+<<<<<<< HEAD
 /CloverInWpf/bin/Debug/media
+=======
+/cloverinwpf/bin/debug/Clover.vshost.exe.manifest
+/cloverinwpf/bin/debug/Clover.exe.config
+/cloverinwpf/bin/debug/Clover.vshost.exe
+/cloverinwpf/bin/debug/Clover.vshost.exe.config
+>>>>>>> 601d9edfbfaf723fed6b962db4a74cff1d19ef78
