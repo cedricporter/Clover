@@ -71,13 +71,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Basic.cs" />    <Compile Include="CubeNavigator.cs" />
-    <Compile Include="CloverController.cs" />
-    <Compile Include="EdgeLayer.cs" />
-    <Compile Include="EdgeNode.cs" />
-    <Compile Include="EdgeTree.cs" />
-    <Compile Include="FaceLayer.cs" />
-    <Compile Include="VertexLayer.cs" />
+    <Compile Include="AbstractLayer\Basic.cs" />
+    <Compile Include="CubeNavigator.cs" />
+    <Compile Include="AbstractLayer\CloverController.cs" />
+    <Compile Include="AbstractLayer\EdgeLayer.cs" />
+    <Compile Include="AbstractLayer\EdgeTree.cs" />
+    <Compile Include="AbstractLayer\FaceLayer.cs" />
+    <Compile Include="AbstractLayer\VertexLayer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
