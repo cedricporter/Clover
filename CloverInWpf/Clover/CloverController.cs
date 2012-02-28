@@ -16,10 +16,8 @@ namespace Clover
             /// Create 4 original vertices
             vertexLayer.InsertVertex( new Vertex( -width / 2, height / 2, 0 ) );
             vertexLayer.InsertVertex( new Vertex( width / 2, height / 2, 0 ) );
-            vertexLayer.InsertVertex( new Vertex(width / 2, -height / 2, 0) );
+            vertexLayer.InsertVertex( new Vertex( width / 2, -height / 2, 0 ) );
             vertexLayer.InsertVertex( new Vertex( -width / 2, -height / 2, 0 ) );
-
-            
 
 
         }
