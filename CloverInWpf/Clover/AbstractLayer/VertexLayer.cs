@@ -32,16 +32,16 @@ namespace Clover
 
         public bool IsVertexExist(int index) 
         {
-            if (VertexCellTable.Count < index)
-                return false;
-            return true;  
+            // 这里逻辑也有问题吧？ —— Cedric Porter
+            //if (VertexCellTable.Count < index)
+            //    return false;
+            //return true;  
+            return index < VertexCellTable.Count;
         }
         
         public bool IsEmpty() 
-        { 
-            if ( VertexCellTable.Count == 0 )
-                return true;
-            return false;
+        {
+            return VertexCellTable.Count == 0;
         }
 
         public Vertex GetVertex(int index)
