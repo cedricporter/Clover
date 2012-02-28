@@ -6,12 +6,13 @@
         Loaded="Window_Loaded">
     <Grid>
         
+        <!-- Mogre -->
         <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1">
             <Image x:Name="MogreImage" SizeChanged="MogreImage_SizeChanged"/>
         </Grid>
         
         
-        <!--正方体导航
+        <!-- 正方体导航
                   4 ______7
                   /|      /
                0 /_|___3 /|
@@ -47,11 +48,7 @@
                             </GeometryModel3D.Geometry>
                             <GeometryModel3D.Material>
                                 <MaterialGroup>
-                                    <DiffuseMaterial>
-                                        <DiffuseMaterial.Brush>
-                                            <ImageBrush ImageSource="CubeNavTex.png"/>
-                                        </DiffuseMaterial.Brush>
-                                    </DiffuseMaterial>
+                                    <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
                                 </MaterialGroup>
                             </GeometryModel3D.Material>
                         </GeometryModel3D>
@@ -66,6 +63,9 @@
                 </ModelVisual3D.Content>
             </ModelVisual3D>
         </Viewport3D>
+        
+        <!-- 背景图片 -->
+        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}"/>
         
     </Grid>
 </Window>
