@@ -70,6 +70,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Basic.cs" />
+    <Compile Include="CloverController.cs" />
+    <Compile Include="EdgeLayer.cs" />
+    <Compile Include="EdgeNode.cs" />
+    <Compile Include="EdgeTree.cs" />
+    <Compile Include="FaceLayer.cs" />
     <Compile Include="VertexLayer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

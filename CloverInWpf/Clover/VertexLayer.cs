@@ -8,20 +8,17 @@ namespace Clover
     class VertexLayer
     {
         // Basic vertex structure.
-        struct Vertex
-        {
-            float x;
-            float y;
-            float z;
-        };
 
         // Attributes.
         // Vertexcell lookup table.
         List<List<Vertex>> VertexCellTable;
 
+        CloverController controller;
+
         // Constructor and Destroyer.
-        public void VertexLayer()
+        public VertexLayer(CloverController ctrl)
         {
+            controller = ctrl;
             VertexCellTable = new List<List<Vertex>>();
         }
 
@@ -40,7 +37,7 @@ namespace Clover
             return false;
         }
 
-        public bool GetVertex(Vertex vertex, int index)
+        public bool GetVertex(ref Vertex vertex, int index)
         {
             if (!IsVertexExist(index))
                 return false;
