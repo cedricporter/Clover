@@ -13,11 +13,12 @@ namespace Clover
 
         public void Initialize(float width, float height)
         {
-            /// Create 4 original vertices
+            // Create 4 original vertices
             vertexLayer.InsertVertex( new Vertex( -width / 2, height / 2, 0 ) );
             vertexLayer.InsertVertex( new Vertex( width / 2, height / 2, 0 ) );
             vertexLayer.InsertVertex( new Vertex( width / 2, -height / 2, 0 ) );
             vertexLayer.InsertVertex( new Vertex( -width / 2, -height / 2, 0 ) );
+
 
 
         }

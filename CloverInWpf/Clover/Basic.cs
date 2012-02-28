@@ -6,6 +6,9 @@ using Mogre;
 
 namespace Clover
 {
+    /// <summary>
+    /// 抽象的点，里面包含渲染的点和其他信息
+    /// </summary>
     class Vertex
     {
         public Vector3 point;
@@ -21,6 +24,9 @@ namespace Clover
         }
     }
 
+    /// <summary>
+    /// 抽象的边
+    /// </summary>
     class Edge
     {
         #region get/set
@@ -71,6 +77,9 @@ namespace Clover
         }
     }
 
+    /// <summary>
+    /// 抽象的面
+    /// </summary>
     class Face
     {
         List<Edge> edges;

@@ -5,11 +5,15 @@ using System.Text;
 
 namespace Clover
 {
+    /// <summary>
+    /// Basic vertex structure.
+    /// </summary>
     class VertexLayer
     {
-        // Basic vertex structure.
-
+        //////////////////////////////////////////////////////////////////////////
         // Attributes.
+        //////////////////////////////////////////////////////////////////////////
+
         // Vertexcell lookup table.
         List<List<Vertex>> VertexCellTable;
 
@@ -22,7 +26,10 @@ namespace Clover
             VertexCellTable = new List<List<Vertex>>();
         }
 
+        //////////////////////////////////////////////////////////////////////////
         // Public Interfaces.
+        //////////////////////////////////////////////////////////////////////////
+
         public bool IsVertexExist(int index) 
         {
             if (VertexCellTable.Count < index)
@@ -37,12 +44,11 @@ namespace Clover
             return false;
         }
 
-        public bool GetVertex(ref Vertex vertex, int index)
+        public Vertex GetVertex(int index)
         {
             if (!IsVertexExist(index))
-                return false;
-            vertex = VertexCellTable[index][0];
-            return true;
+                return null;
+            return VertexCellTable[index][0];
         }
 
         public int InsertVertex(Vertex vertex)
@@ -50,7 +56,9 @@ namespace Clover
             List<Vertex> vl =  new List<Vertex>();
             vl.Add(vertex);
             VertexCellTable.Add(vl);
-            return VertexCellTable.Count;
+            // 是不是返回新的顶点的索引？是的话是不是应该减一呢？ —— Cedric Porter
+            // old: return VertexCellTable.Count;
+            return VertexCellTable.Count - 1;
         }
 
         public void UpdateVertex(Vertex vertex, int index)
