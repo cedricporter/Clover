@@ -9,26 +9,27 @@ namespace Clover
     {
         Edge root;
 
-        public bool AddNode( Edge node )
-        {
-
-            return true;
-        }
-
-
-        public bool DeleteNode( Edge node )
+        public bool AddEdge( Edge node )
         {
             return true;
         }
 
 
-        public bool IsEmpty()
+        public bool DeleteEdge( Edge node )
         {
-            if ( root != null )
+            return true;
+        }
+
+        public bool IsEmpty
+        {
+            get
             {
-                return false;
+                if ( root != null )
+                {
+                    return false;
+                }
+                return true;
             }
-            return true;
         }
 
         public bool IsContain(Edge edge)
