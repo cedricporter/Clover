@@ -30,7 +30,7 @@ namespace Clover
         // Public Interfaces.
         //////////////////////////////////////////////////////////////////////////
 
-        public bool IsVertexExist(int index) 
+        public bool IsVertexExist(int index)
         {
             // 这里逻辑也有问题吧？ —— Cedric Porter
             //if (VertexCellTable.Count < index)
@@ -38,8 +38,8 @@ namespace Clover
             //return true;  
             return index < VertexCellTable.Count;
         }
-        
-        public bool IsEmpty() 
+
+        public bool IsEmpty()
         {
             return VertexCellTable.Count == 0;
         }
@@ -75,7 +75,6 @@ namespace Clover
         public void UpdateVertex(Vertex vertex, int index)
         {
             VertexCellTable[index].Add(vertex);
-            return ;
         }
 
         public void DeleteVertex(int index)

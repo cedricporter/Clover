@@ -18,7 +18,7 @@ namespace Clover
 
         public void AddTree(EdgeTree tree)
         {
-            EdgeTreeList.Add( tree );
+            EdgeTreeList.Add(tree);
         }
 
         /// <summary>
@@ -30,10 +30,10 @@ namespace Clover
         {
             foreach (EdgeTree tree in EdgeTreeList)
             {
-                if ( tree.IsContain( parentEdge ) )
+                if (tree.IsContain(parentEdge))
                 {
-                    Edge e1 = new Edge( parentEdge.Vertex1, cutVertex );
-                    Edge e2 = new Edge( cutVertex, parentEdge.Vertex2 );
+                    Edge e1 = new Edge(parentEdge.Vertex1, cutVertex);
+                    Edge e2 = new Edge(cutVertex, parentEdge.Vertex2);
 
                     // 设置左右孩子会自动设置父亲
                     //e1.Parent = e2.Parent = parentEdge;

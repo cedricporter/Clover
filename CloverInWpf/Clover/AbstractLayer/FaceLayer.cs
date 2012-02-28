@@ -10,52 +10,54 @@ namespace Clover
     /// </summary>
     class FacecellTree
     {
-        Face root;
+        #region get/set
         public Clover.Face Root
         {
             get { return root; }
             set { root = value; }
         }
-        List<Face> leaves;
+        #endregion
+
+        Face root;
+        List<Face> leaves = new List<Face>();
+
+        public FacecellTree(Face r)
+        {
+            root = r;
+        }
 
         /// <summary>
         /// 返回所有叶节点，每次自动更新，如果要更高的运行效率，可以拆成另外两个函数
         /// </summary>
         public List<Face> Leaves
         {
-            get
-            {
-                Update();
-                return leaves;
-            }
+            get { /*Update();*/ return leaves; }
         }
 
         /// <summary>
         /// 更新叶节点
         /// </summary>
-        void Update()
+        public void Update()
         {
             leaves.Clear();
-            Travel( root );
+            Travel(root);
         }
 
         bool IsLeave(Face face)
         {
-            if ( face.LeftChild == null && face.RightChild == null )
-                return true;
-            return false;
+            return face.LeftChild == null && face.RightChild == null;
         }
 
         void Travel(Face r)
         {
-            if ( r == null )
+            if (r == null)
                 return;
 
-            Travel( r.LeftChild );
-            Travel( r.RightChild );
+            Travel(r.LeftChild);
+            Travel(r.RightChild);
 
-            if ( IsLeave( r ) )
-                leaves.Add( r );
+            if (IsLeave(r))
+                leaves.Add(r);
         }
     }
 
@@ -64,18 +66,22 @@ namespace Clover
     /// </summary>
     class LookupTable
     {
-        List<List<Face>> tables;
+        List<List<Face>> tables = new List<List<Face>>();
 
         public List<List<Face>> Tables
+        { get { return tables; } }
+
+        public int AddGroup(Face face)
         {
-            get
-            {
-                return tables;
-            }
+            List<Face> fl = new List<Face>();
+            fl.Add(face);
+            tables.Add(fl);
+            return tables.Count - 1;
         }
+
     }
 
-   
+
 
     /// <summary>
     /// 面层的抽象，相当于控制器。
@@ -89,6 +95,12 @@ namespace Clover
         public FaceLayer(CloverController controller)
         {
             this.controller = controller;
+        }
+
+        public void Initliaze(Face root)
+        {
+            facecellTree = new FacecellTree(root);
+            lookupTable = new LookupTable();
         }
 
         /// <summary>

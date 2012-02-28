@@ -31,7 +31,7 @@ namespace Clover
     {
         #region get/set
         /// <summary>
-        /// 设置父亲不做任何事情
+        /// 设置父亲时不做任何事情
         /// </summary>
         public Clover.Edge Parent
         {
@@ -64,19 +64,23 @@ namespace Clover
         public Clover.Edge LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; leftChild.Parent = this;}
+            set { leftChild = value; leftChild.Parent = this; }
         }
         public Clover.Edge RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; rightChild.Parent = this;}
+            set { rightChild = value; rightChild.Parent = this; }
+        }
+        public bool IsLeaf
+        {
+            get { return leftChild == null && rightChild == null; }
         }
         #endregion
 
-        public Edge parent;
-        public Face face1, face2;
-        public Vertex vertex1, vertex2;
-        public Edge leftChild, rightChild;
+        Edge parent;
+        Face face1, face2;
+        Vertex vertex1, vertex2;
+        Edge leftChild, rightChild;
 
         public Edge(Vertex v1, Vertex v2)
         {
@@ -90,12 +94,12 @@ namespace Clover
     /// </summary>
     class Face
     {
-        List<Edge> edges;
+        List<Edge> edges = new List<Edge>();
 
-        public Vector3 normal;
-        public Face leftChild = null;
-        public Face rightChild = null;
-        public Face parent = null;
+        Vector3 normal;
+        Face leftChild = null;
+        Face rightChild = null;
+        Face parent = null;
 
         #region get/set
         public Mogre.Vector3 Normal
@@ -120,14 +124,14 @@ namespace Clover
         }
         #endregion
 
-        public void AddEdge( Edge edge )
+        public void AddEdge(Edge edge)
         {
-            edges.Add( edge );
+            edges.Add(edge);
         }
 
-        public bool RemoveEdge( Edge edge )
+        public bool RemoveEdge(Edge edge)
         {
-            return edges.Remove( edge );
+            return edges.Remove(edge);
         }
 
     }
