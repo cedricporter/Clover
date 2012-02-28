@@ -110,8 +110,4 @@ namespace Clover
 
     }
 
-    class EdgeLayer
-    {
-
-    }
 }
