@@ -20,7 +20,7 @@ namespace Clover
         #region 编译选项
 
         public readonly bool InitMogreAsync = true;
-        public static readonly Size StartupViewportSize = new Size(400, 300);
+        public static readonly Size StartupViewportSize = new Size(800, 600);
         public readonly bool AutoUpdateViewportSize = true;
 
         #endregion
@@ -62,7 +62,7 @@ namespace Clover
                 Top = 0,
                 Width = 1,
                 Height = 1,
-                BackgroundColour = new ColourValue(0.5f, 0.5f, 0.5f, 1),
+                BackgroundColour = new ColourValue(0,0,0,0),
             });
             mogreImageSource.ViewportDefinitions = vds.ToArray();
 
