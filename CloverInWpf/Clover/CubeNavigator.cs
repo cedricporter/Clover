@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mogre;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Media3D;
+using System.Windows.Input;
 
 /**
 @date		:	2012/02/27
@@ -28,52 +31,55 @@ using Mogre;
 
 namespace Clover
 {
-    public class CubeNavigator : ManualObject
+    
+    public class CubeNavigator
     {
+        
+        MainWindow mainWindow;
+        Viewport3D cubeNavViewport;
+        Model3DGroup cubeNavModel;
+        //Viewport2DVisual3D cubeNavModel2;
+        Point lastMousePos;
+        Quaternion lastQuat = new Quaternion();
+        
 
-//        // point list
-//PL = [[-20, 20, 20], [-20, -20, 20], [20, -20, 20], [20, 20, 20],
-//      [-20, 20, -20], [-20, -20, -20], [20, -20, -20], [20, 20, -20]]
-//// index list /ft/bk/lt/rt/up/dn
-//IL = [[0,1,3], [3,1,2],
-//      [7,6,4], [4,6,5],
-//      [4,5,0], [0,5,1],
-//      [3,2,7], [7,2,6],
-//      [4,0,7], [7,0,3],
-//      [1,5,2], [2,5,6]]
-//// height light index list
-//HIL = [[0,1,3,2], [7,6,4,5], [4,5,0,1],
-//       [3,2,7,6], [4,0,7,3], [1,5,2,6]]
-//// texture coordinates list
-//TC = [[[0.6667, 0], [0.6667, 1], [0.8333, 0]],
-//      [[0.8333, 0],[0.6667, 1], [0.8333, 1]],
-//      [[0.833, 0], [0.833, 1], [1, 0]], 
-//      [[1, 0], [0.833, 1], [1, 1]],
-//      [[0.3333, 0], [0.3333, 1], [0.5, 0]], 
-//      [[0.5, 0], [0.3333, 1], [0.5, 1]],
-//      [[0.5, 0], [0.5, 1], [0.6667, 0]], 
-//      [[0.6667, 0], [0.5, 1], [0.6667, 1]],
-//      [[0, 0], [0, 1], [0.1667, 0]], 
-//      [[0.1667, 0], [0, 1], [0.1667, 1]],
-//      [[0.1667, 0], [0.1667, 1], [0.3333, 0]], 
-//      [[0.3333, 0], [0.1667, 1], [0.3333, 1]]]
-
-//// face quaternion list, quaternion for six face
-//FQL = [Quaternion(1, 0, 0, 0), //ft
-//       Quaternion(0, 0, 1, 0), //bk
-//       Quaternion(math.sqrt(0.5), 0, math.sqrt(0.5), 0), //lt
-//       Quaternion(math.sqrt(0.5), 0, -math.sqrt(0.5), 0), //rt
-//       Quaternion(math.sqrt(0.5), math.sqrt(0.5), 0, 0), //up
-//       Quaternion(math.sqrt(0.5), -math.sqrt(0.5), 0, 0)] //dn
-
-        public CubeNavigator(SceneNode cloverRoot) : base("CubeNavigator")
+        public CubeNavigator(MainWindow mainWindow)
         {
-            //MaterialPtr material = (MaterialPtr)MaterialManager.Singleton.Create("CubeNavMat", "General");
-            //Pass pass = material.GetTechnique(0).GetPass(0);
-            //pass.LightingEnabled = false;
-            //pass.DepthCheckEnabled = false;
-            //pass.CreateTextureUnitState("CubeNavTex.png");
-            //System.Windows.MessageBox.Show(this.Name);
+            this.mainWindow = mainWindow;
+            cubeNavViewport = mainWindow.CubeNavViewport;
+            cubeNavModel = mainWindow.CubeNavModel;
+            //cubeNavModel2 = mainWindow.CubeNavModel2;
+            cubeNavViewport.MouseLeftButtonDown += new MouseButtonEventHandler(cubeNavViewport_MouseLeftButtonDown);
+            cubeNavViewport.MouseMove += new MouseEventHandler(cubeNavViewport_MouseMove);
         }
+
+        private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        {
+            lastMousePos = e.GetPosition(mainWindow);
+        }
+
+        private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                Point currMousePos = e.GetPosition(mainWindow);
+                Vector offsetVec = currMousePos - lastMousePos;
+                Double rotDeg = offsetVec.Length;
+                System.Windows.Media.Media3D.Vector3D mouseDir = new System.Windows.Media.Media3D.Vector3D(offsetVec.X, -offsetVec.Y, 0);
+                System.Windows.Media.Media3D.Vector3D foreDir = new System.Windows.Media.Media3D.Vector3D(0, 0, -1);
+                System.Windows.Media.Media3D.Vector3D axisOfRatate = System.Windows.Media.Media3D.Vector3D.CrossProduct(mouseDir, foreDir);
+                axisOfRatate.Normalize();
+                System.Windows.Media.Media3D.Quaternion quar = new System.Windows.Media.Media3D.Quaternion(axisOfRatate, rotDeg);
+                quar = quar * lastQuat;
+                System.Windows.Media.Media3D.QuaternionRotation3D rot3d = new System.Windows.Media.Media3D.QuaternionRotation3D(quar);
+                System.Windows.Media.Media3D.RotateTransform3D rotts = new System.Windows.Media.Media3D.RotateTransform3D(rot3d);
+                cubeNavModel.Transform = rotts;
+                //cubeNavModel2.Transform = rotts;
+                lastQuat = quar;
+                lastMousePos = currMousePos;
+            }
+
+        }
+
     }
 }

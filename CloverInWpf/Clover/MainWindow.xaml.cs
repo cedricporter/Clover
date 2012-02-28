@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Input;
 
 using Mogre;
 using MogreInWpf;
@@ -67,6 +68,8 @@ namespace Clover
             mogreImageSource.ViewportDefinitions = vds.ToArray();
 
             // 代码写这里
+            cubeNav = new CubeNavigator(this);
+            //this.AddChild(cubeNav);
         }
 
         /// <summary>
@@ -166,9 +169,11 @@ namespace Clover
 
         #endregion
 
-        
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("SDF");
+        }
 
-        
 
         
     }
