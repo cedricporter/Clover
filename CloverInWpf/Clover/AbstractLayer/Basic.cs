@@ -188,7 +188,7 @@ namespace Clover
            // UpdateVertices();
         }
 
-        public void UpdateTree()
+        public void SortEdge()
         {
             // 对边进行排序
             Edge currentedge = edges[0];
