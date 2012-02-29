@@ -59,7 +59,7 @@
     			<Rectangle x:Name="InnerBorder" Margin="1" RadiusY="2" RadiusX="2"/>-->
                 <Grid Name="Bg" Visibility="Hidden">
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlue}" Margin="0,0,0,2" />
-                    <Rectangle Fill="#191C20" Margin="1" Effect="{StaticResource BlurEffect2px}"/>
+                    <Rectangle Fill="#191C20" Effect="{StaticResource BlurEffect2px}" Margin="1"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlue}" Margin="0,1,0,2"/>
                 </Grid>
                 <Rectangle Fill="Transparent"/>
@@ -184,9 +184,7 @@
     	</Style>
     	<ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}" TargetType="{x:Type ContentControl}">
             <Border Background="{StaticResource BackgroundFillBlack}" BorderBrush="{StaticResource BackgroundStrokeBlack}" BorderThickness="1">
-                <Grid>
-                    <ContentPresenter Grid.ColumnSpan="2" Margin="1,0"/>
-                </Grid>
+                <ContentPresenter/>
             </Border>
     	</ControlTemplate>
         <!-- 顶级菜单项 -->
@@ -218,10 +216,10 @@
     					<ContentControl x:Name="SubMenuBorder" IsTabStop="false" Template="{DynamicResource {ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}}">
     						<ScrollViewer x:Name="SubMenuScrollViewer" CanContentScroll="true" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
     							<Grid RenderOptions.ClearTypeHint="Enabled">
-    								<Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
+    								<!--<Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
     									<Rectangle Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
-    								</Canvas>
-    								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" Margin="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+    								</Canvas>-->
+    								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
     							</Grid>
     						</ScrollViewer>
     					</ContentControl>
@@ -265,9 +263,9 @@
     	</ControlTemplate>
     	<ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
     		<Grid SnapsToDevicePixels="true">
-    			<!--<Rectangle x:Name="OuterBorder" RadiusY="2" RadiusX="2"/>
+    			<Rectangle x:Name="OuterBorder" RadiusY="2" RadiusX="2"/>
     			<Rectangle x:Name="Bg" Fill="{TemplateBinding Background}" Margin="1" RadiusY="1" RadiusX="1" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
-    			<Rectangle x:Name="InnerBorder" Margin="2"/>-->
+    			<Rectangle x:Name="InnerBorder" Margin="2"/>
     			<DockPanel>
     				<ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0,6,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
     				<Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" Fill="{TemplateBinding Foreground}" FlowDirection="LeftToRight" Margin="7,0,0,0" Visibility="Collapsed" VerticalAlignment="Center"/>
@@ -275,7 +273,7 @@
     			</DockPanel>
     		</Grid>
     		<ControlTemplate.Triggers>
-    			<!--<Trigger Property="Icon" Value="{x:Null}">
+    			<Trigger Property="Icon" Value="{x:Null}">
     				<Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
     			</Trigger>
     			<Trigger Property="IsChecked" Value="true">
@@ -295,7 +293,7 @@
     			<Trigger Property="IsEnabled" Value="false">
     				<Setter Property="Foreground" Value="#FF9A9A9A"/>
     				<Setter Property="Fill" TargetName="GlyphPanel" Value="#848589"/>
-    			</Trigger>-->
+    			</Trigger>
     		</ControlTemplate.Triggers>
     	</ControlTemplate>
     	<Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
