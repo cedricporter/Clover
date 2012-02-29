@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 using Mogre;
 using MogreInWpf;
-using Clover.tool;
+using Clover.Tool;
 using System.Windows.Media;
 
 

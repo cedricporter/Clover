@@ -394,7 +394,8 @@
         <ControlTemplate x:Key="WindowTemplate1" TargetType="{x:Type Window}">
             <Grid>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
-                <Rectangle Fill="{StaticResource BackgroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <!--<Rectangle Fill="{StaticResource BackgroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>-->
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Name="Title" Height="30" VerticalAlignment="Top" Margin="5,3">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
@@ -409,15 +410,19 @@
         <!-- RectangleButtonTemplate1 -->
         <ControlTemplate x:Key="RectangleButtonTemplate1" TargetType="{x:Type Button}">
             <Grid>
-                <Grid Name="Bg3">
+                <!--<Grid Name="Bg3">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusX="2" RadiusY="2"/>
                     <Rectangle Name="Bg2"  Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusX="2" RadiusY="2"/>
                     <Rectangle Name="Bg1"  Fill="{StaticResource ForegroundFillBlack}" Margin="1,2,1,1" RadiusX="2" RadiusY="2"/>
                 </Grid>
                 <Grid Name="Bg4" Visibility="Hidden">
-                    <Rectangle Fill="Black" Effect="{StaticResource BlurEffect2px}" Margin="2" RadiusX="2" RadiusY="2"/>
-                    <Rectangle Fill="{StaticResource BackgroundFillBlack}" Effect="{StaticResource BlurEffect2px}" Margin="2" RadiusX="2" RadiusY="2"/>
-                </Grid>
+                    <Rectangle Fill="#060606" Effect="{StaticResource BlurEffect2px}" Margin="1" RadiusX="2" RadiusY="2"/>
+                    <Rectangle Fill="{StaticResource BackgroundFillBlack}" Effect="{StaticResource BlurEffect2px}" Margin="2,2,1,1" RadiusX="2" RadiusY="2"/>
+                </Grid>-->
+                <Rectangle Name="Bg4" Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg2" Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg1" Fill="{StaticResource ForegroundFillBlack}" Margin="1,2,1,1" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg3" Fill="{StaticResource BackgroundFillBlack}" Margin="1" RadiusX="2" RadiusY="2" Visibility="Hidden"/>
                 <ContentPresenter TextBlock.Foreground="{StaticResource TextWhiteBrush}" Effect="{StaticResource DropShadowEffect1px}"  HorizontalAlignment="Center" RecognizesAccessKey="True" VerticalAlignment="Center"/>
             </Grid>
             <ControlTemplate.Triggers>
@@ -426,8 +431,35 @@
                     <Setter Property="Fill" TargetName="Bg2" Value="{StaticResource HeightLightBorderTopBlue}"/>
                 </Trigger>
                 <Trigger Property="IsPressed" Value="true">
-                    <Setter Property="Visibility" TargetName="Bg3" Value="Hidden"/>
-                    <Setter Property="Visibility" TargetName="Bg4" Value="Visible"/>
+                    <!--<Setter Property="Visibility" TargetName="Bg3" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg4" Value="Visible"/>-->
+                    <Setter Property="Visibility" TargetName="Bg2" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg1" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg3" Value="Visible"/>
+                    <Setter Property="Fill" TargetName="Bg4" Value="{StaticResource BackgroundStrokeBlack}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- RectangleCheckButtonTemplate1 -->
+        <ControlTemplate x:Key="RectangleCheckButtonTemplate1" TargetType="{x:Type CheckBox}">
+            <Grid>
+                <Rectangle Name="Bg4" Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg2" Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg1" Fill="{StaticResource ForegroundFillBlack}" Margin="1,2,1,1" RadiusX="2" RadiusY="2"/>
+                <Rectangle Name="Bg3" Fill="{StaticResource BackgroundFillBlack}" Margin="1" RadiusX="2" RadiusY="2" Visibility="Hidden"/>
+                <ContentPresenter TextBlock.Foreground="{StaticResource TextWhiteBrush}" Effect="{StaticResource DropShadowEffect1px}"  HorizontalAlignment="Center" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Fill" TargetName="Bg1" Value="{StaticResource ForegroundFillBlue}"/>
+                    <Setter Property="Fill" TargetName="Bg2" Value="{StaticResource HeightLightBorderTopBlue}"/>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="true">
+                    <Setter Property="Visibility" TargetName="Bg2" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg1" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg3" Value="Visible"/>
+                    <Setter Property="Fill" TargetName="Bg4" Value="{StaticResource BackgroundStrokeBlack}"/>
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>

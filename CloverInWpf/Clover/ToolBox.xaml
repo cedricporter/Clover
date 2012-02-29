@@ -10,6 +10,6 @@
     
     <Grid>
         <Button Content="Button" HorizontalAlignment="Left" Height="54" Margin="63,73,0,0" VerticalAlignment="Top" Width="56" Template="{StaticResource RectangleButtonTemplate1}"/>
-    	
+        <CheckBox Content="Fold" Height="50" Width="50" Template="{StaticResource RectangleCheckButtonTemplate1}"/>
     </Grid>
 </Window>

@@ -18,7 +18,7 @@ using System.Windows.Input;
 @note		:	工具工厂类
 **/
 
-namespace Clover.tool
+namespace Clover.Tool
 {
     public abstract class ToolFactory
     {
