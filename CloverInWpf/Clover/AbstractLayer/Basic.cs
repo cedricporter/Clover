@@ -104,8 +104,13 @@ namespace Clover
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
+        List<Vertex> vertices = new List<Vertex>();
 
         #region get/set
+        public List<Vertex> Vertices
+        {
+            get { return vertices; }
+        }
         public Mogre.Vector3 Normal
         {
             get { return normal; }
@@ -128,14 +133,32 @@ namespace Clover
         }
         #endregion
 
+        /// <summary>
+        /// 更新面的点，方便绘制时使用
+        /// </summary>
+        void UpdateVertices()
+        {
+            vertices.Clear();
+            foreach (Edge e in edges)
+            {
+                if (!vertices.Contains(e.Vertex1))
+                    vertices.Add(e.Vertex1);
+                if (!vertices.Contains(e.Vertex2))
+                    vertices.Add(e.Vertex2);
+            }
+        }
+
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
+            UpdateVertices();
         }
 
         public bool RemoveEdge(Edge edge)
         {
-            return edges.Remove(edge);
+            bool ret = edges.Remove(edge);
+            UpdateVertices();
+            return ret;
         }
 
     }
