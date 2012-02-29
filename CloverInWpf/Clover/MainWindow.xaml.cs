@@ -81,12 +81,13 @@ namespace Clover
             mogreImageSource.ViewportDefinitions = vds.ToArray();
 
             // 创建工具集
-            ToolFactory tl = new TestTool(this);
+            tools.Clear();
+            TestTool tl = new TestTool(this);
             tools.Add(tl);
             currentTool = tl;
 
             // 代码写这里
-            cubeNav = new CubeNavigator(this);
+            
 
             // 初始化抽象数据结构，暂时先放在这里，到时再说了
             cloverController = new CloverController();
@@ -109,7 +110,10 @@ namespace Clover
         {
             InitializeComponent();
 
+            // 窗口
             toolBox = new ToolBox(this);
+            // 导航立方提
+            cubeNav = new CubeNavigator(this);
 
 
             stopwatch.Start();
