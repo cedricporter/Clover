@@ -10,14 +10,16 @@ namespace Clover
     /// </summary>
     class VertexLayer
     {
-        //////////////////////////////////////////////////////////////////////////
-        // Attributes.
-        //////////////////////////////////////////////////////////////////////////
+        #region Attributes
 
         // Vertexcell lookup table.
         List<List<Vertex>> VertexCellTable;
 
         CloverController controller;
+
+        #endregion
+
+        #region Public Interfaces.
 
         // Constructor and Destroyer.
         public VertexLayer(CloverController ctrl)
@@ -25,10 +27,6 @@ namespace Clover
             controller = ctrl;
             VertexCellTable = new List<List<Vertex>>();
         }
-
-        //////////////////////////////////////////////////////////////////////////
-        // Public Interfaces.
-        //////////////////////////////////////////////////////////////////////////
 
         public bool IsVertexExist(int index)
         {
@@ -63,7 +61,11 @@ namespace Clover
             VertexCellTable.Add(vl);
             // 是不是返回新的顶点的索引？是的话是不是应该减一呢？ —— Cedric Porter
             // old: return VertexCellTable.Count;
-            return VertexCellTable.Count - 1;
+
+            // 设置顶点的index，后续插入的顶点都有同样的index，方便索引
+            vertex.Index = VertexCellTable.Count - 1;
+
+            return vertex.Index;
         }
 
         /// <summary>
@@ -74,7 +76,18 @@ namespace Clover
         /// <remarks>下标越界会抛出异常</remarks>
         public void UpdateVertex(Vertex vertex, int index)
         {
+            vertex.Index = index;
             VertexCellTable[index].Add(vertex);
+        }
+        /// <summary>
+        /// 更新节点
+        /// </summary>
+        /// <param name="oldVertex">要被更新的节点</param>
+        /// <param name="newVertex">新的节点</param>
+        public void UpdateVertex(Vertex oldVertex, Vertex newVertex)
+        {
+            newVertex.Index = oldVertex.Index;
+            VertexCellTable[newVertex.Index].Add(newVertex);
         }
 
         public void DeleteVertex(int index)
@@ -86,5 +99,6 @@ namespace Clover
         {
             VertexCellTable.Clear();
         }
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,10 +38,21 @@ namespace Clover
         /// <summary>
         /// 更新叶节点
         /// </summary>
-        public void Update()
+        /// <param name="oldFace">改变了的节点</param>
+        /// <remarks>如果输入一个面，则将这个面移除并将他的两个孩子加到叶节点表。否则重建整棵树。</remarks>
+        public void Update(Face oldFace = null)
         {
-            leaves.Clear();
-            Travel(root);
+            if (oldFace == null)
+            {
+                leaves.Clear();
+                Travel(root);
+                return;
+            }
+
+            Debug.Assert(oldFace.LeftChild != null && oldFace.RightChild != null);
+            leaves.Remove(oldFace);
+            leaves.Add(oldFace.LeftChild);
+            leaves.Add(oldFace.RightChild);
         }
 
         bool IsLeave(Face face)
@@ -48,6 +60,11 @@ namespace Clover
             return face.LeftChild == null && face.RightChild == null;
         }
 
+        /// <summary>
+        /// 后续遍历
+        /// </summary>
+        /// <param name="r">根节点</param>
+        /// <remarks>请在调用Travel前清空leaves！</remarks>
         void Travel(Face r)
         {
             if (r == null)
@@ -67,9 +84,17 @@ namespace Clover
     class LookupTable
     {
         List<List<Face>> tables = new List<List<Face>>();
+        Face root;
 
+        #region get/set
         public List<List<Face>> Tables
         { get { return tables; } }
+        #endregion
+
+        public LookupTable(Face root)
+        {
+            this.root = root;
+        }
 
         public int AddGroup(Face face)
         {
@@ -84,7 +109,7 @@ namespace Clover
 
 
     /// <summary>
-    /// 面层的抽象，相当于控制器。
+    /// 面层的抽象
     /// </summary>
     class FaceLayer
     {
@@ -100,7 +125,7 @@ namespace Clover
         public void Initliaze(Face root)
         {
             facecellTree = new FacecellTree(root);
-            lookupTable = new LookupTable();
+            lookupTable = new LookupTable(root);
         }
 
         /// <summary>
@@ -112,6 +137,11 @@ namespace Clover
 
         }
 
+        /// <summary>
+        /// 这里有问题，要修改
+        /// </summary>
+        /// <param name="edges"></param>
+        /// <param name="rotDegree"></param>
         public void Update(List<Edge> edges, double rotDegree)
         {
             // bla bla
