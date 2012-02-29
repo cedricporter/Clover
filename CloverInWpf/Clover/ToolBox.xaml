@@ -9,7 +9,7 @@
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
     
     <Grid>
-        <!--<ResizeGrip HorizontalAlignment="Right" VerticalAlignment="Bottom"/>-->
+        <Button Content="Button" HorizontalAlignment="Left" Height="54" Margin="63,73,0,0" VerticalAlignment="Top" Width="56" Template="{StaticResource RectangleButtonTemplate1}"/>
     	
     </Grid>
 </Window>

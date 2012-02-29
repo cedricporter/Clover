@@ -219,6 +219,8 @@ namespace Clover
 
         #endregion
 
+        #region 释放资源
+
         /// <summary>
         /// 窗口关闭时关闭所有子窗口
         /// </summary>
@@ -229,6 +231,25 @@ namespace Clover
             if (toolBox != null)
                 toolBox.Close();
         }
+
+        #endregion
+
+        #region 鼠标事件响应函数
+
+        private void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (currentTool != null)
+                currentTool.onMove();
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (currentTool != null)
+                currentTool.onPress();
+        }
+
+        #endregion
+        
 
 
 

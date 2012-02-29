@@ -401,9 +401,35 @@
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
                     <ContentPresenter ContentSource="Title" Effect="{StaticResource DropShadowEffect1px}"  TextBlock.Foreground="{StaticResource TextWhiteBrush}"  RecognizesAccessKey="True" Margin="10,0" VerticalAlignment="Center"/>
                 </Grid>
+				<ContentPresenter ContentSource="Content"  RecognizesAccessKey="True"/>
                 <ResizeGrip VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
             </Grid>
-            
+        </ControlTemplate>
+
+        <!-- RectangleButtonTemplate1 -->
+        <ControlTemplate x:Key="RectangleButtonTemplate1" TargetType="{x:Type Button}">
+            <Grid>
+                <Grid Name="Bg3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusX="2" RadiusY="2"/>
+                    <Rectangle Name="Bg2"  Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusX="2" RadiusY="2"/>
+                    <Rectangle Name="Bg1"  Fill="{StaticResource ForegroundFillBlack}" Margin="1,2,1,1" RadiusX="2" RadiusY="2"/>
+                </Grid>
+                <Grid Name="Bg4" Visibility="Hidden">
+                    <Rectangle Fill="Black" Effect="{StaticResource BlurEffect2px}" Margin="2" RadiusX="2" RadiusY="2"/>
+                    <Rectangle Fill="{StaticResource BackgroundFillBlack}" Effect="{StaticResource BlurEffect2px}" Margin="2" RadiusX="2" RadiusY="2"/>
+                </Grid>
+                <ContentPresenter TextBlock.Foreground="{StaticResource TextWhiteBrush}" Effect="{StaticResource DropShadowEffect1px}"  HorizontalAlignment="Center" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Fill" TargetName="Bg1" Value="{StaticResource ForegroundFillBlue}"/>
+                    <Setter Property="Fill" TargetName="Bg2" Value="{StaticResource HeightLightBorderTopBlue}"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="Visibility" TargetName="Bg3" Value="Hidden"/>
+                    <Setter Property="Visibility" TargetName="Bg4" Value="Visible"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
         </ControlTemplate>
 
 

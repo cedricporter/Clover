@@ -28,7 +28,9 @@ namespace Clover.tool
         static public Object currOveredElement = null;
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
+
         protected static RaySceneQuery raySceneQuery = null;
+
 
         MainWindow mainWindow;
 
@@ -86,18 +88,22 @@ namespace Clover.tool
         public void onMove()
         {
             currMousePos = Mouse.GetPosition(mainWindow.MogreImage);
-            currOveredElement = ExcuteHitTest();
-
-            if (currOveredElement != lastOveredElement)
+            if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
             {
-                if (currOveredElement != null)
-                    onEnterElement(currOveredElement);
-                if (lastOveredElement != null)
-                    onLeaveElement(lastOveredElement);
-            }
+                currOveredElement = ExcuteHitTest();
 
-            lastOveredElement = currOveredElement;
-            lastMousePos = currMousePos;
+                if (currOveredElement != lastOveredElement)
+                {
+                    if (currOveredElement != null)
+                        onEnterElement(currOveredElement);
+                    if (lastOveredElement != null)
+                        onLeaveElement(lastOveredElement);
+                }
+
+                lastOveredElement = currOveredElement;
+                lastMousePos = currMousePos;
+            }
+            
         }
 
         /// <summary>
