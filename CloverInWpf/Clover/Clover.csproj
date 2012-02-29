@@ -63,6 +63,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="tool\TestTool.cs" />
     <Compile Include="tool\ToolFactory.cs" />
     <Page Include="MainWindow.xaml">

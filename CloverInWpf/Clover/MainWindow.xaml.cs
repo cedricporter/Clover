@@ -37,17 +37,17 @@ namespace Clover
         public List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
 
+        #region 折纸部分
         // 抽象数据结构控制器
-        CloverController cloverController = new CloverController();
+        CloverController cloverController;
+        Paper paper;
+        #endregion
 
         /// <summary>
         /// 场景创建
         /// </summary>
         private void CreateScene()
         {
-            // 初始化抽象数据结构，暂时先放在这里，到时再说了
-            cloverController.Initialize( 100, 100 );
-
             // 初始化全局变量
             Root root = MogreRootManager.GetSharedRoot();
             sceneManager = mogreImageSource.SceneManager = root.CreateSceneManager(SceneType.ST_GENERIC, "mainSceneManager");
@@ -85,6 +85,12 @@ namespace Clover
 
             // 代码写这里
             cubeNav = new CubeNavigator(this);
+
+            // 初始化抽象数据结构，暂时先放在这里，到时再说了
+            cloverController = new CloverController();
+            cloverController.Initialize( 100, 100 );
+            cloverRoot.AttachObject(cloverController.Paper);
+            cloverController.UpdatePaper();
         }
 
         /// <summary>

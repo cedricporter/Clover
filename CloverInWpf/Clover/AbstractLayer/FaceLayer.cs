@@ -15,7 +15,6 @@ namespace Clover
         public Clover.Face Root
         {
             get { return root; }
-            set { root = value; }
         }
         #endregion
 
@@ -113,6 +112,17 @@ namespace Clover
     /// </summary>
     class FaceLayer
     {
+        #region get/set
+        public Clover.FacecellTree FacecellTree
+        {
+            get { return facecellTree; }
+        }
+        public List<Face> Leaves
+        { 
+            get { return facecellTree.Leaves; }
+        }
+        #endregion
+
         FacecellTree facecellTree;
         LookupTable lookupTable;
         CloverController controller;

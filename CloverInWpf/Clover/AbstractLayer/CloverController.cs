@@ -7,9 +7,17 @@ namespace Clover
 {
     class CloverController
     {
-        FaceLayer faceLayer;
-        EdgeLayer edgeLayer;
-        VertexLayer vertexLayer;
+        FaceLayer faceLayer;    /// 面层
+        EdgeLayer edgeLayer;    /// 边层
+        VertexLayer vertexLayer;/// 点层
+        Paper paper;            /// 纸张实体，ogre的实体，用于画图
+
+        #region get/set
+        public Clover.Paper Paper
+        {
+            get { return paper; }
+        }
+        #endregion
 
         public void Initialize(float width, float height)
         {
@@ -52,6 +60,20 @@ namespace Clover
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
 
+            paper = new Paper("paper");
+        }
+
+        public void UpdatePaper()
+        {
+            paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
+            foreach (Face face in faceLayer.Leaves)
+            {
+                for (int i = 0; i < face.Vertices.Count; i++)
+                {
+                    paper.Position(face.Vertices[i].point);
+                }
+            }
+            paper.End();
         }
     }
 }
