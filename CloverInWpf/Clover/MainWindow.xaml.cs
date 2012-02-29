@@ -110,6 +110,7 @@ namespace Clover
             InitializeComponent();
 
             toolBox = new ToolBox(this);
+            toolBox.Show();
 
 
             stopwatch.Start();
