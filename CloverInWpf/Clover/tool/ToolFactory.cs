@@ -37,8 +37,8 @@ namespace Clover.Tool
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
-            raySceneQuery.SetSortByDistance(true);
+            //raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
+            //raySceneQuery.SetSortByDistance(true);
             //System.Windows.MessageBox.Show("ToolFactory!");
         }
 
@@ -53,32 +53,35 @@ namespace Clover.Tool
             float x = (float)(currMousePos.X / mainWindow.MogreImage.ActualWidth);
             float y = (float)(currMousePos.Y / mainWindow.MogreImage.ActualHeight);
 
-            if (null != raySceneQuery)
+            if (null == raySceneQuery)
             {
-                raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
-
-                Ray ray = raySceneQuery.Ray;
-                RaySceneQueryResult rayresult = raySceneQuery.Execute();
-                if (rayresult.Count <= 0)
-                    return null;
-
-                RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
-
-                foreach (RaySceneQueryResultEntry resultEntry in queryResult)
-                {
-                    if (resultEntry.movable == null)
-                        continue;
-
-                    // 折纸的mesh也许不叫这个名字，不过先这样写着先
-                    if (resultEntry.movable.Name != "CloverEntity")
-                        continue;
-
-                    // todo
-                    // PerformPick
-
-                }
-                return null;
+                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
+                raySceneQuery.SetSortByDistance(true);
             }
+
+            raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
+
+            Ray ray = raySceneQuery.Ray;
+            RaySceneQueryResult rayresult = raySceneQuery.Execute();
+            if (rayresult.Count <= 0)
+                return null;
+
+            RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
+
+            foreach (RaySceneQueryResultEntry resultEntry in queryResult)
+            {
+                if (resultEntry.movable == null)
+                    continue;
+
+                // 折纸的mesh也许不叫这个名字，不过先这样写着先
+                if (resultEntry.movable.Name != "CloverEntity")
+                    continue;
+
+                // todo
+                // PerformPick
+
+            }
+
             return null;
         }
 

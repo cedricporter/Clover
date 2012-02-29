@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Mogre;
 using MogreInWpf;
 using Clover.Tool;
+using Clover.Visual;
 using System.Windows.Media;
 
 
@@ -41,6 +42,8 @@ namespace Clover
 
         // 抽象数据结构控制器
         CloverController cloverController = new CloverController();
+
+        VisualController visualController;
 
         /// <summary>
         /// 场景创建
@@ -84,9 +87,6 @@ namespace Clover
             ToolFactory tl = new TestTool(this);
             tools.Add(tl);
             currentTool = tl;
-
-            // 代码写这里
-            cubeNav = new CubeNavigator(this);
         }
 
         /// <summary>
@@ -102,9 +102,15 @@ namespace Clover
         public MainWindow()
         {
             InitializeComponent();
-
+            // 各种窗口
             toolBox = new ToolBox(this);
             toolBox.Show();
+            // 各种
+            visualController = VisualController.GetSingleton(this);
+
+            // 导航立方
+            cubeNav = new CubeNavigator(this);
+            
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
