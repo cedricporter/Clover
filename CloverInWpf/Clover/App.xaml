@@ -35,7 +35,7 @@
         
         <!-- Effects -->
         <BlurEffect x:Key="BlurEffect2px" Radius="2"/>
-        <DropShadowEffect x:Key="DropShadowEffect2px" ShadowDepth="5" BlurRadius="2" Color="Black"/>
+        <DropShadowEffect x:Key="DropShadowEffect1px" ShadowDepth="1" Direction="270" Opacity="0.8"/>
 
         <!-- MenuTemplate1 -->
     	<ControlTemplate x:Key="MenuTemplate1" TargetType="{x:Type Menu}">
@@ -76,7 +76,7 @@
     				<!--<Border x:Name="GlyphPanel" BorderBrush="#CDD3E6" BorderThickness="1" Background="#E6EFF4" CornerRadius="3" Height="22" Margin="1" Visibility="Hidden" Width="22">
     					<Path x:Name="Glyph" Data="{StaticResource Checkmark}" Fill="#0C12A1" FlowDirection="LeftToRight" Height="11" Width="9"/>
     				</Border>-->
-    				<ContentPresenter Grid.Column="2" ContentSource="Header" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="0,8,0,10" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    <ContentPresenter Grid.Column="2" Effect="{StaticResource DropShadowEffect1px}" ContentSource="Header" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="0,8,0,10" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
     				<!--<TextBlock Grid.Column="4" Margin="{TemplateBinding Padding}" Text="{TemplateBinding InputGestureText}"/>-->
     			</Grid>
     		</Grid>
@@ -209,8 +209,8 @@
                 <DockPanel>
     				<!--<ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0,6,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
     				<Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" Fill="{TemplateBinding Foreground}" FlowDirection="LeftToRight" Margin="7,0,0,0" Visibility="Collapsed" VerticalAlignment="Center"/>-->
-    				<ContentPresenter ContentSource="Header" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-    			</DockPanel>
+                    <ContentPresenter ContentSource="Header" Effect="{StaticResource DropShadowEffect1px}" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                </DockPanel>
     			<Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false" HorizontalOffset="1" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" Placement="Bottom" VerticalOffset="-1">
     				<Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent">
     					<ContentControl x:Name="SubMenuBorder" IsTabStop="false" Template="{DynamicResource {ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}}">
@@ -219,7 +219,7 @@
     								<!--<Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
     									<Rectangle Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
     								</Canvas>-->
-    								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
+                                    <ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
     							</Grid>
     						</ScrollViewer>
     					</ContentControl>

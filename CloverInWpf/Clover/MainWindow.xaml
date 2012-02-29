@@ -65,8 +65,9 @@
         	</Grid>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
             	<MenuItem Header="File" VerticalAlignment="Center" Style="{DynamicResource MenuItemStyle1}">
-            		<MenuItem Header="New"/>
-					<MenuItem Header="Open"/>
+                    <MenuItem Header="New">
+                    </MenuItem>
+                    <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
 				</MenuItem>         
 			</Menu>
