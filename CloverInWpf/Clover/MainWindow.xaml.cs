@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Mogre;
 using MogreInWpf;
 using Clover.tool;
+using System.Windows.Media;
 
 
 
@@ -99,6 +100,11 @@ namespace Clover
         public MainWindow()
         {
             InitializeComponent();
+
+            stopwatch.Start();
+            statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
+                new EventHandler(FrameRateDisplay), this.Dispatcher);
+            CompositionTarget.Rendering += FrameCountPlusPlus;
         }
 
         /// <summary>
@@ -183,12 +189,30 @@ namespace Clover
 
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        #region 监视帧率
+
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        int frameCount = 0;
+        float Fps = 0;
+        System.Windows.Threading.DispatcherTimer statsTimer;
+        void FrameRateDisplay(Object sender, EventArgs e)
         {
-            MessageBox.Show("SDF");
+            long elapsed = stopwatch.ElapsedMilliseconds;
+            stopwatch.Restart();
+            if (elapsed != 0)
+                Fps = frameCount * 1000.0f / elapsed;
+            frameCount = 0;
+            this.Title = "Clover Current Fps:";
+            this.Title += Fps.ToString("#.00");
+        }
+        void FrameCountPlusPlus(Object sender, EventArgs e)
+        {
+            frameCount++;
         }
 
+        #endregion
 
-        
+
+
     }
 }
