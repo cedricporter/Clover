@@ -199,11 +199,12 @@ namespace Clover
                     if ( currentedge.IsVerticeIn(e.Vertex1.point) || currentedge.IsVerticeIn(e.Vertex2.point))
                     {
                         orderelist.Add(e);
+                        edges.Remove( e );
                         break;
                     }
                 }
             }
-
+            edges = orderelist;
             UpdateVertices();
         }
 
