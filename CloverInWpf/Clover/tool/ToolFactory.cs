@@ -18,7 +18,7 @@ using System.Windows.Input;
 @note		:	工具工厂类
 **/
 
-namespace Clover.tool
+namespace Clover.Tool
 {
     public abstract class ToolFactory
     {
@@ -28,15 +28,17 @@ namespace Clover.tool
         static public Object currOveredElement = null;
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
+
         protected static RaySceneQuery raySceneQuery = null;
+
 
         MainWindow mainWindow;
 
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
-            raySceneQuery.SetSortByDistance(true);
+            //raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
+            //raySceneQuery.SetSortByDistance(true);
             //System.Windows.MessageBox.Show("ToolFactory!");
         }
 
@@ -51,31 +53,32 @@ namespace Clover.tool
             float x = (float)(currMousePos.X / mainWindow.MogreImage.ActualWidth);
             float y = (float)(currMousePos.Y / mainWindow.MogreImage.ActualHeight);
 
-            if (null != raySceneQuery)
+            if (null == raySceneQuery)
             {
-                raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
+                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
+                raySceneQuery.SetSortByDistance(true);
+            }
+            raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
 
-                Ray ray = raySceneQuery.Ray;
-                RaySceneQueryResult rayresult = raySceneQuery.Execute();
-                if (rayresult.Count <= 0)
-                    return null;
-
-                RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
-
-                foreach (RaySceneQueryResultEntry resultEntry in queryResult)
-                {
-                    if (resultEntry.movable == null)
-                        continue;
-
-                    // 折纸的mesh也许不叫这个名字，不过先这样写着先
-                    if (resultEntry.movable.Name != "CloverEntity")
-                        continue;
-
-                    // todo
-                    // PerformPick
-
-                }
+            Ray ray = raySceneQuery.Ray;
+            RaySceneQueryResult rayresult = raySceneQuery.Execute();
+            if (rayresult.Count <= 0)
                 return null;
+
+            RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
+
+            foreach (RaySceneQueryResultEntry resultEntry in queryResult)
+            {
+                if (resultEntry.movable == null)
+                    continue;
+
+                // 折纸的mesh也许不叫这个名字，不过先这样写着先
+                if (resultEntry.movable.Name != "CloverEntity")
+                    continue;
+
+                // todo
+                // PerformPick
+
             }
             return null;
         }
@@ -86,18 +89,22 @@ namespace Clover.tool
         public void onMove()
         {
             currMousePos = Mouse.GetPosition(mainWindow.MogreImage);
-            currOveredElement = ExcuteHitTest();
-
-            if (currOveredElement != lastOveredElement)
+            if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
             {
-                if (currOveredElement != null)
-                    onEnterElement(currOveredElement);
-                if (lastOveredElement != null)
-                    onLeaveElement(lastOveredElement);
-            }
+                currOveredElement = ExcuteHitTest();
 
-            lastOveredElement = currOveredElement;
-            lastMousePos = currMousePos;
+                if (currOveredElement != lastOveredElement)
+                {
+                    if (currOveredElement != null)
+                        onEnterElement(currOveredElement);
+                    if (lastOveredElement != null)
+                        onLeaveElement(lastOveredElement);
+                }
+
+                lastOveredElement = currOveredElement;
+                lastMousePos = currMousePos;
+            }
+            
         }
 
         /// <summary>

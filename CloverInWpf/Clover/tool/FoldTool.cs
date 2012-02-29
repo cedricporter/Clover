@@ -3,13 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+/**
+@date		:	2012/02/29
+@filename	: 	FoldTool.cs
+@author		:	屠文翔	
+			 -     _     - 
+			| | - (_) __| |
+			| |/ /| |/ _  |
+			|   < | |||_| |
+			|_|\_\|_|\____|
+@note		:	纸张折叠工具
+**/
+
 namespace Clover.Tool
 {
-    class TestTool : ToolFactory
-    {   
-        public TestTool(MainWindow mainWindow) : base(mainWindow)
+    class FoldTool : ToolFactory
+    {
+
+        public FoldTool(MainWindow mainWindow)
+            : base(mainWindow)
         {
-            //System.Windows.MessageBox.Show();
+
         }
 
         protected override void onEnterElement(Object element)
