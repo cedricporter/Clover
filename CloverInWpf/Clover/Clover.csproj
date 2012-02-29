@@ -66,8 +66,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-
-    <Compile Include="AbstractLayer\Paper.cs" />    <Compile Include="ToolBox.xaml.cs">
+    <Compile Include="AbstractLayer\FaceGroup.cs" />
+    <Compile Include="AbstractLayer\Paper.cs" />
+    <Compile Include="ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="tool\TestTool.cs" />
