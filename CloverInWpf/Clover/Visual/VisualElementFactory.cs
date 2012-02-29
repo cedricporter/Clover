@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
 
 /**
 @date		:	2012/02/29
@@ -25,6 +26,7 @@ namespace Clover.Visual
         }
 
         State state = State.FadeIn;
+        Grid grid = new Grid();
 
         public State GetState()
         {
