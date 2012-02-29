@@ -6,6 +6,7 @@ using System.Windows.Input;
 
 using Mogre;
 using MogreInWpf;
+using Clover.tool;
 
 
 
@@ -32,6 +33,8 @@ namespace Clover
         public List<Camera> cameras = new List<Camera>();
 
         public CubeNavigator cubeNav;
+        public List<ToolFactory> tools = new List<ToolFactory>();
+        public ToolFactory currentTool = null;
 
         /// <summary>
         /// 场景创建
@@ -67,9 +70,13 @@ namespace Clover
             });
             mogreImageSource.ViewportDefinitions = vds.ToArray();
 
+            // 创建工具集
+            ToolFactory tl = new TestTool(this);
+            tools.Add(tl);
+            currentTool = tl;
+
             // 代码写这里
             cubeNav = new CubeNavigator(this);
-            //this.AddChild(cubeNav);
         }
 
         /// <summary>
