@@ -36,8 +36,9 @@ namespace Clover
         public CubeNavigator cubeNav;
         public List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
+        public ToolBox toolBox;
 
-        #region 折纸部分        public ToolBox toolBox;
+        #region 折纸部分
 
         // 抽象数据结构控制器
         CloverController cloverController;
@@ -109,7 +110,7 @@ namespace Clover
             InitializeComponent();
 
             toolBox = new ToolBox(this);
-            toolBox.Show();
+
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
