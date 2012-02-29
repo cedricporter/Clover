@@ -4,7 +4,7 @@
         xmlns:clover="clr-namespace:Clover"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.MainWindow"
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
         
         <!-- Mogre -->
@@ -64,12 +64,15 @@
         		<Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
         	</Grid>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
-            	<MenuItem Header="File" VerticalAlignment="Center" Style="{DynamicResource MenuItemStyle1}">
+            	<MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="New">
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
-				</MenuItem>         
+				</MenuItem>
+                <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
+                    <MenuItem Header="ToolBox"/>
+                </MenuItem>
 			</Menu>
         </Grid>
         

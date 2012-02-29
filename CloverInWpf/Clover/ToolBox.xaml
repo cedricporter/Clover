@@ -1,0 +1,15 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.ToolBox"
+        Title="ToolBox" Height="300" Width="300" WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True" WindowStyle="None" Background="Transparent"
+        Template="{StaticResource WindowTemplate1}"
+        ResizeMode="CanResizeWithGrip" ShowInTaskbar="False" Topmost="True"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    
+    <Grid>
+        <!--<ResizeGrip HorizontalAlignment="Right" VerticalAlignment="Bottom"/>-->
+    	
+    </Grid>
+</Window>

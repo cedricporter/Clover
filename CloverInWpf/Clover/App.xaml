@@ -35,6 +35,7 @@
         
         <!-- Effects -->
         <BlurEffect x:Key="BlurEffect2px" Radius="2"/>
+        <BlurEffect x:Key="BlurEffect4px" Radius="4"/>
         <DropShadowEffect x:Key="DropShadowEffect1px" ShadowDepth="1" Direction="270" Opacity="0.8"/>
 
         <!-- MenuTemplate1 -->
@@ -388,6 +389,22 @@
     			</Trigger>
     		</Style.Triggers>
     	</Style>
+
+        <!-- WindowTemplate1 -->
+        <ControlTemplate x:Key="WindowTemplate1" TargetType="{x:Type Window}">
+            <Grid>
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Fill="{StaticResource BackgroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Name="Title" Height="30" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <ContentPresenter ContentSource="Title" Effect="{StaticResource DropShadowEffect1px}"  TextBlock.Foreground="{StaticResource TextWhiteBrush}"  RecognizesAccessKey="True" Margin="10,0" VerticalAlignment="Center"/>
+                </Grid>
+                <ResizeGrip VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+            </Grid>
+            
+        </ControlTemplate>
 
 
     </Application.Resources>
