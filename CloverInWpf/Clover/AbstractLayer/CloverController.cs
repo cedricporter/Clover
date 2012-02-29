@@ -19,6 +19,19 @@ namespace Clover
         }
         #endregion
 
+        public List<Edge> Edges
+        {
+            get 
+            {
+                faceLayer.UpdateLeaves();
+                List<Edge> list = new List<Edge>();
+                foreach (Face f in faceLayer.Leaves)
+                    foreach (Edge e in f.Edges)
+                        list.Add(e);
+                return list;
+            }
+        }
+
         public void Initialize(float width, float height)
         {
             // Create 4 original vertices
@@ -65,6 +78,7 @@ namespace Clover
 
         public void UpdatePaper()
         {
+            faceLayer.UpdateLeaves();
             paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
             foreach (Face face in faceLayer.Leaves)
             {
