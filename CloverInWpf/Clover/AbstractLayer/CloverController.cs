@@ -75,6 +75,22 @@ namespace Clover
 
             paper = new Paper("paper");
         }
+        
+        public void InitializeBeforeFolding(Vertex vertex)
+        {
+            // 计算和创建一条新的折线
+
+            // 新增数据结构的信息
+
+            // 1.
+
+            // 
+        }
+
+        public void Update()
+        {
+            // 
+        }
 
         public void UpdatePaper()
         {
