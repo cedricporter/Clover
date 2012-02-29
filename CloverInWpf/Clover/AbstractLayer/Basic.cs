@@ -106,7 +106,11 @@ namespace Clover
     class Face
     {
         List<Edge> edges = new List<Edge>();
-
+        public List<Edge> Edges
+        {
+            get { return edges; }
+            set { edges = value; }
+        }
         Vector3 normal;
         Face leftChild = null;
         Face rightChild = null;

@@ -19,6 +19,19 @@ namespace Clover
         }
         #endregion
 
+        public List<Edge> Edges
+        {
+            get 
+            {
+                faceLayer.UpdateLeaves();
+                List<Edge> list = new List<Edge>();
+                foreach (Face f in faceLayer.Leaves)
+                    foreach (Edge e in f.Edges)
+                        list.Add(e);
+                return list;
+            }
+        }
+
         public void Initialize(float width, float height)
         {
             // Create 4 original vertices
@@ -62,9 +75,72 @@ namespace Clover
 
             paper = new Paper("paper");
         }
+        
+        public void InitializeBeforeFolding(Vertex vertex)
+        {
+            // 计算和创建一条新的折线
+
+            // 新增数据结构的信息
+            //   1.顶点
+            //   2.边
+            //   3.面
+            //   over...
+
+            // 
+        }
+
+        Edge currentFoldingLine = new Edge(null, null);
+    	public Edge CurrentFoldingLine
+    	{
+    		get { return currentFoldingLine; }
+    	}
+
+        float currentAngel;
+
+        List<Edge> shadowEdges = new List<Edge>();
+        List<Vertex> shadowVertice = new List<Vertex>();
+        List<Face> shadowFaces = new List<Face>();
+
+
+        void CalculateFoldingLine(float xRel, float yRel)
+        {
+            
+        }
+
+        /// <summary>
+        /// 判定是否有新添或者删除数据结构中的信息
+        /// </summary>
+        void CoreAlgorithm()
+        {
+
+        }
+
+        void UpdateDataStruct()
+        {
+
+        }
+
+        /// <summary>
+        /// 根据鼠标位移在每个渲染帧前更新结构
+        /// </summary>
+        /// <param name="xRel">鼠标的x位移</param>
+        /// <param name="yRel">鼠标的y位移</param>
+        /// <param name="faceList">折叠所受影响的面</param>
+        public void Update(float xRel, float yRel, List<Face> faceList)
+        {
+            // 计算新的折线，角度，
+            CalculateFoldingLine(xRel, yRel);
+
+            // 判定是否有新添或者删除数据结构中的信息
+            CoreAlgorithm();
+
+            // 更新数据结构中的信息
+            UpdateDataStruct();
+        }
 
         public void UpdatePaper()
         {
+            faceLayer.UpdateLeaves();
             paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
             foreach (Face face in faceLayer.Leaves)
             {

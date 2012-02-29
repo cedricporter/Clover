@@ -39,7 +39,7 @@ namespace Clover
         /// </summary>
         /// <param name="oldFace">改变了的节点</param>
         /// <remarks>如果输入一个面，则将这个面移除并将他的两个孩子加到叶节点表。否则重建整棵树。</remarks>
-        public void Update(Face oldFace = null)
+        public void UpdateLeaves(Face oldFace = null)
         {
             if (oldFace == null)
             {
@@ -145,6 +145,12 @@ namespace Clover
         {
             // bla bla... 更新索引，到时再说
 
+        }
+
+
+        public void UpdateLeaves(Face oldFace = null)
+        {
+            facecellTree.UpdateLeaves(oldFace);
         }
 
         /// <summary>
