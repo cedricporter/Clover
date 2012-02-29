@@ -37,7 +37,8 @@ namespace Clover
         public List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
 
-        #region 折纸部分
+        #region 折纸部分        public ToolBox toolBox;
+
         // 抽象数据结构控制器
         CloverController cloverController;
         Paper paper;
@@ -107,6 +108,9 @@ namespace Clover
         {
             InitializeComponent();
 
+            toolBox = new ToolBox(this);
+            toolBox.Show();
+
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
@@ -171,6 +175,8 @@ namespace Clover
 
         #endregion
 
+
+
         #region 变更ogre视窗大小
 
         public Size PreferredMogreViewportSize
@@ -217,6 +223,17 @@ namespace Clover
         }
 
         #endregion
+
+        /// <summary>
+        /// 窗口关闭时关闭所有子窗口
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (toolBox != null)
+                toolBox.Close();
+        }
 
 
 

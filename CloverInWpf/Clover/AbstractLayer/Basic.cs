@@ -91,6 +91,13 @@ namespace Clover
             vertex1 = v1;
             vertex2 = v2;
         }
+
+        public bool IsVerticeIn(Vector3 p)
+        {
+            if ( p.Equals( Vertex1.point ) || p.Equals( Vertex2.point ) )
+                return true;
+            return false;
+        }
     }
 
     /// <summary>
@@ -149,9 +156,54 @@ namespace Clover
             }
         }
 
+        /// <summary>
+        /// 更行面的法向量
+        /// </summary>
+        /// <returns></returns>
+        bool UpdateNormal()
+        {
+            if ( vertices.Count < 3 )
+                return false;
+            Vertex[] p = new Vertex[ 3 ];
+            p[ 0 ] = vertices[ 0 ];
+            p[ 1 ] = Vertices[ 1 ];
+            p[ 2 ] = vertices[ 2 ];
+            // 取任意位于面上的向量
+            Vector3 v1 = p[0].point - p[1].point;
+            Vector3 v2 = p[0].point - p[2].point;
+            normal = v1.CrossProduct( v2 );
+            return true;
+        }
+
+
+
+
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
+           // UpdateVertices();
+        }
+
+        public void UpdateTree()
+        {
+            // 对边进行排序
+            Edge currentedge = edges[0];
+            edges.RemoveAt(0);
+            int edgecount = edges.Count;
+            List<Edge> orderelist = new List<Edge>();
+            orderelist.Add(currentedge);
+            for ( int i = 0; i < edgecount - 1; i++ )
+            {
+                foreach(Edge e in edges)
+                {
+                    if ( currentedge.IsVerticeIn(e.Vertex1.point) || currentedge.IsVerticeIn(e.Vertex2.point))
+                    {
+                        orderelist.Add(e);
+                        break;
+                    }
+                }
+            }
+
             UpdateVertices();
         }
 
