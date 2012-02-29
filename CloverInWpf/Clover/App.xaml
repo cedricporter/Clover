@@ -14,6 +14,10 @@
         </LinearGradientBrush>
         <SolidColorBrush x:Key="BackgroundFillBlack" Color="#262A30"/>
         <LinearGradientBrush x:Key="BackgroundStrokeBlack" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#1F242A" Offset="0"/>
+            <GradientStop Color="#1E2126" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="ForegroundStrokeBlack" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#2B313B" Offset="0"/>
             <GradientStop Color="#1E2227" Offset="1"/>
         </LinearGradientBrush>
@@ -27,14 +31,16 @@
             <GradientStop Color="#2D71B6" Offset="1"/>
         </LinearGradientBrush>
         <SolidColorBrush x:Key="HeightLightBorderTopBlue" Color="#9AC7E3"/>
+        <SolidColorBrush x:Key="TextWhiteBrush" Color="#F4F4F4"/>
         
         <!-- Effects -->
-        <BlurEffect x:Key="BlurEffect2" Radius="2"/>
+        <BlurEffect x:Key="BlurEffect2px" Radius="2"/>
+        <DropShadowEffect x:Key="DropShadowEffect2px" ShadowDepth="5" BlurRadius="2" Color="Black"/>
 
         <!-- MenuTemplate1 -->
     	<ControlTemplate x:Key="MenuTemplate1" TargetType="{x:Type Menu}">
     		<Grid>
-    			<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="0"/>
+    			<Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
     			<Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
     			<Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
     			<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
@@ -43,8 +49,8 @@
 
         <!-- MenuItemStyle1 -->
     	<LinearGradientBrush x:Key="MenuItemSelectionFill" EndPoint="0,1" StartPoint="0,0">
-    		<GradientStop Color="#34C5EBFF" Offset="0"/>
-    		<GradientStop Color="#3481D8FF" Offset="1"/>
+    		<GradientStop Color="#4195CA" Offset="0"/>
+            <GradientStop Color="#2D71B6" Offset="1"/>
     	</LinearGradientBrush>
     	<Geometry x:Key="Checkmark">M 0,5.1 L 1.7,5.2 L 3.4,7.1 L 8,0.4 L 9.2,0 L 3.3,10.8 Z</Geometry>
     	<ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuItemTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
@@ -171,14 +177,11 @@
     		</Setter>
     	</Style>
     	<ControlTemplate x:Key="{ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}" TargetType="{x:Type ContentControl}">
-    		<Border BorderBrush="#FF959595" BorderThickness="1" Background="{StaticResource SubMenuBackgroundBrush}">
-    			<Grid>
-    				<Rectangle Fill="#F1F1F1" HorizontalAlignment="Left" Margin="2" RadiusY="2" RadiusX="2" Width="28"/>
-    				<Rectangle Fill="#E2E3E3" HorizontalAlignment="Left" Margin="30,2,0,2" Width="1"/>
-    				<Rectangle Fill="White" HorizontalAlignment="Left" Margin="31,2,0,2" Width="1"/>
-    				<ContentPresenter Grid.ColumnSpan="2" Margin="1,0"/>
-    			</Grid>
-    		</Border>
+            <Border Background="{StaticResource BackgroundFillBlack}" BorderBrush="{StaticResource BackgroundStrokeBlack}" BorderThickness="1">
+                <Grid>
+                    <ContentPresenter Grid.ColumnSpan="2" Margin="1,0"/>
+                </Grid>
+            </Border>
     	</ControlTemplate>
         <!-- 顶级菜单项 -->
     	<ControlTemplate x:Key="{ComponentResourceKey ResourceId=TopLevelHeaderTemplateKey, TypeInTargetAssembly={x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
@@ -187,22 +190,22 @@
     			<Rectangle x:Name="Bg" Fill="{TemplateBinding Background}" Margin="1" RadiusY="1" RadiusX="1" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
     			<Rectangle x:Name="InnerBorder" Margin="2"/>-->
                 <Grid x:Name="Bg" Margin="0" Visibility="Hidden" Height="22" Width="55">
-                    <Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="0" RadiusY="2" RadiusX="2"/>
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusY="2" RadiusX="2"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusY="2" RadiusX="2"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="1,2,1,1" RadiusY="2" RadiusX="2"/>
                     <!--<ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>-->
                 </Grid>
                 <Grid x:Name="Bg2" Margin="0" Visibility="Hidden" Height="22" Width="55">
-                    <!--<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="0" RadiusY="2" RadiusX="2"/>
+                    <!--<Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0" RadiusY="2" RadiusX="2"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="1" RadiusY="2" RadiusX="2"/>-->
                     <Rectangle Fill="Black" Margin="1" RadiusY="2" RadiusX="2"/>
-                    <Rectangle Fill="{StaticResource BackgroundFillBlack}" Effect="{StaticResource BlurEffect2}"  Margin="1" RadiusY="2" RadiusX="2"/>
+                    <Rectangle Fill="{StaticResource BackgroundFillBlack}" Effect="{StaticResource BlurEffect2px}"  Margin="1" RadiusY="2" RadiusX="2"/>
                     <!--<ContentPresenter ContentSource="Header" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>-->
                 </Grid>
                 <DockPanel>
     				<!--<ContentPresenter x:Name="Icon" ContentSource="Icon" Margin="4,0,6,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center"/>
     				<Path x:Name="GlyphPanel" Data="{StaticResource Checkmark}" Fill="{TemplateBinding Foreground}" FlowDirection="LeftToRight" Margin="7,0,0,0" Visibility="Collapsed" VerticalAlignment="Center"/>-->
-    				<ContentPresenter ContentSource="Header" TextBlock.Foreground="#F4F4F4"  Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+    				<ContentPresenter ContentSource="Header" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="{TemplateBinding Padding}" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
     			</DockPanel>
     			<Popup x:Name="PART_Popup" AllowsTransparency="true" Focusable="false" HorizontalOffset="1" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" Placement="Bottom" VerticalOffset="-1">
     				<Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent">
@@ -210,7 +213,7 @@
     						<ScrollViewer x:Name="SubMenuScrollViewer" CanContentScroll="true" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
     							<Grid RenderOptions.ClearTypeHint="Enabled">
     								<Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
-    									<Rectangle Fill="{StaticResource SubMenuBackgroundBrush}" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
+    									<Rectangle Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
     								</Canvas>
     								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" Margin="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
     							</Grid>
@@ -229,11 +232,11 @@
     			<Trigger Property="IsChecked" Value="true">
     				<Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
     				<Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
-    			</Trigger>
+    			</Trigger>-->
     			<Trigger Property="HasDropShadow" SourceName="PART_Popup" Value="true">
     				<Setter Property="Margin" TargetName="Shdw" Value="0,0,5,5"/>
     				<Setter Property="Color" TargetName="Shdw" Value="#71000000"/>
-    			</Trigger>-->
+    			</Trigger>
     			<Trigger Property="IsHighlighted" Value="true">
     				<Setter Property="Visibility" TargetName="Bg" Value="Visible"/>
     				<!--<Setter Property="Stroke" TargetName="OuterBorder" Value="#50FFFFFF"/>
