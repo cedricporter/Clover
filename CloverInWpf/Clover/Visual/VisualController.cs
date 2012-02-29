@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 
 /**
 @date		:	2012/02/29
@@ -35,11 +37,17 @@ namespace Clover.Visual
         #endregion
 
         MainWindow mainWindow;
+        Grid grid = new Grid();
         List<VisualElementFactory> visualList = new List<VisualElementFactory>();
 
         private VisualController(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
+            // 初始化视觉容器
+            grid.Height = grid.Width = 0;
+            grid.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.VerticalAlignment = VerticalAlignment.Top;
+            mainWindow.WindowRoot.Children.Add(grid);
         }
 
         public void Update()
@@ -68,16 +76,20 @@ namespace Clover.Visual
         
         public void AddVisual(VisualElementFactory vi)
         {
+            grid.Children.Add(vi.grid);
             visualList.Add(vi);
         }
 
         public void RemoveVisual(VisualElementFactory vi)
         {
+            grid.Children.Remove(vi.grid);
             visualList.Remove(vi);
         }
 
         public void RemoveAllVisual()
         {
+            foreach (VisualElementFactory vi in visualList)
+                grid.Children.Remove(vi.grid);
             visualList.RemoveAll(null);
         }
 

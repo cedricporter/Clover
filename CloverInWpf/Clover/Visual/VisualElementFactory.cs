@@ -26,7 +26,14 @@ namespace Clover.Visual
         }
 
         State state = State.FadeIn;
-        Grid grid = new Grid();
+        
+        // 容器 
+        public Grid grid = new Grid();
+
+        public VisualElementFactory()
+        {
+            grid.Name = "grid";
+        }
 
         public State GetState()
         {

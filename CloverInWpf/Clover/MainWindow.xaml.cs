@@ -105,8 +105,10 @@ namespace Clover
             // 各种窗口
             toolBox = new ToolBox(this);
             toolBox.Show();
-            // 各种
+            // 测试Visual
             visualController = VisualController.GetSingleton(this);
+            TextVisualElement vi = new TextVisualElement("Fuck", new Point(), Color.FromRgb(0,0,0));
+
 
             // 导航立方
             cubeNav = new CubeNavigator(this);
