@@ -7,6 +7,25 @@
         <!-- Brushed -->
         <ImageBrush x:Key="AppBgImgBrush" ImageSource="media/texture/AppBackground.jpg"/>
         <ImageBrush x:Key="CubeNavTexBrush" ImageSource="media/texture/CubeNavTex.png"/>
+        <LinearGradientBrush x:Key="ForegroundFillBlack">
+            <GradientStop Color="#4B5159" Offset="0"/>
+            <GradientStop Color="#383D43" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="BackgroundFillBlack" Color="#262A30"/>
+        <LinearGradientBrush x:Key="BackgroundStrokeBlack">
+            <GradientStop Color="#2B313B" Offset="0"/>
+            <GradientStop Color="#1E2227" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="HeightLightBorderTopBlack" Color="#5D6269"/>
+        <LinearGradientBrush x:Key="HeightLightBorderLeftBlack">
+            <GradientStop Color="#515459" Offset="0"/>
+            <GradientStop Color="#4F5357" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="ForegroundFillBlue">
+            <GradientStop Color="#4195CA" Offset="0"/>
+            <GradientStop Color="#2D71B6" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="HeightLightBorderTopBlue" Color="#9AC7E3"/>
         
     </Application.Resources>
 </Application>
