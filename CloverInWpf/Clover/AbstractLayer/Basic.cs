@@ -16,11 +16,15 @@ namespace Clover
         public float u = 0;
         public float v = 0;
 
-        public Vertex(float x, float y, float z)
+        public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
+
+        public Vertex(float x, float y, float z, int index = -1)
         {
             point.x = x;
             point.y = y;
             point.z = z;
+
+            Index = index;
         }
     }
 
