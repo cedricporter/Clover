@@ -10,7 +10,7 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
-    class Vertex
+    public class Vertex
     {
         public Point3D point;
 
@@ -32,7 +32,7 @@ namespace Clover
     /// <summary>
     /// 抽象的边
     /// </summary>
-    class Edge
+    public class Edge
     {
         #region get/set
         /// <summary>
@@ -104,7 +104,7 @@ namespace Clover
     /// <summary>
     /// 抽象的面
     /// </summary>
-    class Face
+    public class Face
     {
         List<Edge> edges = new List<Edge>();
         public List<Edge> Edges

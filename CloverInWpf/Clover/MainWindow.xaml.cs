@@ -30,12 +30,14 @@ namespace Clover
 
         #endregion
         
-
-
         #region 折纸部分
 
         // 抽象数据结构控制器
-        CloverController cloverController;
+        CloverController cloverController = new CloverController();
+        public Clover.CloverController CloverController
+        {
+            get { return cloverController; }
+        }
         //Paper paper;
         #endregion
 
@@ -62,6 +64,9 @@ namespace Clover
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
+
+            cloverController.Initialize(100, 100);
+            foldingPaperViewport.Children.Add(cloverController.UpdatePaper());
         }
 
         ~MainWindow()
