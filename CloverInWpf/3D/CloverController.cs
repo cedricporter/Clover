@@ -99,7 +99,8 @@ namespace Clover
     	}
 
         float currentAngel;
-
+        Point3D currentVertex;
+        
         List<Edge> shadowEdges = new List<Edge>();
         List<Vertex> shadowVertice = new List<Vertex>();
         List<Face> shadowFaces = new List<Face>();
@@ -113,14 +114,16 @@ namespace Clover
         /// <summary>
         /// 判定是否有新添或者删除数据结构中的信息
         /// </summary>
-        void CoreAlgorithm()
-        {
 
+        bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
+        {
+            return true; 
         }
 
-        void UpdateDataStruct()
+        bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
 
+            return true;
         }
 
         /// <summary>
@@ -129,16 +132,31 @@ namespace Clover
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, List<Face> faceList)
+        public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
         {
-            // 计算新的折线，角度，
+           // 计算初始折线
             CalculateFoldingLine(xRel, yRel);
 
-            // 判定是否有新添或者删除数据结构中的信息
-            CoreAlgorithm();
+           // 创建移动面分组
+            List<Face> faceWithFoldingLine = new List<Face>();
+            List<Face> faceWithoutFoldingLine = new List<Face>();
+            
+            // 根据面组遍历所有面，判定是否属于移动面并分组插入
+            foreach(Face face in faceLayer.Leaves)
+            {
+                if (TestMovedFace(face, pickedFace, pickedVertex))
+                {
+                    if (TestFoldingLineCrossed(face, currentFoldingLine))
+                    {
+                        faceWithFoldingLine.Add(face);
+                    }
+                    else
+                    {
+                        faceWithoutFoldingLine.Add(face);
+                    }
+                }
+            }
 
-            // 更新数据结构中的信息
-            UpdateDataStruct();
         }
 
         public ModelVisual3D UpdatePaper()

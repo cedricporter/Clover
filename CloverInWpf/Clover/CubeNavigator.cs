@@ -78,6 +78,7 @@ namespace Clover
                 
                 // 让CloverRoot模仿cube的动作
                 //mainWindow.cloverRoot.SetOrientation((float)quar.W, (float)quar.X, (float)quar.Y, (float)quar.Z);
+                mainWindow.CloverController.Model.Transform = rotts;
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;
