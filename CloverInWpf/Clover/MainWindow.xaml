@@ -8,9 +8,14 @@
         MouseMove="Window_MouseMove" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Grid x:Name="WindowRoot">
         
-        <!-- Mogre -->
+        <!-- 3D -->
         <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1" d:IsLocked="True">
-            <Image x:Name="MogreImage" SizeChanged="MogreImage_SizeChanged"/>
+            <!--<Image x:Name="MogreImage" SizeChanged="MogreImage_SizeChanged"/>-->
+            <Viewport3D x:Name="foldingPaperViewport">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,200" UpDirection="0,1,0" FieldOfView="45"/>
+                </Viewport3D.Camera>
+            </Viewport3D>
         </Grid>
         
         

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 
-using Mogre;
-using MogreInWpf;
+//using Mogre;
+//using MogreInWpf;
 using Clover.Tool;
 using Clover.Visual;
 using System.Windows.Media;
@@ -20,7 +21,7 @@ namespace Clover
     /// </summary>
     public partial class MainWindow : Window
     {
-        MogreImage mogreImageSource;
+        //MogreImage mogreImageSource;
 
         #region 编译选项
 
@@ -30,9 +31,9 @@ namespace Clover
 
         #endregion
 
-        public SceneManager sceneManager;
-        public SceneNode rootSceneNode;
-        public SceneNode cloverRoot;
+        //public SceneManager sceneManager;
+        //public SceneNode rootSceneNode;
+        //public SceneNode cloverRoot;
         public List<Camera> cameras = new List<Camera>();
 
         public CubeNavigator cubeNav;
@@ -55,53 +56,75 @@ namespace Clover
         private void CreateScene()
         {
             // 初始化全局变量
-            Root root = MogreRootManager.GetSharedRoot();
-            sceneManager = mogreImageSource.SceneManager = root.CreateSceneManager(SceneType.ST_GENERIC, "mainSceneManager");
-            sceneManager.AmbientLight = new ColourValue(0.5f, 0.5f, 0.5f);
-            rootSceneNode = sceneManager.RootSceneNode;
-            cloverRoot = rootSceneNode.CreateChildSceneNode("cloverRoot");
+            //Root root = MogreRootManager.GetSharedRoot();
+            //sceneManager = mogreImageSource.SceneManager = root.CreateSceneManager(SceneType.ST_GENERIC, "mainSceneManager");
+            //sceneManager.AmbientLight = new ColourValue(0.5f, 0.5f, 0.5f);
+            //rootSceneNode = sceneManager.RootSceneNode;
+            //cloverRoot = rootSceneNode.CreateChildSceneNode("cloverRoot");
 
-            //  创建相机，将来或许会用到多相机
-            cameras.Clear();
-            Camera camera = sceneManager.CreateCamera("mainCamera");
-            camera.AutoAspectRatio = true;
-            camera.NearClipDistance = 5;
-            camera.Position = new Vector3(0, 0, 200);
-            camera.LookAt(new Vector3(0));
-            cameras.Add(camera);
+            ////  创建相机，将来或许会用到多相机
+            //cameras.Clear();
+            //Camera camera = sceneManager.CreateCamera("mainCamera");
+            //camera.AutoAspectRatio = true;
+            //camera.NearClipDistance = 5;
+            //camera.Position = new Vector3(0, 0, 200);
+            //camera.LookAt(new Vector3(0));
+            //cameras.Add(camera);
 
-            // 创建视口，将来也可能会用到很多视口吗……
-            // 嗯，有可能的。。。 —— Cedric Porter
-            List<ViewportDefinition> vds = new List<ViewportDefinition>();
-            vds.Add(new ViewportDefinition
-            {
-                Camera = camera,
-                Left = 0,
-                Top = 0,
-                Width = 1,
-                Height = 1,
-                BackgroundColour = new ColourValue(0,0,0,0),
-            });
-            mogreImageSource.ViewportDefinitions = vds.ToArray();
+            //// 创建视口，将来也可能会用到很多视口吗……
+            //// 嗯，有可能的。。。 —— Cedric Porter
+            //List<ViewportDefinition> vds = new List<ViewportDefinition>();
+            //vds.Add(new ViewportDefinition
+            //{
+            //    Camera = camera,
+            //    Left = 0,
+            //    Top = 0,
+            //    Width = 1,
+            //    Height = 1,
+            //    BackgroundColour = new ColourValue(0,0,0,0),
+            //});
+            //mogreImageSource.ViewportDefinitions = vds.ToArray();
 
             // 创建工具集
-            tools.Clear();
-            TestTool tl = new TestTool(this);
-            tools.Add(tl);
-            currentTool = tl;
+            //tools.Clear();
+            //TestTool tl = new TestTool(this);
+            //tools.Add(tl);
+            //currentTool = tl;
 
             // 代码写这里
-            
+            MeshGeometry3D triangleMesh = new MeshGeometry3D();
+            Point3D point0 = new Point3D(0, 0, 0);
+            Point3D point1 = new Point3D(5, 0, 0);
+            Point3D point2 = new Point3D(0, 0, 5);
+            triangleMesh.Positions.Add(point0);
+            triangleMesh.Positions.Add(point1);
+            triangleMesh.Positions.Add(point2);
+            triangleMesh.TriangleIndices.Add(0);
+            triangleMesh.TriangleIndices.Add(2);
+            triangleMesh.TriangleIndices.Add(1);
+            Vector3D normal = new Vector3D(0, 1, 0);
+            triangleMesh.Normals.Add(normal);
+            triangleMesh.Normals.Add(normal);
+            triangleMesh.Normals.Add(normal);
+            Material material = new DiffuseMaterial(
+                new SolidColorBrush(Colors.DarkKhaki));
+            GeometryModel3D triangleModel = new GeometryModel3D(
+                triangleMesh, material);
+            ModelVisual3D model = new ModelVisual3D();
+            model.Content = triangleModel;
+
+
+            foldingPaperViewport.Children.Add(null);
 
             // 初始化抽象数据结构，暂时先放在这里，到时再说了
-            cloverController = new CloverController();
-            cloverController.Initialize( 100, 100 );
+            //cloverController = new CloverController();
+            //cloverController.Initialize( 100, 100 );
             //cloverRoot.AttachObject(cloverController.Paper);
-            cloverController.UpdatePaper();
+            //cloverController.UpdatePaper();
 
-            Entity ent = sceneManager.CreateEntity("ogrehead", "ogrehead.mesh");
-            SceneNode node = rootSceneNode.CreateChildSceneNode("ogrenode");
-            node.AttachObject(ent);
+            //Entity ent = sceneManager.CreateEntity("ogrehead", "ogrehead.mesh");
+            //SceneNode node = rootSceneNode.CreateChildSceneNode("ogrenode");
+            //node.AttachObject(ent);
 
         }
 
@@ -154,26 +177,26 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // 初始化 mogre image
-            try
-            {
-                InitializeImage();
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-                this.Close();
-            }
-            // 初始化ogre
-            if (InitMogreAsync)
-            {
-                mogreImageSource.InitOgreAsync(System.Threading.ThreadPriority.Normal, new RoutedEventHandler(OnOgreInitComplete));
-            }
-            else
-            {
-                mogreImageSource.InitOgreImage();
-                OnOgreInitComplete(null, null);
-            }
+            //// 初始化 mogre image
+            //try
+            //{
+            //    InitializeImage();
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    MessageBox.Show(ex.ToString());
+            //    this.Close();
+            //}
+            //// 初始化ogre
+            //if (InitMogreAsync)
+            //{
+            //    mogreImageSource.InitOgreAsync(System.Threading.ThreadPriority.Normal, new RoutedEventHandler(OnOgreInitComplete));
+            //}
+            //else
+            //{
+            //    mogreImageSource.InitOgreImage();
+            //    OnOgreInitComplete(null, null);
+            //}
         }
 
         /// <summary>
@@ -181,12 +204,12 @@ namespace Clover
         /// </summary>
         private void InitializeImage()
         {
-            mogreImageSource = new MogreImage();
-            mogreImageSource.ViewportSize = PreferredMogreViewportSize;
-            // 将下面的值改为true，并注释掉CreateScene，可以显示出一个ogre头……
-            mogreImageSource.CreateDefaultScene = false;
-            CreateScene();
-            MogreImage.Source = mogreImageSource;
+            //mogreImageSource = new MogreImage();
+            //mogreImageSource.ViewportSize = PreferredMogreViewportSize;
+            //// 将下面的值改为true，并注释掉CreateScene，可以显示出一个ogre头……
+            //mogreImageSource.CreateDefaultScene = false;
+            //CreateScene();
+            //MogreImage.Source = mogreImageSource;
         }
 
         /// <summary>
@@ -199,7 +222,7 @@ namespace Clover
             // 比如显示装载已完成……
 
             // 注册PreRender事件回调函数
-            mogreImageSource.PreRender += new EventHandler(mogreImageSource_PreRender);
+            //mogreImageSource.PreRender += new EventHandler(mogreImageSource_PreRender);
         }
 
         #endregion
@@ -208,25 +231,25 @@ namespace Clover
 
         #region 变更ogre视窗大小
 
-        public Size PreferredMogreViewportSize
-        {
-            get 
-            {
-                if (MogreImage.ActualHeight == 0 || MogreImage.ActualWidth == 0)
-                    return StartupViewportSize;
-                return new Size(MogreImage.ActualWidth, MogreImage.ActualHeight);
-            }
-        }
+        //public Size PreferredMogreViewportSize
+        //{
+        //    get 
+        //    {
+        //        if (MogreImage.ActualHeight == 0 || MogreImage.ActualWidth == 0)
+        //            return StartupViewportSize;
+        //        return new Size(MogreImage.ActualWidth, MogreImage.ActualHeight);
+        //    }
+        //}
 
-        /// <summary>
-        /// 当MogreImage大小发生改变时
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MogreImage_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            mogreImageSource.ViewportSize = PreferredMogreViewportSize;
-        }
+        ///// <summary>
+        ///// 当MogreImage大小发生改变时
+        ///// </summary>
+        ///// <param name="sender"></param>
+        ///// <param name="e"></param>
+        //private void MogreImage_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    mogreImageSource.ViewportSize = PreferredMogreViewportSize;
+        //}
 
         #endregion
 
@@ -334,8 +357,8 @@ namespace Clover
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (currentTool != null)
-                currentTool.onPress();
+            //if (currentTool != null)
+            //    currentTool.onPress();
         }
 
         #endregion
