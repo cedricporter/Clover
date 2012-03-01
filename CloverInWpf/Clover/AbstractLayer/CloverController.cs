@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Clover
 {
-    public class CloverController
+    class CloverController
     {
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
@@ -79,29 +79,9 @@ namespace Clover
             //paper = new Paper("paper");
         }
         
-        public bool InitializeBeforeFolding(Vertex vertex)
+        public void InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
-            // Find out the face which the vertex belongs to. If the vertex belongs to different faces which 
-            // are not in the same group, then the vertex is not a foldable vertex.
-
-            // The face list.
-            List<Face> faceList = new List<Face>(); 
-
-            foreach ( Face face in faceLayer.Leaves )
-            {
-                foreach (Edge edge in face.Edges)
-                {
-                    if (edge.Vertex1 == vertex || edge.Vertex2 == vertex)
-                    {
-                        faceList.Add(face);
-                    }
-                }
-            }
-           
-            // Test whether the faces in the faceList belong to the same group.
-            
-
 
             // 新增数据结构的信息
             //   1.顶点
@@ -110,7 +90,6 @@ namespace Clover
             //   over...
 
             // 
-            return true;
         }
 
         Edge currentFoldingLine = new Edge(null, null);
@@ -120,7 +99,8 @@ namespace Clover
     	}
 
         float currentAngel;
-
+        Point3D currentVertex;
+        
         List<Edge> shadowEdges = new List<Edge>();
         List<Vertex> shadowVertice = new List<Vertex>();
         List<Face> shadowFaces = new List<Face>();
@@ -134,14 +114,16 @@ namespace Clover
         /// <summary>
         /// 判定是否有新添或者删除数据结构中的信息
         /// </summary>
-        void CoreAlgorithm()
-        {
 
+        bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
+        {
+            return true; 
         }
 
-        void UpdateDataStruct()
+        bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
 
+            return true;
         }
 
         /// <summary>
@@ -150,22 +132,31 @@ namespace Clover
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, List<Face> faceList)
+        public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
         {
-            // 计算新的折线，角度
+           // 计算初始折线
             CalculateFoldingLine(xRel, yRel);
 
-            // 判定是否有新添或者删除数据结构中的信息
-            CoreAlgorithm();
+           // 创建移动面分组
+            List<Face> faceWithFoldingLine = new List<Face>();
+            List<Face> faceWithoutFoldingLine = new List<Face>();
+            
+            // 根据面组遍历所有面，判定是否属于移动面并分组插入
+            foreach(Face face in faceLayer.Leaves)
+            {
+                if (TestMovedFace(face, pickedFace, pickedVertex))
+                {
+                    if (TestFoldingLineCrossed(face, currentFoldingLine))
+                    {
+                        faceWithFoldingLine.Add(face);
+                    }
+                    else
+                    {
+                        faceWithoutFoldingLine.Add(face);
+                    }
+                }
+            }
 
-            // 更新数据结构中的信息
-            UpdateDataStruct();
-        }
-        ModelVisual3D model = new ModelVisual3D();
-        public System.Windows.Media.Media3D.ModelVisual3D Model
-        {
-            get { return model; }
-            set { model = value; }
         }
 
         public ModelVisual3D UpdatePaper()
@@ -201,6 +192,7 @@ namespace Clover
             GeometryModel3D triangleModel = new GeometryModel3D(
                 triangleMesh, material);
             triangleModel.BackMaterial = material;
+            ModelVisual3D model = new ModelVisual3D();
             model.Content = triangleModel;
 
             return model;
