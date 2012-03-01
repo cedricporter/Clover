@@ -37,8 +37,8 @@ namespace Clover
         {
             // Create 4 original vertices
             Vertex[] vertices = new Vertex[4];
-            vertices[0] = new Vertex(-width / 2, height / 2, 100);
-            vertices[1] = new Vertex(width / 2, height / 2, 50);
+            vertices[0] = new Vertex(-width / 2, height / 2, 0);
+            vertices[1] = new Vertex(width / 2, height / 2, 0);
             vertices[2] = new Vertex(width / 2, -height / 2, 0);
             vertices[3] = new Vertex(-width / 2, -height / 2, 0);
 
@@ -147,6 +147,12 @@ namespace Clover
             {
                 face.UpdateVertices();
                 for (int i = 0; i < face.Vertices.Count; i++)
+                {
+                    paper.Position(face.Vertices[i].point);
+                    Debug.WriteLine(face.Vertices[i].point);
+                }
+
+                for (int i = face.Vertices.Count - 1; i > 0; i--)
                 {
                     paper.Position(face.Vertices[i].point);
                     Debug.WriteLine(face.Vertices[i].point);
