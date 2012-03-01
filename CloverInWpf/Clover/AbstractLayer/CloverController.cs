@@ -79,9 +79,29 @@ namespace Clover
             //paper = new Paper("paper");
         }
         
-        public void InitializeBeforeFolding(Vertex vertex)
+        public bool InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
+            // Find out the face which the vertex belongs to. If the vertex belongs to different faces which 
+            // are not in the same group, then the vertex is not a foldable vertex.
+
+            // The face list.
+            List<Face> faceList = new List<Face>(); 
+
+            foreach ( Face face in faceLayer.Leaves )
+            {
+                foreach (Edge edge in face.Edges)
+                {
+                    if (edge.Vertex1 == vertex || edge.Vertex2 == vertex)
+                    {
+                        faceList.Add(face);
+                    }
+                }
+            }
+           
+            // Test whether the faces in the faceList belong to the same group.
+            
+
 
             // 新增数据结构的信息
             //   1.顶点
@@ -90,6 +110,7 @@ namespace Clover
             //   over...
 
             // 
+            return true;
         }
 
         Edge currentFoldingLine = new Edge(null, null);
@@ -131,7 +152,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, List<Face> faceList)
         {
-            // 计算新的折线，角度，
+            // 计算新的折线，角度
             CalculateFoldingLine(xRel, yRel);
 
             // 判定是否有新添或者删除数据结构中的信息
