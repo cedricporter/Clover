@@ -10,16 +10,31 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
-    public class Vertex
+    public class Vertex 
     {
-        public Point3D point;
+        public Point3D point = new Point3D();
 
         public float u = 0;
         public float v = 0;
 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
+        public double X
+        {
+            get { return point.X; }
+            set { point.X = value; }
+        }
+        public double Y
+        {
+            get { return point.Y; }
+            set { point.Y = value; }
+        }
+        public double Z
+        {
+            get { return point.Z; }
+            set { point.Z = value; }
+        }
 
-        public Vertex(float x, float y, float z, int index = -1)
+        public Vertex(double x, double y, double z, int index = -1)
         {
             point.X = x;
             point.Y = y;

@@ -66,7 +66,8 @@ namespace Clover
             CompositionTarget.Rendering += FrameCountPlusPlus;
 
             cloverController.Initialize(100, 100);
-            foldingPaperViewport.Children.Add(cloverController.UpdatePaper());
+            cloverController.UpdatePaper();
+            foldingPaperViewport.Children.Add(cloverController.Model);
         }
 
         ~MainWindow()
