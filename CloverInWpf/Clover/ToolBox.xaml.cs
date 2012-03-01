@@ -35,7 +35,6 @@ namespace Clover
         public ToolBox(MainWindow mainWindow)
         {
             InitializeComponent();
-
             this.mainWindow = mainWindow;
         }
 

@@ -162,6 +162,10 @@ namespace Clover
                 mogreImageSource.InitOgreImage();
                 OnOgreInitComplete(null, null);
             }
+
+            toolBox.Left = Left + 10;
+            toolBox.Top = Top + 70;
+            toolBox.Show();
         }
 
         /// <summary>
