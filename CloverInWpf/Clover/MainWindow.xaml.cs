@@ -21,7 +21,16 @@ namespace Clover
         public CubeNavigator cubeNav;
         public List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
+
+        #region 工具窗
+
         public ToolBox toolBox;
+        public Double toolBoxRelLeft = 10;
+        public Double toolBoxRelTop = 70;
+
+        #endregion
+        
+
 
         #region 折纸部分
 
@@ -36,9 +45,7 @@ namespace Clover
         public MainWindow()
         {
             InitializeComponent();
-            // 各种窗口
-            // 窗口
-            toolBox = new ToolBox(this);
+            
             //toolBox.Show();
             // 测试Visual
             //visualController = VisualController.GetSingleton(this);
@@ -69,8 +76,10 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            toolBox.Left = Left + 10;
-            toolBox.Top = Top + 70;
+            // 各种窗口
+            toolBox = new ToolBox(this);
+            toolBox.Left = Left + toolBoxRelLeft;
+            toolBox.Top = Top + toolBoxRelTop;
             toolBox.Show();
         }
 
@@ -116,18 +125,6 @@ namespace Clover
 
         #region 鼠标事件响应函数
 
-        private void Window_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (currentTool != null)
-                currentTool.onMove();
-        }
-
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (currentTool != null)
-                currentTool.onPress();
-        }
-
         /// <summary>
         /// 移动窗体
         /// </summary>
@@ -136,11 +133,34 @@ namespace Clover
         private void MenuBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+            // 使工具窗位置相对主窗口静止
+            if (toolBox != null)
+            {
+                toolBox.Left = Left + toolBoxRelLeft;
+                toolBox.Top = Top + toolBoxRelTop;
+            }
         }
 
         #endregion
 
+        #region 主窗体大小改变
 
+        /// <summary>
+        /// 当窗口大小发生改变时……
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // 使工具窗位置相对主窗口静止
+            if (toolBox != null)
+            {
+                toolBox.Left = Left + toolBoxRelLeft;
+                toolBox.Top = Top + toolBoxRelTop;
+            }
+        }
+
+        #endregion
 
     }
 }
