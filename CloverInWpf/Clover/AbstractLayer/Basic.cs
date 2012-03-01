@@ -130,16 +130,19 @@ namespace Clover
     public class Face
     {
         List<Edge> edges = new List<Edge>();
-        public List<Edge> Edges
-        {
-            get { return edges; }
-            set { edges = value; }
-        }
         Point3D normal;
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
         List<Vertex> vertices = new List<Vertex>();
+
+        #region get/set
+        public List<Edge> Edges
+        {
+            get { return edges; }
+            set { edges = value; }
+        }
+        #endregion
 
         #region get/set
         public List<Vertex> Vertices
@@ -148,7 +151,7 @@ namespace Clover
         }
         public Point3D Normal
         {
-            get { return normal; }
+            get { UpdateNormal(); return normal; }
             set { normal = value; }
         }
         public Clover.Face LeftChild
@@ -168,6 +171,7 @@ namespace Clover
         }
         #endregion
 
+        #region 更新
         /// <summary>
         /// 更新面的点，方便绘制时使用
         /// </summary>
@@ -190,14 +194,14 @@ namespace Clover
         /// <returns></returns>
         bool UpdateNormal()
         {
-            if ( vertices.Count < 3 )
+            if (vertices.Count < 3)
                 return false;
-            Vertex[] p = new Vertex[ 3 ];
-            p[ 0 ] = vertices[ 0 ];
-            p[ 1 ] = Vertices[ 1 ];
-            p[ 2 ] = vertices[ 2 ];
+            Vertex[] p = new Vertex[3];
+            p[0] = vertices[0];
+            p[1] = Vertices[1];
+            p[2] = vertices[2];
             // 取任意位于面上的向量
-            
+
             // 被注释了
             //Point3D v1 = p[0].point - p[1].point;
             //Point3D v2 = p[0].point - p[2].point;
@@ -205,14 +209,13 @@ namespace Clover
 
             return true;
         }
+        #endregion
 
-
-
-
+        #region 对边的操作
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
-           // UpdateVertices();
+            // UpdateVertices();
         }
 
         public void SortEdge()
@@ -223,14 +226,14 @@ namespace Clover
             int edgecount = edges.Count;
             List<Edge> orderelist = new List<Edge>();
             orderelist.Add(currentedge);
-            for ( int i = 0; i < edgecount - 1; i++ )
+            for (int i = 0; i < edgecount - 1; i++)
             {
-                foreach(Edge e in edges)
+                foreach (Edge e in edges)
                 {
-                    if ( currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
+                    if (currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
                     {
                         orderelist.Add(e);
-                        edges.Remove( e );
+                        edges.Remove(e);
                         break;
                     }
                 }
@@ -239,14 +242,13 @@ namespace Clover
             UpdateVertices();
         }
 
-
-
         public bool RemoveEdge(Edge edge)
         {
             bool ret = edges.Remove(edge);
             UpdateVertices();
             return ret;
         }
+        #endregion
 
     }
 }
