@@ -5,7 +5,7 @@
     <Grid>
         <Viewport3D x:Name="foldingPaperViewport">
             <Viewport3D.Camera>
-                <PerspectiveCamera LookDirection="-9,-8,-10" Position="9,8,10" UpDirection="0,1,0" FieldOfView="45"/>
+                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,300" UpDirection="0,1,0" FieldOfView="45"/>
             </Viewport3D.Camera>
         </Viewport3D>
     </Grid>

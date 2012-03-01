@@ -19,6 +19,19 @@ namespace Clover
 
         #endregion
 
+        public List<Vertex> Vertices
+        {
+            get
+            {
+                List<Vertex> list = new List<Vertex>();
+                foreach (List<Vertex> l in VertexCellTable)
+                {
+                    list.Add(l[l.Count - 1]);
+                }
+                return list;
+            }
+        }
+
         #region Public Interfaces.
 
         // Constructor and Destroyer.
