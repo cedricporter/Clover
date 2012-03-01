@@ -176,6 +176,7 @@ namespace Clover.RenderLayer
             //    line.Thickness = 2;
             //    mainWindow.foldingPaperViewport.Children.Add(line);
             //}
+
             return mesh;
         }
     }

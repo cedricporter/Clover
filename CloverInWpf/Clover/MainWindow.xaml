@@ -13,7 +13,7 @@
             <!-- 折纸 -->
             <Viewport3D x:Name="foldingPaperViewport" MouseMove="foldingPaperViewport_MouseMove">
                 <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
+                    <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
             </Viewport3D>
             

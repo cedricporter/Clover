@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Clover.RenderLayer;
 
 namespace Clover
 {
@@ -16,10 +17,15 @@ namespace Clover
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
         MainWindow mainWindow;  /// 你懂得
-        Clover.RenderLayer.RenderController renderController;///渲染层
         #endregion
 
         #region get/set
+        RenderController renderController;///渲染层
+        public RenderController RenderController
+        {
+            get { return renderController; }
+            //set { renderController = value; }
+        }
         public List<Edge> Edges
         {
             get 
