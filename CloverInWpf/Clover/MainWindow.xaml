@@ -7,6 +7,7 @@
         Loaded="Window_Loaded" Closing="Window_Closing"
         MouseMove="Window_MouseMove" MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
+        
         <Grid Margin="4,0,4,4">
         	<!-- Mogre -->
 	        <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1" d:IsLocked="True">
@@ -56,6 +57,7 @@
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>      
 		</Grid>
+        
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
         	<Grid x:Name="MenuBarBackground" Margin="0">
         		<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="4,0"/>
