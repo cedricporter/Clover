@@ -12,12 +12,15 @@ namespace Clover
     /// </summary>
     public class Vertex 
     {
-        public Point3D point = new Point3D();
+        Point3D point = new Point3D();
+
 
         public float u = 0;
         public float v = 0;
 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
+
+        #region get/set
         public double X
         {
             get { return point.X; }
@@ -32,6 +35,12 @@ namespace Clover
         {
             get { return point.Z; }
             set { point.Z = value; }
+        }
+        #endregion
+
+        public Point3D GetPoint3D()
+        {
+            return point;
         }
 
         public Vertex(double x, double y, double z, int index = -1)
@@ -110,7 +119,7 @@ namespace Clover
 
         public bool IsVerticeIn(Point3D p)
         {
-            if ( p.Equals( Vertex1.point ) || p.Equals( Vertex2.point ) )
+            if ( p.Equals( Vertex1.GetPoint3D() ) || p.Equals( Vertex2.GetPoint3D() ) )
                 return true;
             return false;
         }
@@ -219,7 +228,7 @@ namespace Clover
             {
                 foreach(Edge e in edges)
                 {
-                    if ( currentedge.IsVerticeIn(e.Vertex1.point) || currentedge.IsVerticeIn(e.Vertex2.point))
+                    if ( currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
                     {
                         orderelist.Add(e);
                         edges.Remove( e );
