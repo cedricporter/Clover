@@ -91,8 +91,8 @@ namespace Clover.AbstractLayer
             C1 = f1.Normal.Z;
             C2 = f2.Normal.Z;
 
-            D1 = -( f1.Vertices[ 0 ].point.X * A1 + f1.Vertices[ 0 ].point.Y * B1 + f1.Vertices[ 0 ].point.Z * C1 );
-            D2 = -( f1.Vertices[ 0 ].point.X * A2 + f1.Vertices[ 0 ].point.Y * B2 + f1.Vertices[ 0 ].point.Z * C2 );
+            D1 = -( f1.Vertices[ 0 ].X * A1 + f1.Vertices[ 0 ].Y * B1 + f1.Vertices[ 0 ].Z * C1 );
+            D2 = -( f1.Vertices[ 0 ].X * A2 + f1.Vertices[ 0 ].Y * B2 + f1.Vertices[ 0 ].Z * C2 );
 
             if ( A1 * B2 == A2 * B1 &&
                 B1 * C2 == B2 * C1 &&

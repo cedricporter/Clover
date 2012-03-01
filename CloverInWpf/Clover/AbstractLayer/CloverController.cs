@@ -181,7 +181,7 @@ namespace Clover
 
             foreach (Vertex v in vertexLayer.Vertices)
             {
-                triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
+                triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
             }
              
 
@@ -194,7 +194,7 @@ namespace Clover
                     triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
                     triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
 
-                    Debug.WriteLine(face.Vertices[i].point);
+                    Debug.WriteLine(face.Vertices[i]);
                 }
             }
 
