@@ -136,7 +136,10 @@ namespace Clover.RenderLayer
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
+                // 更新3d坐标
                 mesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+                // 更新纹理坐标
+                mesh.TextureCoordinates.Add(new Point(v.u, v.v));
             }
             // 更新索引
             for (int i = 1; i < face.Vertices.Count - 1; i++)
