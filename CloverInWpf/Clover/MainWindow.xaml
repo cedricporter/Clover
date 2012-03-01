@@ -6,7 +6,7 @@
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closing="Window_Closing"
         MouseMove="Window_MouseMove" MouseLeftButtonDown="Window_MouseLeftButtonDown">
-    <Grid>
+    <Grid x:Name="WindowRoot">
         
         <!-- Mogre -->
         <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1" d:IsLocked="True">

@@ -147,7 +147,7 @@ namespace Clover
         /// <summary>
         /// 更新面的点，方便绘制时使用
         /// </summary>
-        void UpdateVertices()
+        public void UpdateVertices()
         {
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();

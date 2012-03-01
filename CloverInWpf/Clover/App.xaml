@@ -32,11 +32,17 @@
         </LinearGradientBrush>
         <SolidColorBrush x:Key="HeightLightBorderTopBlue" Color="#9AC7E3"/>
         <SolidColorBrush x:Key="TextWhiteBrush" Color="#F4F4F4"/>
+        <SolidColorBrush x:Key="TextBlueBrush" Color="#0099FF"/>
         
         <!-- Effects -->
         <BlurEffect x:Key="BlurEffect2px" Radius="2"/>
         <BlurEffect x:Key="BlurEffect4px" Radius="4"/>
         <DropShadowEffect x:Key="DropShadowEffect1px" ShadowDepth="1" Direction="270" Opacity="0.8"/>
+        
+        <!-- AlpahFadeInAnimation -->
+        <DoubleAnimation x:Key="AlpahFadeInAnimation" From="0"  To="1" Duration="0:0:0.3"/>
+        <!-- AlpahFadeOutAnimation -->
+        <DoubleAnimation x:Key="AlpahFadeOutAnimation" From="1"  To="0" Duration="0:0:0.3"/>
 
         <!-- MenuTemplate1 -->
     	<ControlTemplate x:Key="MenuTemplate1" TargetType="{x:Type Menu}">
