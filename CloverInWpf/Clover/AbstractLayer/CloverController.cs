@@ -106,6 +106,11 @@ namespace Clover
         List<Face> shadowFaces = new List<Face>();
 
 
+        /// <summary>
+        /// 根据鼠标位移更新折线
+        /// </summary>
+        /// <param name="xRel"></param>
+        /// <param name="yRel"></param>
         void CalculateFoldingLine(float xRel, float yRel)
         {
             
