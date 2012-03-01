@@ -108,6 +108,11 @@ namespace Clover
         List<Face> shadowFaces = new List<Face>();
 
 
+        /// <summary>
+        /// 根据鼠标位移更新折线
+        /// </summary>
+        /// <param name="xRel"></param>
+        /// <param name="yRel"></param>
         void CalculateFoldingLine(float xRel, float yRel)
         {
             
@@ -178,7 +183,7 @@ namespace Clover
 
             //foreach (Vertex v in vertexLayer.Vertices)
             //{
-            //    triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
+            //    triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
             //}
              
 
