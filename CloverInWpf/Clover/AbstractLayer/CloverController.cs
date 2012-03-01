@@ -15,8 +15,8 @@ namespace Clover
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
-        MainWindow mainWindow;
-        Clover.RenderLayer.RenderController renderController;
+        MainWindow mainWindow;  /// 你懂得
+        Clover.RenderLayer.RenderController renderController;///渲染层
         #endregion
 
         #region get/set

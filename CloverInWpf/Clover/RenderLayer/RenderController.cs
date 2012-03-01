@@ -24,7 +24,14 @@ namespace Clover.RenderLayer
     {
 
         #region Get/Set 方法
-        
+
+        Double distance = 300;
+        public System.Double Distance
+        {
+            get { return distance; }
+            set { distance = value; }
+        }
+
         Material frontMaterial;
 	    public System.Windows.Media.Media3D.Material FrontMaterial
 	    {
@@ -86,6 +93,7 @@ namespace Clover.RenderLayer
         {
             entity.Content = modelGroup;
             this.mainWindow = mainWindow;
+            entity.Transform = new TranslateTransform3D(0, 0, -distance);
         }
 
         /// <summary>

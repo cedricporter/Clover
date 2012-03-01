@@ -8,6 +8,9 @@ using Clover.Tool;
 using Clover.Visual;
 using Clover.RenderLayer;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
+using _3DTools;
+using System.Diagnostics;
 
 
 
@@ -151,6 +154,28 @@ namespace Clover
             }
         }
 
+        /// <summary>
+        /// 当鼠标在折纸视口上。。。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void foldingPaperViewport_MouseMove(object sender, MouseEventArgs e)
+        {
+            //Viewport3DVisual viewport;
+            //Boolean success;
+            //Matrix3D visualToScreen = MathUtils.TryTransformTo2DAncestor(foldingPaperViewport.Children[0], out viewport, out success);
+            //if (success)
+            //{
+            //    Point3D p1 = cloverController.Edges[0].Vertex1.GetPoint3D() * visualToScreen;
+            //    Point3D p2 = cloverController.Edges[0].Vertex2.GetPoint3D() * visualToScreen;
+            //    Debug.WriteLine("======================");
+            //    Debug.Write(p1);
+            //    Debug.Write("      ");
+            //    Debug.WriteLine(p2);
+            //    Debug.WriteLine(Mouse.GetPosition(foldingPaperViewport));
+            //}
+        }
+
         #endregion
 
         #region 主窗体大小改变
@@ -171,6 +196,26 @@ namespace Clover
         }
 
         #endregion
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            Viewport3DVisual viewport;
+            Boolean success;
+            Matrix3D visualToScreen = MathUtils.TryTransformTo2DAncestor(foldingPaperViewport.Children[0], out viewport, out success);
+            if (success)
+            {
+                Point3D p1 = cloverController.Edges[0].Vertex1.GetPoint3D() * visualToScreen;
+                Point3D p2 = cloverController.Edges[0].Vertex2.GetPoint3D() * visualToScreen;
+                //Debug.WriteLine("======================");
+                //Debug.Write(p1);
+                //Debug.Write("      ");
+                //Debug.WriteLine(p2);
+                //Debug.WriteLine(Mouse.GetPosition(foldingPaperViewport));
+                Debug.WriteLine(foldingPaperViewport.ActualHeight);
+            }
+        }
+
+        
 
     }
 }
