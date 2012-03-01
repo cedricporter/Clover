@@ -63,14 +63,21 @@
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
+                    <Separator></Separator>
+                    <MenuItem Header="Save"/>
+                    <MenuItem Header="Export...">
+                        <MenuItem Header="3D Model"/>
+                        <MenuItem Header="Annotated Paper"/>
+                        <MenuItem Header="Folding Script"/>
+                    </MenuItem>
 				</MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="ToolBox"/>
                 </MenuItem>
 			</Menu>
-            <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{DynamicResource RectangleButtonTemplate1}"/>
-            <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}" Content="口"/>
-            <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}">X</Button>
+            <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{StaticResource RectangleButtonTemplate1}"/>
+            <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}" Content="口"/>
+            <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}">X</Button>
         </Grid>
         
     </Grid>

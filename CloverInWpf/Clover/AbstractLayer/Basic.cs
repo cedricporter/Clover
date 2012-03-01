@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mogre;
+using System.Windows.Media.Media3D;
 
 namespace Clover
 {
+
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
     class Vertex
     {
-        public Vector3 point;
+        public Point3D point;
 
         public float u = 0;
         public float v = 0;
@@ -20,9 +21,9 @@ namespace Clover
 
         public Vertex(float x, float y, float z, int index = -1)
         {
-            point.x = x;
-            point.y = y;
-            point.z = z;
+            point.X = x;
+            point.Y = y;
+            point.Z = z;
 
             Index = index;
         }
@@ -92,7 +93,7 @@ namespace Clover
             vertex2 = v2;
         }
 
-        public bool IsVerticeIn(Vector3 p)
+        public bool IsVerticeIn(Point3D p)
         {
             if ( p.Equals( Vertex1.point ) || p.Equals( Vertex2.point ) )
                 return true;
@@ -111,7 +112,7 @@ namespace Clover
             get { return edges; }
             set { edges = value; }
         }
-        Vector3 normal;
+        Point3D normal;
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
@@ -122,7 +123,7 @@ namespace Clover
         {
             get { return vertices; }
         }
-        public Mogre.Vector3 Normal
+        public Point3D Normal
         {
             get { return normal; }
             set { normal = value; }
@@ -173,9 +174,12 @@ namespace Clover
             p[ 1 ] = Vertices[ 1 ];
             p[ 2 ] = vertices[ 2 ];
             // 取任意位于面上的向量
-            Vector3 v1 = p[0].point - p[1].point;
-            Vector3 v2 = p[0].point - p[2].point;
-            normal = v1.CrossProduct( v2 );
+            
+            // 被注释了
+            //Point3D v1 = p[0].point - p[1].point;
+            //Point3D v2 = p[0].point - p[2].point;
+            //normal = v1.CrossProduct( v2 );
+
             return true;
         }
 
