@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Clover
 {
@@ -144,9 +145,17 @@ namespace Clover
             paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
             foreach (Face face in faceLayer.Leaves)
             {
+                face.UpdateVertices();
                 for (int i = 0; i < face.Vertices.Count; i++)
                 {
                     paper.Position(face.Vertices[i].point);
+                    Debug.WriteLine(face.Vertices[i].point);
+                }
+
+                for (int i = face.Vertices.Count - 1; i > 0; i--)
+                {
+                    paper.Position(face.Vertices[i].point);
+                    Debug.WriteLine(face.Vertices[i].point);
                 }
             }
             paper.End();
