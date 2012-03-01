@@ -92,7 +92,7 @@ namespace Clover
             // 初始化抽象数据结构，暂时先放在这里，到时再说了
             cloverController = new CloverController();
             cloverController.Initialize( 100, 100 );
-            cloverRoot.AttachObject(cloverController.Paper);
+            //cloverRoot.AttachObject(cloverController.Paper);
             cloverController.UpdatePaper();
         }
 
@@ -120,6 +120,11 @@ namespace Clover
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
+        }
+
+        ~MainWindow()
+        {
+            //System.Windows.MessageBox.Show("Fuck");
         }
 
         /// <summary>
@@ -238,8 +243,32 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (toolBox != null)
-                toolBox.Close();
+            try
+            {
+
+                MogreImage img = MogreImage.Source as MogreImage;
+                if (img != null)
+                {
+                    img.Dispose();
+                }
+                MogreImage = null;
+
+                MogreRootManager.DisposeSharedRoot();
+
+                cloverRoot.Dispose();
+                cloverRoot = null;
+                sceneManager = null;
+                rootSceneNode.Dispose();
+                rootSceneNode = null;
+                cameras.Clear();
+
+                if (toolBox != null)
+                    toolBox.Close();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.ToString());
+            }
         }
 
         #endregion
