@@ -58,6 +58,7 @@ namespace Clover.Tool
                 raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
                 raySceneQuery.SetSortByDistance(true);
             }
+
             raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
 
             Ray ray = raySceneQuery.Ray;
@@ -80,6 +81,7 @@ namespace Clover.Tool
                 // PerformPick
 
             }
+
             return null;
         }
 

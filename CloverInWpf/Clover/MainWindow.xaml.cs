@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Mogre;
 using MogreInWpf;
 using Clover.Tool;
+using Clover.Visual;
 using System.Windows.Media;
 
 
@@ -44,6 +45,8 @@ namespace Clover
         CloverController cloverController;
         Paper paper;
         #endregion
+
+        VisualController visualController;
 
         /// <summary>
         /// 场景创建
@@ -101,7 +104,8 @@ namespace Clover
         /// </summary>
         private void mogreImageSource_PreRender(object sender, EventArgs e)
         {
-
+            if (visualController != null)
+                visualController.Update();
         }
 
         #region 构造和初始化
@@ -109,12 +113,20 @@ namespace Clover
         public MainWindow()
         {
             InitializeComponent();
-
+            // 各种窗口
             // 窗口
             toolBox = new ToolBox(this);
-            // 导航立方提
-            cubeNav = new CubeNavigator(this);
+            //toolBox.Show();
+            // 测试Visual
+            visualController = VisualController.GetSingleton(this);
+            TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
+            visualController.AddVisual(vi);
+            vi.Start();
 
+
+            // 导航立方
+            cubeNav = new CubeNavigator(this);
+            
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
