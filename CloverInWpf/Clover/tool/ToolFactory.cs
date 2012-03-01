@@ -49,20 +49,20 @@ namespace Clover.Tool
         /// <returns>拾取到的CloverElement。如果没拾取到，返回null</returns>
         public Object ExcuteHitTest()
         {
-            //Camera camera = mainWindow.cameras[0];
+            Camera camera = mainWindow.cameras[0];
 
-            //float x = (float)(currMousePos.X / mainWindow.MogreImage.ActualWidth);
-            //float y = (float)(currMousePos.Y / mainWindow.MogreImage.ActualHeight);
+            float x = (float)(currMousePos.X / mainWindow.MogreImage.ActualWidth);
+            float y = (float)(currMousePos.Y / mainWindow.MogreImage.ActualHeight);
 
-            //if (null == raySceneQuery)
-            //{
-            //    raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray());
-            //    raySceneQuery.SetSortByDistance(true);
-            //}
+            if (null == raySceneQuery)
+            {
+                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray());
+                raySceneQuery.SetSortByDistance(true);
+            }
 
-            //Ray mouseRay = camera.GetCameraToViewportRay(x, y);
-            //RaySceneQuery query = mainWindow.sceneManager.CreateRayQuery(mouseRay);
-            //RaySceneQueryResult rayresult = query.Execute();
+            Ray mouseRay = camera.GetCameraToViewportRay(x, y);
+            RaySceneQuery query = mainWindow.sceneManager.CreateRayQuery(mouseRay);
+            RaySceneQueryResult rayresult = query.Execute();
 
 
             //raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
@@ -71,7 +71,7 @@ namespace Clover.Tool
 
             //Debug.WriteLine(ray.Direction.x.ToString() + "," + ray.Direction.y.ToString() + "," + ray.Direction.z.ToString());
             //RaySceneQueryResult rayresult = raySceneQuery.Execute();
-            //Debug.WriteLine(rayresult.Count.ToString());
+            Debug.WriteLine(rayresult.Count.ToString());
 
 
             //if (rayresult.Count <= 0)

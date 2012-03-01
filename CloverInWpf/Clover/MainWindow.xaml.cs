@@ -271,30 +271,30 @@ namespace Clover
                 currentTool.onMove();
 
             
-            Edge ed = cloverController.Edges[0];
-            Debug.WriteLine("==============================");
-            Debug.WriteLine(ed.Vertex1.point);
-            //Debug.WriteLine(ed.Vertex2.point);
+            //Edge ed = cloverController.Edges[0];
+            //Debug.WriteLine("==============================");
+            //Debug.WriteLine(ed.Vertex1.point);
+            ////Debug.WriteLine(ed.Vertex2.point);
 
-            Camera cam = cameras[0];
-            Matrix4 vm = cam.ViewMatrix;
-            Matrix4 pm = cam.ProjectionMatrix;
-            Vector4 vec = pm * vm * new Vector4(ed.Vertex1.point.x, ed.Vertex1.point.y, ed.Vertex1.point.z, 1);
-            vec.x /= vec.w;
-            vec.y /= vec.w;
-            vec = vec / 2.0f + 0.5f;
-            vec.y = 1 - vec.y;
-            vec.x *= (float)ActualHeight;
-            vec.y *= (float)ActualWidth;
-            Debug.WriteLine(vec);
+            //Camera cam = cameras[0];
+            //Matrix4 vm = cam.ViewMatrix;
+            //Matrix4 pm = cam.ProjectionMatrix;
+            //Vector4 vec = pm * vm * new Vector4(ed.Vertex1.point.x, ed.Vertex1.point.y, ed.Vertex1.point.z, 1);
+            //vec.x /= vec.w;
+            //vec.y /= vec.w;
+            //vec = vec / 2.0f + 0.5f;
+            //vec.y = 1 - vec.y;
+            //vec.x *= (float)ActualHeight;
+            //vec.y *= (float)ActualWidth;
+            //Debug.WriteLine(vec);
 
-            //float x = (float)(Mouse.GetPosition(this).X / MogreImage.ActualWidth);
-            //float y = (float)(Mouse.GetPosition(this).Y / MogreImage.ActualHeight);
-            //Debug.WriteLine(x.ToString() + "," + y.ToString());
-            Debug.WriteLine(Mouse.GetPosition(MogreImage));
+            ////float x = (float)(Mouse.GetPosition(this).X / MogreImage.ActualWidth);
+            ////float y = (float)(Mouse.GetPosition(this).Y / MogreImage.ActualHeight);
+            ////Debug.WriteLine(x.ToString() + "," + y.ToString());
+            //Debug.WriteLine(Mouse.GetPosition(MogreImage));
 
-            Debug.WriteLine(cam.Viewport.ActualHeight.ToString() + "," + cam.Viewport.ActualWidth.ToString());
-            Debug.WriteLine(MogreImage.ActualHeight.ToString() + "," + MogreImage.ActualWidth.ToString());
+            //Debug.WriteLine(cam.Viewport.ActualHeight.ToString() + "," + cam.Viewport.ActualWidth.ToString());
+            //Debug.WriteLine(MogreImage.ActualHeight.ToString() + "," + MogreImage.ActualWidth.ToString());
 
 
             //foreach (Edge ed in cloverController.Edges)
