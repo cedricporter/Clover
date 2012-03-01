@@ -14,7 +14,6 @@ namespace Clover
     {
         Point3D point = new Point3D();
 
-
         public float u = 0;
         public float v = 0;
 
@@ -43,7 +42,7 @@ namespace Clover
             return point;
         }
 
-        public Vertex(double x, double y, double z, int index = -1)
+        public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
         {
             point.X = x;
             point.Y = y;
