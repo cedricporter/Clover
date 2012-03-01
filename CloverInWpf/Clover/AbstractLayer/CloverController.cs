@@ -15,11 +15,11 @@ namespace Clover
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
+        MainWindow mainWindow;
+        Clover.RenderLayer.RenderController renderController;
         #endregion
 
         #region get/set
-        Clover.RenderLayer.RenderController renderController = new Clover.RenderLayer.RenderController();
-
         public List<Edge> Edges
         {
             get 
@@ -75,12 +75,13 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController()
+        public CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
-
+            this.mainWindow = mainWindow;
+            renderController = new Clover.RenderLayer.RenderController(mainWindow);
             //paper = new Paper("paper");
         }
         #endregion
@@ -213,6 +214,9 @@ namespace Clover
             //    triangleMesh, material);
             //triangleModel.BackMaterial = material;
             //model.Content = triangleModel;
+
+            if (renderController == null)
+                return model;
 
             MaterialGroup mgf = new MaterialGroup();
             mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));

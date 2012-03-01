@@ -34,15 +34,12 @@ namespace Clover
         #region 折纸部分
 
         // 抽象数据结构控制器
-        CloverController cloverController = new CloverController();
+        CloverController cloverController;
         public Clover.CloverController CloverController
         {
             get { return cloverController; }
         }
         //Paper paper;
-
-        // 渲染层控制器
-        //public RenderController renderController = new RenderController();
 
         #endregion
 
@@ -60,19 +57,20 @@ namespace Clover
             //visualController.AddVisual(vi);
             //vi.Start();
 
-
             // 导航立方
             cubeNav = new CubeNavigator(this);
+
+            // 初始化纸张
+            cloverController = new CloverController(this);
+            cloverController.Initialize(100, 100);
+            cloverController.UpdatePaper();
+            foldingPaperViewport.Children.Add(cloverController.Model);
             
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
-
-            cloverController.Initialize(100, 100);
-            cloverController.UpdatePaper();
-            foldingPaperViewport.Children.Add(cloverController.Model);
         }
 
         ~MainWindow()
@@ -92,6 +90,7 @@ namespace Clover
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
             toolBox.Show();
+            
         }
 
         #endregion

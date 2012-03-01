@@ -66,17 +66,26 @@ namespace Clover.RenderLayer
         public Dictionary<Face, GeometryModel3D> FaceMeshMap
         {
             get { return faceMeshMap; }
-            set { faceMeshMap = value; }
+            //set { faceMeshMap = value; }
         }
 
+        //Dictionary<Edge, ModelVisual3D> edgeLineMap = new Dictionary<Edge, ModelVisual3D>();
+        //public Dictionary<Edge, ModelVisual3D> EdgeLineMap
+        //{
+        //    get { return edgeLineMap; }
+        //    //set { edgeLineMap = value; }
+        //}
         #endregion
+
+        MainWindow mainWindow;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        public RenderController()
+        public RenderController(MainWindow mainWindow)
         {
             entity.Content = modelGroup;
+            this.mainWindow = mainWindow;
         }
 
         /// <summary>
@@ -149,6 +158,16 @@ namespace Clover.RenderLayer
                 mesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
+            //// 描绘边缘
+            //foreach (Edge edge in face.Edges)
+            //{
+            //    _3DTools.ScreenSpaceLines3D line = new _3DTools.ScreenSpaceLines3D();
+            //    line.Points.Add(edge.Vertex1.GetPoint3D());
+            //    line.Points.Add(edge.Vertex2.GetPoint3D());
+            //    line.Color = Colors.Black;
+            //    line.Thickness = 2;
+            //    mainWindow.foldingPaperViewport.Children.Add(line);
+            //}
             return mesh;
         }
     }
