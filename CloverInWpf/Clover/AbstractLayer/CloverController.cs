@@ -10,18 +10,13 @@ namespace Clover
 {
     public class CloverController
     {
+        #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
-        //Paper paper;            /// 纸张实体，ogre的实体，用于画图
-
-        #region get/set
-        //public Clover.Paper Paper
-        //{
-        //    get { return paper; }
-        //}
         #endregion
 
+        #region get/set
         public List<Edge> Edges
         {
             get 
@@ -34,7 +29,9 @@ namespace Clover
                 return list;
             }
         }
+        #endregion
 
+        #region 初始化
         public void Initialize(float width, float height)
         {
             // Create 4 original vertices
@@ -78,7 +75,9 @@ namespace Clover
 
             //paper = new Paper("paper");
         }
+        #endregion
         
+        #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
@@ -122,7 +121,7 @@ namespace Clover
 
         bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
         {
-            return true; 
+            return true;
         }
 
         bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
@@ -139,15 +138,15 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
         {
-           // 计算初始折线
+            // 计算初始折线
             CalculateFoldingLine(xRel, yRel);
 
-           // 创建移动面分组
+            // 创建移动面分组
             List<Face> faceWithFoldingLine = new List<Face>();
             List<Face> faceWithoutFoldingLine = new List<Face>();
-            
+
             // 根据面组遍历所有面，判定是否属于移动面并分组插入
-            foreach(Face face in faceLayer.Leaves)
+            foreach (Face face in faceLayer.Leaves)
             {
                 if (TestMovedFace(face, pickedFace, pickedVertex))
                 {
@@ -164,6 +163,9 @@ namespace Clover
 
         }
 
+        #endregion
+
+        #region 更新图形层的模型
         ModelVisual3D model = new ModelVisual3D();
         public System.Windows.Media.Media3D.ModelVisual3D Model
         {
@@ -183,7 +185,7 @@ namespace Clover
             {
                 triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
             }
-             
+
 
             foreach (Face face in faceLayer.Leaves)
             {
@@ -207,5 +209,6 @@ namespace Clover
 
             return model;
         }
+        #endregion
     }
 }
