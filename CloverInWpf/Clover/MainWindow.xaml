@@ -63,8 +63,7 @@
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
-                    <Separator></Separator>
-                    <MenuItem Header="Save"/>
+                    <Separator BorderThickness="10" Style="{DynamicResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
                         <MenuItem Header="3D Model"/>
                         <MenuItem Header="Annotated Paper"/>
