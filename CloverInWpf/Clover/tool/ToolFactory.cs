@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Mogre;
 using System.Windows.Input;
 
 /**
@@ -29,9 +28,6 @@ namespace Clover.Tool
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
 
-        protected static RaySceneQuery raySceneQuery = null;
-
-
         MainWindow mainWindow;
 
         public ToolFactory(MainWindow mainWindow)
@@ -48,40 +44,6 @@ namespace Clover.Tool
         /// <returns>拾取到的CloverElement。如果没拾取到，返回null</returns>
         public Object ExcuteHitTest()
         {
-            Camera camera = mainWindow.cameras[0];
-
-            float x = (float)(currMousePos.X / mainWindow.MogreImage.ActualWidth);
-            float y = (float)(currMousePos.Y / mainWindow.MogreImage.ActualHeight);
-
-            if (null == raySceneQuery)
-            {
-                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
-                raySceneQuery.SetSortByDistance(true);
-            }
-
-            raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
-
-            Ray ray = raySceneQuery.Ray;
-            RaySceneQueryResult rayresult = raySceneQuery.Execute();
-            if (rayresult.Count <= 0)
-                return null;
-
-            RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
-
-            foreach (RaySceneQueryResultEntry resultEntry in queryResult)
-            {
-                if (resultEntry.movable == null)
-                    continue;
-
-                // 折纸的mesh也许不叫这个名字，不过先这样写着先
-                if (resultEntry.movable.Name != "CloverEntity")
-                    continue;
-
-                // todo
-                // PerformPick
-
-            }
-
             return null;
         }
 
@@ -90,7 +52,7 @@ namespace Clover.Tool
         /// </summary>
         public void onMove()
         {
-            currMousePos = Mouse.GetPosition(mainWindow.MogreImage);
+            currMousePos = Mouse.GetPosition(mainWindow);
             if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
             {
                 currOveredElement = ExcuteHitTest();

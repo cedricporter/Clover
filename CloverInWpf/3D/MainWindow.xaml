@@ -1,0 +1,12 @@
+﻿<Window x:Class="_3D.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Viewport3D x:Name="foldingPaperViewport">
+            <Viewport3D.Camera>
+                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,300" UpDirection="0,1,0" FieldOfView="45"/>
+            </Viewport3D.Camera>
+        </Viewport3D>
+    </Grid>
+</Window>

@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clover", "Clover\Clover.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MogreImage", "MogreImage\MogreImage.csproj", "{5C76A1AF-286C-4F0E-B588-0A376AAC654F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3D", "3D\3D.csproj", "{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -21,6 +23,9 @@ Global
 		{5C76A1AF-286C-4F0E-B588-0A376AAC654F}.Debug|x86.ActiveCfg = Debug|x86
 		{5C76A1AF-286C-4F0E-B588-0A376AAC654F}.Release|x86.ActiveCfg = Release|x86
 		{5C76A1AF-286C-4F0E-B588-0A376AAC654F}.Release|x86.Build.0 = Release|x86
+		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Debug|x86.ActiveCfg = Debug|x86
+		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Release|x86.ActiveCfg = Release|x86
+		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
