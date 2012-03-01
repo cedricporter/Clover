@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Media.Media3D;
+using System.Windows.Media;
 
 namespace Clover
 {
-    class CloverController
+    public class CloverController
     {
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
@@ -159,27 +161,49 @@ namespace Clover
             // 更新数据结构中的信息
             UpdateDataStruct();
         }
+        ModelVisual3D model = new ModelVisual3D();
+        public System.Windows.Media.Media3D.ModelVisual3D Model
+        {
+            get { return model; }
+            set { model = value; }
+        }
 
-        public void UpdatePaper()
+        public ModelVisual3D UpdatePaper()
         {
             faceLayer.UpdateLeaves();
             //paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
-            //foreach (Face face in faceLayer.Leaves)
-            //{
-            //    face.UpdateVertices();
-            //    for (int i = 0; i < face.Vertices.Count; i++)
-            //    {
-            //        paper.Position(face.Vertices[i].point);
-            //        Debug.WriteLine(face.Vertices[i].point);
-            //    }
 
-            //    for (int i = face.Vertices.Count - 1; i > 0; i--)
-            //    {
-            //        paper.Position(face.Vertices[i].point);
-            //        Debug.WriteLine(face.Vertices[i].point);
-            //    }
-            //}
-            //paper.End();
+
+
+            MeshGeometry3D triangleMesh = new MeshGeometry3D();
+
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
+            }
+             
+
+            foreach (Face face in faceLayer.Leaves)
+            {
+                face.UpdateVertices();
+                for (int i = 1; i < face.Vertices.Count - 1; i++)
+                {
+                    triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
+                    triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
+                    triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
+
+                    Debug.WriteLine(face.Vertices[i].point);
+                }
+            }
+
+            Material material = new DiffuseMaterial(
+                new SolidColorBrush(Colors.DarkKhaki));
+            GeometryModel3D triangleModel = new GeometryModel3D(
+                triangleMesh, material);
+            triangleModel.BackMaterial = material;
+            model.Content = triangleModel;
+
+            return model;
         }
     }
 }
