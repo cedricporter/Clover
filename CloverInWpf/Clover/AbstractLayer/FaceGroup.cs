@@ -9,6 +9,8 @@ namespace Clover.AbstractLayer
     {
         List<List<Face>> GroupList = new List<List<Face>>();
 
+
+
         public void Initialize( FacecellTree facetree )
         {
             foreach ( Face f in facetree.Leaves )
@@ -58,6 +60,22 @@ namespace Clover.AbstractLayer
                     return true;
             }
             return false;
+        }
+
+
+        List<Face> GetGroup(Face f)
+        {
+            foreach (List<Face> l in GroupList)
+            {
+                foreach (Face face in l)
+                {
+                    if (f == face)
+                    {
+                        return l;
+                    }
+                }
+            }
+            return null;
         }
 
         bool IsInSameGroup(Face f1, Face f2)

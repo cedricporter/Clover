@@ -212,6 +212,8 @@ namespace Clover
             UpdateVertices();
         }
 
+
+
         public bool RemoveEdge(Edge edge)
         {
             bool ret = edges.Remove(edge);
