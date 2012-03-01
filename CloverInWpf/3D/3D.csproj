@@ -5,25 +5,23 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}</ProjectGuid>
+    <ProjectGuid>{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clover</RootNamespace>
-    <AssemblyName>Clover</AssemblyName>
+    <RootNamespace>_3D</RootNamespace>
+    <AssemblyName>3D</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <Utf8Output>true</Utf8Output>
-    <ExpressionBlendVersion>4.0.20621.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,11 +36,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LionFire.MOgreImage, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\bin\Debug\LionFire.MOgreImage.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -62,18 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AbstractLayer\Convert3DInfoTo2D.cs" />
-    <Compile Include="AbstractLayer\FaceGroup.cs" />
-    <Compile Include="AbstractLayer\Paper.cs" />
-    <Compile Include="ToolBox.xaml.cs">
-      <DependentUpon>ToolBox.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tool\FoldTool.cs" />
-    <Compile Include="Tool\TestTool.cs" />
-    <Compile Include="Tool\ToolFactory.cs" />
-    <Compile Include="Visual\TextVisualElement.cs" />
-    <Compile Include="Visual\VisualController.cs" />
-    <Compile Include="Visual\VisualElementFactory.cs" />
+    <Compile Include="VertexLayer.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -82,23 +64,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AbstractLayer\Basic.cs" />
-    <Compile Include="CubeNavigator.cs" />
-    <Compile Include="AbstractLayer\CloverController.cs" />
-    <Compile Include="AbstractLayer\EdgeLayer.cs" />
-    <Compile Include="AbstractLayer\EdgeTree.cs" />
-    <Compile Include="AbstractLayer\FaceLayer.cs" />
-    <Compile Include="AbstractLayer\VertexLayer.cs" />
+    <Compile Include="Basic.cs" />
+    <Compile Include="CloverController.cs" />
+    <Compile Include="Convert3DInfoTo2D.cs" />
+    <Compile Include="EdgeLayer.cs" />
+    <Compile Include="EdgeTree.cs" />
+    <Compile Include="FaceGroup.cs" />
+    <Compile Include="FaceLayer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ToolBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Paper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -116,20 +95,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="media\texture\AppBackground.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="media\texture\CubeNavTex.png" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

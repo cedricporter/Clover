@@ -6,61 +6,55 @@
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closing="Window_Closing"
         MouseMove="Window_MouseMove" MouseLeftButtonDown="Window_MouseLeftButtonDown">
-    <Grid x:Name="WindowRoot">
+    <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
         
-        <!-- Mogre -->
-        <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1" d:IsLocked="True">
-            <Image x:Name="MogreImage" SizeChanged="MogreImage_SizeChanged"/>
-        </Grid>
+        <Grid Margin="4,0,4,4">
+	        <!-- 正方体导航
+	                  4 ______7
+	                  /|      /
+	               0 /_|___3 /|
+	                 | |____|_|
+	                 | /5   | /6
+	                1|/____2|/ 
+	        -->
+	        <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True">
+	            <Viewport3D.Camera>
+	                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
+	            </Viewport3D.Camera>
+	            <ModelVisual3D>
+	                <ModelVisual3D.Content>
+	                    <Model3DGroup x:Name="CubeNavModel">
+	                        <GeometryModel3D>
+	                            <GeometryModel3D.Geometry>
+	                                <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,10,10 10,10,10 -10,-10,10 10,-10,10 10,10,-10 10,-10,-10 -10,10,-10 -10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10
+	-10,-10,-10 -10,10,10 -10,10,10 -10,-10,-10 -10,-10,10 10,10,10 10,-10,10 10,10,-10 10,10,-10 10,-10,10 10,-10,-10 -10,10,-10 -10,10,10
+	10,10,-10 10,10,-10 -10,10,10 10,10,10 -10,-10,10 -10,-10,-10 10,-10,10 10,-10,10 -10,-10,-10 10,-10,-10"
+	                                                TriangleIndices="0 1 2 3 4 5 6 7 8 9 10 11                                                  12 13 14 15 16 17 18 19 20 21 22 23                                                 24 25 26 27 28 29 30 31 32 33 34 35"
+	                                                TextureCoordinates="0.6667,0 0.6667,1 0.8333,0 0.8333,0 0.6667,1 0.8333,1 0.8333,0 0.8333,1 1,0 1,0 0.8333,1 1,1 0.3333,0 0.3333,1 0.5,0 0.5,0 0.3333,1 0.5,1 0.5,0 0.5,1 0.6667,0 0.6667,0 0.5,1
+	0.6667,1 0,0 0,1 0.1667,0 0.1667,0 0,1 0.1667,1 0.1667,0 0.1667,1 0.3333,0 0.3333,0 0.1667,1 0.3333,1"/>
+	                            </GeometryModel3D.Geometry>
+	                            <GeometryModel3D.Material>
+	                                <MaterialGroup>
+	                                    <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
+	                                </MaterialGroup>
+	                            </GeometryModel3D.Material>
+	                        </GeometryModel3D>
+	                    </Model3DGroup>
+	                </ModelVisual3D.Content>
+	            </ModelVisual3D>
+	            <ModelVisual3D>
+	                <ModelVisual3D.Content>
+	                    <AmbientLight Color="White"/>
+	                </ModelVisual3D.Content>
+	            </ModelVisual3D>
+	        </Viewport3D>	        
+	        <!-- 背景图片 -->
+	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>      
+		</Grid>
         
-        
-        <!-- 正方体导航
-                  4 ______7
-                  /|      /
-               0 /_|___3 /|
-                 | |____|_|
-                 | /5   | /6
-                1|/____2|/ 
-        -->
-        <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True">
-            <Viewport3D.Camera>
-                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
-            </Viewport3D.Camera>
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <Model3DGroup x:Name="CubeNavModel">
-                        <GeometryModel3D>
-                            <GeometryModel3D.Geometry>
-                                <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,10,10 10,10,10 -10,-10,10 10,-10,10 10,10,-10 10,-10,-10 -10,10,-10 -10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10
--10,-10,-10 -10,10,10 -10,10,10 -10,-10,-10 -10,-10,10 10,10,10 10,-10,10 10,10,-10 10,10,-10 10,-10,10 10,-10,-10 -10,10,-10 -10,10,10
-10,10,-10 10,10,-10 -10,10,10 10,10,10 -10,-10,10 -10,-10,-10 10,-10,10 10,-10,10 -10,-10,-10 10,-10,-10"
-                                                TriangleIndices="0 1 2 3 4 5 6 7 8 9 10 11                                                  12 13 14 15 16 17 18 19 20 21 22 23                                                 24 25 26 27 28 29 30 31 32 33 34 35"
-                                                TextureCoordinates="0.6667,0 0.6667,1 0.8333,0 0.8333,0 0.6667,1 0.8333,1 0.8333,0 0.8333,1 1,0 1,0 0.8333,1 1,1 0.3333,0 0.3333,1 0.5,0 0.5,0 0.3333,1 0.5,1 0.5,0 0.5,1 0.6667,0 0.6667,0 0.5,1
-0.6667,1 0,0 0,1 0.1667,0 0.1667,0 0,1 0.1667,1 0.1667,0 0.1667,1 0.3333,0 0.3333,0 0.1667,1 0.3333,1"/>
-                            </GeometryModel3D.Geometry>
-                            <GeometryModel3D.Material>
-                                <MaterialGroup>
-                                    <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
-                                </MaterialGroup>
-                            </GeometryModel3D.Material>
-                        </GeometryModel3D>
-                    </Model3DGroup>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-            
-
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <AmbientLight Color="White"/>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-        </Viewport3D>
-        
-        <!-- 背景图片 -->
-        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
-        <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top">
+        <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
         	<Grid x:Name="MenuBarBackground" Margin="0">
-        		<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="0"/>
+        		<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="4,0"/>
         		<Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
         		<Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
         	</Grid>
@@ -75,6 +69,9 @@
                     <MenuItem Header="ToolBox"/>
                 </MenuItem>
 			</Menu>
+            <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{DynamicResource RectangleButtonTemplate1}"/>
+            <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}" Content="口"/>
+            <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}">X</Button>
         </Grid>
         
     </Grid>
