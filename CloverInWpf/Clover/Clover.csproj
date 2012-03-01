@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AbstractLayer\Convert3DInfoTo2D.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="ToolBox.xaml.cs">
