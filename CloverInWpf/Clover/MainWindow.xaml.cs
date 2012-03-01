@@ -118,10 +118,10 @@ namespace Clover
             toolBox = new ToolBox(this);
             //toolBox.Show();
             // 测试Visual
-            visualController = VisualController.GetSingleton(this);
-            TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
-            visualController.AddVisual(vi);
-            vi.Start();
+            //visualController = VisualController.GetSingleton(this);
+            //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
+            //visualController.AddVisual(vi);
+            //vi.Start();
 
 
             // 导航立方
