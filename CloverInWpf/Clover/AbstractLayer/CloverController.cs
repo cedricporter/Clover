@@ -22,6 +22,8 @@ namespace Clover
         //}
         #endregion
 
+        Clover.RenderLayer.RenderController renderController = new Clover.RenderLayer.RenderController();
+
         public List<Edge> Edges
         {
             get 
@@ -167,39 +169,50 @@ namespace Clover
         }
         public ModelVisual3D UpdatePaper()
         {
-            faceLayer.UpdateLeaves();
-            //paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
+            //faceLayer.UpdateLeaves();
+            ////paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
 
 
 
-            MeshGeometry3D triangleMesh = new MeshGeometry3D();
+            //MeshGeometry3D triangleMesh = new MeshGeometry3D();
 
-            foreach (Vertex v in vertexLayer.Vertices)
-            {
-                triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
-            }
+            //foreach (Vertex v in vertexLayer.Vertices)
+            //{
+            //    triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
+            //}
              
 
+            //foreach (Face face in faceLayer.Leaves)
+            //{
+            //    face.UpdateVertices();
+            //    for (int i = 1; i < face.Vertices.Count - 1; i++)
+            //    {
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
+
+            //        Debug.WriteLine(face.Vertices[i].point);
+            //    }
+            //}
+
+            //Material material = new DiffuseMaterial(
+            //    new SolidColorBrush(Colors.DarkKhaki));
+            //GeometryModel3D triangleModel = new GeometryModel3D(
+            //    triangleMesh, material);
+            //triangleModel.BackMaterial = material;
+            //model.Content = triangleModel;
+
+            Material material = new DiffuseMaterial(new SolidColorBrush(Colors.DarkKhaki));
+            renderController.FrontMaterial = renderController.BackMaterial = material;
+
+            faceLayer.UpdateLeaves();
             foreach (Face face in faceLayer.Leaves)
             {
                 face.UpdateVertices();
-                for (int i = 1; i < face.Vertices.Count - 1; i++)
-                {
-                    triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
-                    triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
-                    triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
-
-                    Debug.WriteLine(face.Vertices[i].point);
-                }
+                renderController.New(face);
             }
-
-            Material material = new DiffuseMaterial(
-                new SolidColorBrush(Colors.DarkKhaki));
-            GeometryModel3D triangleModel = new GeometryModel3D(
-                triangleMesh, material);
-            triangleModel.BackMaterial = material;
-            model.Content = triangleModel;
-
+            model = renderController.Entity;
+           
             return model;
         }
     }

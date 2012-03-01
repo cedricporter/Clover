@@ -20,7 +20,7 @@ using System.Windows.Media.Media3D;
 
 namespace Clover.RenderLayer
 {
-    class RenderController
+    public class RenderController
     {
 
         #region Get/Set 方法
@@ -54,7 +54,7 @@ namespace Clover.RenderLayer
         }
 
         ModelVisual3D entity = new ModelVisual3D();
-        public System.Windows.Media.Media3D.ModelVisual3D Model
+        public System.Windows.Media.Media3D.ModelVisual3D Entity
         {
             get { return entity; }
             set { entity = value; }

@@ -6,6 +6,7 @@ using System.Windows.Input;
 
 using Clover.Tool;
 using Clover.Visual;
+using Clover.RenderLayer;
 using System.Windows.Media;
 
 
@@ -39,6 +40,10 @@ namespace Clover
             get { return cloverController; }
         }
         //Paper paper;
+
+        // 渲染层控制器
+        //public RenderController renderController = new RenderController();
+
         #endregion
 
 
@@ -66,6 +71,7 @@ namespace Clover
             CompositionTarget.Rendering += FrameCountPlusPlus;
 
             cloverController.Initialize(100, 100);
+            
             foldingPaperViewport.Children.Add(cloverController.UpdatePaper());
         }
 
