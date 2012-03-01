@@ -24,3 +24,7 @@
 /cloverinwpf/bin/debug/Clover.vshost.exe
 /cloverinwpf/bin/debug/Clover.vshost.exe.config
 >>>>>>> 601d9edfbfaf723fed6b962db4a74cff1d19ef78
+
+/CloverInWpf/MogreImage/obj
+/CloverInWpf/bin/Debug/LionFire.MOgreImage.dll
+/cloverinwpf/Clover/Clover.csproj.user

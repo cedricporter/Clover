@@ -7,7 +7,7 @@ namespace Clover.AbstractLayer
 {
     class Convert3DInfoTo2D
     {
-        private Convert3DInfoTo2D();
+        //private Convert3DInfoTo2D();
         static private Convert3DInfoTo2D MySelf = null; 
 
         static public Convert3DInfoTo2D GetConverter()
