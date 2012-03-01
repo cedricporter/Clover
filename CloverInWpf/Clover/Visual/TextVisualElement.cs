@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 
 /**
 @date		:	2012/03/01
@@ -21,30 +23,47 @@ namespace Clover.Visual
 {
     class TextVisualElement : VisualElementFactory
     {
-        public String text;
-        public Point pos;
-        public Color textColor;
+        TextBlock textBlock = new TextBlock();
 
-        public TextVisualElement(String text, Point pos, Color textColor)
+        public TextVisualElement(String text, Point pos, Brush textColor)
         {
-            this.text = text;
-            this.pos = pos;
-            this.textColor = textColor;
+            textBlock.Text = text;
+            textBlock.FontSize = 12;
+            textBlock.Margin = new System.Windows.Thickness(5,2,5,2);
+            textBlock.Foreground = textColor;
+            grid.Children.Add(textBlock);
+            grid.RenderTransform = new TranslateTransform(pos.X, pos.Y);
         }
 
         public override void FadeIn()
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (!grid.HasAnimatedProperties)
+            {
+                grid.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeInAnimation"));
+            }
+            if (grid.Opacity == 1.0)
+            {
+                state = VisualElementFactory.State.Display;
+            }
         }
 
         public override void Display()
         {
-            throw new Exception("The method or operation is not implemented.");
+            grid.BeginAnimation(Grid.OpacityProperty, null);
+            state = VisualElementFactory.State.FadeOut;
         }
 
         public override void FadeOut()
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (!grid.HasAnimatedProperties)
+            {
+                grid.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeOutAnimation"));
+            }
+            if (grid.Opacity == 0.0)
+            {
+                //MessageBox.Show("!");
+                state = VisualElementFactory.State.Destroy;
+            }
         }
     }
 }

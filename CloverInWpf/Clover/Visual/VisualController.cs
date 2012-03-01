@@ -39,19 +39,24 @@ namespace Clover.Visual
         MainWindow mainWindow;
         Grid grid = new Grid();
         List<VisualElementFactory> visualList = new List<VisualElementFactory>();
+        List<VisualElementFactory> removeList = new List<VisualElementFactory>();
 
         private VisualController(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
             // 初始化视觉容器
-            grid.Height = grid.Width = 0;
-            grid.HorizontalAlignment = HorizontalAlignment.Left;
-            grid.VerticalAlignment = VerticalAlignment.Top;
+            //grid.Height = grid.Width = 0;
+            //grid.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
+            //grid.HorizontalAlignment = HorizontalAlignment.Left;
+            //grid.VerticalAlignment = VerticalAlignment.Top;
+            //grid.ClipToBounds = false;
+            //Panel.SetZIndex(grid, 11);
             mainWindow.WindowRoot.Children.Add(grid);
         }
 
         public void Update()
         {
+            // 遍历视觉表并依次执行
             foreach (VisualElementFactory vi in visualList)
             {
                 switch (vi.GetState())
@@ -70,6 +75,13 @@ namespace Clover.Visual
                         break;
                 }
             }
+            // 清除已经过期的视觉
+            foreach (VisualElementFactory vi in removeList)
+            {
+                grid.Children.Remove(vi.grid);
+                visualList.Remove(vi);
+            }
+            removeList.Clear();
         }
 
         #region VisualList外部管理接口
@@ -82,15 +94,14 @@ namespace Clover.Visual
 
         public void RemoveVisual(VisualElementFactory vi)
         {
-            grid.Children.Remove(vi.grid);
-            visualList.Remove(vi);
+            removeList.Add(vi);
         }
 
         public void RemoveAllVisual()
         {
             foreach (VisualElementFactory vi in visualList)
                 grid.Children.Remove(vi.grid);
-            visualList.RemoveAll(null);
+            visualList.Clear();
         }
 
         #endregion

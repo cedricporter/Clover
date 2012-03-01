@@ -94,7 +94,8 @@ namespace Clover
         /// </summary>
         private void mogreImageSource_PreRender(object sender, EventArgs e)
         {
-
+            if (visualController != null)
+                visualController.Update();
         }
 
         #region 构造和初始化
@@ -104,10 +105,12 @@ namespace Clover
             InitializeComponent();
             // 各种窗口
             toolBox = new ToolBox(this);
-            toolBox.Show();
+            //toolBox.Show();
             // 测试Visual
             visualController = VisualController.GetSingleton(this);
-            TextVisualElement vi = new TextVisualElement("Fuck", new Point(), Color.FromRgb(0,0,0));
+            TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
+            visualController.AddVisual(vi);
+            vi.Start();
 
 
             // 导航立方
