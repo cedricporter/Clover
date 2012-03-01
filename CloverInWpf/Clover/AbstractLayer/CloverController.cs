@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Clover
 {
-    class CloverController
+    public class CloverController
     {
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
@@ -159,6 +159,12 @@ namespace Clover
 
         }
 
+        ModelVisual3D model = new ModelVisual3D();
+        public System.Windows.Media.Media3D.ModelVisual3D Model
+        {
+            get { return model; }
+            set { model = value; }
+        }
         public ModelVisual3D UpdatePaper()
         {
             faceLayer.UpdateLeaves();
@@ -192,7 +198,6 @@ namespace Clover
             GeometryModel3D triangleModel = new GeometryModel3D(
                 triangleMesh, material);
             triangleModel.BackMaterial = material;
-            ModelVisual3D model = new ModelVisual3D();
             model.Content = triangleModel;
 
             return model;
