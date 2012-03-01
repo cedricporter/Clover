@@ -9,12 +9,6 @@
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
         
         <Grid Margin="4,0,4,4">
-        	<!-- Mogre -->
-	        <Grid x:Name="ImageGrid" MinHeight="1" MinWidth="1" d:IsLocked="True">
-	            <Image x:Name="MogreImage" SizeChanged="MogreImage_SizeChanged"/>
-	        </Grid>
-	        
-	        
 	        <!-- 正方体导航
 	                  4 ______7
 	                  /|      /
