@@ -87,7 +87,7 @@ namespace Clover
             toolBox.Top = Top + toolBoxRelTop;
             toolBox.Show();
 
-            MessageBox.Show("fuck");
+            //  MessageBox.Show("fuck");
         }
 
         #endregion
