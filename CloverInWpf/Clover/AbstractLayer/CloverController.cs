@@ -120,9 +120,20 @@ namespace Clover
             return true; 
         }
 
+        /// <summary>
+        /// 判断折线是否通过该平面
+        /// </summary>
+        /// <param name="face">当前判定平面</param>
+        /// <param name="currentFoldingLine">折线亮点坐标</param>
+        /// <returns></returns>
         bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
-
+            // 求出折线参数方程
+            Point3D node = new Point3D(); 
+            float t;
+            node.X = currentFoldingLine.Vertex1.point.X + t * (currentFoldingLine.Vertex2.point.X - currentFoldingLine.Vertex1.point.X);
+            node.Y = currentFoldingLine.Vertex1.point.Y + t * (currentFoldingLine.Vertex2.point.Y - currentFoldingLine.Vertex2.point.Y);
+            node.Z = currentFoldingLine.Vertex1.point.Z + t * (currentFoldingLine.Vertex2.point.Z - currentFoldingLine.Vertex1.point.Z);
             return true;
         }
 
