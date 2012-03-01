@@ -9,6 +9,7 @@ using MogreInWpf;
 using Clover.Tool;
 using Clover.Visual;
 using System.Windows.Media;
+using System.Diagnostics;
 
 
 
@@ -97,6 +98,11 @@ namespace Clover
             cloverController.Initialize( 100, 100 );
             //cloverRoot.AttachObject(cloverController.Paper);
             cloverController.UpdatePaper();
+
+            Entity ent = sceneManager.CreateEntity("ogrehead", "ogrehead.mesh");
+            SceneNode node = rootSceneNode.CreateChildSceneNode("ogrenode");
+            node.AttachObject(ent);
+
         }
 
         /// <summary>
@@ -104,8 +110,9 @@ namespace Clover
         /// </summary>
         private void mogreImageSource_PreRender(object sender, EventArgs e)
         {
+            // 更新视觉信息
             if (visualController != null)
-                visualController.Update();
+                visualController.Update();            
         }
 
         #region 构造和初始化
@@ -118,10 +125,10 @@ namespace Clover
             toolBox = new ToolBox(this);
             //toolBox.Show();
             // 测试Visual
-            visualController = VisualController.GetSingleton(this);
-            TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
-            visualController.AddVisual(vi);
-            vi.Start();
+            //visualController = VisualController.GetSingleton(this);
+            //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
+            //visualController.AddVisual(vi);
+            //vi.Start();
 
 
             // 导航立方
@@ -291,6 +298,38 @@ namespace Clover
         {
             if (currentTool != null)
                 currentTool.onMove();
+
+            
+            //Edge ed = cloverController.Edges[0];
+            //Debug.WriteLine("==============================");
+            //Debug.WriteLine(ed.Vertex1.point);
+            ////Debug.WriteLine(ed.Vertex2.point);
+
+            //Camera cam = cameras[0];
+            //Matrix4 vm = cam.ViewMatrix;
+            //Matrix4 pm = cam.ProjectionMatrix;
+            //Vector4 vec = pm * vm * new Vector4(ed.Vertex1.point.x, ed.Vertex1.point.y, ed.Vertex1.point.z, 1);
+            //vec.x /= vec.w;
+            //vec.y /= vec.w;
+            //vec = vec / 2.0f + 0.5f;
+            //vec.y = 1 - vec.y;
+            //vec.x *= (float)ActualHeight;
+            //vec.y *= (float)ActualWidth;
+            //Debug.WriteLine(vec);
+
+            ////float x = (float)(Mouse.GetPosition(this).X / MogreImage.ActualWidth);
+            ////float y = (float)(Mouse.GetPosition(this).Y / MogreImage.ActualHeight);
+            ////Debug.WriteLine(x.ToString() + "," + y.ToString());
+            //Debug.WriteLine(Mouse.GetPosition(MogreImage));
+
+            //Debug.WriteLine(cam.Viewport.ActualHeight.ToString() + "," + cam.Viewport.ActualWidth.ToString());
+            //Debug.WriteLine(MogreImage.ActualHeight.ToString() + "," + MogreImage.ActualWidth.ToString());
+
+
+            //foreach (Edge ed in cloverController.Edges)
+            //{
+            //    Debug.WriteLine(ed.ToString());
+            //}
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)

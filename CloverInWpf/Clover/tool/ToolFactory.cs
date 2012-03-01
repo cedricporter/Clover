@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using Mogre;
 using System.Windows.Input;
+using System.Diagnostics;
 
 /**
 @date		:	2012/02/29
@@ -55,32 +56,45 @@ namespace Clover.Tool
 
             if (null == raySceneQuery)
             {
-                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
+                raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray());
                 raySceneQuery.SetSortByDistance(true);
             }
 
-            raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
+            Ray mouseRay = camera.GetCameraToViewportRay(x, y);
+            RaySceneQuery query = mainWindow.sceneManager.CreateRayQuery(mouseRay);
+            RaySceneQueryResult rayresult = query.Execute();
 
-            Ray ray = raySceneQuery.Ray;
-            RaySceneQueryResult rayresult = raySceneQuery.Execute();
-            if (rayresult.Count <= 0)
-                return null;
 
-            RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
+            //raySceneQuery.Ray = camera.GetCameraToViewportRay(x, y);
 
-            foreach (RaySceneQueryResultEntry resultEntry in queryResult)
-            {
-                if (resultEntry.movable == null)
-                    continue;
+            //Ray ray = raySceneQuery.Ray;
 
-                // 折纸的mesh也许不叫这个名字，不过先这样写着先
-                if (resultEntry.movable.Name != "CloverEntity")
-                    continue;
+            //Debug.WriteLine(ray.Direction.x.ToString() + "," + ray.Direction.y.ToString() + "," + ray.Direction.z.ToString());
+            //RaySceneQueryResult rayresult = raySceneQuery.Execute();
+            Debug.WriteLine(rayresult.Count.ToString());
 
-                // todo
-                // PerformPick
 
-            }
+            //if (rayresult.Count <= 0)
+            //    return null;
+
+            //RaySceneQueryResult queryResult = raySceneQuery.GetLastResults();
+
+            //foreach (RaySceneQueryResultEntry resultEntry in queryResult)
+            //{
+            //    if (resultEntry.movable == null)
+            //        continue;
+
+            //    // 折纸的mesh也许不叫这个名字，不过先这样写着先
+            //    //if (resultEntry.movable.Name != "CloverEntity")
+            //    //    continue;
+
+            //    // PerformPick
+            //    System.Windows.MessageBox.Show(resultEntry.ToString());
+            //    //Debug.WriteLine(resultEntry.movable.Name);
+
+            //}
+
+            
 
             return null;
         }
