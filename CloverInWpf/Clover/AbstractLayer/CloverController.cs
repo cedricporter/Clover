@@ -136,9 +136,11 @@ namespace Clover
             // 求出折线参数方程
             Point3D node = new Point3D(); 
             float t;
-            node.X = currentFoldingLine.Vertex1.point.X + t * (currentFoldingLine.Vertex2.point.X - currentFoldingLine.Vertex1.point.X);
-            node.Y = currentFoldingLine.Vertex1.point.Y + t * (currentFoldingLine.Vertex2.point.Y - currentFoldingLine.Vertex2.point.Y);
-            node.Z = currentFoldingLine.Vertex1.point.Z + t * (currentFoldingLine.Vertex2.point.Z - currentFoldingLine.Vertex1.point.Z);
+            node.X = currentFoldingLine.Vertex1.X + t * (currentFoldingLine.Vertex2.X - currentFoldingLine.Vertex1.X);
+            node.Y = currentFoldingLine.Vertex1.Y + t * (currentFoldingLine.Vertex2.Y - currentFoldingLine.Vertex2.Y);
+            node.Z = currentFoldingLine.Vertex1.Z + t * (currentFoldingLine.Vertex2.Z - currentFoldingLine.Vertex1.Z);
+
+
             return true;
         }
 
