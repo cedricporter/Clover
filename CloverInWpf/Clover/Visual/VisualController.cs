@@ -77,7 +77,7 @@ namespace Clover.Visual
             // 清除已经过期的视觉
             foreach (VisualElementFactory vi in removeList)
             {
-                grid.Children.Remove(vi.grid);
+                grid.Children.Remove(vi.box);
                 visualList.Remove(vi);
             }
             removeList.Clear();
@@ -87,7 +87,7 @@ namespace Clover.Visual
         
         public void AddVisual(VisualElementFactory vi)
         {
-            grid.Children.Add(vi.grid);
+            grid.Children.Add(vi.box);
             visualList.Add(vi);
         }
 
@@ -99,7 +99,7 @@ namespace Clover.Visual
         public void RemoveAllVisual()
         {
             foreach (VisualElementFactory vi in visualList)
-                grid.Children.Remove(vi.grid);
+                grid.Children.Remove(vi.box);
             visualList.Clear();
         }
 

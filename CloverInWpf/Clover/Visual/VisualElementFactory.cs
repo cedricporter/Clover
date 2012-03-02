@@ -32,7 +32,7 @@ namespace Clover.Visual
         /// <summary>
         /// 容器 
         /// </summary>
-        public Grid grid = new Grid();
+        public Grid box = new Grid();
 
         /// <summary>
         /// 位置
@@ -46,9 +46,9 @@ namespace Clover.Visual
 
         public VisualElementFactory()
         {
-            grid.Name = "grid";
-            grid.HorizontalAlignment = HorizontalAlignment.Left;
-            grid.VerticalAlignment = VerticalAlignment.Top;
+            box.Name = "grid";
+            box.HorizontalAlignment = HorizontalAlignment.Left;
+            box.VerticalAlignment = VerticalAlignment.Top;
             //Border bg = new Border();
             //bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
             //bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
@@ -87,7 +87,7 @@ namespace Clover.Visual
         /// </summary>
         public void UpdatePosition()
         {
-            grid.RenderTransform = translateTransform;
+            box.RenderTransform = translateTransform;
         }
 
         public abstract void FadeIn();
