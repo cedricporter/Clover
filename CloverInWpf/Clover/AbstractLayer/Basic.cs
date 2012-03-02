@@ -2,27 +2,53 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Mogre;
+using System.Windows.Media.Media3D;
+using System.Windows;
 
 namespace Clover
 {
+
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
-    class Vertex
+    public class Vertex 
     {
-        public Vector3 point;
+        Point3D point = new Point3D();
 
+        public Point UVW = new Point();     /// 纹理坐标
         public float u = 0;
         public float v = 0;
 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
-        public Vertex(float x, float y, float z, int index = -1)
+        #region get/set
+        public double X
         {
-            point.x = x;
-            point.y = y;
-            point.z = z;
+            get { return point.X; }
+            set { point.X = value; }
+        }
+        public double Y
+        {
+            get { return point.Y; }
+            set { point.Y = value; }
+        }
+        public double Z
+        {
+            get { return point.Z; }
+            set { point.Z = value; }
+        }
+        #endregion
+
+        public Point3D GetPoint3D()
+        {
+            return point;
+        }
+
+        public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
+        {
+            point.X = x;
+            point.Y = y;
+            point.Z = z;
 
             Index = index;
         }
@@ -31,7 +57,7 @@ namespace Clover
     /// <summary>
     /// 抽象的边
     /// </summary>
-    class Edge
+    public class Edge
     {
         #region get/set
         /// <summary>
@@ -62,6 +88,7 @@ namespace Clover
             get { return vertex1; }
             set { vertex1 = value; }
         }
+
         /// <summary>
         /// 设置孩子时会将孩子的父亲置为自己
         /// </summary>
@@ -92,9 +119,9 @@ namespace Clover
             vertex2 = v2;
         }
 
-        public bool IsVerticeIn(Vector3 p)
+        public bool IsVerticeIn(Point3D p)
         {
-            if ( p.Equals( Vertex1.point ) || p.Equals( Vertex2.point ) )
+            if ( p.Equals( Vertex1.GetPoint3D() ) || p.Equals( Vertex2.GetPoint3D() ) )
                 return true;
             return false;
         }
@@ -103,28 +130,34 @@ namespace Clover
     /// <summary>
     /// 抽象的面
     /// </summary>
-    class Face
+    public class Face
     {
+        #region 成员变量
         List<Edge> edges = new List<Edge>();
+        Vector3D normal;
+
+        Face leftChild = null;
+        Face rightChild = null;
+        Face parent = null;
+        List<Vertex> vertices = new List<Vertex>();
+        #endregion
+
+        #region get/set
         public List<Edge> Edges
         {
             get { return edges; }
             set { edges = value; }
         }
-        Vector3 normal;
-        Face leftChild = null;
-        Face rightChild = null;
-        Face parent = null;
-        List<Vertex> vertices = new List<Vertex>();
+        #endregion
 
         #region get/set
         public List<Vertex> Vertices
         {
             get { return vertices; }
         }
-        public Mogre.Vector3 Normal
+        public Vector3D Normal
         {
-            get { return normal; }
+            get { UpdateNormal(); return normal; }
             set { normal = value; }
         }
         public Clover.Face LeftChild
@@ -144,6 +177,7 @@ namespace Clover
         }
         #endregion
 
+        #region 更新
         /// <summary>
         /// 更新面的点，方便绘制时使用
         /// </summary>
@@ -166,26 +200,28 @@ namespace Clover
         /// <returns></returns>
         bool UpdateNormal()
         {
-            if ( vertices.Count < 3 )
+            if (vertices.Count < 3)
                 return false;
-            Vertex[] p = new Vertex[ 3 ];
-            p[ 0 ] = vertices[ 0 ];
-            p[ 1 ] = Vertices[ 1 ];
-            p[ 2 ] = vertices[ 2 ];
+            Vertex[] p = new Vertex[3];
+            p[0] = vertices[0];
+            p[1] = Vertices[1];
+            p[2] = vertices[2];
             // 取任意位于面上的向量
-            Vector3 v1 = p[0].point - p[1].point;
-            Vector3 v2 = p[0].point - p[2].point;
-            normal = v1.CrossProduct( v2 );
+
+            // 被注释了
+            //Point3D v1 = p[0].point - p[1].point;
+            //Point3D v2 = p[0].point - p[2].point;
+            //normal = v1.CrossProduct( v2 );
+
             return true;
         }
+        #endregion
 
-
-
-
+        #region 对边的操作
         public void AddEdge(Edge edge)
         {
             edges.Add(edge);
-           // UpdateVertices();
+            // UpdateVertices();
         }
 
         public void SortEdge()
@@ -196,14 +232,14 @@ namespace Clover
             int edgecount = edges.Count;
             List<Edge> orderelist = new List<Edge>();
             orderelist.Add(currentedge);
-            for ( int i = 0; i < edgecount - 1; i++ )
+            for (int i = 0; i < edgecount - 1; i++)
             {
-                foreach(Edge e in edges)
+                foreach (Edge e in edges)
                 {
-                    if ( currentedge.IsVerticeIn(e.Vertex1.point) || currentedge.IsVerticeIn(e.Vertex2.point))
+                    if (currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
                     {
                         orderelist.Add(e);
-                        edges.Remove( e );
+                        edges.Remove(e);
                         break;
                     }
                 }
@@ -212,14 +248,13 @@ namespace Clover
             UpdateVertices();
         }
 
-
-
         public bool RemoveEdge(Edge edge)
         {
             bool ret = edges.Remove(edge);
             UpdateVertices();
             return ret;
         }
+        #endregion
 
     }
 }

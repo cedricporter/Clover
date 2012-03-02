@@ -3,23 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows.Media.Media3D;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Clover.RenderLayer;
 
 namespace Clover
 {
-    class CloverController
+    public class CloverController
     {
+        #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
-        Paper paper;            /// 纸张实体，ogre的实体，用于画图
-
-        #region get/set
-        public Clover.Paper Paper
-        {
-            get { return paper; }
-        }
+        MainWindow mainWindow;  /// 你懂得
         #endregion
 
+        #region get/set
+        RenderController renderController;///渲染层
+        public RenderController RenderController
+        {
+            get { return renderController; }
+            //set { renderController = value; }
+        }
         public List<Edge> Edges
         {
             get 
@@ -32,7 +38,9 @@ namespace Clover
                 return list;
             }
         }
+        #endregion
 
+        #region 初始化
         public void Initialize(float width, float height)
         {
             // Create 4 original vertices
@@ -41,6 +49,11 @@ namespace Clover
             vertices[1] = new Vertex(width / 2, height / 2, 0);
             vertices[2] = new Vertex(width / 2, -height / 2, 0);
             vertices[3] = new Vertex(-width / 2, -height / 2, 0);
+            // 初始化纹理坐标
+            vertices[0].u = 0; vertices[0].v = 0;
+            vertices[1].u = 1; vertices[1].v = 0;
+            vertices[2].u = 1; vertices[2].v = 1;
+            vertices[3].u = 0; vertices[3].v = 1;
 
             // add to vertex layer
             foreach (Vertex v in vertices)
@@ -68,15 +81,18 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController()
+        public CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
-
-            paper = new Paper("paper");
+            this.mainWindow = mainWindow;
+            renderController = new Clover.RenderLayer.RenderController(mainWindow);
+            //paper = new Paper("paper");
         }
+        #endregion
         
+        #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
@@ -97,12 +113,17 @@ namespace Clover
     	}
 
         float currentAngel;
-
+        Point3D currentVertex;
+        
         List<Edge> shadowEdges = new List<Edge>();
         List<Vertex> shadowVertice = new List<Vertex>();
         List<Face> shadowFaces = new List<Face>();
 
-
+        /// <summary>
+        /// 根据鼠标位移更新折线
+        /// </summary>
+        /// <param name="xRel"></param>
+        /// <param name="yRel"></param>
         void CalculateFoldingLine(float xRel, float yRel)
         {
             
@@ -111,14 +132,70 @@ namespace Clover
         /// <summary>
         /// 判定是否有新添或者删除数据结构中的信息
         /// </summary>
-        void CoreAlgorithm()
-        {
 
+        bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
+        {
+            return true;
         }
 
-        void UpdateDataStruct()
+        /// <summary>
+        /// 判断折线是否通过该平面
+        /// </summary>
+        /// <param name="face">当前判定平面</param>
+        /// <param name="currentFoldingLine">折线亮点坐标</param>
+        /// <returns></returns>
+        bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
+            // 求出折线向量
+            Vector3D u = new Vector3D();
+            u.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+            u.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+            u.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
 
+            // 判定面中的每条边与折线是否相交，若有两条相交则折线分割该平面
+            int crossCount = 0;
+            foreach (Edge edge in face.Edges)
+            {
+                Vector3D v = new Vector3D();
+                v.X = edge.Vertex1.X - edge.Vertex2.Y;
+                v.Y = edge.Vertex1.Y - edge.Vertex2.Y;
+                v.Z = edge.Vertex1.Z - edge.Vertex2.Z;
+
+                Vector3D w = new Vector3D();
+                w.X = currentFoldingLine.Vertex1.X - edge.Vertex1.X;
+                w.Y = currentFoldingLine.Vertex1.Y - edge.Vertex1.Y;
+                w.Z = currentFoldingLine.Vertex1.Z - edge.Vertex1.Z;
+
+                double a = Vector3D.DotProduct(u, u);
+                double b = Vector3D.DotProduct(u, v);
+                double c = Vector3D.DotProduct(v, v);
+                double d = Vector3D.DotProduct(u, w);
+                double e = Vector3D.DotProduct(v, w);
+                double D = a * c - b * b;
+                double sc, tc;
+
+                // 两条线平行
+                if (D < 0.00001)
+                {
+                    return false;
+                }
+                else
+                {
+                    sc = (b * e - c * d) / D;
+                    tc = (a * e - b * d) / D;
+                }
+
+                // sc, tc 分别为两条直线上的比例参数
+                Vector3D dp = new Vector3D();
+                dp = w + (sc * u) - (tc * v);
+
+                if (dp.Length < 0.00001)
+                {
+                    crossCount++;
+                }
+            }
+
+            return crossCount >= 2 ? true : false;
         }
 
         /// <summary>
@@ -127,38 +204,102 @@ namespace Clover
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, List<Face> faceList)
+        public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
         {
-            // 计算新的折线，角度，
+            // 计算初始折线
             CalculateFoldingLine(xRel, yRel);
 
-            // 判定是否有新添或者删除数据结构中的信息
-            CoreAlgorithm();
+            // 创建移动面分组
+            List<Face> faceWithFoldingLine = new List<Face>();
+            List<Face> faceWithoutFoldingLine = new List<Face>();
 
-            // 更新数据结构中的信息
-            UpdateDataStruct();
+            // 根据面组遍历所有面，判定是否属于移动面并分组插入
+            foreach (Face face in faceLayer.Leaves)
+            {
+                if (TestMovedFace(face, pickedFace, pickedVertex))
+                {
+                    if (TestFoldingLineCrossed(face, currentFoldingLine))
+                    {
+                        faceWithFoldingLine.Add(face);
+                    }
+                    else
+                    {
+                        faceWithoutFoldingLine.Add(face);
+                    }
+                }
+            }
+
         }
 
-        public void UpdatePaper()
+        #endregion
+
+        #region 更新图形层的模型
+        ModelVisual3D model = new ModelVisual3D();
+        public System.Windows.Media.Media3D.ModelVisual3D Model
         {
+            get { return model; }
+            set { model = value; }
+        }
+        public ModelVisual3D UpdatePaper()
+        {
+            //faceLayer.UpdateLeaves();
+            ////paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
+
+
+
+            //MeshGeometry3D triangleMesh = new MeshGeometry3D();
+
+            //foreach (Vertex v in vertexLayer.Vertices)
+            //{
+            //    triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+            //}
+
+            //foreach (Face face in faceLayer.Leaves)
+            //{
+            //    face.UpdateVertices();
+            //    for (int i = 1; i < face.Vertices.Count - 1; i++)
+            //    {
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
+
+            //        Debug.WriteLine(face.Vertices[i].point);
+            //    }
+            //}
+
+            //Material material = new DiffuseMaterial(
+            //    new SolidColorBrush(Colors.DarkKhaki));
+            //GeometryModel3D triangleModel = new GeometryModel3D(
+            //    triangleMesh, material);
+            //triangleModel.BackMaterial = material;
+            //model.Content = triangleModel;
+
+            if (renderController == null)
+                return model;
+
+            MaterialGroup mgf = new MaterialGroup();
+            mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            ImageBrush imb = new ImageBrush();
+            imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
+            mgf.Children.Add(new EmissiveMaterial(imb));
+            MaterialGroup mgb = new MaterialGroup();
+            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            mgb.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.OldLace)));
+            //mg.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.Red)));
+            //Material material = new EmissiveMaterial(new SolidColorBrush(Colors.Yellow));
+            renderController.FrontMaterial = mgf;
+            renderController.BackMaterial = mgb;
+
             faceLayer.UpdateLeaves();
-            paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
             foreach (Face face in faceLayer.Leaves)
             {
                 face.UpdateVertices();
-                for (int i = 0; i < face.Vertices.Count; i++)
-                {
-                    paper.Position(face.Vertices[i].point);
-                    Debug.WriteLine(face.Vertices[i].point);
-                }
-
-                for (int i = face.Vertices.Count - 1; i > 0; i--)
-                {
-                    paper.Position(face.Vertices[i].point);
-                    Debug.WriteLine(face.Vertices[i].point);
-                }
+                renderController.New(face);
             }
-            paper.End();
+            model = renderController.Entity;
+           
+            return model;
         }
+        #endregion
     }
 }

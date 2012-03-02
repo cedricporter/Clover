@@ -6,8 +6,17 @@
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
+
+
         
-        <Grid Margin="4,0,4,4">
+        <Grid Margin="4,0,4,4" MouseMove="Grid_MouseMove" MinWidth="10">
+            <!-- 折纸 -->
+            <Viewport3D x:Name="foldingPaperViewport" MouseMove="foldingPaperViewport_MouseMove">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
+                </Viewport3D.Camera>
+            </Viewport3D>
+            
 	        <!-- 正方体导航
 	                  4 ______7
 	                  /|      /
@@ -63,14 +72,20 @@
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
+                    <Separator BorderThickness="10" Style="{DynamicResource SeparatorStyle1}"></Separator>
+                    <MenuItem Header="Export...">
+                        <MenuItem Header="3D Model"/>
+                        <MenuItem Header="Annotated Paper"/>
+                        <MenuItem Header="Folding Script"/>
+                    </MenuItem>
 				</MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="ToolBox"/>
                 </MenuItem>
 			</Menu>
-            <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{DynamicResource RectangleButtonTemplate1}"/>
-            <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}" Content="口"/>
-            <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{DynamicResource RectangleButtonTemplate1}">X</Button>
+            <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{StaticResource RectangleButtonTemplate1}"/>
+            <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}" Content="口"/>
+            <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}">X</Button>
         </Grid>
         
     </Grid>

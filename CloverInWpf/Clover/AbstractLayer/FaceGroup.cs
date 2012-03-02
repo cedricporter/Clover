@@ -80,19 +80,19 @@ namespace Clover.AbstractLayer
 
         bool IsInSameGroup(Face f1, Face f2)
         {
-            float A1, B1, C1, D1;
-            float A2, B2, C2, D2;
-            A1 = f1.Normal.x;
-            A2 = f2.Normal.x;
+            double A1, B1, C1, D1;
+            double A2, B2, C2, D2;
+            A1 = f1.Normal.X;
+            A2 = f2.Normal.X;
 
-            B1 = f1.Normal.y;
-            B2 = f2.Normal.y;
+            B1 = f1.Normal.Y;
+            B2 = f2.Normal.Y;
 
-            C1 = f1.Normal.z;
-            C2 = f2.Normal.z;
+            C1 = f1.Normal.Z;
+            C2 = f2.Normal.Z;
 
-            D1 = -( f1.Vertices[ 0 ].point.x * A1 + f1.Vertices[ 0 ].point.y * B1 + f1.Vertices[ 0 ].point.z * C1 );
-            D2 = -( f1.Vertices[ 0 ].point.x * A2 + f1.Vertices[ 0 ].point.y * B2 + f1.Vertices[ 0 ].point.z * C2 );
+            D1 = -( f1.Vertices[ 0 ].X * A1 + f1.Vertices[ 0 ].Y * B1 + f1.Vertices[ 0 ].Z * C1 );
+            D2 = -( f1.Vertices[ 0 ].X * A2 + f1.Vertices[ 0 ].Y * B2 + f1.Vertices[ 0 ].Z * C2 );
 
             if ( A1 * B2 == A2 * B1 &&
                 B1 * C2 == B2 * C1 &&

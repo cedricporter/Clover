@@ -2,8 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clover", "Clover\Clover.csproj", "{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}"
+<<<<<<< HEAD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3D", "3D\3D.csproj", "{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}"
+=======
+>>>>>>> 3c953463f2aee4e9b568f0b31d0a7794ae383fde
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,12 +15,16 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}.Debug|x86.ActiveCfg = Debug|x86
+		{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}.Debug|x86.Build.0 = Debug|x86
 		{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}.Release|x86.ActiveCfg = Release|x86
 		{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}.Release|x86.Build.0 = Release|x86
+<<<<<<< HEAD
 		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Debug|x86.ActiveCfg = Debug|x86
 		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Debug|x86.Build.0 = Debug|x86
 		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Release|x86.ActiveCfg = Release|x86
 		{5E8836B8-55A6-4CC9-9CB0-08828A4A210A}.Release|x86.Build.0 = Release|x86
+=======
+>>>>>>> 3c953463f2aee4e9b568f0b31d0a7794ae383fde
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
