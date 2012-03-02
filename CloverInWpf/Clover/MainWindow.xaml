@@ -11,7 +11,7 @@
         
         <Grid Margin="4,0,4,4" MouseMove="Grid_MouseMove" MinWidth="10">
             <!-- 折纸 -->
-            <Viewport3D x:Name="foldingPaperViewport" MouseMove="foldingPaperViewport_MouseMove">
+            <Viewport3D x:Name="foldingPaperViewport">
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
