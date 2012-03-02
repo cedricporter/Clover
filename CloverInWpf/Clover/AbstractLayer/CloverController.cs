@@ -40,6 +40,26 @@ namespace Clover
         }
         #endregion
 
+        static CloverController instance = null;
+        static MainWindow window = null;
+
+        public static void InitializeInstance(MainWindow mainWindow)
+        {
+            window = mainWindow;
+        }
+
+        public static CloverController GetInstance()
+        {
+            if (instance == null)
+            {
+                Debug.Assert(window != null);
+                instance = new CloverController(window);
+            }
+
+            return instance;
+
+        }
+
         #region 初始化
         public void Initialize(float width, float height)
         {
@@ -81,7 +101,7 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController(MainWindow mainWindow)
+        private CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
@@ -97,7 +117,7 @@ namespace Clover
         /// <summary>
         /// 切割一个面为两个面
         /// </summary>
-        /// <param name="face"></param>
+        /// <param name="face">需要切割的面。</param>
         /// <param name="edge">割线，割线的两个端点必须在面的边上</param>
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
@@ -108,6 +128,21 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
+            Vertex v1 = edge.Vertex1;
+            Vertex v2 = edge.Vertex2;
+
+            int index1 = -1, index2 = -1;
+            for ( int i = 0; i < face.Edges.Count; i++)
+            {
+                if (face.Edges[i].IsVerticeIn(v1))
+                    index1 = i;
+                if (face.Edges[i].IsVerticeIn(v2))
+                    index2 = i;
+            }
+
+            Debug.Assert(index1 != -1 && index2 != -1);
+
+
 
         }
 
@@ -116,6 +151,8 @@ namespace Clover
         /// 的产生或者老的受影响的面被移除。
         /// </summary>
         List<Face> affectedFaceList = new List<Face>();
+
+        int originLastVertexIndex = -1;    /// 顶点列表的最后一个下标
 
         /// <summary>
         /// 进入折叠模式前的叶子节点表，用于恢复

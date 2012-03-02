@@ -64,7 +64,8 @@ namespace Clover
             currentTool = tool;
 
             // 初始化纸张
-            cloverController = new CloverController(this);
+            CloverController.InitializeInstance(this);
+            cloverController = CloverController.GetInstance();
             cloverController.Initialize(100, 100);
             cloverController.UpdatePaper();
             foldingPaperViewport.Children.Add(cloverController.Model);
