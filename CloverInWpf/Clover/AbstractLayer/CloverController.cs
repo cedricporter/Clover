@@ -40,6 +40,26 @@ namespace Clover
         }
         #endregion
 
+        static CloverController instance = null;
+        static MainWindow window = null;
+
+        public static void InitializeInstance(MainWindow mainWindow)
+        {
+            window = mainWindow;
+        }
+
+        public static CloverController GetInstance()
+        {
+            if (instance == null)
+            {
+                Debug.Assert(window != null);
+                instance = new CloverController(window);
+            }
+
+            return instance;
+
+        }
+
         #region 初始化
         public void Initialize(float width, float height)
         {
@@ -81,7 +101,7 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController(MainWindow mainWindow)
+        private CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
@@ -107,6 +127,20 @@ namespace Clover
 
             face.LeftChild = f1;
             face.RightChild = f2;
+
+            Vertex v1 = edge.Vertex1;
+            Vertex v2 = edge.Vertex2;
+
+            int index1 = -1, index2 = -1;
+            for ( int i = 0; i < face.Edges.Count; i++)
+            {
+                if (face.Edges[i].IsVerticeIn(v1))
+                    index1 = i;
+                if (face.Edges[i].IsVerticeIn(v2))
+                    index2 = i;
+            }
+
+            Debug.Assert(index1 != -1 && index2 != -1);
 
 
 
