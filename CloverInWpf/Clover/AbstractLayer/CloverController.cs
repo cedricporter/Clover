@@ -94,6 +94,12 @@ namespace Clover
 
         #region 测试折叠
 
+        /// <summary>
+        /// 切割一个面为两个面
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="edge">割线，割线的两个端点必须在面的边上</param>
+        /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
             Face f1 = new Face();
@@ -101,9 +107,6 @@ namespace Clover
 
             face.LeftChild = f1;
             face.RightChild = f2;
-
-
-
 
 
         }
