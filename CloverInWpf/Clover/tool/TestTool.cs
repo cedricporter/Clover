@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Clover.Tool
 {
@@ -14,12 +15,13 @@ namespace Clover.Tool
 
         protected override void onEnterElement(Object element)
         {
-            throw new Exception("The method or operation is not implemented.");
+            //Type t = element.GetType();
+            Debug.WriteLine(element.GetType());
         }
 
         protected override void onLeaveElement(Object element)
         {
-            throw new Exception("The method or operation is not implemented.");
+            //Debug.WriteLine(element.GetType());
         }
 
         protected override void onSelectElement(Object element)

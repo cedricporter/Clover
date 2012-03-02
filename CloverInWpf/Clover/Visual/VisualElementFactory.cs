@@ -34,17 +34,27 @@ namespace Clover.Visual
         /// </summary>
         public Grid grid = new Grid();
 
+        /// <summary>
+        /// 位置
+        /// </summary>
+        TranslateTransform translateTransform = new TranslateTransform();
+        public System.Windows.Media.TranslateTransform TranslateTransform
+        {
+            get { return translateTransform; }
+            set { translateTransform = value; }
+        }
+
         public VisualElementFactory()
         {
             grid.Name = "grid";
             grid.HorizontalAlignment = HorizontalAlignment.Left;
             grid.VerticalAlignment = VerticalAlignment.Top;
-            Border bg = new Border();
-            bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
-            bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
-            bg.BorderThickness = new Thickness(1);
-            grid.Children.Add(bg);
-            grid.Opacity = 0;
+            //Border bg = new Border();
+            //bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
+            //bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
+            //bg.BorderThickness = new Thickness(1);
+            //grid.Children.Add(bg);
+            //grid.Opacity = 0;
         }
 
         /// <summary>
@@ -70,6 +80,14 @@ namespace Clover.Visual
         public void End()
         {
             state = VisualElementFactory.State.FadeOut;
+        }
+
+        /// <summary>
+        /// 更新视觉元素的位置
+        /// </summary>
+        public void UpdatePosition()
+        {
+            grid.RenderTransform = translateTransform;
         }
 
         public abstract void FadeIn();
