@@ -5,23 +5,27 @@ using System.Text;
 using System.Diagnostics;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Clover.RenderLayer;
 
 namespace Clover
 {
     public class CloverController
     {
+        #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
-        //Paper paper;            /// 纸张实体，ogre的实体，用于画图
-
-        #region get/set
-        //public Clover.Paper Paper
-        //{
-        //    get { return paper; }
-        //}
+        MainWindow mainWindow;  /// 你懂得
         #endregion
 
+        #region get/set
+        RenderController renderController;///渲染层
+        public RenderController RenderController
+        {
+            get { return renderController; }
+            //set { renderController = value; }
+        }
         public List<Edge> Edges
         {
             get 
@@ -34,7 +38,9 @@ namespace Clover
                 return list;
             }
         }
+        #endregion
 
+        #region 初始化
         public void Initialize(float width, float height)
         {
             // Create 4 original vertices
@@ -43,6 +49,11 @@ namespace Clover
             vertices[1] = new Vertex(width / 2, height / 2, 0);
             vertices[2] = new Vertex(width / 2, -height / 2, 0);
             vertices[3] = new Vertex(-width / 2, -height / 2, 0);
+            // 初始化纹理坐标
+            vertices[0].u = 0; vertices[0].v = 0;
+            vertices[1].u = 1; vertices[1].v = 0;
+            vertices[2].u = 1; vertices[2].v = 1;
+            vertices[3].u = 0; vertices[3].v = 1;
 
             // add to vertex layer
             foreach (Vertex v in vertices)
@@ -70,15 +81,18 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController()
+        public CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
-
+            this.mainWindow = mainWindow;
+            renderController = new Clover.RenderLayer.RenderController(mainWindow);
             //paper = new Paper("paper");
         }
+        #endregion
         
+        #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
@@ -122,7 +136,7 @@ namespace Clover
 
         bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
         {
-            return true; 
+            return true;
         }
 
         /// <summary>
@@ -152,15 +166,15 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
         {
-           // 计算初始折线
+            // 计算初始折线
             CalculateFoldingLine(xRel, yRel);
 
-           // 创建移动面分组
+            // 创建移动面分组
             List<Face> faceWithFoldingLine = new List<Face>();
             List<Face> faceWithoutFoldingLine = new List<Face>();
-            
+
             // 根据面组遍历所有面，判定是否属于移动面并分组插入
-            foreach(Face face in faceLayer.Leaves)
+            foreach (Face face in faceLayer.Leaves)
             {
                 if (TestMovedFace(face, pickedFace, pickedVertex))
                 {
@@ -177,6 +191,9 @@ namespace Clover
 
         }
 
+        #endregion
+
+        #region 更新图形层的模型
         ModelVisual3D model = new ModelVisual3D();
         public System.Windows.Media.Media3D.ModelVisual3D Model
         {
@@ -185,40 +202,64 @@ namespace Clover
         }
         public ModelVisual3D UpdatePaper()
         {
+            //faceLayer.UpdateLeaves();
+            ////paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
+
+
+
+            //MeshGeometry3D triangleMesh = new MeshGeometry3D();
+
+            //foreach (Vertex v in vertexLayer.Vertices)
+            //{
+            //    triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+            //}
+
+            //foreach (Face face in faceLayer.Leaves)
+            //{
+            //    face.UpdateVertices();
+            //    for (int i = 1; i < face.Vertices.Count - 1; i++)
+            //    {
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
+            //        triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
+
+            //        Debug.WriteLine(face.Vertices[i].point);
+            //    }
+            //}
+
+            //Material material = new DiffuseMaterial(
+            //    new SolidColorBrush(Colors.DarkKhaki));
+            //GeometryModel3D triangleModel = new GeometryModel3D(
+            //    triangleMesh, material);
+            //triangleModel.BackMaterial = material;
+            //model.Content = triangleModel;
+
+            if (renderController == null)
+                return model;
+
+            MaterialGroup mgf = new MaterialGroup();
+            mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            ImageBrush imb = new ImageBrush();
+            imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
+            mgf.Children.Add(new EmissiveMaterial(imb));
+            MaterialGroup mgb = new MaterialGroup();
+            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            mgb.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.OldLace)));
+            //mg.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.Red)));
+            //Material material = new EmissiveMaterial(new SolidColorBrush(Colors.Yellow));
+            renderController.FrontMaterial = mgf;
+            renderController.BackMaterial = mgb;
+
             faceLayer.UpdateLeaves();
-            //paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
-
-
-
-            MeshGeometry3D triangleMesh = new MeshGeometry3D();
-
-            foreach (Vertex v in vertexLayer.Vertices)
-            {
-                triangleMesh.Positions.Add(new Point3D(v.point.X, v.point.Y, v.point.Z));
-            }
-             
-
             foreach (Face face in faceLayer.Leaves)
             {
                 face.UpdateVertices();
-                for (int i = 1; i < face.Vertices.Count - 1; i++)
-                {
-                    triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
-                    triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
-                    triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
-
-                    Debug.WriteLine(face.Vertices[i].point);
-                }
+                renderController.New(face);
             }
-
-            Material material = new DiffuseMaterial(
-                new SolidColorBrush(Colors.DarkKhaki));
-            GeometryModel3D triangleModel = new GeometryModel3D(
-                triangleMesh, material);
-            triangleModel.BackMaterial = material;
-            model.Content = triangleModel;
-
+            model = renderController.Entity;
+           
             return model;
         }
+        #endregion
     }
 }
