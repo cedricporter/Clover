@@ -225,22 +225,102 @@ namespace Clover
         Point3D currentVertex;
         
         /// <summary>
-        /// 根据鼠标位移更新折线
+        /// 创建初始的折线顶点·
         /// </summary>
         /// <param name="xRel"></param>
         /// <param name="yRel"></param>
-        void CalculateFoldingLine(float xRel, float yRel)
+        Edge CalculateFoldingLine(Vertex pickedVertex)
         {
-            
+            // 找到所有包含此点的面
+            foreach(Face f in faceLayer.Leaves)
+            {
+                Point3D vertex1 = new Point3D();
+                Point3D vertex2 = new Point3D();
+
+                bool findFirstVertex = false;
+                bool CalculateFinished = false;
+                foreach (Edge e in f.Edges)
+                {
+                    if (CalculateFinished)
+                    {
+                        Vertex cVertex1 = new Vertex(vertex1);
+                        Vertex cVertex2 = new Vertex(vertex2);
+
+                        Edge edge = new Edge( cVertex1, cVertex2);
+                        return edge;
+                    }
+
+                    if (e.Vertex1 == pickedVertex)
+                    {
+
+                        Vector3D v = new Vector3D();
+                        v.X = e.Vertex1.X - e.Vertex2.X;
+                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
+                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
+
+                        v.Normalize();
+                        if (!findFirstVertex)
+                        {
+                            vertex1.X = e.Vertex1.X + v.X;
+                            vertex1.Y = e.Vertex1.Y + v.Y;
+                            vertex1.Z = e.Vertex1.Z + v.Z;
+                            findFirstVertex = true;
+                        }
+                        else
+                        {
+                            vertex2.X = e.Vertex1.X + v.X;
+                            vertex2.Y = e.Vertex1.Y + v.Y;
+                            vertex2.Z = e.Vertex1.Z + v.Z;
+                            CalculateFinished = true;
+                        }
+                    }
+
+                    if (e.Vertex2 == pickedVertex)
+                    {
+
+                        Vector3D v = new Vector3D();
+                        v.X = e.Vertex2.X - e.Vertex1.X;
+                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
+                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
+
+                        v.Normalize();
+
+                        if (!findFirstVertex)
+                        {
+                            vertex1.X = e.Vertex2.X + v.X;
+                            vertex1.Y = e.Vertex2.Y + v.Y;
+                            vertex1.Z = e.Vertex2.Z + v.Z;
+                            findFirstVertex = true;
+                        }
+                        else
+                        {
+                            vertex2.X = e.Vertex2.X + v.X;
+                            vertex2.Y = e.Vertex2.Y + v.Y;
+                            vertex2.Z = e.Vertex2.Z + v.Z;
+                            CalculateFinished = true;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
         /// 判定是否有新添或者删除数据结构中的信息
         /// </summary>
 
-        bool TestMovedFace(Face face, Face PickedFace, Point3D pickedVertex)
+        bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
         {
-            return true;
+            // 选定的面一定是移动面
+            if (face == pickedFace)
+                return true;
+
+            // 所有和移动面有共同边的面都是移动面
+
+
+            // 若有面覆盖在该面上，也为移动面
+            return false;
         }
 
         /// <summary>
@@ -309,10 +389,10 @@ namespace Clover
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, Point3D pickedVertex, Face pickedFace)
+        public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
             // 计算初始折线
-            CalculateFoldingLine(xRel, yRel);
+            CalculateFoldingLine(pickedVertex);
 
             // 创建移动面分组
             List<Face> faceWithFoldingLine = new List<Face>();
