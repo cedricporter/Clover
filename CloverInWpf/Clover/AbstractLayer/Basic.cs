@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
+using System.Windows;
 
 namespace Clover
 {
@@ -14,6 +15,7 @@ namespace Clover
     {
         Point3D point = new Point3D();
 
+        public Point UVW = new Point();     /// 纹理坐标
         public float u = 0;
         public float v = 0;
 
@@ -129,12 +131,14 @@ namespace Clover
     /// </summary>
     public class Face
     {
+        #region 成员变量
         List<Edge> edges = new List<Edge>();
         Point3D normal;
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
         List<Vertex> vertices = new List<Vertex>();
+        #endregion
 
         #region get/set
         public List<Edge> Edges
