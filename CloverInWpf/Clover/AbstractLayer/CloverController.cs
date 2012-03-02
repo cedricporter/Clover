@@ -5,6 +5,8 @@ using System.Text;
 using System.Diagnostics;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using Clover.RenderLayer;
 
 namespace Clover
 {
@@ -14,11 +16,16 @@ namespace Clover
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
+        MainWindow mainWindow;  /// 你懂得
         #endregion
 
         #region get/set
-        Clover.RenderLayer.RenderController renderController = new Clover.RenderLayer.RenderController();
-
+        RenderController renderController;///渲染层
+        public RenderController RenderController
+        {
+            get { return renderController; }
+            //set { renderController = value; }
+        }
         public List<Edge> Edges
         {
             get 
@@ -42,6 +49,11 @@ namespace Clover
             vertices[1] = new Vertex(width / 2, height / 2, 0);
             vertices[2] = new Vertex(width / 2, -height / 2, 0);
             vertices[3] = new Vertex(-width / 2, -height / 2, 0);
+            // 初始化纹理坐标
+            vertices[0].u = 0; vertices[0].v = 0;
+            vertices[1].u = 1; vertices[1].v = 0;
+            vertices[2].u = 1; vertices[2].v = 1;
+            vertices[3].u = 0; vertices[3].v = 1;
 
             // add to vertex layer
             foreach (Vertex v in vertices)
@@ -69,12 +81,13 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController()
+        public CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
-
+            this.mainWindow = mainWindow;
+            renderController = new Clover.RenderLayer.RenderController(mainWindow);
             //paper = new Paper("paper");
         }
         #endregion
@@ -208,8 +221,21 @@ namespace Clover
             //triangleModel.BackMaterial = material;
             //model.Content = triangleModel;
 
-            Material material = new DiffuseMaterial(new SolidColorBrush(Colors.DarkKhaki));
-            renderController.FrontMaterial = renderController.BackMaterial = material;
+            if (renderController == null)
+                return model;
+
+            MaterialGroup mgf = new MaterialGroup();
+            mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            ImageBrush imb = new ImageBrush();
+            imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
+            mgf.Children.Add(new EmissiveMaterial(imb));
+            MaterialGroup mgb = new MaterialGroup();
+            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            mgb.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.OldLace)));
+            //mg.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.Red)));
+            //Material material = new EmissiveMaterial(new SolidColorBrush(Colors.Yellow));
+            renderController.FrontMaterial = mgf;
+            renderController.BackMaterial = mgb;
 
             faceLayer.UpdateLeaves();
             foreach (Face face in faceLayer.Leaves)

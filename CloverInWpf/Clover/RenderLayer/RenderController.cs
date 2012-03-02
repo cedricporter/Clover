@@ -24,7 +24,14 @@ namespace Clover.RenderLayer
     {
 
         #region Get/Set 方法
-        
+
+        Double distance = 300;
+        public System.Double Distance
+        {
+            get { return distance; }
+            set { distance = value; }
+        }
+
         Material frontMaterial;
 	    public System.Windows.Media.Media3D.Material FrontMaterial
 	    {
@@ -66,17 +73,27 @@ namespace Clover.RenderLayer
         public Dictionary<Face, GeometryModel3D> FaceMeshMap
         {
             get { return faceMeshMap; }
-            set { faceMeshMap = value; }
+            //set { faceMeshMap = value; }
         }
 
+        //Dictionary<Edge, ModelVisual3D> edgeLineMap = new Dictionary<Edge, ModelVisual3D>();
+        //public Dictionary<Edge, ModelVisual3D> EdgeLineMap
+        //{
+        //    get { return edgeLineMap; }
+        //    //set { edgeLineMap = value; }
+        //}
         #endregion
+
+        MainWindow mainWindow;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        public RenderController()
+        public RenderController(MainWindow mainWindow)
         {
             entity.Content = modelGroup;
+            this.mainWindow = mainWindow;
+            entity.Transform = new TranslateTransform3D(0, 0, -distance);
         }
 
         /// <summary>
@@ -136,7 +153,10 @@ namespace Clover.RenderLayer
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
+                // 更新3d坐标
                 mesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+                // 更新纹理坐标
+                mesh.TextureCoordinates.Add(new Point(v.u, v.v));
             }
             // 更新索引
             for (int i = 1; i < face.Vertices.Count - 1; i++)
@@ -146,6 +166,17 @@ namespace Clover.RenderLayer
                 mesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
+            //// 描绘边缘
+            //foreach (Edge edge in face.Edges)
+            //{
+            //    _3DTools.ScreenSpaceLines3D line = new _3DTools.ScreenSpaceLines3D();
+            //    line.Points.Add(edge.Vertex1.GetPoint3D());
+            //    line.Points.Add(edge.Vertex2.GetPoint3D());
+            //    line.Color = Colors.Black;
+            //    line.Thickness = 2;
+            //    mainWindow.foldingPaperViewport.Children.Add(line);
+            //}
+
             return mesh;
         }
     }

@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="3DTools">
+      <HintPath>.\3DTools.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -68,6 +71,7 @@
     <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
+    <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Visual\TextVisualElement.cs" />
     <Compile Include="Visual\VisualController.cs" />
     <Compile Include="Visual\VisualElementFactory.cs" />
@@ -121,6 +125,12 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="media\paper\paper1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="media\paper\paper2.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="media\texture\AppBackground.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
