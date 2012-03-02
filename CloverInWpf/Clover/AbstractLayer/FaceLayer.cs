@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Clover.AbstractLayer;
 namespace Clover
 {
     /// <summary>
@@ -77,31 +77,61 @@ namespace Clover
         }
     }
 
+
     /// <summary>
     /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
     /// </summary>
     class LookupTable
     {
-        List<List<Face>> tables = new List<List<Face>>();
-        Face root;
+        List<FaceGroup> tables = new List<FaceGroup>();
+        
+
 
         #region get/set
-        public List<List<Face>> Tables
+        public List<FaceGroup> Tables
         { get { return tables; } }
         #endregion
 
-        public LookupTable(Face root)
+        /// <summary>
+        /// 构造第一个面的时候初始化。
+        /// </summary>
+        /// <param name="f"></param>
+        public LookupTable(Face f)
         {
-            this.root = root;
+            FaceGroup g = new FaceGroup();
+            g.AddFaceBehind(f);
+            tables.Add( g );
         }
 
-        public int AddGroup(Face face)
+
+        /// <summary>
+        /// 得到面所在的分组，如果错误返回null。
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public FaceGroup GetGroup(Face f)
         {
-            List<Face> fl = new List<Face>();
-            fl.Add(face);
-            tables.Add(fl);
-            return tables.Count - 1;
+            foreach (FaceGroup fg in tables)
+            {
+                foreach (Face face in fg.GetGroup())
+                {
+                    if (face == f)
+                    {
+                        return fg;
+                    }
+                }
+            }
+            return null;
         }
+
+
+        public void UpdateLookupTable ()
+        {
+            Clover.CloverController.GetInstance()
+        }
+
+
+
 
     }
 
