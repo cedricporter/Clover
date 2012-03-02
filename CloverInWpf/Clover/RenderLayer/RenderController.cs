@@ -161,9 +161,9 @@ namespace Clover.RenderLayer
             // 更新索引
             for (int i = 1; i < face.Vertices.Count - 1; i++)
             {
-                mesh.TriangleIndices.Add(face.Vertices[0].Index);
-                mesh.TriangleIndices.Add(face.Vertices[i].Index);
                 mesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
+                mesh.TriangleIndices.Add(face.Vertices[i].Index);
+                mesh.TriangleIndices.Add(face.Vertices[0].Index);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
             //// 描绘边缘

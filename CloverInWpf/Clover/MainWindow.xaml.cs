@@ -47,7 +47,6 @@ namespace Clover
 
         #endregion
 
-
         #region 构造和初始化
 
         public MainWindow()
