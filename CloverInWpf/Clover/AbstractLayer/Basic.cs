@@ -39,9 +39,19 @@ namespace Clover
         }
         #endregion
 
+        public Vertex(Point3D vertex)
+        {
+            point = vertex; 
+        }
+
         public Point3D GetPoint3D()
         {
             return point;
+        }
+
+        public void SetPoint3D(Point3D vertex)
+        {
+            point = vertex;  
         }
 
         public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
