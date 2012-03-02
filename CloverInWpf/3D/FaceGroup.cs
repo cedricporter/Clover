@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 
 namespace Clover.AbstractLayer
 {
     class FaceGroup
     {
-        List<List<Face>> GroupList = new List<List<Face>>();
-
-
+        List<Face> GroupList = new List<Face>();
+        
 
         public void Initialize( FacecellTree facetree )
         {
