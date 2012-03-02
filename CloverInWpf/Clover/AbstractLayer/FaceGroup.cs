@@ -8,9 +8,12 @@ namespace Clover.AbstractLayer
     class FaceGroup
     {
         List<List<Face>> GroupList = new List<List<Face>>();
+        
 
-
-
+        /// <summary>
+        /// 初始化面组
+        /// </summary>
+        /// <param name="facetree"></param>
         public void Initialize( FacecellTree facetree )
         {
             foreach ( Face f in facetree.Leaves )
@@ -21,6 +24,10 @@ namespace Clover.AbstractLayer
         }
 
 
+        /// <summary>
+        /// 向面组添加一个面
+        /// </summary>
+        /// <param name="f"></param>
         void AddFace(Face f)
         {
             if (GroupList.Count == 0)
@@ -52,6 +59,11 @@ namespace Clover.AbstractLayer
             }
         }
 
+        /// <summary>
+        /// 从面组中删除面
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         bool DeleteFace(Face f)
         {
             foreach (List<Face> l in GroupList)
@@ -62,7 +74,11 @@ namespace Clover.AbstractLayer
             return false;
         }
 
-
+        /// <summary>
+        /// 获取当前面所在的整个组
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         List<Face> GetGroup(Face f)
         {
             foreach (List<Face> l in GroupList)
