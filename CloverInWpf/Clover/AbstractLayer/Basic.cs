@@ -86,6 +86,7 @@ namespace Clover
             get { return vertex1; }
             set { vertex1 = value; }
         }
+
         /// <summary>
         /// 设置孩子时会将孩子的父亲置为自己
         /// </summary>
@@ -135,7 +136,8 @@ namespace Clover
             get { return edges; }
             set { edges = value; }
         }
-        Point3D normal;
+        Vector3D normal;
+
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
@@ -146,7 +148,7 @@ namespace Clover
         {
             get { return vertices; }
         }
-        public Point3D Normal
+        public Vector3D Normal
         {
             get { return normal; }
             set { normal = value; }
