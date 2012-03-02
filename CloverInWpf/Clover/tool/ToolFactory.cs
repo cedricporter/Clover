@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Diagnostics;
 using System.Windows.Media.Media3D;
+using Clover.Visual;
 
 /**
 @date		:	2012/02/29
@@ -30,13 +31,16 @@ namespace Clover.Tool
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
 
-        Double pointThreadhold = 10;         ///拾取点误差
-        Double lineThreadhold = 0.15;        ///拾取线误差
+        Double pointThreadhold = 10;         /// 拾取点误差
+        Double lineThreadhold = 0.15;        /// 拾取线误差
+        Boolean isVisualEnable = true;       /// 开启视觉元素
         MainWindow mainWindow;
+        VisualController visualController;
 
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
+            visualController = VisualController.GetSingleton(mainWindow);
         }
 
         /// <summary>
@@ -58,12 +62,12 @@ namespace Clover.Tool
                 if ((p - p12d).Length < pointThreadhold)
                 {
                     //Debug.WriteLine(p1);
-                    return p1;
+                    return edge.Vertex1;
                 }
                 if ((p - p22d).Length < pointThreadhold)
                 {
                     //Debug.WriteLine(p2);
-                    return p2;
+                    return edge.Vertex2;
                 }
                 // 判断线
                 Vector V1 = p - p12d;
@@ -92,9 +96,25 @@ namespace Clover.Tool
                 if (currOveredElement != lastOveredElement)
                 {
                     if (currOveredElement != null)
+                    {
+                        if (isVisualEnable)
+                        {
+                            // todo
+                            if (currOveredElement.GetType().ToString() == "Clover.Vertex")
+                            {
+
+                            }
+                        }
                         onEnterElement(currOveredElement);
+                    }
                     if (lastOveredElement != null)
+                    {
+                        if (isVisualEnable)
+                        {
+                            // todo
+                        }
                         onLeaveElement(lastOveredElement);
+                    }
                 }
 
                 lastOveredElement = currOveredElement;

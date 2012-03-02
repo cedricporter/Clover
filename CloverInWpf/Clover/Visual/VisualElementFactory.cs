@@ -34,6 +34,16 @@ namespace Clover.Visual
         /// </summary>
         public Grid grid = new Grid();
 
+        /// <summary>
+        /// 位置
+        /// </summary>
+        TranslateTransform translateTransform = new TranslateTransform();
+        public System.Windows.Media.TranslateTransform TranslateTransform
+        {
+            get { return translateTransform; }
+            set { translateTransform = value; }
+        }
+
         public VisualElementFactory()
         {
             grid.Name = "grid";
@@ -70,6 +80,14 @@ namespace Clover.Visual
         public void End()
         {
             state = VisualElementFactory.State.FadeOut;
+        }
+
+        /// <summary>
+        /// 更新视觉元素的位置
+        /// </summary>
+        public void UpdatePosition()
+        {
+            grid.RenderTransform = translateTransform;
         }
 
         public abstract void FadeIn();

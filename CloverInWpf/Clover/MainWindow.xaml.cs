@@ -26,6 +26,7 @@ namespace Clover
         public List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
         public Utility utility;
+        VisualController visualController;
 
         #region 工具窗
 
@@ -49,7 +50,7 @@ namespace Clover
             InitializeComponent();
             
             // 测试Visual
-            //visualController = VisualController.GetSingleton(this);
+            visualController = VisualController.GetSingleton(this);
             //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
             //visualController.AddVisual(vi);
             //vi.Start();
@@ -71,6 +72,9 @@ namespace Clover
             // 杂项
             utility = new Utility(this);
             utility.UpdateWorlCameMat();
+
+            // 注册回调函数
+            CompositionTarget.Rendering += MainLoop;
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
@@ -94,9 +98,24 @@ namespace Clover
             toolBox = new ToolBox(this);
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
-            toolBox.Show();
-            
+            toolBox.Show();  
         }
+
+        #region 主循环
+
+        /// <summary>
+        /// 主循环
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainLoop(Object sender, EventArgs e)
+        {
+            //RenderingEventArgs re = (RenderingEventArgs)e;
+            //Debug.WriteLine(re.RenderingTime);
+            visualController.Update();
+        }
+
+        #endregion
 
         #endregion
 
