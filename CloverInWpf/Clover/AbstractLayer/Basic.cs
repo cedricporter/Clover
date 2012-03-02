@@ -133,7 +133,7 @@ namespace Clover
     {
         #region 成员变量
         List<Edge> edges = new List<Edge>();
-        Point3D normal;
+        Vector3D normal;
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
@@ -146,14 +146,11 @@ namespace Clover
             get { return edges; }
             set { edges = value; }
         }
-        #endregion
-
-        #region get/set
         public List<Vertex> Vertices
         {
             get { return vertices; }
         }
-        public Point3D Normal
+        public Vector3D Normal
         {
             get { UpdateNormal(); return normal; }
             set { normal = value; }
@@ -161,12 +158,12 @@ namespace Clover
         public Clover.Face LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; }
+            set { leftChild = value; leftChild.parent = this; }
         }
         public Clover.Face RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; }
+            set { rightChild = value; rightChild.parent = this; }
         }
         public Clover.Face Parent
         {
