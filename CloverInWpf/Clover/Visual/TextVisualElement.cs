@@ -32,8 +32,8 @@ namespace Clover.Visual
             textBlock.FontSize = 12;
             textBlock.Margin = new System.Windows.Thickness(5,2,5,2);
             textBlock.Foreground = textColor;
-            grid.Children.Add(textBlock);
-            grid.RenderTransform = new TranslateTransform(pos.X, pos.Y);
+            box.Children.Add(textBlock);
+            box.RenderTransform = new TranslateTransform(pos.X, pos.Y);
         }
 
         public override void FadeIn()
@@ -46,11 +46,11 @@ namespace Clover.Visual
             //    //grid.BeginStoryboard;
             //    //sb.Begin();
             //}
-            if (!grid.HasAnimatedProperties)
+            if (!box.HasAnimatedProperties)
             {
-                grid.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeInAnimation"));
+                box.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeInAnimation"));
             }
-            else if (grid.Opacity == 1.0)
+            else if (box.Opacity == 1.0)
             {
                 state = VisualElementFactory.State.Display;
             }
@@ -58,17 +58,17 @@ namespace Clover.Visual
 
         public override void Display()
         {
-            grid.BeginAnimation(Grid.OpacityProperty, null);
+            box.BeginAnimation(Grid.OpacityProperty, null);
             state = VisualElementFactory.State.FadeOut;
         }
 
         public override void FadeOut()
         {
-            if (!grid.HasAnimatedProperties)
+            if (!box.HasAnimatedProperties)
             {
-                grid.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeOutAnimation"));
+                box.BeginAnimation(Grid.OpacityProperty, (DoubleAnimation)App.Current.FindResource("AlpahFadeOutAnimation"));
             }
-            else if (grid.Opacity == 0.0)
+            else if (box.Opacity == 0.0)
             {
                 state = VisualElementFactory.State.Destroy;
             }

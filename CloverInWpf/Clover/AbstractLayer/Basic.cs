@@ -129,10 +129,23 @@ namespace Clover
             vertex2 = v2;
         }
 
+        public bool IsVerticeIn(Vertex v)
+        {
+            return IsVerticeIn(v.GetPoint3D());
+        }
         public bool IsVerticeIn(Point3D p)
         {
-            if ( p.Equals( Vertex1.GetPoint3D() ) || p.Equals( Vertex2.GetPoint3D() ) )
+            double pointThreadhold = 0.001;
+            // 判断线
+            Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
+            Vector3D V2 = p - vertex1.GetPoint3D();
+            Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
+            Point3D p3 = vertex1.GetPoint3D() + t * V1;
+            if ((p - p3).Length < pointThreadhold)
+            {
                 return true;
+            }
+
             return false;
         }
     }
@@ -158,9 +171,6 @@ namespace Clover
             get { return edges; }
             set { edges = value; }
         }
-        #endregion
-
-        #region get/set
         public List<Vertex> Vertices
         {
             get { return vertices; }
@@ -173,12 +183,12 @@ namespace Clover
         public Clover.Face LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; }
+            set { leftChild = value; leftChild.parent = this; }
         }
         public Clover.Face RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; }
+            set { rightChild = value; rightChild.parent = this; }
         }
         public Clover.Face Parent
         {
@@ -266,5 +276,18 @@ namespace Clover
         }
         #endregion
 
+    }
+
+    /// <summary>
+    /// 边到2D的映射
+    /// </summary>
+    public class Edge2D
+    {
+        public Edge2D(Point p1, Point p2)
+        {
+            this.p1 = p1;
+            this.p2 = p2;
+        }
+        public Point p1, p2;
     }
 }

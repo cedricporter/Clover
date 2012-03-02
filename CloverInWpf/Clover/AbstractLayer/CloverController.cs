@@ -40,6 +40,26 @@ namespace Clover
         }
         #endregion
 
+        static CloverController instance = null;
+        static MainWindow window = null;
+
+        public static void InitializeInstance(MainWindow mainWindow)
+        {
+            window = mainWindow;
+        }
+
+        public static CloverController GetInstance()
+        {
+            if (instance == null)
+            {
+                Debug.Assert(window != null);
+                instance = new CloverController(window);
+            }
+
+            return instance;
+
+        }
+
         #region 初始化
         public void Initialize(float width, float height)
         {
@@ -81,7 +101,7 @@ namespace Clover
             faceLayer.Initliaze(face);
         }
 
-        public CloverController(MainWindow mainWindow)
+        private CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
             edgeLayer = new EdgeLayer(this);
@@ -91,7 +111,101 @@ namespace Clover
             //paper = new Paper("paper");
         }
         #endregion
-        
+
+        #region 测试折叠
+
+        /// <summary>
+        /// 切割一个面为两个面
+        /// </summary>
+        /// <param name="face">需要切割的面。</param>
+        /// <param name="edge">割线，割线的两个端点必须在面的边上</param>
+        /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
+        void CutAFace(Face face, Edge edge)
+        {
+            Face f1 = new Face();
+            Face f2 = new Face();
+
+            face.LeftChild = f1;
+            face.RightChild = f2;
+
+            Vertex v1 = edge.Vertex1;
+            Vertex v2 = edge.Vertex2;
+
+            int index1 = -1, index2 = -1;
+            for ( int i = 0; i < face.Edges.Count; i++)
+            {
+                if (face.Edges[i].IsVerticeIn(v1))
+                    index1 = i;
+                if (face.Edges[i].IsVerticeIn(v2))
+                    index2 = i;
+            }
+
+            Debug.Assert(index1 != -1 && index2 != -1);
+
+
+
+        }
+
+        /// <summary>
+        /// 当前都影响的面，在拖动的过程中需要实时计算，因为随时会有新的受影响
+        /// 的产生或者老的受影响的面被移除。
+        /// </summary>
+        List<Face> affectedFaceList = new List<Face>();
+
+        int originLastVertexIndex = -1;    /// 顶点列表的最后一个下标
+
+        /// <summary>
+        /// 进入折叠模式前的叶子节点表，用于恢复
+        /// </summary>
+        List<Face> originFaceList = new List<Face>();
+
+        Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
+
+    	public Edge CurrentFoldingLine
+    	{
+    		get { return currentFoldingLine; }
+    	}
+
+        void UpdateAffectedFaceList()
+        {
+
+        }
+
+
+        /// <summary>
+        /// 开始折叠模式
+        /// </summary>
+        /// <param name="faces">需要折叠的面</param>
+        /// <remarks>
+        /// 首先保存原始面树的叶子。
+        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
+        /// 对于边树，我们将在当前叶子节点的面的边而不在originLeaves的边移除。
+        /// </remarks>
+        void StartFoldingModel(List<Face> faces)
+        {
+            originFaceList.Clear();
+            foreach ( Face f in faceLayer.Leaves)
+            {
+                originFaceList.Add(f);
+            }
+
+            
+            // 
+            Edge foldingLine = null;
+
+            foreach (Face face in faces)
+            {
+                CutAFace(face, foldingLine);         // 分割面
+                faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
+            }
+
+
+
+
+        }
+
+        #endregion
+
         #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
@@ -106,19 +220,10 @@ namespace Clover
             // 
         }
 
-        Edge currentFoldingLine = new Edge(null, null);
-    	public Edge CurrentFoldingLine
-    	{
-    		get { return currentFoldingLine; }
-    	}
 
         float currentAngel;
         Point3D currentVertex;
         
-        List<Edge> shadowEdges = new List<Edge>();
-        List<Vertex> shadowVertice = new List<Vertex>();
-        List<Face> shadowFaces = new List<Face>();
-
         /// <summary>
         /// 创建初始的折线顶点·
         /// </summary>

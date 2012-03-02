@@ -29,9 +29,13 @@ namespace Clover.Visual
 
         public static VisualController GetSingleton(MainWindow mainWindow)
         {
-            if (instance != null)
-                return instance;
-            return new VisualController(mainWindow);
+            if (instance == null)
+            {
+                instance = new VisualController(mainWindow);;
+
+            }
+            return instance;
+         
         }
 
         #endregion
@@ -45,12 +49,6 @@ namespace Clover.Visual
         {
             this.mainWindow = mainWindow;
             // 初始化视觉容器
-            //grid.Height = grid.Width = 0;
-            //grid.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
-            //grid.HorizontalAlignment = HorizontalAlignment.Left;
-            //grid.VerticalAlignment = VerticalAlignment.Top;
-            //grid.ClipToBounds = false;
-            //Panel.SetZIndex(grid, 11);
             mainWindow.WindowRoot.Children.Add(grid);
         }
 
@@ -59,6 +57,7 @@ namespace Clover.Visual
             // 遍历视觉表并依次执行
             foreach (VisualElementFactory vi in visualList)
             {
+                vi.UpdatePosition();
                 switch (vi.GetState())
                 {
                     case VisualElementFactory.State.FadeIn:
@@ -78,7 +77,7 @@ namespace Clover.Visual
             // 清除已经过期的视觉
             foreach (VisualElementFactory vi in removeList)
             {
-                grid.Children.Remove(vi.grid);
+                grid.Children.Remove(vi.box);
                 visualList.Remove(vi);
             }
             removeList.Clear();
@@ -88,7 +87,7 @@ namespace Clover.Visual
         
         public void AddVisual(VisualElementFactory vi)
         {
-            grid.Children.Add(vi.grid);
+            grid.Children.Add(vi.box);
             visualList.Add(vi);
         }
 
@@ -100,7 +99,7 @@ namespace Clover.Visual
         public void RemoveAllVisual()
         {
             foreach (VisualElementFactory vi in visualList)
-                grid.Children.Remove(vi.grid);
+                grid.Children.Remove(vi.box);
             visualList.Clear();
         }
 

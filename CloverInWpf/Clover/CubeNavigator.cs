@@ -79,11 +79,13 @@ namespace Clover
                 // 让CloverRoot模仿cube的动作
                 Transform3DGroup group = new Transform3DGroup();
                 group.Children.Add(rotts);
-                TranslateTransform3D ts = new TranslateTransform3D(mainWindow.CloverController.Model.Transform.Value.OffsetX,
-                                                                   mainWindow.CloverController.Model.Transform.Value.OffsetY,
-                                                                   mainWindow.CloverController.Model.Transform.Value.OffsetZ);
+                TranslateTransform3D ts = new TranslateTransform3D(mainWindow.cloverController.Model.Transform.Value.OffsetX,
+                                                                   mainWindow.cloverController.Model.Transform.Value.OffsetY,
+                                                                   mainWindow.cloverController.Model.Transform.Value.OffsetZ);
                 group.Children.Add(ts);
-                mainWindow.CloverController.Model.Transform = group;
+                mainWindow.cloverController.Model.Transform = group;
+
+                mainWindow.utility.UpdateWorlCameMat();
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;
