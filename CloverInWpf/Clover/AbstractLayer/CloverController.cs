@@ -346,13 +346,13 @@ namespace Clover
                 return model;
 
             MaterialGroup mgf = new MaterialGroup();
-            mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            //mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
             ImageBrush imb = new ImageBrush();
             imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
-            mgf.Children.Add(new EmissiveMaterial(imb));
+            mgf.Children.Add(new DiffuseMaterial(imb));
             MaterialGroup mgb = new MaterialGroup();
-            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
-            mgb.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.OldLace)));
+            //mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.OldLace)));
             //mg.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.Red)));
             //Material material = new EmissiveMaterial(new SolidColorBrush(Colors.Yellow));
             renderController.FrontMaterial = mgf;
