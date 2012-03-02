@@ -38,12 +38,7 @@ namespace Clover
         #region 折纸部分
 
         // 抽象数据结构控制器
-        CloverController cloverController;
-        public Clover.CloverController CloverController
-        {
-            get { return cloverController; }
-        }
-        //Paper paper;
+        public CloverController cloverController;
 
         #endregion
 
@@ -53,7 +48,6 @@ namespace Clover
         {
             InitializeComponent();
             
-            //toolBox.Show();
             // 测试Visual
             //visualController = VisualController.GetSingleton(this);
             //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
@@ -62,6 +56,11 @@ namespace Clover
 
             // 导航立方
             cubeNav = new CubeNavigator(this);
+
+            // 创建工具
+            ToolFactory tool = new TestTool(this);
+            tools.Add(tool);
+            currentTool = tool;
 
             // 初始化纸张
             cloverController = new CloverController(this);
@@ -162,21 +161,10 @@ namespace Clover
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void foldingPaperViewport_MouseMove(object sender, MouseEventArgs e)
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
-            //Viewport3DVisual viewport;
-            //Boolean success;
-            //Matrix3D visualToScreen = MathUtils.TryTransformTo2DAncestor(foldingPaperViewport.Children[0], out viewport, out success);
-            //if (success)
-            //{
-            //    Point3D p1 = cloverController.Edges[0].Vertex1.GetPoint3D() * visualToScreen;
-            //    Point3D p2 = cloverController.Edges[0].Vertex2.GetPoint3D() * visualToScreen;
-            //    Debug.WriteLine("======================");
-            //    Debug.Write(p1);
-            //    Debug.Write("      ");
-            //    Debug.WriteLine(p2);
-            //    Debug.WriteLine(Mouse.GetPosition(foldingPaperViewport));
-            //}
+            if (currentTool != null)
+                currentTool.onMove();
         }
 
         #endregion
@@ -202,24 +190,7 @@ namespace Clover
 
         #endregion
 
-        private void Grid_MouseMove(object sender, MouseEventArgs e)
-        {
-            //Viewport3DVisual viewport;
-            //Boolean success;
-            //Matrix3D visualToScreen = MathUtils.TryTransformTo2DAncestor(foldingPaperViewport.Children[0], out viewport, out success);
-            ////if (success)
-            ////{
-
-            //Point3D p1 = cloverController.Edges[0].Vertex1.GetPoint3D() * utility.To2DMat;
-            //Point3D p2 = cloverController.Edges[0].Vertex2.GetPoint3D() * utility.To2DMat;
-            //    Debug.WriteLine("======================");
-            //    Debug.Write(p1);
-            //    Debug.Write("      ");
-            //    Debug.WriteLine(p2);
-            //    //Debug.WriteLine(Mouse.GetPosition(foldingPaperViewport));
-            //    Debug.WriteLine(Mouse.GetPosition(foldingPaperViewport));
-            ////}
-        }
+        
 
         
 

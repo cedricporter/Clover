@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using System.Diagnostics;
+using System.Windows.Media.Media3D;
 
 /**
 @date		:	2012/02/29
@@ -33,9 +35,6 @@ namespace Clover.Tool
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            //raySceneQuery = mainWindow.sceneManager.CreateRayQuery(new Ray(), SceneManager.WORLD_GEOMETRY_TYPE_MASK);
-            //raySceneQuery.SetSortByDistance(true);
-            //System.Windows.MessageBox.Show("ToolFactory!");
         }
 
         /// <summary>
@@ -44,6 +43,18 @@ namespace Clover.Tool
         /// <returns>拾取到的CloverElement。如果没拾取到，返回null</returns>
         public Object ExcuteHitTest()
         {
+            foreach (Edge edge in mainWindow.cloverController.Edges)
+            {
+                Point3D p1 = edge.Vertex1.GetPoint3D();
+                Point3D p2 = edge.Vertex2.GetPoint3D();
+                // 首先要将点从模型坐标系变换到世界坐标系
+                Matrix3D worldMat = mainWindow.cloverController.RenderController.Entity.Transform.Value;
+                p1 *= worldMat;
+                p2 *= worldMat;
+                _3DTools.MathUtils.
+
+            }
+
             return null;
         }
 
@@ -68,6 +79,9 @@ namespace Clover.Tool
                 lastOveredElement = currOveredElement;
                 lastMousePos = currMousePos;
             }
+
+            Debug.WriteLine("=====================");
+            Debug.WriteLine(Mouse.GetPosition(mainWindow.foldingPaperViewport));
             
         }
 
