@@ -38,6 +38,10 @@ namespace Clover
                 return list;
             }
         }
+        public List<Face> FaceLeaves
+        {
+            get { return faceLayer.Leaves; }
+        }
         #endregion
 
         static CloverController instance = null;
@@ -141,6 +145,17 @@ namespace Clover
             }
 
             Debug.Assert(index1 != -1 && index2 != -1);
+
+            // 确保逻辑上v1在v2前面
+            if (index1 > index2)
+            {
+                Vertex temp = v1;
+                v1 = v2;
+                v2 = temp;
+                int tempIndex = index1;
+                index1 = index2;
+                index2 = tempIndex;
+            }
 
 
 
