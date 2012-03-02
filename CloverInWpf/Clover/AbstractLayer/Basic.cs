@@ -16,8 +16,8 @@ namespace Clover
         Point3D point = new Point3D();
 
         public Point UVW = new Point();     /// 纹理坐标
-        public float u = 0;
-        public float v = 0;
+        public double u = 0;
+        public double v = 0;
 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
@@ -39,11 +39,6 @@ namespace Clover
         }
         #endregion
 
-        public Vertex(Point3D vertex)
-        {
-            point = vertex; 
-        }
-
         public Point3D GetPoint3D()
         {
             return point;
@@ -52,6 +47,19 @@ namespace Clover
         public void SetPoint3D(Point3D vertex)
         {
             point = vertex;  
+        }
+
+        public Vertex(Point3D vertex)
+        {
+            point = vertex; 
+        }
+
+        public Vertex(Vertex vertex)
+        {
+            point = new Point3D(vertex.X, vertex.Y, vertex.Z);
+            Index = vertex.Index;
+            u = vertex.u;
+            v = vertex.v;
         }
 
         public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
