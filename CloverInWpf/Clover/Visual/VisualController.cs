@@ -29,9 +29,13 @@ namespace Clover.Visual
 
         public static VisualController GetSingleton(MainWindow mainWindow)
         {
-            if (instance != null)
-                return instance;
-            return new VisualController(mainWindow);
+            if (instance == null)
+            {
+                instance = new VisualController(mainWindow);;
+
+            }
+            return instance;
+         
         }
 
         #endregion

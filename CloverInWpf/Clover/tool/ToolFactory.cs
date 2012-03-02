@@ -38,6 +38,11 @@ namespace Clover.Tool
         MainWindow mainWindow;
         VisualController visualController;
 
+        VisualElementFactory lastOveredElementVi = null;
+        VisualElementFactory currOveredElementVi = null;
+        VisualElementFactory lastSelectedElementVi = null;
+        VisualElementFactory currSelectedElementVi = null;
+
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
@@ -63,13 +68,13 @@ namespace Clover.Tool
                 if ((p - p12d).Length < pointThreadhold)
                 {
                     //Debug.WriteLine(p1);
-                    shadow2DElement = new Clover.Vertex2D(p12d);
+                    shadow2DElement = p12d;
                     return edge.Vertex1;
                 }
                 if ((p - p22d).Length < pointThreadhold)
                 {
                     //Debug.WriteLine(p2);
-                    shadow2DElement = new Clover.Vertex2D(p22d);
+                    shadow2DElement = p22d;
                     return edge.Vertex2;
                 }
                 // 判断线
@@ -112,12 +117,13 @@ namespace Clover.Tool
                     {
                         if (isVisualEnable)
                         {
-                            // todo
                             if (currOveredElement.GetType().ToString() == "Clover.Vertex")
                             {
-                                //Clover.Vertex v = (Clover.Vertex)currOveredElement;
-                                //VertexHeightLightVisual vi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
-                                //    v.X)
+                                Point pos = (Point)shadowElement;
+                                currOveredElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
+                                    pos.X, pos.Y);
+                                currOveredElementVi.Start();
+                                visualController.AddVisual(currOveredElementVi);
                             }
                         }
                         onEnterElement(currOveredElement);
@@ -126,13 +132,19 @@ namespace Clover.Tool
                     {
                         if (isVisualEnable)
                         {
-                            // todo
+                            if (lastOveredElementVi != null)
+                            {
+                                lastOveredElementVi.End();
+                                lastOveredElementVi = null;
+                            }
                         }
                         onLeaveElement(lastOveredElement);
                     }
                 }
+                
 
                 lastOveredElement = currOveredElement;
+                lastOveredElementVi = currOveredElementVi;
                 lastMousePos = currMousePos;
             }
 

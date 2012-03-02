@@ -49,12 +49,12 @@ namespace Clover.Visual
             grid.Name = "grid";
             grid.HorizontalAlignment = HorizontalAlignment.Left;
             grid.VerticalAlignment = VerticalAlignment.Top;
-            Border bg = new Border();
-            bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
-            bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
-            bg.BorderThickness = new Thickness(1);
-            grid.Children.Add(bg);
-            grid.Opacity = 0;
+            //Border bg = new Border();
+            //bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
+            //bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
+            //bg.BorderThickness = new Thickness(1);
+            //grid.Children.Add(bg);
+            //grid.Opacity = 0;
         }
 
         /// <summary>

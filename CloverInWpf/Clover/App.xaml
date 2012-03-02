@@ -36,7 +36,7 @@
         <SolidColorBrush x:Key="VisualElementBlueBrush" Color="#CC0099FF"/>
         
         <!-- Shapes -->
-        <Ellipse x:Key="VertexMark" Height="10" Width="10"/>
+        <Ellipse x:Key="VertexMark" Height="10" Width="10" Margin="0,-5,0,0"/>
         <Ellipse x:Key="VertexMarkBlue" Height="10" Width="10" Fill="{StaticResource VisualElementBlueBrush}"/>
         
         <!-- Effects -->

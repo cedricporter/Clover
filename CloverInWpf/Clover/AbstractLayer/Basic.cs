@@ -256,19 +256,6 @@ namespace Clover
 
     }
 
-
-    /// <summary>
-    /// 点到2D的映射
-    /// </summary>
-    public class Vertex2D
-    {
-        public Point p;
-        public Vertex2D(Point p)
-        {
-            this.p = p;
-        }
-    }
-
     /// <summary>
     /// 边到2D的映射
     /// </summary>

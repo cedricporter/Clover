@@ -16,23 +16,34 @@ namespace Clover.Visual
             mark = (Ellipse)App.Current.FindResource("VertexMark");
             mark.Fill = brush;
             grid.Children.Add(mark);
+            grid.Opacity = 0;
             TranslateTransform = new TranslateTransform(posX, posY);
             //mark.Opacity = 0;
         }
 
         public override void FadeIn()
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (grid.Opacity < 1)
+            {
+                grid.Opacity += 0.1;
+            }
+            else
+                state = VisualElementFactory.State.Display;
         }
 
         public override void Display()
         {
-            throw new Exception("The method or operation is not implemented.");
+            
         }
 
         public override void FadeOut()
         {
-            throw new Exception("The method or operation is not implemented.");
+            if (grid.Opacity > 0)
+            {
+                grid.Opacity -= 0.1;
+            }
+            else
+                state = VisualElementFactory.State.Destroy;
         }
     }
 }
