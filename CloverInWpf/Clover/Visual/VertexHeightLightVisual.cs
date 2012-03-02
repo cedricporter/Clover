@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace Clover.Visual
 {
@@ -13,19 +14,21 @@ namespace Clover.Visual
 
         public VertexHeightLightVisual(Brush brush, Double posX, Double posY)
         {
-            mark = (Ellipse)App.Current.FindResource("VertexMark");
+            mark = new Ellipse();
+            mark.Height = mark.Width = 10;
+            mark.Margin = new System.Windows.Thickness(0, -5, 0, 0);
             mark.Fill = brush;
-            grid.Children.Add(mark);
-            grid.Opacity = 0;
+            box.Children.Add(mark);
+            box.Opacity = 0;
             TranslateTransform = new TranslateTransform(posX, posY);
             //mark.Opacity = 0;
         }
 
         public override void FadeIn()
         {
-            if (grid.Opacity < 1)
+            if (box.Opacity < 1)
             {
-                grid.Opacity += 0.1;
+                box.Opacity += 0.1;
             }
             else
                 state = VisualElementFactory.State.Display;
@@ -38,9 +41,9 @@ namespace Clover.Visual
 
         public override void FadeOut()
         {
-            if (grid.Opacity > 0)
+            if (box.Opacity > 0)
             {
-                grid.Opacity -= 0.1;
+                box.Opacity -= 0.1;
             }
             else
                 state = VisualElementFactory.State.Destroy;

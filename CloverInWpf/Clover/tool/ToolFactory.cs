@@ -113,6 +113,11 @@ namespace Clover.Tool
 
                 if (currOveredElement != lastOveredElement)
                 {
+                    if (isVisualEnable)
+                    {
+                        lastOveredElementVi = currOveredElementVi;
+                        currOveredElementVi = null;
+                    }
                     if (currOveredElement != null)
                     {
                         if (isVisualEnable)
@@ -144,7 +149,6 @@ namespace Clover.Tool
                 
 
                 lastOveredElement = currOveredElement;
-                lastOveredElementVi = currOveredElementVi;
                 lastMousePos = currMousePos;
             }
 
