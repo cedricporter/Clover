@@ -85,6 +85,8 @@ namespace Clover
                 group.Children.Add(ts);
                 mainWindow.cloverController.Model.Transform = group;
 
+                mainWindow.utility.UpdateWorlCameMat();
+
                 lastQuat = quar;
                 lastMousePos = currMousePos;
             }

@@ -70,7 +70,7 @@ namespace Clover
 
             // 杂项
             utility = new Utility(this);
-            utility.UpdateWorlCameMat(-cloverController.RenderController.Entity.Transform.Value.OffsetZ);
+            utility.UpdateWorlCameMat();
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,

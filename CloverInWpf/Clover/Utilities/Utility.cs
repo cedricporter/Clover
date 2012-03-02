@@ -30,10 +30,11 @@ namespace Clover
         /// <summary>
         /// 当镜头缩放时，更新由世界到镜头的矩阵
         /// </summary>
-        public void UpdateWorlCameMat(Double distance)
+        public void UpdateWorlCameMat()
         {
-            WorlCameMat = Matrix3D.Identity;
-            WorlCameMat.OffsetZ = -distance;
+            WorlCameMat = mainWindow.cloverController.RenderController.Entity.Transform.Value;
+            //WorlCameMat = Matrix3D.Identity;
+            //WorlCameMat.OffsetZ = -distance;
 
             UpdateTo2DMat();
         }

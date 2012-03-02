@@ -30,6 +30,8 @@ namespace Clover.Tool
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
 
+        Double pointThreadhold = 10;         ///拾取点误差
+        Double lineThreadhold = 0.15;        ///拾取线误差
         MainWindow mainWindow;
 
         public ToolFactory(MainWindow mainWindow)
@@ -47,12 +49,31 @@ namespace Clover.Tool
             {
                 Point3D p1 = edge.Vertex1.GetPoint3D();
                 Point3D p2 = edge.Vertex2.GetPoint3D();
-                // 首先要将点从模型坐标系变换到世界坐标系
-                Matrix3D worldMat = mainWindow.cloverController.RenderController.Entity.Transform.Value;
-                p1 *= worldMat;
-                p2 *= worldMat;
-                _3DTools.MathUtils.
-
+                p1 *= mainWindow.utility.To2DMat;
+                p2 *= mainWindow.utility.To2DMat;
+                Point p12d = new Point(p1.X, p1.Y);
+                Point p22d = new Point(p2.X, p2.Y);
+                Point p = Mouse.GetPosition(mainWindow.foldingPaperViewport);
+                // 判断点
+                if ((p - p12d).Length < pointThreadhold)
+                {
+                    //Debug.WriteLine(p1);
+                    return p1;
+                }
+                if ((p - p22d).Length < pointThreadhold)
+                {
+                    //Debug.WriteLine(p2);
+                    return p2;
+                }
+                // 判断线
+                Vector V1 = p - p12d;
+                Vector V2 = p22d - p;
+                Vector V0 = p22d - p12d;
+                if (V1.Length + V2.Length - V0.Length < lineThreadhold)
+                {
+                    //Debug.WriteLine(edge);
+                    return edge;
+                }                
             }
 
             return null;
