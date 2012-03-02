@@ -88,6 +88,7 @@ namespace Clover
             get { return vertex1; }
             set { vertex1 = value; }
         }
+
         /// <summary>
         /// 设置孩子时会将孩子的父亲置为自己
         /// </summary>
@@ -134,6 +135,7 @@ namespace Clover
         #region 成员变量
         List<Edge> edges = new List<Edge>();
         Vector3D normal;
+
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
