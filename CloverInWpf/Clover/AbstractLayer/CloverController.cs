@@ -91,7 +91,84 @@ namespace Clover
             //paper = new Paper("paper");
         }
         #endregion
-        
+
+        #region 测试折叠
+
+        /// <summary>
+        /// 切割一个面为两个面
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="edge">割线，割线的两个端点必须在面的边上</param>
+        /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
+        void CutAFace(Face face, Edge edge)
+        {
+            Face f1 = new Face();
+            Face f2 = new Face();
+
+            face.LeftChild = f1;
+            face.RightChild = f2;
+
+
+        }
+
+        /// <summary>
+        /// 当前都影响的面，在拖动的过程中需要实时计算，因为随时会有新的受影响
+        /// 的产生或者老的受影响的面被移除。
+        /// </summary>
+        List<Face> affectedFaceList = new List<Face>();
+
+        /// <summary>
+        /// 进入折叠模式前的叶子节点表，用于恢复
+        /// </summary>
+        List<Face> originFaceList = new List<Face>();
+
+        Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
+
+    	public Edge CurrentFoldingLine
+    	{
+    		get { return currentFoldingLine; }
+    	}
+
+        void UpdateAffectedFaceList()
+        {
+
+        }
+
+
+        /// <summary>
+        /// 开始折叠模式
+        /// </summary>
+        /// <param name="faces">需要折叠的面</param>
+        /// <remarks>
+        /// 首先保存原始面树的叶子。
+        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
+        /// 对于边树，我们将在当前叶子节点的面的边而不在originLeaves的边移除。
+        /// </remarks>
+        void StartFoldingModel(List<Face> faces)
+        {
+            originFaceList.Clear();
+            foreach ( Face f in faceLayer.Leaves)
+            {
+                originFaceList.Add(f);
+            }
+
+            
+            // 
+            Edge foldingLine = null;
+
+            foreach (Face face in faces)
+            {
+                CutAFace(face, foldingLine);         // 分割面
+                faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
+            }
+
+
+
+
+        }
+
+        #endregion
+
         #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
@@ -106,20 +183,10 @@ namespace Clover
             // 
         }
 
-        Edge currentFoldingLine = new Edge(null, null);
-    	public Edge CurrentFoldingLine
-    	{
-    		get { return currentFoldingLine; }
-    	}
 
         float currentAngel;
         Point3D currentVertex;
         
-        List<Edge> shadowEdges = new List<Edge>();
-        List<Vertex> shadowVertice = new List<Vertex>();
-        List<Face> shadowFaces = new List<Face>();
-
-
         /// <summary>
         /// 根据鼠标位移更新折线
         /// </summary>
@@ -139,10 +206,64 @@ namespace Clover
             return true;
         }
 
+        /// <summary>
+        /// 判断折线是否通过该平面
+        /// </summary>
+        /// <param name="face">当前判定平面</param>
+        /// <param name="currentFoldingLine">折线亮点坐标</param>
+        /// <returns></returns>
         bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
+            // 求出折线向量
+            Vector3D u = new Vector3D();
+            u.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+            u.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+            u.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
 
-            return true;
+            // 判定面中的每条边与折线是否相交，若有两条相交则折线分割该平面
+            int crossCount = 0;
+            foreach (Edge edge in face.Edges)
+            {
+                Vector3D v = new Vector3D();
+                v.X = edge.Vertex1.X - edge.Vertex2.Y;
+                v.Y = edge.Vertex1.Y - edge.Vertex2.Y;
+                v.Z = edge.Vertex1.Z - edge.Vertex2.Z;
+
+                Vector3D w = new Vector3D();
+                w.X = currentFoldingLine.Vertex1.X - edge.Vertex1.X;
+                w.Y = currentFoldingLine.Vertex1.Y - edge.Vertex1.Y;
+                w.Z = currentFoldingLine.Vertex1.Z - edge.Vertex1.Z;
+
+                double a = Vector3D.DotProduct(u, u);
+                double b = Vector3D.DotProduct(u, v);
+                double c = Vector3D.DotProduct(v, v);
+                double d = Vector3D.DotProduct(u, w);
+                double e = Vector3D.DotProduct(v, w);
+                double D = a * c - b * b;
+                double sc, tc;
+
+                // 两条线平行
+                if (D < 0.00001)
+                {
+                    return false;
+                }
+                else
+                {
+                    sc = (b * e - c * d) / D;
+                    tc = (a * e - b * d) / D;
+                }
+
+                // sc, tc 分别为两条直线上的比例参数
+                Vector3D dp = new Vector3D();
+                dp = w + (sc * u) - (tc * v);
+
+                if (dp.Length < 0.00001)
+                {
+                    crossCount++;
+                }
+            }
+
+            return crossCount >= 2 ? true : false;
         }
 
         /// <summary>
