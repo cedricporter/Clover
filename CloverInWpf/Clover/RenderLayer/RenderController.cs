@@ -27,8 +27,14 @@ namespace Clover.RenderLayer
 
         #region Get/Set 方法
 
-        Double distance = 300;
+        RotateTransform3D rotateTransform = new RotateTransform3D();
+        public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
+        {
+            get { return rotateTransform; }
+            set { rotateTransform = value; }
+        }
         
+        Double distance = 300;
         public System.Double Distance
         {
             get { return distance; }
@@ -107,11 +113,14 @@ namespace Clover.RenderLayer
         /// </summary>
         public void UpdatePosition()
         {
-            
-            TransformGroup tg = new TransformGroup();
+            Transform3DGroup tg = new Transform3DGroup();
             TranslateTransform3D ts = new TranslateTransform3D(0, 0, -distance);
-            //RotateTransform;
-            entity.Transform = new TranslateTransform3D(0, 0, -distance);
+            tg.Children.Add(rotateTransform);
+            tg.Children.Add(ts);
+            entity.Transform = tg;
+
+            if (mainWindow.utility != null)
+                mainWindow.utility.UpdateWorlCameMat();
         }
 
         /// <summary>
