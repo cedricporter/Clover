@@ -241,22 +241,14 @@ namespace Clover
                 bool CalculateFinished = false;
                 foreach (Edge e in f.Edges)
                 {
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
-
-                        Edge edge = new Edge( cVertex1, cVertex2);
-                        return edge;
-                    }
-
+                    // 边的第一个顶点是否是选中点
                     if (e.Vertex1 == pickedVertex)
                     {
 
                         Vector3D v = new Vector3D();
-                        v.X = e.Vertex1.X - e.Vertex2.X;
-                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
-                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
+                        v.X = e.Vertex2.X - e.Vertex1.X;
+                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
+                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
 
                         v.Normalize();
                         if (!findFirstVertex)
@@ -274,14 +266,15 @@ namespace Clover
                             CalculateFinished = true;
                         }
                     }
-
+                    
+                    // 边的第二个顶点是否是选中点
                     if (e.Vertex2 == pickedVertex)
                     {
 
                         Vector3D v = new Vector3D();
-                        v.X = e.Vertex2.X - e.Vertex1.X;
-                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
-                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
+                        v.X = e.Vertex1.X - e.Vertex2.X;
+                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
+                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
 
                         v.Normalize();
 
@@ -298,6 +291,16 @@ namespace Clover
                             vertex2.Y = e.Vertex2.Y + v.Y;
                             vertex2.Z = e.Vertex2.Z + v.Z;
                             CalculateFinished = true;
+                        }
+
+
+                        if (CalculateFinished)
+                        {
+                            Vertex cVertex1 = new Vertex(vertex1);
+                            Vertex cVertex2 = new Vertex(vertex2);
+
+                            Edge edge = new Edge(cVertex1, cVertex2);
+                            return edge;
                         }
                     }
                 }
@@ -391,6 +394,10 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            // 假设已经选取了左上角的点，主平面
+            pickedVertex = vertexLayer.Vertices[0];
+            pickedFace = faceLayer.FacecellTree.Root;
+
             // 计算初始折线
             CalculateFoldingLine(pickedVertex);
 
