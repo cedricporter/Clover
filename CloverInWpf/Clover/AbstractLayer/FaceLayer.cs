@@ -159,18 +159,16 @@ namespace Clover
         /// </summary>
         /// <param name="fg1">合并后的目标</param>
         /// <param name="fg2">合并的源</param>
-        /// <param name="IsCover">fg2 是否位于 fg1的上面</param>
+        /// <param name="IsOver">fg2 是否位于 fg1的上面</param>
         /// <param name="op">目前的折叠操作类型</param>
-        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsCover,FoldingOp op )
+        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsOver,FoldingOp op )
         {
             switch(op)
             {
                 case FoldingOp.Blend:
-                    break;
-
                 case FoldingOp.FoldUp:
-                    
-                    if (IsCover)
+
+                    if ( IsOver )
                     {
                         int layer = 0;
                         for ( int i = 0; i < fg1.GetGroup().Count; i++ )
@@ -242,6 +240,8 @@ namespace Clover
 
         public void Initliaze(Face root)
         {
+            root.UpdateVertices();
+            
             facecellTree = new FacecellTree(root);
             lookupTable = new LookupTable(root);
         }
