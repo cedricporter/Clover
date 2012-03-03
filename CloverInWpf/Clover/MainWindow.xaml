@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:clover="clr-namespace:Clover"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.MainWindow"
-        Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" 
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
 

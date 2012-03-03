@@ -240,15 +240,38 @@ namespace Clover
 
             
             // 
-            Edge foldingLine = null;
+            //Edge foldingLine = null;
 
-            foreach (Face face in faces)
-            {
-                CutAFace(face, foldingLine);         // 分割面
-                faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
-            }
+            //foreach (Face face in faces)
+            //{
+            //    CutAFace(face, foldingLine);    // 分割面
+            //    faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
+            //}
 
+            // 假定只有一个face现在
+            Face face = faces[0];
 
+            Face f1 = new Face();
+            Face f2 = new Face();
+
+            face.LeftChild = f1;
+            face.RightChild = f2;
+
+            Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
+            vertexLayer.InsertVertex(newV1);
+            Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
+            vertexLayer.InsertVertex(newV2);
+
+            Edge newEdge = new Edge(newV1, newV2);
+
+            f1.AddEdge(face.Edges[0]);
+            f1.AddEdge(face.Edges[1]);
+            f1.AddEdge(newEdge);
+            f2.AddEdge(face.Edges[2]);
+            f2.AddEdge(face.Edges[3]);
+            f2.AddEdge(newEdge);
+
+            vertexLayer.GetVertex(3).Z = 50;
 
 
         }
