@@ -71,7 +71,7 @@ namespace Clover
             foldingPaperViewport.Children.Add(cloverController.Model);
 
             // 杂项
-            utility = new Utility(this);
+            utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();
 
             // 注册回调函数
@@ -197,15 +197,16 @@ namespace Clover
         /// <param name="e"></param>
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
+            RenderController renCtrl = RenderController.GetInstance();
             if (e.Delta > 0)
             {
-                cloverController.RenderController.Distance += 20;
-                cloverController.RenderController.UpdatePosition();
+                renCtrl.Distance += 20;
+                renCtrl.UpdatePosition();
             }
             else
             {
-                cloverController.RenderController.Distance -= 20;
-                cloverController.RenderController.UpdatePosition();
+                renCtrl.Distance -= 20;
+                renCtrl.UpdatePosition();
             }
         }
 

@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
+using Clover.RenderLayer;
 
 /**
 @date		:	2012/02/27
@@ -77,8 +78,8 @@ namespace Clover
                 cubeNavModel.Transform = rotts;
                 
                 // 让CloverRoot模仿cube的动作
-                mainWindow.cloverController.RenderController.RotateTransform = rotts;
-                mainWindow.cloverController.RenderController.UpdatePosition();
+                RenderController.GetInstance().RotateTransform = rotts;
+                RenderController.GetInstance().UpdatePosition();
                 //Transform3DGroup group = new Transform3DGroup();
                 //group.Children.Add(rotts);
                 //TranslateTransform3D ts = new TranslateTransform3D(mainWindow.cloverController.Model.Transform.Value.OffsetX,

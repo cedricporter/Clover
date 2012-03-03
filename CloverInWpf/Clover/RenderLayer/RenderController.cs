@@ -95,16 +95,26 @@ namespace Clover.RenderLayer
         MaterialController materialController = new MaterialController();
         #endregion
 
+        static RenderController instance = null;
 
-        MainWindow mainWindow;
+        public static RenderController GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new RenderController();
+            }
+            return instance;
+        }
+
+        //MainWindow mainWindow;
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        public RenderController(MainWindow mainWindow)
+        /*public */RenderController(/*MainWindow mainWindow*/)
         {
             entity.Content = modelGroup;
-            this.mainWindow = mainWindow;
+            //this.mainWindow = mainWindow;
             UpdatePosition();
         }
 
@@ -119,8 +129,8 @@ namespace Clover.RenderLayer
             tg.Children.Add(ts);
             entity.Transform = tg;
 
-            if (mainWindow.utility != null)
-                mainWindow.utility.UpdateWorlCameMat();
+            if (instance != null) // 这个判断避免了Utility类和RenderController类无限递归调用
+                Utility.GetInstance().UpdateWorlCameMat();
         }
 
         /// <summary>
