@@ -70,10 +70,10 @@ namespace Clover.Tool
                 // 计算旋转
                 //RotateTransform3D rot;
                 Quaternion quat;
-                if (vector1 == nearestFace.Normal)
+                if (vector1 == new Vector3D(0,0,1))
                     //rot = new RotateTransform3D();
                     quat = new Quaternion();
-                else if (vector1 == nearestFace.Normal * -1)
+                else if (vector1 == new Vector3D(0,0,-1))
                     //rot = new RotateTransform3D(new AxisAngleRotation3D(new Vector3D(0, 1, 0), 180));
                     quat = new Quaternion(new Vector3D(0, 1, 0), 180);
                 else
