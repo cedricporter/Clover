@@ -56,7 +56,8 @@ namespace Clover
             //vi.Start();
 
             // 导航立方
-            cubeNav = new CubeNavigator(this);
+            CubeNavigator.InitializeInstance(this);
+            cubeNav = CubeNavigator.GetInstance();    
 
             // 创建工具
             ToolFactory tool = new TestTool(this);
@@ -119,6 +120,8 @@ namespace Clover
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
             //cloverController.Update( 10, 10, null, null );
+
+            RenderController.GetInstance().RenderAnimations();
         }
 
 
@@ -213,12 +216,12 @@ namespace Clover
             if (e.Delta > 0)
             {
                 renCtrl.Distance += 20;
-                renCtrl.UpdatePosition();
+                //renCtrl.UpdatePosition();
             }
             else
             {
                 renCtrl.Distance -= 20;
-                renCtrl.UpdatePosition();
+                //renCtrl.UpdatePosition();
             }
         }
 
