@@ -22,10 +22,10 @@ namespace Clover
     public partial class MainWindow : Window
     {
 
-        public CubeNavigator cubeNav;
-        public List<ToolFactory> tools = new List<ToolFactory>();
+        CubeNavigator cubeNav;
+        List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
-        public Utility utility;
+        Utility utility;
         VisualController visualController;
 
         #region 工具窗
@@ -71,7 +71,7 @@ namespace Clover
             foldingPaperViewport.Children.Add(cloverController.Model);
 
             // 杂项
-            utility = new Utility(this);
+            utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();
 
             // 注册回调函数
@@ -99,10 +99,13 @@ namespace Clover
             toolBox = new ToolBox(this);
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
-            toolBox.Show();  
+            toolBox.Show();
+
+            this.Focus();
         }
 
         #endregion
+
         #region 主循环
 
         /// <summary>
@@ -188,6 +191,26 @@ namespace Clover
                 currentTool.onMove();
         }
 
+        /// <summary>
+        /// 改变折纸的距离
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            RenderController renCtrl = RenderController.GetInstance();
+            if (e.Delta > 0)
+            {
+                renCtrl.Distance += 20;
+                renCtrl.UpdatePosition();
+            }
+            else
+            {
+                renCtrl.Distance -= 20;
+                renCtrl.UpdatePosition();
+            }
+        }
+
         #endregion
 
         #region 主窗体大小改变
@@ -210,6 +233,16 @@ namespace Clover
         }
 
         #endregion
+
+        
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up)
+            {
+                MessageBox.Show("fuck");
+            }
+        }
 
         
 

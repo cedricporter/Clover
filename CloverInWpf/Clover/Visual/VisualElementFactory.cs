@@ -35,13 +35,13 @@ namespace Clover.Visual
         public Grid box = new Grid();
 
         /// <summary>
-        /// 位置
+        /// 变换
         /// </summary>
-        TranslateTransform translateTransform = new TranslateTransform();
-        public System.Windows.Media.TranslateTransform TranslateTransform
+        Transform transformGroup = new TransformGroup();
+        public System.Windows.Media.Transform TransformGroup
         {
-            get { return translateTransform; }
-            set { translateTransform = value; }
+            get { return transformGroup; }
+            set { transformGroup = value; }
         }
 
         public VisualElementFactory()
@@ -87,7 +87,7 @@ namespace Clover.Visual
         /// </summary>
         public void UpdatePosition()
         {
-            box.RenderTransform = translateTransform;
+            box.RenderTransform = transformGroup;
         }
 
         public abstract void FadeIn();
