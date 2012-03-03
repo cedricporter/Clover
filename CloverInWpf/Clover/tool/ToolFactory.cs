@@ -152,8 +152,8 @@ namespace Clover.Tool
                 lastMousePos = currMousePos;
             }
 
-            Debug.WriteLine("=====================");
-            Debug.WriteLine(Mouse.GetPosition(mainWindow.foldingPaperViewport));
+            //Debug.WriteLine("=====================");
+            //Debug.WriteLine(Mouse.GetPosition(mainWindow.foldingPaperViewport));
             
         }
 

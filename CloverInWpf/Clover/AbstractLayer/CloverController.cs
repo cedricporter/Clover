@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Clover.RenderLayer;
+using System.Windows.Controls;
+using System.Windows.Shapes;
 
 namespace Clover
 {
@@ -37,6 +40,10 @@ namespace Clover
                         list.Add(e);
                 return list;
             }
+        }
+        public List<Face> FaceLeaves
+        {
+            get { return faceLayer.Leaves; }
         }
         #endregion
 
@@ -128,9 +135,11 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
-            Vertex v1 = edge.Vertex1;
-            Vertex v2 = edge.Vertex2;
+            // 创建v1,v2，加入到verticesLayer
+            Vertex v1 = new Vertex(edge.Vertex1);
+            Vertex v2 = new Vertex(edge.Vertex2);
 
+            // edge index
             int index1 = -1, index2 = -1;
             for ( int i = 0; i < face.Edges.Count; i++)
             {
@@ -141,6 +150,32 @@ namespace Clover
             }
 
             Debug.Assert(index1 != -1 && index2 != -1);
+
+            // 确保逻辑上v1在v2前面
+            if (index1 > index2)
+            {
+                Vertex temp = v1;
+                v1 = v2;
+                v2 = temp;
+                int tempIndex = index1;
+                index1 = index2;    
+                index2 = tempIndex;
+            }
+
+            Edge newCutEdge = new Edge(v1, v2);
+
+
+            face.UpdateVertices();
+            for ( int i = 0; i <= index1; i++)
+            {
+                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            }
+            //f1.AddEdge(newEdge);
+            for ( int i = 0; i <= index1; i++)
+            {
+                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            }
+
 
 
 
@@ -223,6 +258,83 @@ namespace Clover
 
         float currentAngel;
         Point3D currentVertex;
+
+        Edge CalcaluteFoldingLine(Face face, Vertex pickedVertex)
+        {
+            // 找到所有包含此点的面
+            Face f = face;
+            {
+                Point3D vertex1 = new Point3D();
+                Point3D vertex2 = new Point3D();
+
+                bool findFirstVertex = false;
+                bool CalculateFinished = false;
+                foreach (Edge e in f.Edges)
+                {
+                    if (CalculateFinished)
+                    {
+                        Vertex cVertex1 = new Vertex(vertex1);
+                        Vertex cVertex2 = new Vertex(vertex2);
+
+                        Edge edge = new Edge( cVertex1, cVertex2);
+                        return edge;
+                    }
+
+                    if (e.Vertex1 == pickedVertex)
+                    {
+
+                        Vector3D v = new Vector3D();
+                        v.X = e.Vertex1.X - e.Vertex2.X;
+                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
+                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
+
+                        v.Normalize();
+                        if (!findFirstVertex)
+                        {
+                            vertex1.X = e.Vertex1.X + v.X;
+                            vertex1.Y = e.Vertex1.Y + v.Y;
+                            vertex1.Z = e.Vertex1.Z + v.Z;
+                            findFirstVertex = true;
+                        }
+                        else
+                        {
+                            vertex2.X = e.Vertex1.X + v.X;
+                            vertex2.Y = e.Vertex1.Y + v.Y;
+                            vertex2.Z = e.Vertex1.Z + v.Z;
+                            CalculateFinished = true;
+                        }
+                    }
+
+                    if (e.Vertex2 == pickedVertex)
+                    {
+
+                        Vector3D v = new Vector3D();
+                        v.X = e.Vertex2.X - e.Vertex1.X;
+                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
+                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
+
+                        v.Normalize();
+
+                        if (!findFirstVertex)
+                        {
+                            vertex1.X = e.Vertex2.X + v.X;
+                            vertex1.Y = e.Vertex2.Y + v.Y;
+                            vertex1.Z = e.Vertex2.Z + v.Z;
+                            findFirstVertex = true;
+                        }
+                        else
+                        {
+                            vertex2.X = e.Vertex2.X + v.X;
+                            vertex2.Y = e.Vertex2.Y + v.Y;
+                            vertex2.Z = e.Vertex2.Z + v.Z;
+                            CalculateFinished = true;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
         
         /// <summary>
         /// 创建初始的折线顶点·
@@ -470,15 +582,12 @@ namespace Clover
                 return model;
 
             MaterialGroup mgf = new MaterialGroup();
-            mgf.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
             ImageBrush imb = new ImageBrush();
             imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
-            mgf.Children.Add(new EmissiveMaterial(imb));
+            mgf.Children.Add(new DiffuseMaterial(imb));
+
             MaterialGroup mgb = new MaterialGroup();
-            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
-            mgb.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.OldLace)));
-            //mg.Children.Add(new EmissiveMaterial(new SolidColorBrush(Colors.Red)));
-            //Material material = new EmissiveMaterial(new SolidColorBrush(Colors.Yellow));
+            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.OldLace)));
             renderController.FrontMaterial = mgf;
             renderController.BackMaterial = mgb;
 
