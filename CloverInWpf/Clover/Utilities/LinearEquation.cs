@@ -17,6 +17,7 @@ namespace Clover.Utilities
         public void Initialize(int unkownnum, double[,] g)
         {
             x = new double[ unkownnum ];
+            GaussianJordanElimination( g );
         }
 
         /// <summary>
@@ -25,7 +26,7 @@ namespace Clover.Utilities
         /// <returns></returns>
         public double[] GetResult ()
         {
-            GaussianJordanElimination( g );
+            
             return x;
         }
 
