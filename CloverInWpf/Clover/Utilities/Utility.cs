@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media.Media3D;
 using _3DTools;
+using Clover.RenderLayer;
 
 namespace Clover
 {
@@ -16,25 +17,29 @@ namespace Clover
         public System.Windows.Media.Media3D.Matrix3D To2DMat
         {
             get { return to2DMat; }
-            //set { to2DMat = value; }
         }
-                          ///
 
-        MainWindow mainWindow;
-        public Utility(MainWindow mainWindow)
+        #region 单例
+        
+        static Utility instance = null;
+        public static Utility GetInstance()
         {
-            this.mainWindow = mainWindow;
-
+            if (instance == null)
+            {
+                instance = new Utility();
+            }
+            return instance;
         }
+        Utility(){ }
+
+        #endregion
 
         /// <summary>
         /// 当镜头缩放时，更新由世界到镜头的矩阵
         /// </summary>
         public void UpdateWorlCameMat()
         {
-            WorlCameMat = mainWindow.cloverController.RenderController.Entity.Transform.Value;
-            //WorlCameMat = Matrix3D.Identity;
-            //WorlCameMat.OffsetZ = -distance;
+            WorlCameMat = RenderController.GetInstance().Entity.Transform.Value;
 
             UpdateTo2DMat();
         }
@@ -70,7 +75,7 @@ namespace Clover
         }
 
         /// <summary>
-        /// 当窗口大小发生改变时，更新视口矩阵
+        /// 更新3d到2d矩阵
         /// </summary>
         public void UpdateTo2DMat()
         {

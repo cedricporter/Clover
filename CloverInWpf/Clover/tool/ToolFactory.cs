@@ -59,8 +59,8 @@ namespace Clover.Tool
             {
                 Point3D p1 = edge.Vertex1.GetPoint3D();
                 Point3D p2 = edge.Vertex2.GetPoint3D();
-                p1 *= mainWindow.utility.To2DMat;
-                p2 *= mainWindow.utility.To2DMat;
+                p1 *= Utility.GetInstance().To2DMat;
+                p2 *= Utility.GetInstance().To2DMat;
                 Point p12d = new Point(p1.X, p1.Y);
                 Point p22d = new Point(p2.X, p2.Y);
                 Point p = currMousePos;

@@ -27,8 +27,14 @@ namespace Clover.RenderLayer
 
         #region Get/Set 方法
 
-        Double distance = 300;
+        RotateTransform3D rotateTransform = new RotateTransform3D();
+        public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
+        {
+            get { return rotateTransform; }
+            set { rotateTransform = value; }
+        }
         
+        Double distance = 300;
         public System.Double Distance
         {
             get { return distance; }
@@ -89,29 +95,38 @@ namespace Clover.RenderLayer
         MaterialController materialController = new MaterialController();
         #endregion
 
-
-        MainWindow mainWindow;
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        public RenderController(MainWindow mainWindow)
+        #region 单例
+        
+        static RenderController instance = null;
+        public static RenderController GetInstance()
+        {
+            if (instance == null)
+            {
+                instance = new RenderController();
+            }
+            return instance;
+        }
+        RenderController()
         {
             entity.Content = modelGroup;
-            this.mainWindow = mainWindow;
             UpdatePosition();
         }
+
+        #endregion
 
         /// <summary>
         /// 更新折纸位置
         /// </summary>
         public void UpdatePosition()
         {
-            
-            TransformGroup tg = new TransformGroup();
+            Transform3DGroup tg = new Transform3DGroup();
             TranslateTransform3D ts = new TranslateTransform3D(0, 0, -distance);
-            //RotateTransform;
-            entity.Transform = new TranslateTransform3D(0, 0, -distance);
+            tg.Children.Add(rotateTransform);
+            tg.Children.Add(ts);
+            entity.Transform = tg;
+
+            if (instance != null) // 这个判断避免了Utility类和RenderController类无限递归调用
+                Utility.GetInstance().UpdateWorlCameMat();
         }
 
         /// <summary>
@@ -181,9 +196,9 @@ namespace Clover.RenderLayer
         /// <param name="u1"></param>
         /// <param name="v1"></param>
         /// <param name="isUpdate"></param>
-        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
         {
-            materialController.AddFoldingLine(u0, v0, u1, v1, isUpdate);
+            materialController.AddFoldingLine(u0, v0, u1, v1);
         }
 
         /// <summary>
