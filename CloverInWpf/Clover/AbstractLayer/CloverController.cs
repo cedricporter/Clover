@@ -235,6 +235,53 @@ namespace Clover
 
         }
 
+
+        /// <summary>
+        /// 保存到原始叶节点表
+        /// </summary>
+        /// <param name="leaves">当前的叶子</param>
+        /// <remarks>
+        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
+        /// </remarks>
+        void SaveToOriginLeaves(List<Face> leaves)
+        {
+            originFaceList.Clear();
+            foreach ( Face f in faceLayer.Leaves)
+            {
+                originFaceList.Add(f);
+            }
+        }
+
+        /// <summary>
+        /// 还原到originLeaves
+        /// </summary>
+        void Revert()
+        {
+            List<Edge> originEdgeList = new List<Edge>();
+            foreach (Face face in originFaceList)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    originEdgeList.Add(e);
+                }
+            }
+
+            List<Edge> currentEdgeList = new List<Edge>();
+            foreach (Face face in faceLayer.Leaves)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    originEdgeList.Add(e);
+                }
+            }
+
+
+
+
+
+
+        }
+
         /// <summary>
         /// 开始折叠模式
         /// </summary>
@@ -248,11 +295,7 @@ namespace Clover
         {
             faces = faceLayer.Leaves;
 
-            originFaceList.Clear();
-            foreach ( Face f in faceLayer.Leaves)
-            {
-                originFaceList.Add(f);
-            }
+            SaveToOriginLeaves(faces);
 
             
             // 
@@ -584,10 +627,13 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            if (faceLayer.Leaves.Count < 2)
+                return;
+
             // 假设已经选取了左上角的点，主平面
-            //pickedVertex = vertexLayer.Vertices[0];
-            pickedVertex = new Vertex(0, 0);
-            pickedFace = faceLayer.FacecellTree.Root;
+            pickedVertex = vertexLayer.GetVertex(3);
+            pickedFace = faceLayer.Leaves[1];
+            //pickedFace = faceLayer.FacecellTree.Root;
 
             // 计算初始折线
             currentFoldingLine = CalculateFoldingLine(pickedVertex);

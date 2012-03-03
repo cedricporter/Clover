@@ -118,7 +118,7 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
-            //cloverController.Update( 0, 10, null, null );
+            cloverController.Update( 10, 10, null, null );
         }
 
 
