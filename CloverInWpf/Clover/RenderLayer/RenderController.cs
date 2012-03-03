@@ -28,10 +28,15 @@ namespace Clover.RenderLayer
         #region Get/Set 方法
 
         Double distance = 300;
+        
         public System.Double Distance
         {
             get { return distance; }
-            set { distance = value; }
+            set 
+            { 
+                if (value > 40 && value < 1000)
+                    distance = value;
+            }
         }
 
         MaterialGroup frontMaterial;
@@ -94,6 +99,18 @@ namespace Clover.RenderLayer
         {
             entity.Content = modelGroup;
             this.mainWindow = mainWindow;
+            UpdatePosition();
+        }
+
+        /// <summary>
+        /// 更新折纸位置
+        /// </summary>
+        public void UpdatePosition()
+        {
+            
+            TransformGroup tg = new TransformGroup();
+            TranslateTransform3D ts = new TranslateTransform3D(0, 0, -distance);
+            //RotateTransform;
             entity.Transform = new TranslateTransform3D(0, 0, -distance);
         }
 
