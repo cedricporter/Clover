@@ -220,6 +220,15 @@ namespace Clover
 
         }
 
+        public void UpdateVertexPosition(Vertex vertex, double xOffset, double yOffset)
+        {
+            vertex = vertexLayer.GetVertex(3);
+            vertex.X += xOffset;
+            vertex.Y += yOffset;
+
+            renderController.Update(faceLayer.Leaves[1]);
+
+        }
 
         /// <summary>
         /// 开始折叠模式
@@ -230,8 +239,10 @@ namespace Clover
         /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
         /// 对于边树，我们将在当前叶子节点的面的边而不在originLeaves的边移除。
         /// </remarks>
-        void StartFoldingModel(List<Face> faces)
+        public void StartFoldingModel(List<Face> faces)
         {
+            faces = faceLayer.Leaves;
+
             originFaceList.Clear();
             foreach ( Face f in faceLayer.Leaves)
             {
@@ -257,6 +268,8 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
+            faceLayer.UpdateLeaves(face);
+
             Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
             vertexLayer.InsertVertex(newV1);
             Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
@@ -271,7 +284,15 @@ namespace Clover
             f2.AddEdge(face.Edges[3]);
             f2.AddEdge(newEdge);
 
+
+            f1.UpdateVertices();
+            f2.UpdateVertices();
+
             vertexLayer.GetVertex(3).Z = 50;
+
+            renderController.Delete(face);
+            renderController.New(f1);
+            renderController.New(f2);
 
 
         }

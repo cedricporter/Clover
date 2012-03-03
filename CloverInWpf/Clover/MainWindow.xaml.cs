@@ -233,14 +233,30 @@ namespace Clover
 
         #endregion
 
-        
+
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up)
+            switch (e.Key)
             {
-                MessageBox.Show("fuck");
+                case Key.G:
+                    cloverController.StartFoldingModel(null);
+                    break;
+                case Key.Up:
+                    cloverController.UpdateVertexPosition(null, 0, 10);
+                    break;
+                case Key.Down:
+                    cloverController.UpdateVertexPosition(null, 0, -10);
+                    break;
+                case Key.Left:
+                    cloverController.UpdateVertexPosition(null, -10, 0);
+                    break;
+                case Key.Right:
+                    cloverController.UpdateVertexPosition(null, 10, 0);
+                    break;
             }
+
+            cloverController.RenderController.UpdatePosition();
         }
 
         
