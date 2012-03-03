@@ -185,6 +185,15 @@ namespace Clover.RenderLayer
         }
 
         /// <summary>
+        /// 删除所有的面
+        /// </summary>
+        public void DeleteAll()
+        {
+            modelGroup.Children.Clear();
+            faceMeshMap.Clear();
+        }
+
+        /// <summary>
         /// 更新一个已存在的面
         /// </summary>
         /// <param name="face"></param>
@@ -225,9 +234,9 @@ namespace Clover.RenderLayer
             // 更新索引
             for (int i = 1; i < face.Vertices.Count - 1; i++)
             {
-                mesh.TriangleIndices.Add(i + 1);
-                mesh.TriangleIndices.Add(i);
                 mesh.TriangleIndices.Add(0);
+                mesh.TriangleIndices.Add(i);
+                mesh.TriangleIndices.Add(i + 1);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
 

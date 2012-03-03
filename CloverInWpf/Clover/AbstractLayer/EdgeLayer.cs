@@ -7,8 +7,19 @@ namespace Clover
 {
     class EdgeLayer
     {
-        List<EdgeTree> EdgeTreeList = new List<EdgeTree>();
 
+        #region get/set
+        public int Count
+        {
+            get { return edgeTreeList.Count; }
+        }
+        public List<EdgeTree> EdgeTreeList
+        {
+            get { return edgeTreeList; }
+        }
+        #endregion
+
+        List<EdgeTree> edgeTreeList = new List<EdgeTree>();
         CloverController controller;
 
         public EdgeLayer(CloverController controller)
@@ -18,7 +29,7 @@ namespace Clover
 
         public void AddTree(EdgeTree tree)
         {
-            EdgeTreeList.Add(tree);
+            edgeTreeList.Add(tree);
         }
 
         /// <summary>
@@ -28,7 +39,7 @@ namespace Clover
         /// <param name="cutVertex"></param>
         void UpdateTree(Edge parentEdge, Vertex cutVertex)
         {
-            foreach (EdgeTree tree in EdgeTreeList)
+            foreach (EdgeTree tree in edgeTreeList)
             {
                 if (tree.IsContain(parentEdge))
                 {
