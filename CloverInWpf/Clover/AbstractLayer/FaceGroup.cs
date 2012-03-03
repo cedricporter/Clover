@@ -8,54 +8,95 @@ using System.Windows.Media;
 
 namespace Clover.AbstractLayer
 {
+
+    class FaceSort : IComparer<Face>
+    {
+        int IComparer<Face>.Compare( Face f1, Face f2 )
+        {
+            if ( f1.Layer > f2.Layer )
+                return 1;
+            else
+                return -1;
+        }
+
+    }
+
     class FaceGroup
     {
         List<Face> GroupList;
-        Vector3D normal;
-        double A, B, C, D;
+        Vector3D Normal = new Vector3D(); // 组的法向量
+        double A, B, C, D; // 面组中所有面的所在的平面的方程
 
         public FaceGroup(Face f)
         {
             if (f != null)
             {
+                GroupList = new List<Face>();
+                Normal = f.Normal;
+                Normal.Normalize();
                 GroupList.Add( f );
-                A = f.Normal.X;
-                B = f.Normal.Y;
-                C = f.Normal.Z;
+                A = Normal.X;
+                B = Normal.Y;
+                C = Normal.Z;
                 D = -( f.Vertices[ 0 ].X * A + f.Vertices[ 0 ].Y * B + f.Vertices[ 0 ].Z * C );
             }
-            
-            
         }
+
         /// <summary>
-        /// 
+        /// 往面组中增加面
         /// </summary>
         /// <param name="f"></param>
-        public void AddFaceBehind(Face f)
+        public void AddFace(Face f)
         {
-
-            
             GroupList.Add( f );
+            SortFace();
         }
 
+        /// <summary>
+        /// 删除某个面
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public bool DeleteFace( Face f )
         {
-            GroupList.Remove( f );
+            if ( GroupList.Remove( f ) )
+                return true;
+
             return false;
         }
 
-
+        /// <summary>
+        /// 得到面组
+        /// </summary>
+        /// <returns></returns>
         public List<Face> GetGroup()
         {
             return GroupList;
         }
 
+        /// <summary>
+        /// 对面组中的面进行排序
+        /// </summary>
+        void SortFace()
+        {
+
+            FaceSort fc = new FaceSort();
+            GroupList.Sort( fc );
+            
+        }
 
 
+        /// <summary>
+        /// 判断两个面是否属于一个组
+        /// </summary>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
+        /// <returns></returns>
         bool IsInSameGroup( Face f1, Face f2 )
         {
             double A1, B1, C1, D1;
             double A2, B2, C2, D2;
+
             A1 = f1.Normal.X;
             A2 = f2.Normal.X;
 
@@ -80,7 +121,12 @@ namespace Clover.AbstractLayer
         }
 
 
-        bool IsMatch( Face f )
+        /// <summary>
+        /// 判断一个面是否属于这个组
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool IsMatch( Face f )
         {
             double A1, B1, C1, D1;
             A1 = f.Normal.X;
@@ -100,7 +146,19 @@ namespace Clover.AbstractLayer
                 return false;
         }
 
+        public int GetTopLayer()
+        {
+            return GroupList[ 0 ].Layer;
+        }
+
+        public int GetBottomLayer()
+        {
+            return GroupList[ GroupList.Count- 1 ].Layer;
+
+        }
+
 
         
     }
 }
+
