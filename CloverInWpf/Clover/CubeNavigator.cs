@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
+using Clover.RenderLayer;
 
 /**
 @date		:	2012/02/27
@@ -38,7 +39,6 @@ namespace Clover
         MainWindow mainWindow;
         Viewport3D cubeNavViewport;
         Model3DGroup cubeNavModel;
-        //Viewport2DVisual3D cubeNavModel2;
         Point lastMousePos;
         Quaternion lastQuat = new Quaternion();
         
@@ -48,7 +48,6 @@ namespace Clover
             this.mainWindow = mainWindow;
             cubeNavViewport = mainWindow.CubeNavViewport;
             cubeNavModel = mainWindow.CubeNavModel;
-            //cubeNavModel2 = mainWindow.CubeNavModel2;
             cubeNavViewport.MouseLeftButtonDown += new MouseButtonEventHandler(cubeNavViewport_MouseLeftButtonDown);
             cubeNavViewport.MouseMove += new MouseEventHandler(cubeNavViewport_MouseMove);
         }
@@ -77,15 +76,8 @@ namespace Clover
                 cubeNavModel.Transform = rotts;
                 
                 // 让CloverRoot模仿cube的动作
-                Transform3DGroup group = new Transform3DGroup();
-                group.Children.Add(rotts);
-                TranslateTransform3D ts = new TranslateTransform3D(mainWindow.cloverController.Model.Transform.Value.OffsetX,
-                                                                   mainWindow.cloverController.Model.Transform.Value.OffsetY,
-                                                                   mainWindow.cloverController.Model.Transform.Value.OffsetZ);
-                group.Children.Add(ts);
-                mainWindow.cloverController.Model.Transform = group;
-
-                mainWindow.utility.UpdateWorlCameMat();
+                RenderController.GetInstance().RotateTransform = rotts;
+                RenderController.GetInstance().UpdatePosition();
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;

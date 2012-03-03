@@ -24,11 +24,11 @@ namespace Clover
 
         #region get/set
         RenderController renderController;///渲染层
-        public RenderController RenderController
-        {
-            get { return renderController; }
-            //set { renderController = value; }
-        }
+        //public RenderController RenderController
+        //{
+        //    get { return renderController; }
+        //    //set { renderController = value; }
+        //}
         public List<Edge> Edges
         {
             get 
@@ -114,7 +114,7 @@ namespace Clover
             edgeLayer = new EdgeLayer(this);
             vertexLayer = new VertexLayer(this);
             this.mainWindow = mainWindow;
-            renderController = new Clover.RenderLayer.RenderController(mainWindow);
+            renderController = RenderController.GetInstance();
             //paper = new Paper("paper");
         }
         #endregion
@@ -625,6 +625,11 @@ namespace Clover
                 face.UpdateVertices();
                 renderController.New(face);
             }
+            
+            //test
+            renderController.AddFoldingLine(0, 0, 1, 1);
+            renderController.AddFoldingLine(0, 1, 1, 0);
+
             model = renderController.Entity;
            
             return model;

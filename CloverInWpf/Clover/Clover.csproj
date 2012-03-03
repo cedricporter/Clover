@@ -64,6 +64,7 @@
     <Compile Include="AbstractLayer\Convert3DInfoTo2D.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
+    <Compile Include="RenderLayer\MaterialController.cs" />
     <Compile Include="RenderLayer\RenderController.cs" />
     <Compile Include="ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
@@ -72,6 +73,7 @@
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
     <Compile Include="Utilities\Utility.cs" />
+    <Compile Include="Visual\EdgeHeightLightVisual.cs" />
     <Compile Include="Visual\TextVisualElement.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
     <Compile Include="Visual\VisualController.cs" />
