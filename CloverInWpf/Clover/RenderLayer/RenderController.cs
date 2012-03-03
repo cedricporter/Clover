@@ -95,8 +95,9 @@ namespace Clover.RenderLayer
         MaterialController materialController = new MaterialController();
         #endregion
 
+        #region 单例
+        
         static RenderController instance = null;
-
         public static RenderController GetInstance()
         {
             if (instance == null)
@@ -105,18 +106,13 @@ namespace Clover.RenderLayer
             }
             return instance;
         }
-
-        //MainWindow mainWindow;
-
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /*public */RenderController(/*MainWindow mainWindow*/)
+        RenderController()
         {
             entity.Content = modelGroup;
-            //this.mainWindow = mainWindow;
             UpdatePosition();
         }
+
+        #endregion
 
         /// <summary>
         /// 更新折纸位置

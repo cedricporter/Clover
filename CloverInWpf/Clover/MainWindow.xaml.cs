@@ -22,10 +22,10 @@ namespace Clover
     public partial class MainWindow : Window
     {
 
-        public CubeNavigator cubeNav;
-        public List<ToolFactory> tools = new List<ToolFactory>();
+        CubeNavigator cubeNav;
+        List<ToolFactory> tools = new List<ToolFactory>();
         public ToolFactory currentTool = null;
-        public Utility utility;
+        Utility utility;
         VisualController visualController;
 
         #region 工具窗
@@ -105,6 +105,7 @@ namespace Clover
         }
 
         #endregion
+
         #region 主循环
 
         /// <summary>

@@ -19,6 +19,8 @@ namespace Clover
             get { return to2DMat; }
         }
 
+        #region 单例
+        
         static Utility instance = null;
         public static Utility GetInstance()
         {
@@ -28,11 +30,9 @@ namespace Clover
             }
             return instance;
         }
-        //MainWindow mainWindow;
-        /*public*/ Utility(/*MainWindow mainWindow*/)
-        {
-            //this.mainWindow = mainWindow;
-        }
+        Utility(){ }
+
+        #endregion
 
         /// <summary>
         /// 当镜头缩放时，更新由世界到镜头的矩阵
