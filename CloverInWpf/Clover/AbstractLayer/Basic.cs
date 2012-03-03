@@ -325,7 +325,7 @@ namespace Clover
             normal = Vector3D.CrossProduct( v1, v2 );
             normal.Normalize();
 
-            //normal.Negate();
+            normal.Negate();
 
             return true;
         }
