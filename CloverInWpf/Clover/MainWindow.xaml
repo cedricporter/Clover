@@ -15,6 +15,11 @@
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <AmbientLight Color="White"/>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
             </Viewport3D>
             
 	        <!-- 正方体导航
@@ -81,6 +86,9 @@
 				</MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="ToolBox"/>
+                </MenuItem>
+                <MenuItem Header="_Setting" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
+                    <MenuItem Header=""/>
                 </MenuItem>
 			</Menu>
             <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{StaticResource RectangleButtonTemplate1}"/>
