@@ -111,6 +111,7 @@ namespace Clover.Tool
                 Object shadowElement;
                 currOveredElement = ExcuteHitTest(out shadowElement);
 
+                // 上一帧拾取到的元素和这一帧拾取到的不同
                 if (currOveredElement != lastOveredElement)
                 {
                     if (isVisualEnable)
@@ -122,6 +123,7 @@ namespace Clover.Tool
                     {
                         if (isVisualEnable)
                         {
+                            // 当前拾取到的是点
                             if (currOveredElement.GetType().ToString() == "Clover.Vertex")
                             {
                                 Point pos = (Point)shadowElement;
@@ -130,6 +132,15 @@ namespace Clover.Tool
                                 currOveredElementVi.Start();
                                 visualController.AddVisual(currOveredElementVi);
                             }
+                            // 当前拾取到的是边
+                            //else if (currOveredElement.GetType().ToString() == "Clover.Edge")
+                            //{
+                            //    Clover.Edge2D edge2d = (Clover.Edge2D)shadowElement;
+                            //    currOveredElementVi = new EdgeHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
+                            //        edge2d.p1, edge2d.p2);
+                            //    currOveredElementVi.Start();
+                            //    visualController.AddVisual(currOveredElementVi);
+                            //}
                         }
                         onEnterElement(currOveredElement);
                     }
@@ -137,6 +148,7 @@ namespace Clover.Tool
                     {
                         if (isVisualEnable)
                         {
+                            // 使上一个视觉元素消失
                             if (lastOveredElementVi != null)
                             {
                                 lastOveredElementVi.End();

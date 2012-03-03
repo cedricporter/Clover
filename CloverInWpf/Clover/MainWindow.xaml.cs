@@ -102,6 +102,7 @@ namespace Clover
             toolBox.Show();  
         }
 
+        #endregion
         #region 主循环
 
         /// <summary>
@@ -114,9 +115,9 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
+            cloverController.Update( 0, 10, null, null );
         }
 
-        #endregion
 
         #endregion
 

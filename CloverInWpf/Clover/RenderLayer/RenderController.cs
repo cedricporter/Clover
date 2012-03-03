@@ -40,25 +40,21 @@ namespace Clover.RenderLayer
             get { return frontMaterial; }
             set
             {
-                frontMaterial = value;
-                ImageSource img = ((value.Children[0] as DiffuseMaterial).Brush as ImageBrush).ImageSource;
-                materialImageHeight = img.Height;
-                materialImageWidth = img.Width;
+                frontMaterial = materialController.UpdateFrontMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
                     pair.Value.Material = value;
                 }
-                UpdateEdgeLayer();
             }
         }
 
-        Material backMaterial;
-        public System.Windows.Media.Media3D.Material BackMaterial
+        MaterialGroup backMaterial;
+        public System.Windows.Media.Media3D.MaterialGroup BackMaterial
         {
             get { return backMaterial; }
             set 
             { 
-                backMaterial = value;
+                backMaterial = materialController.UpdateBackMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
                     pair.Value.BackMaterial = value;
@@ -83,13 +79,9 @@ namespace Clover.RenderLayer
         }
 
         #endregion
-
+        
         #region 私有成员变量
-
-        Double materialImageHeight = 2;
-        Double materialImageWidth = 2;
-        DiffuseMaterial edgeLayer = null;
-
+        MaterialController materialController = new MaterialController();
         #endregion
 
 
@@ -151,30 +143,17 @@ namespace Clover.RenderLayer
             }
         }
 
-        public void AddSolidStroke(Point p1, Point p2)
+        /// <summary>
+        /// 增加新的折线
+        /// </summary>
+        /// <param name="u0"></param>
+        /// <param name="v0"></param>
+        /// <param name="u1"></param>
+        /// <param name="v1"></param>
+        /// <param name="isUpdate"></param>
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
         {
-            if (edgeLayer == null)
-            {
-                edgeLayer = new DiffuseMaterial();
-                
-            }
-            ////test
-            //Image myImage = new Image();
-            //Rect rect = new Rect(new Size(100, 100));
-            ////Rectangle rect = new Rectangle();
-            ////rect.Height = rect.Width = 100;
-            ////rect.Fill = new SolidColorBrush(Colors.Black);
-
-            //DrawingVisual drawingVisual = new DrawingVisual();
-            //DrawingContext drawingContext = drawingVisual.RenderOpen();
-            //drawingContext.DrawRectangle(new SolidColorBrush(Colors.Black), (Pen)null, rect);
-            //drawingContext.Close();
-
-            //RenderTargetBitmap bmp = new RenderTargetBitmap(1200, 1200, 96, 96, PixelFormats.Pbgra32);
-            //bmp.Render(drawingVisual);
-            //myImage.Source = bmp;
-            //ImageBrush imb2 = new ImageBrush(bmp);
-            //mgf.Children.Add(new DiffuseMaterial(imb2));
+            materialController.AddFoldingLine(u0, v0, u1, v1, isUpdate);
         }
 
         /// <summary>
@@ -203,30 +182,6 @@ namespace Clover.RenderLayer
             }
 
             return mesh;
-        }
-
-        /// <summary>
-        /// 当分辨率改变时改变纸张的边的分辨率
-        /// </summary>
-        void UpdateEdgeLayer()
-        {
-            Double thickness = (materialImageHeight > materialImageWidth ? materialImageHeight : materialImageWidth) / 100;
-            Image img = new Image();
-            Rect rect = new Rect(new Size(materialImageWidth, materialImageHeight));
-            DrawingVisual dv = new DrawingVisual();
-            DrawingContext dc = dv.RenderOpen();
-            dc.DrawRectangle((Brush)null, new Pen(new SolidColorBrush(Colors.Black), thickness), rect);
-            dc.Close();
-
-            RenderTargetBitmap bmp = new RenderTargetBitmap((int)materialImageWidth, (int)materialImageHeight, 96, 96, PixelFormats.Pbgra32);
-            bmp.Render(dv);
-            img.Source = bmp;
-            ImageBrush imgb = new ImageBrush(bmp);
-
-            if (edgeLayer != null)
-                frontMaterial.Children.Remove(edgeLayer);
-            edgeLayer = new DiffuseMaterial(imgb);
-            frontMaterial.Children.Add(edgeLayer);
         }
 
     }
