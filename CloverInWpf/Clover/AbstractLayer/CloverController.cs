@@ -340,7 +340,7 @@ namespace Clover
             f1.UpdateVertices();
             f2.UpdateVertices();
 
-            vertexLayer.GetVertex(3).Z = 50;
+            //vertexLayer.GetVertex(3).Z = 50;
 
             renderController.Delete(face);
             renderController.New(f1);
