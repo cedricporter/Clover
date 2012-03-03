@@ -13,8 +13,12 @@ namespace Clover
         #region Attributes
 
         // Vertexcell lookup table.
-        List<List<Vertex>> VertexCellTable;
-
+        List<List<Vertex>> vertexCellTable;
+        public List<List<Vertex>> VertexCellTable
+        {
+            get { return vertexCellTable; }
+            set { vertexCellTable = value; }
+        }
         CloverController controller;
 
         #endregion
@@ -24,7 +28,7 @@ namespace Clover
             get
             {
                 List<Vertex> list = new List<Vertex>();
-                foreach (List<Vertex> l in VertexCellTable)
+                foreach (List<Vertex> l in vertexCellTable)
                 {
                     list.Add(l[l.Count - 1]);
                 }
@@ -38,7 +42,7 @@ namespace Clover
         public VertexLayer(CloverController ctrl)
         {
             controller = ctrl;
-            VertexCellTable = new List<List<Vertex>>();
+            vertexCellTable = new List<List<Vertex>>();
         }
 
         public bool IsVertexExist(int index)
@@ -47,19 +51,19 @@ namespace Clover
             //if (VertexCellTable.Count < index)
             //    return false;
             //return true;  
-            return index < VertexCellTable.Count;
+            return index < vertexCellTable.Count;
         }
 
         public bool IsEmpty()
         {
-            return VertexCellTable.Count == 0;
+            return vertexCellTable.Count == 0;
         }
 
         public Vertex GetVertex(int index)
         {
             if (!IsVertexExist(index))
                 return null;
-            return VertexCellTable[index][0];
+            return vertexCellTable[index][0];
         }
 
         /// <summary>
@@ -71,12 +75,12 @@ namespace Clover
         {
             List<Vertex> vl =  new List<Vertex>();
             vl.Add(vertex);
-            VertexCellTable.Add(vl);
+            vertexCellTable.Add(vl);
             // 是不是返回新的顶点的索引？是的话是不是应该减一呢？ —— Cedric Porter
             // old: return VertexCellTable.Count;
 
             // 设置顶点的index，后续插入的顶点都有同样的index，方便索引
-            vertex.Index = VertexCellTable.Count - 1;
+            vertex.Index = vertexCellTable.Count - 1;
 
             return vertex.Index;
         }
@@ -90,7 +94,7 @@ namespace Clover
         public void UpdateVertex(Vertex vertex, int index)
         {
             vertex.Index = index;
-            VertexCellTable[index].Add(vertex);
+            vertexCellTable[index].Add(vertex);
         }
         /// <summary>
         /// 更新节点
@@ -100,17 +104,17 @@ namespace Clover
         public void UpdateVertex(Vertex oldVertex, Vertex newVertex)
         {
             newVertex.Index = oldVertex.Index;
-            VertexCellTable[newVertex.Index].Add(newVertex);
+            vertexCellTable[newVertex.Index].Add(newVertex);
         }
 
         public void DeleteVertex(int index)
         {
-            VertexCellTable.RemoveAt(index);
+            vertexCellTable.RemoveAt(index);
         }
 
         public void ClearTable()
         {
-            VertexCellTable.Clear();
+            vertexCellTable.Clear();
         }
         #endregion
     }

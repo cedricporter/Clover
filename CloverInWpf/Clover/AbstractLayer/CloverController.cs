@@ -251,6 +251,8 @@ namespace Clover
                 originFaceList.Add(f);
             }
 
+            originEdgeListCount = edgeLayer.Count;
+            //originVertexListCount = vertexLayer.
         }
 
         /// <summary>
