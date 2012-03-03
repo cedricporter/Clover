@@ -554,13 +554,54 @@ namespace Clover
             foreach (Face face in faceWithFoldingLine)
             {
                 CutAFace(face, currentFoldingLine); 
+                // 选取有拾取点的那个面为移动面，加入到没有折线面分组
+
+                bool findMovedFace = false;
+                foreach (Edge e in face.LeftChild.Edges)
+                {
+                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                    {
+                        faceWithoutFoldingLine.Add(face.LeftChild);
+                        findMovedFace = true;
+                        break;
+                    }
+                }
+
+                if (!findMovedFace)
+                    faceWithoutFoldingLine.Add(face.RightChild);
             }
 
-            // 根据鼠标位移修正顶点坐标
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in faceWithoutFoldingLine)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1 != pickedVertex && !e.Vertex1.Moved )
+                    {
+                        e.Vertex1.X += 0.01 * yRel;
+                        e.Vertex1.Y += 0.01 * yRel;
+                        e.Vertex1.Z += 0.01 * yRel;
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2 != pickedVertex && !e.Vertex2.Moved)
+                    {
+                        e.Vertex2.X += 0.01 * yRel;
+                        e.Vertex2.Y += 0.01 * yRel;
+                        e.Vertex2.Z += 0.01 * yRel;
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
 
             // 判断是否贴合，若有贴合更新组
 
 
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
         }
 
         #endregion
