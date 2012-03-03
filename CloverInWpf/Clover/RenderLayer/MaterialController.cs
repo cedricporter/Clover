@@ -29,6 +29,7 @@ namespace Clover.RenderLayer
         MaterialGroup frontMaterial = null;
         MaterialGroup backMaterial = null;
         DiffuseMaterial edgeLayer = null;
+        DiffuseMaterial frontFoldLineLayer = null;
 
         public MaterialController()
         {
@@ -61,13 +62,42 @@ namespace Clover.RenderLayer
             return mat;
         }
 
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        {
+            Point p0 = new Point(u0 * width, v0 * height);
+            Point p1 = new Point(u1 * width, v1 * height);
+            AddFrontFoldingLine(p0, p1, isUpdate);
+        }
+
+        void AddFrontFoldingLine(Point p0, Point p1, Boolean isUpdate)
+        {
+            //Image newImg = new Image();
+
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            Pen pen = new Pen(new SolidColorBrush(Colors.Black), 20);
+            pen.DashStyle = DashStyles.Dash;
+            dc.DrawLine(pen, p0, p1);
+            dc.Close();
+
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp.Render(dv);
+            //newImg.Source = bmp;
+            ImageBrush imgb = new ImageBrush(bmp);
+
+            if (frontFoldLineLayer != null)
+                frontMaterial.Children.Remove(frontFoldLineLayer);
+            frontFoldLineLayer = new DiffuseMaterial(imgb);
+            frontMaterial.Children.Add(frontFoldLineLayer);
+        }
+
         /// <summary>
         /// 当分辨率改变时改变纸张的边的分辨率
         /// </summary>
         void UpdateEdgeLayer()
         {
             Double thickness = (height > width ? height : width) / 100;
-            Image img = new Image();
+            //Image img = new Image();
             Rect rect = new Rect(new Size(width, height));
             DrawingVisual dv = new DrawingVisual();
             DrawingContext dc = dv.RenderOpen();
@@ -76,7 +106,7 @@ namespace Clover.RenderLayer
 
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
-            img.Source = bmp;
+            //img.Source = bmp;
             ImageBrush imgb = new ImageBrush(bmp);
 
             if (edgeLayer != null)

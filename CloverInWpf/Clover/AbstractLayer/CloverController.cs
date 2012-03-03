@@ -590,6 +590,10 @@ namespace Clover
                 face.UpdateVertices();
                 renderController.New(face);
             }
+            
+            //test
+            renderController.AddFoldingLine(0, 0, 1, 1);
+
             model = renderController.Entity;
            
             return model;

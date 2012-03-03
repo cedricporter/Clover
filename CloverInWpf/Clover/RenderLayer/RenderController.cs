@@ -144,6 +144,19 @@ namespace Clover.RenderLayer
         }
 
         /// <summary>
+        /// 增加新的折线
+        /// </summary>
+        /// <param name="u0"></param>
+        /// <param name="v0"></param>
+        /// <param name="u1"></param>
+        /// <param name="v1"></param>
+        /// <param name="isUpdate"></param>
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        {
+            materialController.AddFoldingLine(u0, v0, u1, v1, isUpdate);
+        }
+
+        /// <summary>
         /// 根据传入的Face创建一个新MeshGeometry3D
         /// </summary>
         /// <param name="face"></param>
