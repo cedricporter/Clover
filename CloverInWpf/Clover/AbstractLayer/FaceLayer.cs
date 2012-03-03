@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Clover.AbstractLayer;
 
 namespace Clover
 {
@@ -77,32 +78,137 @@ namespace Clover
         }
     }
 
+
     /// <summary>
     /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
     /// </summary>
     class LookupTable
     {
-        List<List<Face>> tables = new List<List<Face>>();
-        Face root;
-
+        List<FaceGroup> tables = new List<FaceGroup>();
+        
         #region get/set
-        public List<List<Face>> Tables
+        public List<FaceGroup> Tables
         { get { return tables; } }
         #endregion
 
-        public LookupTable(Face root)
+        /// <summary>
+        /// 构造第一个面的时候初始化。
+        /// </summary>
+        /// <param name="f"></param>
+        public LookupTable(Face f)
         {
-            this.root = root;
+            FaceGroup g = new FaceGroup( f );
+            tables.Add( g );
         }
 
-        public int AddGroup(Face face)
+
+        /// <summary>
+        /// 得到面所在的分组，如果错误返回null。
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public FaceGroup GetGroup(Face f)
         {
-            List<Face> fl = new List<Face>();
-            fl.Add(face);
-            tables.Add(fl);
-            return tables.Count - 1;
+            foreach (FaceGroup fg in tables)
+            {
+                foreach (Face face in fg.GetGroup())
+                {
+                    if (face == f)
+                    {
+                        return fg;
+                    }
+                }
+            }
+            return null;
         }
 
+        /// <summary>
+        /// 将一个face增加到table中，table会自动生成或者插入到合适的分组中
+        /// </summary>
+        /// <param name="f"></param>
+        public void AddFace(Face f)
+        {
+            foreach (FaceGroup fg in tables)
+            {
+                if ( fg.IsMatch(f))
+                {
+                    fg.AddFace( f );
+                    return;
+                }
+            }
+            FaceGroup newfg = new FaceGroup( f );
+            tables.Add( newfg );
+        }
+
+        /// <summary>
+        /// 刷新table中的列表，删除空的组
+        /// </summary>
+        void UpdateTable()
+        {
+            foreach (FaceGroup fg in tables)
+            {
+                if (fg.GetGroup().Count == 0)
+                {
+                    tables.Remove( fg );
+                }
+            }
+        }
+
+        /// <summary>
+        /// 自动叠合的时候调用。
+        /// </summary>
+        /// <param name="fg1">合并后的目标</param>
+        /// <param name="fg2">合并的源</param>
+        /// <param name="IsOver">fg2 是否位于 fg1的上面</param>
+        /// <param name="op">目前的折叠操作类型</param>
+        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsOver,FoldingOp op )
+        {
+            switch(op)
+            {
+                case FoldingOp.Blend:
+                case FoldingOp.FoldUp:
+
+                    if ( IsOver )
+                    {
+                        int layer = 0;
+                        for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                        {
+                            fg1.GetGroup()[ i ].Layer = layer;
+                            layer++;
+                        }
+                        for ( int i = fg2.GetGroup().Count - 1; i >= 0; i-- )
+                        {
+                            fg2.GetGroup()[ i ].Layer = layer;
+                            layer++;
+                            fg1.AddFace( fg2.GetGroup()[ i ] );
+                        }
+                        UpdateTable();
+                        
+                    }
+                    else
+                    {
+                        int layer = 0;
+                        for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                        {
+                            fg1.GetGroup()[ i ].Layer = layer;
+                            layer++;
+                        }
+                        layer = fg1.GetBottomLayer();
+                        layer--;
+                        for ( int i = 0; i < fg2.GetGroup().Count; i++ )
+                        {
+                            fg2.GetGroup()[ i ].Layer = layer;
+                            fg1.AddFace( fg2.GetGroup()[ i ] );
+                            layer--;
+                        }
+                        UpdateTable();
+                    }
+                    break;
+
+                case FoldingOp.TuckIn:
+                    break;
+            }
+        }
     }
 
 
@@ -134,6 +240,8 @@ namespace Clover
 
         public void Initliaze(Face root)
         {
+            root.UpdateVertices();
+            
             facecellTree = new FacecellTree(root);
             lookupTable = new LookupTable(root);
         }
