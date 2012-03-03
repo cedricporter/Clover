@@ -89,7 +89,7 @@ namespace Clover
             }
 
             // create a face
-            Face face = new Face();
+            Face face = new Face(0);
 
             // creates 4 edges
             Edge[] edges = new Edge[4];
@@ -133,72 +133,70 @@ namespace Clover
         void CutAFace(Face face, Edge edge)
         {
             return;
+            //旭瑜注释的呃。。。。。。。。。。。。。。。。。。。。。。。。。
+            //Face f1 = new Face();
+            //Face f2 = new Face();
 
-            Face f1 = new Face();
-            Face f2 = new Face();
+            //face.LeftChild = f1;
+            //face.RightChild = f2;
 
-            face.LeftChild = f1;
-            face.RightChild = f2;
+            //// 创建v1,v2，加入到verticesLayer
+            //Vertex v1 = new Vertex(edge.Vertex1);
+            //Vertex v2 = new Vertex(edge.Vertex2);
 
-            // 创建v1,v2，加入到verticesLayer
-            Vertex v1 = new Vertex(edge.Vertex1);
-            Vertex v2 = new Vertex(edge.Vertex2);
+            //// edge index
+            //int index1 = -1, index2 = -1;
+            //for ( int i = 0; i < face.Edges.Count; i++)
+            //{
+            //    if (face.Edges[i].IsVerticeIn(v1))
+            //    {
+            //        index1 = i;
+            //        Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
+            //        Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
 
-            // edge index
-            int index1 = -1, index2 = -1;
-            for ( int i = 0; i < face.Edges.Count; i++)
-            {
-                if (face.Edges[i].IsVerticeIn(v1))
-                {
-                    index1 = i;
-                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
-                    Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
+            //        face.Edges[i].LeftChild = e1;
+            //        face.Edges[i].RightChild = e2;
+            //    }
+            //    if (face.Edges[i].IsVerticeIn(v2))
+            //    {
+            //        index2 = i;
+            //        Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
+            //        Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
 
-                    face.Edges[i].LeftChild = e1;
-                    face.Edges[i].RightChild = e2;
-                }
-                if (face.Edges[i].IsVerticeIn(v2))
-                {
-                    index2 = i;
-                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
-                    Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
+            //        face.Edges[i].LeftChild = e1;
+            //        face.Edges[i].RightChild = e2;
+            //    }
+            //}
 
-                    face.Edges[i].LeftChild = e1;
-                    face.Edges[i].RightChild = e2;
-                }
-            }
+            //Debug.Assert(index1 != -1 && index2 != -1);
 
-            Debug.Assert(index1 != -1 && index2 != -1);
+            //// 确保逻辑上v1在v2前面
+            //if (index1 > index2)
+            //{
+            //    Vertex temp = v1;
+            //    v1 = v2;
+            //    v2 = temp;
+            //    int tempIndex = index1;
+            //    index1 = index2;    
+            //    index2 = tempIndex;
+            //}
 
-            // 确保逻辑上v1在v2前面
-            if (index1 > index2)
-            {
-                Vertex temp = v1;
-                v1 = v2;
-                v2 = temp;
-                int tempIndex = index1;
-                index1 = index2;    
-                index2 = tempIndex;
-            }
-
-            Edge newCutEdge = new Edge(v1, v2);
-
-
-            face.UpdateVertices();
-            for ( int i = 0; i <= index1; i++)
-            {
-                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
-            }
-            //f1.AddEdge(newEdge);
-            for ( int i = 0; i <= index1; i++)
-            {
-                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
-            }
+            //Edge newCutEdge = new Edge(v1, v2);
 
 
-
+            //face.UpdateVertices();
+            //for ( int i = 0; i <= index1; i++)
+            //{
+            //    f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            //}
+            ////f1.AddEdge(newEdge);
+            //for ( int i = 0; i <= index1; i++)
+            //{
+            //    f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            //}
 
         }
+
 
         /// <summary>
         /// 当前都影响的面，在拖动的过程中需要实时计算，因为随时会有新的受影响
@@ -314,9 +312,9 @@ namespace Clover
             // 假定只有一个face现在
             Face face = faces[0];
 
-            Face f1 = new Face();
-            Face f2 = new Face();
-
+            Face f1 = new Face( face.Layer );
+            Face f2 = new Face( face.Layer );
+            
             face.LeftChild = f1;
             face.RightChild = f2;
 

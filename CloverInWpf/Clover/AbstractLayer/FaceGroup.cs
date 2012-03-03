@@ -2,102 +2,101 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Media.Media3D;
+using Clover;
+using System.Windows.Media;
 
 namespace Clover.AbstractLayer
 {
+
+    class FaceSort : IComparer<Face>
+    {
+        int IComparer<Face>.Compare( Face f1, Face f2 )
+        {
+            if ( f1.Layer > f2.Layer )
+                return 1;
+            else
+                return -1;
+        }
+
+    }
+
     class FaceGroup
     {
-        List<List<Face>> GroupList = new List<List<Face>>();
-        
+        List<Face> GroupList;
+        Vector3D Normal = new Vector3D(); // 组的法向量
+        double A, B, C, D; // 面组中所有面的所在的平面的方程
+
+        public FaceGroup(Face f)
+        {
+            if (f != null)
+            {
+                GroupList = new List<Face>();
+                Normal = f.Normal;
+                Normal.Normalize();
+                GroupList.Add( f );
+                A = Normal.X;
+                B = Normal.Y;
+                C = Normal.Z;
+                D = -( f.Vertices[ 0 ].X * A + f.Vertices[ 0 ].Y * B + f.Vertices[ 0 ].Z * C );
+            }
+        }
 
         /// <summary>
-        /// 初始化面组
+        /// 往面组中增加面
         /// </summary>
-        /// <param name="facetree"></param>
-        public void Initialize( FacecellTree facetree )
+        /// <param name="f"></param>
+        public void AddFace(Face f)
         {
-            foreach ( Face f in facetree.Leaves )
-            {
-                AddFace(f);
-            }
+            GroupList.Add( f );
+            SortFace();
+        }
+
+        /// <summary>
+        /// 删除某个面
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool DeleteFace( Face f )
+        {
+            if ( GroupList.Remove( f ) )
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// 得到面组
+        /// </summary>
+        /// <returns></returns>
+        public List<Face> GetGroup()
+        {
+            return GroupList;
+        }
+
+        /// <summary>
+        /// 对面组中的面进行排序
+        /// </summary>
+        void SortFace()
+        {
+
+            FaceSort fc = new FaceSort();
+            GroupList.Sort( fc );
             
         }
 
 
         /// <summary>
-        /// 向面组添加一个面
+        /// 判断两个面是否属于一个组
         /// </summary>
-        /// <param name="f"></param>
-        void AddFace(Face f)
-        {
-            if (GroupList.Count == 0)
-            {
-                List<Face> l = new List<Face>();
-                l.Add( f );
-                GroupList.Add( l );
-            }
-            else
-            {
-                bool isfind = false;
-                foreach (List<Face> l in GroupList)
-                {
-                    foreach (Face face in l)
-                    {
-                        if (IsInSameGroup(f, face))
-                        {
-                            l.Add( f );
-                            isfind = true;
-                            break;
-                        }
-
-                    }
-                    if (isfind)
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// 从面组中删除面
-        /// </summary>
-        /// <param name="f"></param>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
         /// <returns></returns>
-        bool DeleteFace(Face f)
-        {
-            foreach (List<Face> l in GroupList)
-            {
-                if ( l.Remove( f ) )
-                    return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// 获取当前面所在的整个组
-        /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        List<Face> GetGroup(Face f)
-        {
-            foreach (List<Face> l in GroupList)
-            {
-                foreach (Face face in l)
-                {
-                    if (f == face)
-                    {
-                        return l;
-                    }
-                }
-            }
-            return null;
-        }
-
-        bool IsInSameGroup(Face f1, Face f2)
+        bool IsInSameGroup( Face f1, Face f2 )
         {
             double A1, B1, C1, D1;
             double A2, B2, C2, D2;
+
             A1 = f1.Normal.X;
             A2 = f2.Normal.X;
 
@@ -109,20 +108,57 @@ namespace Clover.AbstractLayer
 
             D1 = -( f1.Vertices[ 0 ].X * A1 + f1.Vertices[ 0 ].Y * B1 + f1.Vertices[ 0 ].Z * C1 );
             D2 = -( f1.Vertices[ 0 ].X * A2 + f1.Vertices[ 0 ].Y * B2 + f1.Vertices[ 0 ].Z * C2 );
-
-            if ( A1 * B2 == A2 * B1 &&
-                B1 * C2 == B2 * C1 &&
-                C1 * D2 == C2 * D1
-                )
+            if (
+                (Math.Abs(A1 * B2 - A2 * B1) < 0.0001)  &&
+                (Math.Abs(B1 * C2 - B2 * C1) < 0.0001)  &&
+                (Math.Abs(C1 * D2 - C2 * D1) < 0.0001)  
+               )
             {
                 return true;
             }
             else
                 return false;
-            
-            
         }
+
+
+        /// <summary>
+        /// 判断一个面是否属于这个组
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool IsMatch( Face f )
+        {
+            double A1, B1, C1, D1;
+            A1 = f.Normal.X;
+            B1 = f.Normal.Y;
+            C1 = f.Normal.Z;
+            D1 = -( f.Vertices[ 0 ].X * A1 + f.Vertices[ 0 ].Y * B1 + f.Vertices[ 0 ].Z * C1 );
+
+            if (
+                ( Math.Abs( A1 * B - A * B1 ) < 0.0001 )  &&
+                ( Math.Abs( B1 * C - B * C1 ) < 0.0001 )  &&
+                ( Math.Abs( C1 * D - C * D1 ) < 0.0001 )
+               )
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public int GetTopLayer()
+        {
+            return GroupList[ 0 ].Layer;
+        }
+
+        public int GetBottomLayer()
+        {
+            return GroupList[ GroupList.Count- 1 ].Layer;
+
+        }
+
 
         
     }
 }
+
