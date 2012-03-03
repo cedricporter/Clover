@@ -106,6 +106,9 @@ namespace Clover
 
             // use root to initialize facecell tree and lookuptable
             faceLayer.Initliaze(face);
+
+            face.UpdateVertices();
+            faceLayer.UpdateLeaves();
         }
 
         private CloverController(MainWindow mainWindow)
@@ -129,6 +132,8 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
+            return;
+
             Face f1 = new Face();
             Face f2 = new Face();
 
@@ -268,8 +273,6 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
-            faceLayer.UpdateLeaves(face);
-
             Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
             vertexLayer.InsertVertex(newV1);
             Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
@@ -294,7 +297,7 @@ namespace Clover
             renderController.New(f1);
             renderController.New(f2);
 
-
+            faceLayer.UpdateLeaves(face);
         }
 
         #endregion
@@ -582,7 +585,8 @@ namespace Clover
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
             // 假设已经选取了左上角的点，主平面
-            pickedVertex = vertexLayer.Vertices[0];
+            //pickedVertex = vertexLayer.Vertices[0];
+            pickedVertex = new Vertex(0, 0);
             pickedFace = faceLayer.FacecellTree.Root;
 
             // 计算初始折线

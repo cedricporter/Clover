@@ -118,7 +118,7 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
-            cloverController.Update( 0, 10, null, null );
+            //cloverController.Update( 0, 10, null, null );
         }
 
 
@@ -234,7 +234,7 @@ namespace Clover
 
         #endregion
 
-
+        #region 键盘响应函数
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -257,11 +257,10 @@ namespace Clover
                     break;
             }
 
-            cloverController.RenderController.UpdatePosition();
+            //cloverController.RenderController.UpdatePosition();
         }
 
-        
-
+        #endregion
         
 
     }
