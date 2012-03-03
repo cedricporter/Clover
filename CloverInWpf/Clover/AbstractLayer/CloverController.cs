@@ -271,14 +271,6 @@ namespace Clover
                 bool CalculateFinished = false;
                 foreach (Edge e in f.Edges)
                 {
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
-
-                        Edge edge = new Edge( cVertex1, cVertex2);
-                        return edge;
-                    }
 
                     if (e.Vertex1 == pickedVertex)
                     {
@@ -303,6 +295,7 @@ namespace Clover
                             vertex2.Z = e.Vertex1.Z + v.Z;
                             CalculateFinished = true;
                         }
+
                     }
 
                     if (e.Vertex2 == pickedVertex)
@@ -329,6 +322,15 @@ namespace Clover
                             vertex2.Z = e.Vertex2.Z + v.Z;
                             CalculateFinished = true;
                         }
+                    }
+
+                    if (CalculateFinished)
+                    {
+                        Vertex cVertex1 = new Vertex(vertex1);
+                        Vertex cVertex2 = new Vertex(vertex2);
+
+                        Edge edge = new Edge(cVertex1, cVertex2);
+                        return edge;
                     }
                 }
             }
