@@ -118,7 +118,6 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
-            //cloverController.Update( 10, 10, null, null );
         }
 
 
@@ -244,16 +243,18 @@ namespace Clover
                     cloverController.StartFoldingModel(null);
                     break;
                 case Key.Up:
-                    cloverController.UpdateVertexPosition(null, 0, 10);
+                    cloverController.Update(0, 10, null, null);
+                    //cloverController.UpdateVertexPosition(null, 0, 10);
                     break;
                 case Key.Down:
-                    cloverController.UpdateVertexPosition(null, 0, -10);
+                    cloverController.Update(0, -10, null, null);
+                    //cloverController.UpdateVertexPosition(null, 0, -10);
                     break;
                 case Key.Left:
-                    cloverController.UpdateVertexPosition(null, -10, 0);
+                    //cloverController.UpdateVertexPosition(null, -10, 0);
                     break;
                 case Key.Right:
-                    cloverController.UpdateVertexPosition(null, 10, 0);
+                    //cloverController.UpdateVertexPosition(null, 10, 0);
                     break;
             }
 
