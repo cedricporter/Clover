@@ -100,7 +100,15 @@ namespace Clover
         public Clover.Edge Parent
         {
             get { return parent; }
-            set { parent = value; }
+            set 
+            {
+                if (value == null && parent != null)
+                {
+                    if (parent.leftChild == null) parent.leftChild = null;
+                    if (parent.rightChild == null) parent.rightChild = null;
+                }
+                parent = value;
+            }
         }
         public Clover.Face Face2
         {
@@ -233,8 +241,8 @@ namespace Clover
             { 
                 if (value == null)
                 {
-                    if (parent.LeftChild == this) parent.LeftChild = null;
-                    if (parent.RightChild == this) parent.RightChild = null;
+                    if (parent.leftChild == this) parent.leftChild = null;
+                    if (parent.rightChild == this) parent.rightChild = null;
                 }
                 parent = value;
             }
@@ -317,7 +325,7 @@ namespace Clover
             normal = Vector3D.CrossProduct( v1, v2 );
             normal.Normalize();
 
-            normal.Negate();
+            //normal.Negate();
 
             return true;
         }

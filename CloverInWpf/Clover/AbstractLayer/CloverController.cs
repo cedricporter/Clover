@@ -73,9 +73,9 @@ namespace Clover
             // Create 4 original vertices
             Vertex[] vertices = new Vertex[4];
             vertices[0] = new Vertex(-width / 2, height / 2, 0);
-            vertices[1] = new Vertex(width / 2, height / 2, 0);
+            vertices[1] = new Vertex(-width / 2, -height / 2, 0);
             vertices[2] = new Vertex(width / 2, -height / 2, 0);
-            vertices[3] = new Vertex(-width / 2, -height / 2, 0);
+            vertices[3] = new Vertex(width / 2, height / 2, 0);
             // 初始化纹理坐标
             vertices[0].u = 0; vertices[0].v = 0;
             vertices[1].u = 1; vertices[1].v = 0;
@@ -204,7 +204,6 @@ namespace Clover
         /// </summary>
         List<Face> affectedFaceList = new List<Face>();
 
-        int originLastVertexIndex = -1;    /// 顶点列表的最后一个下标
 
         /// <summary>
         /// 进入折叠模式前的叶子节点表，用于恢复
@@ -255,27 +254,6 @@ namespace Clover
         }
 
         /// <summary>
-        /// 两个List的差
-        /// </summary>
-        /// <param name="list1"></param>
-        /// <param name="list2"></param>
-        /// <returns></returns>
-        List<Edge> Minus(List<Edge> list1, List<Edge> list2)
-        {
-            List<Edge> ret = new List<Edge>();
-
-            foreach (Edge e in list1)
-            {
-                if (!list2.Contains(e))
-                {
-                    ret.Add(e);
-                }
-            }
-
-            return ret;
-        }
-
-        /// <summary>
         /// 还原到originLeaves
         /// </summary>
         void Revert()
@@ -300,17 +278,21 @@ namespace Clover
                 }
             }
 
-            List<Edge> beDeletedEdges = Minus(currentEdgeList, originEdgeList);
+            List<Edge> beDeletedEdges = currentEdgeList.Except(originEdgeList).ToList();
 
+            foreach (Edge edge in beDeletedEdges)
+            {
+                edge.Parent = null;
+            }
 
+            edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount + 1);
 
+            foreach (Face face in originFaceList)
+            {
+                face.LeftChild = face.RightChild = null;
+            }
 
-
-
-
-
-
-
+            UpdatePaper();
         }
 
         /// <summary>
@@ -813,6 +795,8 @@ namespace Clover
 
             if (renderController == null)
                 return model;
+
+            renderController.DeleteAll();
 
             MaterialGroup mgf = new MaterialGroup();
             ImageBrush imb = new ImageBrush();
