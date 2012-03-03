@@ -102,11 +102,11 @@ namespace Clover.RenderLayer
         Model3DGroup modelGroup = new Model3DGroup();
 
         Dictionary<Face, GeometryModel3D> faceMeshMap = new Dictionary<Face, GeometryModel3D>();
-        public Dictionary<Face, GeometryModel3D> FaceMeshMap
-        {
-            get { return faceMeshMap; }
-            //set { faceMeshMap = value; }
-        }
+        //public Dictionary<Face, GeometryModel3D> FaceMeshMap
+        //{
+        //    get { return faceMeshMap; }
+        //    //set { faceMeshMap = value; }
+        //}
 
         #endregion
         
@@ -159,7 +159,7 @@ namespace Clover.RenderLayer
         }
 
         #region 对Mesh的操作
-
+        int count = 0;
         /// <summary>
         /// 添加一个新面
         /// </summary>
@@ -172,6 +172,23 @@ namespace Clover.RenderLayer
             model.Geometry = NewMesh(face);
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
+
+            if ( count++ > 2 )
+            {
+
+            GeometryModel3D fuck = new GeometryModel3D();
+            MeshGeometry3D fuckm = new MeshGeometry3D();
+            fuckm.Positions.Add(new Point3D(0, 0, 0));
+            fuckm.Positions.Add(new Point3D(100, 0, 0));
+            fuckm.Positions.Add(new Point3D(100, 0, 100));
+            fuckm.TriangleIndices.Add(0);
+            fuckm.TriangleIndices.Add(1);
+            fuckm.TriangleIndices.Add(2);
+            fuck.Geometry = fuckm;
+            fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+            fuck.BackMaterial = fuck.Material;
+            modelGroup.Children.Add(fuck);
+            }
         }
 
         /// <summary>
@@ -180,6 +197,7 @@ namespace Clover.RenderLayer
         /// <param name="face"></param>
         public void Delete(Face face)
         {
+            //bool asdf = modelGroup.Children[0].IsFrozen;
             modelGroup.Children.Remove(faceMeshMap[face]);
             faceMeshMap.Remove(face);
         }

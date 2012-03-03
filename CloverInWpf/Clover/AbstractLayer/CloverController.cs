@@ -323,6 +323,8 @@ namespace Clover
                 face.LeftChild = face.RightChild = null;
             }
 
+            renderController.UpdateAll();
+
             faceLayer.UpdateLeaves();
 
             //UpdatePaper();
