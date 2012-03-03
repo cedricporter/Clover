@@ -424,7 +424,7 @@ namespace Clover
         }
 
         /// <summary>
-        /// 判定是否有新添或者删除数据结构中的信息
+        /// 判断当前面是否是个需要移动的面
         /// </summary>
 
         bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
@@ -433,10 +433,19 @@ namespace Clover
             if (face == pickedFace)
                 return true;
 
-            // 所有和移动面有共同边的面都是移动面
-
+            // 所有和移动面有共同边的面都是移动面,即拥有选择点的面
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                {
+                    return true; 
+                }
+            }
 
             // 若有面覆盖在该面上，也为移动面
+            // 需要面分组中的层次信息
+            // bla bla bla.
+
             return false;
         }
 
@@ -450,18 +459,18 @@ namespace Clover
         {
             // 求出折线向量
             Vector3D u = new Vector3D();
-            u.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-            u.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-            u.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+            u.X = currentFoldingLine.Vertex2.X - currentFoldingLine.Vertex1.X;
+            u.Y = currentFoldingLine.Vertex2.Y - currentFoldingLine.Vertex1.Y;
+            u.Z = currentFoldingLine.Vertex2.Z - currentFoldingLine.Vertex1.Z;
 
             // 判定面中的每条边与折线是否相交，若有两条相交则折线分割该平面
             int crossCount = 0;
             foreach (Edge edge in face.Edges)
             {
                 Vector3D v = new Vector3D();
-                v.X = edge.Vertex1.X - edge.Vertex2.Y;
-                v.Y = edge.Vertex1.Y - edge.Vertex2.Y;
-                v.Z = edge.Vertex1.Z - edge.Vertex2.Z;
+                v.X = edge.Vertex2.X - edge.Vertex1.X;
+                v.Y = edge.Vertex2.Y - edge.Vertex1.Y;
+                v.Z = edge.Vertex2.Z - edge.Vertex1.Z;
 
                 Vector3D w = new Vector3D();
                 w.X = currentFoldingLine.Vertex1.X - edge.Vertex1.X;
@@ -485,6 +494,12 @@ namespace Clover
                 {
                     sc = (b * e - c * d) / D;
                     tc = (a * e - b * d) / D;
+
+                    // 判断折线点是否在线段上
+                    if (sc != 0.0f && sc != 1.0f)
+                    {
+                        continue;
+                    }
                 }
 
                 // sc, tc 分别为两条直线上的比例参数
@@ -513,7 +528,7 @@ namespace Clover
             pickedFace = faceLayer.FacecellTree.Root;
 
             // 计算初始折线
-            CalculateFoldingLine(pickedVertex);
+            currentFoldingLine = CalculateFoldingLine(pickedVertex);
 
             // 创建移动面分组
             List<Face> faceWithFoldingLine = new List<Face>();
@@ -535,6 +550,58 @@ namespace Clover
                 }
             }
 
+            // 对于所有有折线经过的面，对面进行切割
+            foreach (Face face in faceWithFoldingLine)
+            {
+                CutAFace(face, currentFoldingLine); 
+                // 选取有拾取点的那个面为移动面，加入到没有折线面分组
+
+                bool findMovedFace = false;
+                foreach (Edge e in face.LeftChild.Edges)
+                {
+                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                    {
+                        faceWithoutFoldingLine.Add(face.LeftChild);
+                        findMovedFace = true;
+                        break;
+                    }
+                }
+
+                if (!findMovedFace)
+                    faceWithoutFoldingLine.Add(face.RightChild);
+            }
+
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in faceWithoutFoldingLine)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1 != pickedVertex && !e.Vertex1.Moved )
+                    {
+                        e.Vertex1.X += 0.01 * yRel;
+                        e.Vertex1.Y += 0.01 * yRel;
+                        e.Vertex1.Z += 0.01 * yRel;
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2 != pickedVertex && !e.Vertex2.Moved)
+                    {
+                        e.Vertex2.X += 0.01 * yRel;
+                        e.Vertex2.Y += 0.01 * yRel;
+                        e.Vertex2.Z += 0.01 * yRel;
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
         }
 
         #endregion
