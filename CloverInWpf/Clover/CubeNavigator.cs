@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Media3D;
 using System.Windows.Input;
 using Clover.RenderLayer;
+using System.Diagnostics;
 
 /**
 @date		:	2012/02/27
@@ -36,28 +37,52 @@ namespace Clover
     public class CubeNavigator
     {
         
-        MainWindow mainWindow;
-        Viewport3D cubeNavViewport;
-        Model3DGroup cubeNavModel;
-        Point lastMousePos;
-        Quaternion lastQuat = new Quaternion();
-        
-
-        public CubeNavigator(MainWindow mainWindow)
+        static MainWindow mainWindow;
+        static Viewport3D cubeNavViewport;
+        static Model3DGroup cubeNavModel;
+        public System.Windows.Media.Media3D.Model3DGroup CubeNavModel
         {
-            this.mainWindow = mainWindow;
+            get { return cubeNavModel; }
+            set 
+            { 
+                cubeNavModel = value;
+            }
+        }
+        static Point lastMousePos;
+        static Quaternion lastQuat = new Quaternion();
+        public System.Windows.Media.Media3D.Quaternion LastQuat
+        {
+            get { return lastQuat; }
+            set 
+            { 
+                lastQuat = value; 
+            }
+        }
+        static CubeNavigator instance = null;
+        public static CubeNavigator GetInstance()
+        {
+            if (instance == null)
+            {
+                Debug.Assert(mainWindow != null);
+                instance = new CubeNavigator();
+            }
+            return instance;
+        }
+        public static void InitializeInstance(MainWindow window)
+        {
+            mainWindow = window;
             cubeNavViewport = mainWindow.CubeNavViewport;
             cubeNavModel = mainWindow.CubeNavModel;
             cubeNavViewport.MouseLeftButtonDown += new MouseButtonEventHandler(cubeNavViewport_MouseLeftButtonDown);
             cubeNavViewport.MouseMove += new MouseEventHandler(cubeNavViewport_MouseMove);
         }
 
-        private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        static private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
         {
             lastMousePos = e.GetPosition(mainWindow);
         }
 
-        private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
+        static private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -76,8 +101,9 @@ namespace Clover
                 cubeNavModel.Transform = rotts;
                 
                 // 让CloverRoot模仿cube的动作
+                RenderController.GetInstance().SrcQuaternion = quar;
                 RenderController.GetInstance().RotateTransform = rotts;
-                RenderController.GetInstance().UpdatePosition();
+                //RenderController.GetInstance().UpdatePosition();
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;

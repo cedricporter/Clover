@@ -56,7 +56,8 @@ namespace Clover
             //vi.Start();
 
             // 导航立方
-            cubeNav = new CubeNavigator(this);
+            CubeNavigator.InitializeInstance(this);
+            cubeNav = CubeNavigator.GetInstance();    
 
             // 创建工具
             ToolFactory tool = new TestTool(this);
@@ -118,6 +119,8 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
+
+            RenderController.GetInstance().RenderAnimations();
         }
 
 
@@ -191,6 +194,17 @@ namespace Clover
         }
 
         /// <summary>
+        /// 当鼠标左键按下，，
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (currentTool != null)
+                currentTool.onPress();
+        }
+
+        /// <summary>
         /// 改变折纸的距离
         /// </summary>
         /// <param name="sender"></param>
@@ -201,12 +215,12 @@ namespace Clover
             if (e.Delta > 0)
             {
                 renCtrl.Distance += 20;
-                renCtrl.UpdatePosition();
+                //renCtrl.UpdatePosition();
             }
             else
             {
                 renCtrl.Distance -= 20;
-                renCtrl.UpdatePosition();
+                //renCtrl.UpdatePosition();
             }
         }
 
@@ -262,6 +276,8 @@ namespace Clover
         }
 
         #endregion
+        
+
         
 
     }

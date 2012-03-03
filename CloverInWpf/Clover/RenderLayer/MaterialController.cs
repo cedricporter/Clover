@@ -29,13 +29,51 @@ namespace Clover.RenderLayer
         Double thickness = 0;              ///线条粗细
         MaterialGroup frontMaterial = null;
         MaterialGroup backMaterial = null;
+        MaterialGroup transparentFrontMaterial = null;
+        MaterialGroup transparentBackMaterial = null;
         DiffuseMaterial edgeLayer = null;
         DiffuseMaterial frontFoldLineLayer = null;
         DiffuseMaterial backFoldLineLayer = null;
 
         public MaterialController()
         {
+            
+        }
 
+        /// <summary>
+        /// 获取纸张正面的半透明材质
+        /// </summary>
+        /// <returns></returns>
+        public MaterialGroup GetFrontShadow()
+        {
+            transparentFrontMaterial = frontMaterial.Clone();
+            foreach (Material m in transparentFrontMaterial.Children)
+            {
+                DiffuseMaterial dm = (DiffuseMaterial)m;
+                if (dm != null)
+                {
+                    dm.Color = dm.AmbientColor = Color.FromArgb(150, 255, 255, 255);
+                }
+            }
+            return transparentFrontMaterial;
+        }
+
+        /// <summary>
+        /// 获取纸张背面的半透明材质
+        /// </summary>
+        /// <returns></returns>
+        public MaterialGroup GetBackShadow()
+        {
+            transparentBackMaterial = backMaterial.Clone();
+            foreach (Material m in transparentBackMaterial.Children)
+            {
+                DiffuseMaterial dm = (DiffuseMaterial)m;
+                if (dm != null)
+                {
+                    dm.Color = dm.AmbientColor = Color.FromArgb(150, 255, 255, 255);
+                }
+            }
+            return transparentBackMaterial;
         }
 
         /// <summary>
@@ -66,6 +104,8 @@ namespace Clover.RenderLayer
             backMaterial = mat;
             return mat;
         }
+
+        #region 添加折线
 
         /// <summary>
         /// 添加折线
@@ -151,6 +191,8 @@ namespace Clover.RenderLayer
             backFoldLineLayer = new DiffuseMaterial(imgb);
             backMaterial.Children.Add(backFoldLineLayer);
         }
+
+        #endregion
 
         /// <summary>
         /// 当分辨率改变时改变纸张的边的分辨率

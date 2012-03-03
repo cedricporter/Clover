@@ -111,6 +111,29 @@ namespace Clover
             faceLayer.UpdateLeaves();
         }
 
+        /// <summary>
+        /// 获取所有拥有该顶点的面
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <returns></returns>
+        public List<Face> GetReferencedFaces(Vertex vertex)
+        {
+            List<Face> faces = new List<Face>();
+
+            foreach (Face f in faceLayer.Leaves)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.IsVerticeIn(vertex))
+                    {
+                        faces.Add(f);
+                        break;
+                    }
+                }
+            }
+            return faces;
+        }
+
         private CloverController(MainWindow mainWindow)
         {
             faceLayer = new FaceLayer(this);
@@ -820,6 +843,7 @@ namespace Clover
             //test
             renderController.AddFoldingLine(0, 0, 1, 1);
             renderController.AddFoldingLine(0, 1, 1, 0);
+            //renderController.Testfuck();
 
             model = renderController.Entity;
            

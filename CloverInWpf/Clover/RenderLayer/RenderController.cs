@@ -27,11 +27,29 @@ namespace Clover.RenderLayer
 
         #region Get/Set 方法
 
+        Quaternion dstQuaternion = new Quaternion();
+        public System.Windows.Media.Media3D.Quaternion DstQuaternion
+        {
+            get { return dstQuaternion; }
+            //set { dstQuaternion = value; }
+        }
+
+        Quaternion srcQuaternion = new Quaternion();
+        public System.Windows.Media.Media3D.Quaternion SrcQuaternion
+        {
+            get { return srcQuaternion; }
+            set { srcQuaternion = value; }
+        }
+
         RotateTransform3D rotateTransform = new RotateTransform3D();
         public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
         {
             get { return rotateTransform; }
-            set { rotateTransform = value; }
+            set 
+            { 
+                rotateTransform = value;
+                UpdatePosition();
+            }
         }
         
         Double distance = 300;
@@ -42,6 +60,7 @@ namespace Clover.RenderLayer
             { 
                 if (value > 40 && value < 1000)
                     distance = value;
+                UpdatePosition();
             }
         }
 
@@ -117,7 +136,7 @@ namespace Clover.RenderLayer
         /// <summary>
         /// 更新折纸位置
         /// </summary>
-        public void UpdatePosition()
+        void UpdatePosition()
         {
             Transform3DGroup tg = new Transform3DGroup();
             TranslateTransform3D ts = new TranslateTransform3D(0, 0, -distance);
@@ -128,6 +147,18 @@ namespace Clover.RenderLayer
             if (instance != null) // 这个判断避免了Utility类和RenderController类无限递归调用
                 Utility.GetInstance().UpdateWorlCameMat();
         }
+
+        public void Testfuck()
+        {
+            //frontMaterial = materialController.GetFrontShadow();
+            foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
+            {
+                pair.Value.Material = materialController.GetFrontShadow();
+                pair.Value.BackMaterial = materialController.GetBackShadow();
+            }
+        }
+
+        #region 对Mesh的操作
 
         /// <summary>
         /// 添加一个新面
@@ -141,19 +172,6 @@ namespace Clover.RenderLayer
             model.Geometry = NewMesh(face);
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
-
-            //GeometryModel3D fuck = new GeometryModel3D();
-            //MeshGeometry3D fuckm = new MeshGeometry3D();
-            //fuckm.Positions.Add(new Point3D(0, 0, 0));
-            //fuckm.Positions.Add(new Point3D(100, 0, 0));
-            //fuckm.Positions.Add(new Point3D(100, 0, 100));
-            //fuckm.TriangleIndices.Add(0);
-            //fuckm.TriangleIndices.Add(1);
-            //fuckm.TriangleIndices.Add(2);
-            //fuck.Geometry = fuckm;
-            //fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-            //fuck.BackMaterial = fuck.Material;
-            //modelGroup.Children.Add(fuck);
         }
 
         /// <summary>
@@ -198,19 +216,6 @@ namespace Clover.RenderLayer
         }
 
         /// <summary>
-        /// 增加新的折线
-        /// </summary>
-        /// <param name="u0"></param>
-        /// <param name="v0"></param>
-        /// <param name="u1"></param>
-        /// <param name="v1"></param>
-        /// <param name="isUpdate"></param>
-        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
-        {
-            materialController.AddFoldingLine(u0, v0, u1, v1);
-        }
-
-        /// <summary>
         /// 根据传入的Face创建一个新MeshGeometry3D
         /// </summary>
         /// <param name="face"></param>
@@ -237,6 +242,72 @@ namespace Clover.RenderLayer
 
             return mesh;
         }
+
+        #endregion
+
+        /// <summary>
+        /// 增加新的折线
+        /// </summary>
+        /// <param name="u0"></param>
+        /// <param name="v0"></param>
+        /// <param name="u1"></param>
+        /// <param name="v1"></param>
+        /// <param name="isUpdate"></param>
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
+        {
+            materialController.AddFoldingLine(u0, v0, u1, v1);
+        }
+
+        #region 动画
+
+        
+
+        /// <summary>
+        /// 一些无法通过故事板实现，只能基于帧的动画
+        /// </summary>
+        public void RenderAnimations()
+        {
+            RotationSlerp();
+        }
+
+        #region 从3D视角变为2D视角的插值动画
+
+        int RotationSlerpCount = -1;
+        public void BeginRotationSlerp(Quaternion dst)
+        {
+            dstQuaternion = dst;
+            RotationSlerpCount = 0;
+        }
+        void RotationSlerp()
+        {
+            if (RotationSlerpCount == -1)
+                return;
+            // 插值
+            srcQuaternion = Quaternion.Slerp(srcQuaternion, dstQuaternion, 0.15);
+            RotationSlerpCount++;
+            // 判断动画中止的条件
+            if (RotationSlerpCount > 60)
+            {
+                srcQuaternion = dstQuaternion;
+                RotationSlerpCount = -1;
+            }
+            //Quaternion sub = dstQuaternion - srcQuaternion;
+            //Double judge = Math.Pow(sub.W, 2) + Math.Pow(sub.X, 2) + Math.Pow(sub.Y, 2) + Math.Pow(sub.Z, 2);
+            //if (judge < 0.001)
+            //{
+            //    srcQuaternion = dstQuaternion;
+            //    isRotationSlerpRunning = false;
+            //}
+            // 动画
+            RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
+            CubeNavigator cubeNav = CubeNavigator.GetInstance();
+            cubeNav.CubeNavModel.Transform = rotateTransform;
+            cubeNav.LastQuat = srcQuaternion;
+        }
+
+        #endregion
+
+        #endregion
 
     }
 }

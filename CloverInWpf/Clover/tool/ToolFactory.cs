@@ -86,15 +86,7 @@ namespace Clover.Tool
                 {
                     shadow2DElement = new Clover.Edge2D(p12d, p22d);
                     return edge;
-                }
-                //Vector V1 = p - p12d;
-                //Vector V2 = p22d - p;
-                //Vector V0 = p22d - p12d;
-                //if (V1.Length + V2.Length - V0.Length < lineThreadhold)
-                //{
-                //    //Debug.WriteLine(edge);
-                //    return edge;
-                //}                
+                }              
             }
             shadow2DElement = null;
             return null;
@@ -106,6 +98,9 @@ namespace Clover.Tool
         public void onMove()
         {
             currMousePos = Mouse.GetPosition(mainWindow);
+
+            // 当鼠标未按下时，触发拾取事件
+            #region 鼠标未按下
             if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
             {
                 Object shadowElement;
@@ -158,11 +153,17 @@ namespace Clover.Tool
                         onLeaveElement(lastOveredElement);
                     }
                 }
-                
-
-                lastOveredElement = currOveredElement;
-                lastMousePos = currMousePos;
             }
+            #endregion
+            #region 鼠标已按下
+            else
+            {
+                onDrag(currSelectedElement);
+            }
+            #endregion
+
+            lastOveredElement = currOveredElement;
+            lastMousePos = currMousePos;
 
             //Debug.WriteLine("=====================");
             //Debug.WriteLine(Mouse.GetPosition(mainWindow.foldingPaperViewport));
@@ -176,10 +177,46 @@ namespace Clover.Tool
         {
             lastSelectedElement = currSelectedElement;
             currSelectedElement = currOveredElement;
-            if (currSelectedElement != null)
-                onSelectElement(currSelectedElement);
-            if (lastSelectedElement != null)
-                onUnselectElement(lastSelectedElement);
+            // 两次选取的点不一样
+            if (currSelectedElement != lastSelectedElement)
+            {
+                if (isVisualEnable)
+                {
+                    lastSelectedElementVi = currSelectedElementVi;
+                    currSelectedElementVi = null;
+                }
+                if (currSelectedElement != null)
+                {
+                    if (isVisualEnable)
+                    {
+                        // 当前拾取到的是点
+                        if (currOveredElement.GetType().ToString() == "Clover.Vertex")
+                        {
+                            Point3D p = ((Clover.Vertex)currSelectedElement).GetPoint3D();
+                            p *= Utility.GetInstance().To2DMat;
+                            currSelectedElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementRedBrush"),
+                                p.X, p.Y);
+                            currSelectedElementVi.Start();
+                            visualController.AddVisual(currSelectedElementVi);
+                        }
+                    }
+                    onSelectElement(currSelectedElement);
+                }
+                if (lastSelectedElement != null)
+                {
+                    if (isVisualEnable)
+                    {
+                        // 使上一个视觉元素消失
+                        if (lastSelectedElementVi != null)
+                        {
+                            lastSelectedElementVi.End();
+                            lastSelectedElementVi = null;
+                        }
+                    }
+                    onUnselectElement(lastSelectedElement);
+                }   
+            }
+            
         }
 
         protected abstract void onEnterElement(Object element);
@@ -189,6 +226,8 @@ namespace Clover.Tool
         protected abstract void onSelectElement(Object element);
 
         protected abstract void onUnselectElement(Object element);
+
+        protected abstract void onDrag(Object element);
 
 
 
