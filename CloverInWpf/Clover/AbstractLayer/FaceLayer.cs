@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Clover.AbstractLayer;
+
 namespace Clover
 {
     /// <summary>
@@ -85,8 +86,6 @@ namespace Clover
     {
         List<FaceGroup> tables = new List<FaceGroup>();
         
-
-
         #region get/set
         public List<FaceGroup> Tables
         { get { return tables; } }
@@ -98,8 +97,7 @@ namespace Clover
         /// <param name="f"></param>
         public LookupTable(Face f)
         {
-            FaceGroup g = new FaceGroup();
-            g.AddFaceBehind(f);
+            FaceGroup g = new FaceGroup( f );
             tables.Add( g );
         }
 
@@ -127,7 +125,19 @@ namespace Clover
 
         public void UpdateLookupTable ()
         {
-            Clover.CloverController.GetInstance()
+            
+            foreach ( Face f in Clover.CloverController.GetInstance().FaceLeaves )
+            {
+                foreach (FaceGroup fg in tables)
+                {
+                    if (fg.IsMatch(f))
+                    {
+                        fg.ad
+                    }
+                }
+
+            }
+           
         }
 
 
