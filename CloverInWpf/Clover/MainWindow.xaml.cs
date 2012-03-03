@@ -99,7 +99,9 @@ namespace Clover
             toolBox = new ToolBox(this);
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
-            toolBox.Show();  
+            toolBox.Show();
+
+            this.Focus();
         }
 
         #endregion
@@ -189,6 +191,25 @@ namespace Clover
                 currentTool.onMove();
         }
 
+        /// <summary>
+        /// 改变折纸的距离
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                cloverController.RenderController.Distance += 20;
+                cloverController.RenderController.UpdatePosition();
+            }
+            else
+            {
+                cloverController.RenderController.Distance -= 20;
+                cloverController.RenderController.UpdatePosition();
+            }
+        }
+
         #endregion
 
         #region 主窗体大小改变
@@ -211,6 +232,16 @@ namespace Clover
         }
 
         #endregion
+
+        
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up)
+            {
+                MessageBox.Show("fuck");
+            }
+        }
 
         
 
