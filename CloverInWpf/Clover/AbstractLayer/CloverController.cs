@@ -281,7 +281,7 @@ namespace Clover
         /// <summary>
         /// 还原到originLeaves
         /// </summary>
-        void Revert()
+        public void Revert()
         {
             // 保存进入折叠模式前的叶子节点的所有边
             List<Edge> originEdgeList = new List<Edge>();
@@ -310,14 +310,22 @@ namespace Clover
                 edge.Parent = null;
             }
 
-            edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount + 1);
+            edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount);
 
             foreach (Face face in originFaceList)
             {
+                if (face.LeftChild != null && face.RightChild != null)
+                {
+                    renderController.Delete(face.LeftChild);
+                    renderController.Delete(face.RightChild);
+                    renderController.New(face);
+                }
                 face.LeftChild = face.RightChild = null;
             }
 
-            UpdatePaper();
+            faceLayer.UpdateLeaves();
+
+            //UpdatePaper();
         }
 
         /// <summary>

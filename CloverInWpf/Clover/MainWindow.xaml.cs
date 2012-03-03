@@ -253,6 +253,9 @@ namespace Clover
         {
             switch (e.Key)
             {
+                case Key.R:
+                    cloverController.Revert();
+                    break;
                 case Key.G:
                     cloverController.StartFoldingModel(null);
                     break;
