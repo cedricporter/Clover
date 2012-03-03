@@ -11,7 +11,7 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
-    public class Vertex 
+    public class Vertex : ICloneable
     {
         Point3D point = new Point3D();
 
@@ -38,6 +38,11 @@ namespace Clover
             set { point.Z = value; }
         }
         #endregion
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
 
         public Point3D GetPoint3D()
         {
@@ -113,12 +118,12 @@ namespace Clover
         public Clover.Edge LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; leftChild.Parent = this; }
+            set { leftChild = value; if (leftChild != null) leftChild.Parent = this; }
         }
         public Clover.Edge RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; rightChild.Parent = this; }
+            set { rightChild = value; if (rightChild != null) rightChild.Parent = this; }
         }
         public bool IsLeaf
         {

@@ -144,9 +144,23 @@ namespace Clover
             for ( int i = 0; i < face.Edges.Count; i++)
             {
                 if (face.Edges[i].IsVerticeIn(v1))
+                {
                     index1 = i;
+                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
+                    Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
+
+                    face.Edges[i].LeftChild = e1;
+                    face.Edges[i].RightChild = e2;
+                }
                 if (face.Edges[i].IsVerticeIn(v2))
+                {
                     index2 = i;
+                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
+                    Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
+
+                    face.Edges[i].LeftChild = e1;
+                    face.Edges[i].RightChild = e2;
+                }
             }
 
             Debug.Assert(index1 != -1 && index2 != -1);
