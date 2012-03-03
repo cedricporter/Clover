@@ -219,17 +219,25 @@ namespace Clover
         public Clover.Face LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; leftChild.parent = this; }
+            set { leftChild = value; if (leftChild != null) leftChild.parent = this; }
         }
         public Clover.Face RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; rightChild.parent = this; }
+            set { rightChild = value; if (rightChild != null) rightChild.parent = this; }
         }
         public Clover.Face Parent
         {
             get { return parent; }
-            set { parent = value; }
+            set 
+            { 
+                if (value == null)
+                {
+                    if (parent.LeftChild == this) parent.LeftChild = null;
+                    if (parent.RightChild == this) parent.RightChild = null;
+                }
+                parent = value;
+            }
         }
         #endregion
 

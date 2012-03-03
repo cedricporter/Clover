@@ -255,10 +255,32 @@ namespace Clover
         }
 
         /// <summary>
+        /// 两个List的差
+        /// </summary>
+        /// <param name="list1"></param>
+        /// <param name="list2"></param>
+        /// <returns></returns>
+        List<Edge> Minus(List<Edge> list1, List<Edge> list2)
+        {
+            List<Edge> ret = new List<Edge>();
+
+            foreach (Edge e in list1)
+            {
+                if (!list2.Contains(e))
+                {
+                    ret.Add(e);
+                }
+            }
+
+            return ret;
+        }
+
+        /// <summary>
         /// 还原到originLeaves
         /// </summary>
         void Revert()
         {
+            // 保存进入折叠模式前的叶子节点的所有边
             List<Edge> originEdgeList = new List<Edge>();
             foreach (Face face in originFaceList)
             {
@@ -268,14 +290,21 @@ namespace Clover
                 }
             }
 
+            // 在折叠模式中的面树叶子的所有的边
             List<Edge> currentEdgeList = new List<Edge>();
             foreach (Face face in faceLayer.Leaves)
             {
                 foreach (Edge e in face.Edges)
                 {
-                    originEdgeList.Add(e);
+                    currentEdgeList.Add(e);
                 }
             }
+
+            List<Edge> beDeletedEdges = Minus(currentEdgeList, originEdgeList);
+
+
+
+
 
 
 
@@ -312,8 +341,8 @@ namespace Clover
             // 假定只有一个face现在
             Face face = faces[0];
 
-            Face f1 = new Face( face.Layer );
-            Face f2 = new Face( face.Layer );
+            Face f1 = new Face(face.Layer);
+            Face f2 = new Face(face.Layer);
             
             face.LeftChild = f1;
             face.RightChild = f2;
@@ -634,6 +663,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
 
