@@ -192,6 +192,17 @@ namespace Clover
         }
 
         /// <summary>
+        /// 当鼠标左键按下，，
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (currentTool != null)
+                currentTool.onPress();
+        }
+
+        /// <summary>
         /// 改变折纸的距离
         /// </summary>
         /// <param name="sender"></param>
@@ -243,6 +254,8 @@ namespace Clover
                 MessageBox.Show("fuck");
             }
         }
+
+        
 
         
 

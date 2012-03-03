@@ -26,12 +26,12 @@ namespace Clover.Tool
 
         protected override void onSelectElement(Object element)
         {
-            throw new Exception("The method or operation is not implemented.");
+            //throw new Exception("The method or operation is not implemented.");
         }
 
         protected override void onUnselectElement(Object element)
         {
-            throw new Exception("The method or operation is not implemented.");
+            //throw new Exception("The method or operation is not implemented.");
         }
     }
 }
