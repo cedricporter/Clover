@@ -696,17 +696,17 @@ namespace Clover
                 {
                     if (e.Vertex1 != currentFoldingLine.Vertex1 && e.Vertex1 != currentFoldingLine.Vertex2 && !e.Vertex1.Moved )
                     {
-                        e.Vertex1.X += 0.1 * yRel;
-                        e.Vertex1.Y += 0.1 * yRel;
-                        e.Vertex1.Z += 0.1 * yRel;
+                        e.Vertex1.X += 0.01 * yRel * f.Normal.X;
+                        e.Vertex1.Y += 0.01 * yRel * f.Normal.Y;
+                        e.Vertex1.Z += 0.01 * yRel * f.Normal.Z;
                         e.Vertex1.Moved = true;
                     }
 
                     if (e.Vertex2 != currentFoldingLine.Vertex1 && e.Vertex2 != currentFoldingLine.Vertex2 && !e.Vertex2.Moved)
                     {
-                        e.Vertex2.X += 0.1 * yRel;
-                        e.Vertex2.Y += 0.1 * yRel;
-                        e.Vertex2.Z += 0.1 * yRel;
+                        e.Vertex2.X += 0.01 * yRel * f.Normal.X;
+                        e.Vertex2.Y += 0.01 * yRel * f.Normal.Y;
+                        e.Vertex2.Z += 0.01 * yRel * f.Normal.Z;
                         e.Vertex2.Moved = true;
                     }
                 }
@@ -721,7 +721,7 @@ namespace Clover
                 v.Moved = false; 
             }
 
-            renderController.Update(pickedFace);
+            renderController.UpdateAll();
         }
 
         #endregion
