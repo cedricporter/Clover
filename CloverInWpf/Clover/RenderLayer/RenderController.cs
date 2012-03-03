@@ -183,9 +183,9 @@ namespace Clover.RenderLayer
         /// <param name="u1"></param>
         /// <param name="v1"></param>
         /// <param name="isUpdate"></param>
-        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
         {
-            materialController.AddFoldingLine(u0, v0, u1, v1, isUpdate);
+            materialController.AddFoldingLine(u0, v0, u1, v1);
         }
 
         /// <summary>
