@@ -21,7 +21,13 @@ namespace Clover
 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
+        bool moved = false;
         #region get/set
+        public bool Moved
+        {
+            get { return moved; }
+            set { moved = value; }
+        }
         public double X
         {
             get { return point.X; }
