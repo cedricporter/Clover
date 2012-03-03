@@ -11,7 +11,7 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
-    public class Vertex 
+    public class Vertex : ICloneable
     {
         Point3D point = new Point3D();
 
@@ -45,6 +45,11 @@ namespace Clover
         }
         #endregion
 
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
         public Point3D GetPoint3D()
         {
             return point;
@@ -52,12 +57,12 @@ namespace Clover
 
         public void SetPoint3D(Point3D vertex)
         {
-            point = vertex;  
+            point = vertex;
         }
 
         public Vertex(Point3D vertex)
         {
-            point = vertex; 
+            point = vertex;
         }
 
         public Vertex(Vertex vertex)
@@ -119,12 +124,12 @@ namespace Clover
         public Clover.Edge LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; leftChild.Parent = this; }
+            set { leftChild = value; if (leftChild != null) leftChild.Parent = this; }
         }
         public Clover.Edge RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; rightChild.Parent = this; }
+            set { rightChild = value; if (rightChild != null) rightChild.Parent = this; }
         }
         public bool IsLeaf
         {
@@ -212,6 +217,7 @@ namespace Clover
         #endregion
 
         #region 更新
+
         /// <summary>
         /// 更新面的点，方便绘制时使用
         /// </summary>
@@ -219,13 +225,51 @@ namespace Clover
         {
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();
+
+            vertices.Add(edges[0].Vertex1);
+            vertices.Add(edges[0].Vertex2);
+
+            Vertex currentVertex = edges[0].Vertex2;
+
+            List<Edge> ignoreList = new List<Edge>();
+            ignoreList.Add(edges[0]);
+
+            while (ignoreList.Count < edges.Count - 1)
+            {
+
+                foreach (Edge e in edges)
+                {
+                    if (!ignoreList.Contains(e))
+                    {
+                        if (e.Vertex1 == currentVertex)
+                        {
+                            ignoreList.Add(e);
+                            if (!vertices.Contains(e.Vertex2))
+                                vertices.Add(currentVertex = e.Vertex2);
+                        }
+                        else if (e.Vertex2 == currentVertex)
+                        {
+                            ignoreList.Add(e);
+                            if (!vertices.Contains(e.Vertex1))
+                                vertices.Add(currentVertex = e.Vertex1);
+                        }
+                    }
+                }
+            }
+
+            Edge e2 = null;
             foreach (Edge e in edges)
             {
-                if (!vertices.Contains(e.Vertex1))
-                    vertices.Add(e.Vertex1);
-                if (!vertices.Contains(e.Vertex2))
-                    vertices.Add(e.Vertex2);
+                if (!ignoreList.Contains(e))
+                {
+                    e2 = e;
+                    break;
+                }
             }
+
+            
+
+            
         }
 
         /// <summary>
