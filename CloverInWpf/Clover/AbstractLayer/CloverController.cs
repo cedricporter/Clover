@@ -89,7 +89,7 @@ namespace Clover
             }
 
             // create a face
-            Face face = new Face();
+            Face face = new Face(0);
 
             // creates 4 edges
             Edge[] edges = new Edge[4];

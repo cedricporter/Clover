@@ -7,7 +7,12 @@ using System.Windows;
 
 namespace Clover
 {
-
+    enum FoldingOp
+    {
+        Blend,
+        FoldUp,
+        TuckIn
+    }
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
@@ -163,6 +168,12 @@ namespace Clover
     /// </summary>
     public class Face
     {
+
+        public Face( int layer )
+        {
+            this.layer = layer;
+        }
+
         #region 成员变量
         List<Edge> edges = new List<Edge>();
         Vector3D normal;
@@ -170,6 +181,7 @@ namespace Clover
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
+        int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
         List<Vertex> vertices = new List<Vertex>();
         #endregion
 
@@ -178,6 +190,11 @@ namespace Clover
         {
             get { return edges; }
             set { edges = value; }
+        }
+        public int Layer
+        {
+            get { return layer; }
+            set { layer = value; }
         }
         public List<Vertex> Vertices
         {
