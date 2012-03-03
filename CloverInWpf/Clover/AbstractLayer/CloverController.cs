@@ -603,6 +603,7 @@ namespace Clover
             //test
             renderController.AddFoldingLine(0, 0, 1, 1);
             renderController.AddFoldingLine(0, 1, 1, 0);
+            //renderController.Testfuck();
 
             model = renderController.Entity;
            

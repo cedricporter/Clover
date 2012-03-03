@@ -129,6 +129,18 @@ namespace Clover.RenderLayer
                 Utility.GetInstance().UpdateWorlCameMat();
         }
 
+        public void Testfuck()
+        {
+            //frontMaterial = materialController.GetFrontShadow();
+            foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
+            {
+                pair.Value.Material = materialController.GetFrontShadow();
+                pair.Value.BackMaterial = materialController.GetBackShadow();
+            }
+        }
+
+        #region 对Mesh的操作
+
         /// <summary>
         /// 添加一个新面
         /// </summary>
@@ -174,6 +186,8 @@ namespace Clover.RenderLayer
                 model.Geometry = NewMesh(face);
             }
         }
+
+        #endregion
 
         /// <summary>
         /// 增加新的折线
