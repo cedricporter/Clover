@@ -24,12 +24,14 @@ namespace Clover.RenderLayer
 {
     class MaterialController
     {
-        int height = 2; ///材质垂直分辨率
-        int width = 2;  ///材质水平分辨率
+        int height = 2;                 ///材质垂直分辨率
+        int width = 2;                  ///材质水平分辨率
+        Double thickness = 0;              ///线条粗细
         MaterialGroup frontMaterial = null;
         MaterialGroup backMaterial = null;
         DiffuseMaterial edgeLayer = null;
         DiffuseMaterial frontFoldLineLayer = null;
+        DiffuseMaterial backFoldLineLayer = null;
 
         public MaterialController()
         {
@@ -47,7 +49,10 @@ namespace Clover.RenderLayer
             ImageSource img = ((mat.Children[0] as DiffuseMaterial).Brush as ImageBrush).ImageSource;
             height = (int)img.Height;
             width = (int)img.Width;
+            thickness = (height > width ? height : width) / 100;
+
             UpdateEdgeLayer();
+
             return mat;
         }
 
@@ -62,27 +67,48 @@ namespace Clover.RenderLayer
             return mat;
         }
 
-        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        /// <summary>
+        /// 添加折线
+        /// </summary>
+        /// <param name="u0"></param>
+        /// <param name="v0"></param>
+        /// <param name="u1"></param>
+        /// <param name="v1"></param>
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
         {
             Point p0 = new Point(u0 * width, v0 * height);
             Point p1 = new Point(u1 * width, v1 * height);
-            AddFrontFoldingLine(p0, p1, isUpdate);
+            AddFrontFoldingLine(p0, p1);
+            AddBackFoldingLine(p0, p1);
         }
 
-        void AddFrontFoldingLine(Point p0, Point p1, Boolean isUpdate)
+        /// <summary>
+        /// 在折纸的正面添加一条折线
+        /// </summary>
+        /// <param name="p0"></param>
+        /// <param name="p1"></param>
+        void AddFrontFoldingLine(Point p0, Point p1)
         {
-            //Image newImg = new Image();
+            // 保存以前的折线
+            ImageSource oldBmp = null;
+            if (frontFoldLineLayer != null)
+            {
+                oldBmp = (frontFoldLineLayer.Brush as ImageBrush).ImageSource;
+            }
 
             DrawingVisual dv = new DrawingVisual();
             DrawingContext dc = dv.RenderOpen();
-            Pen pen = new Pen(new SolidColorBrush(Colors.Black), 20);
+            Pen pen = new Pen(new SolidColorBrush(Colors.Black), thickness*0.5);
             pen.DashStyle = DashStyles.Dash;
+            if (frontFoldLineLayer != null)
+            {
+                dc.DrawImage(oldBmp, new Rect(new Size(width, height)));
+            }
             dc.DrawLine(pen, p0, p1);
             dc.Close();
 
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
-            //newImg.Source = bmp;
             ImageBrush imgb = new ImageBrush(bmp);
 
             if (frontFoldLineLayer != null)
@@ -92,12 +118,45 @@ namespace Clover.RenderLayer
         }
 
         /// <summary>
+        /// 在折纸的背面添加一条折线
+        /// </summary>
+        /// <param name="p0"></param>
+        /// <param name="p1"></param>
+        void AddBackFoldingLine(Point p0, Point p1)
+        {
+            // 保存以前的折线
+            ImageSource oldBmp = null;
+            if (backFoldLineLayer != null)
+            {
+                oldBmp = (backFoldLineLayer.Brush as ImageBrush).ImageSource;
+            }
+
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            Pen pen = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
+            pen.DashStyle = DashStyles.DashDot;
+            if (backFoldLineLayer != null)
+            {
+                dc.DrawImage(oldBmp, new Rect(new Size(width, height)));
+            }
+            dc.DrawLine(pen, p0, p1);
+            dc.Close();
+
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp.Render(dv);
+            ImageBrush imgb = new ImageBrush(bmp);
+
+            if (backFoldLineLayer != null)
+                backMaterial.Children.Remove(backFoldLineLayer);
+            backFoldLineLayer = new DiffuseMaterial(imgb);
+            backMaterial.Children.Add(backFoldLineLayer);
+        }
+
+        /// <summary>
         /// 当分辨率改变时改变纸张的边的分辨率
         /// </summary>
         void UpdateEdgeLayer()
         {
-            Double thickness = (height > width ? height : width) / 100;
-            //Image img = new Image();
             Rect rect = new Rect(new Size(width, height));
             DrawingVisual dv = new DrawingVisual();
             DrawingContext dc = dv.RenderOpen();
@@ -106,7 +165,6 @@ namespace Clover.RenderLayer
 
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
-            //img.Source = bmp;
             ImageBrush imgb = new ImageBrush(bmp);
 
             if (edgeLayer != null)

@@ -106,6 +106,9 @@ namespace Clover
 
             // use root to initialize facecell tree and lookuptable
             faceLayer.Initliaze(face);
+
+            face.UpdateVertices();
+            faceLayer.UpdateLeaves();
         }
 
         private CloverController(MainWindow mainWindow)
@@ -129,6 +132,8 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
+            return;
+
             Face f1 = new Face();
             Face f2 = new Face();
 
@@ -144,9 +149,23 @@ namespace Clover
             for ( int i = 0; i < face.Edges.Count; i++)
             {
                 if (face.Edges[i].IsVerticeIn(v1))
+                {
                     index1 = i;
+                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
+                    Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
+
+                    face.Edges[i].LeftChild = e1;
+                    face.Edges[i].RightChild = e2;
+                }
                 if (face.Edges[i].IsVerticeIn(v2))
+                {
                     index2 = i;
+                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
+                    Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
+
+                    face.Edges[i].LeftChild = e1;
+                    face.Edges[i].RightChild = e2;
+                }
             }
 
             Debug.Assert(index1 != -1 && index2 != -1);
@@ -206,6 +225,62 @@ namespace Clover
 
         }
 
+        public void UpdateVertexPosition(Vertex vertex, double xOffset, double yOffset)
+        {
+            vertex = vertexLayer.GetVertex(3);
+            vertex.X += xOffset;
+            vertex.Y += yOffset;
+
+            renderController.Update(faceLayer.Leaves[1]);
+
+        }
+
+
+        /// <summary>
+        /// 保存到原始叶节点表
+        /// </summary>
+        /// <param name="leaves">当前的叶子</param>
+        /// <remarks>
+        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
+        /// </remarks>
+        void SaveToOriginLeaves(List<Face> leaves)
+        {
+            originFaceList.Clear();
+            foreach ( Face f in faceLayer.Leaves)
+            {
+                originFaceList.Add(f);
+            }
+        }
+
+        /// <summary>
+        /// 还原到originLeaves
+        /// </summary>
+        void Revert()
+        {
+            List<Edge> originEdgeList = new List<Edge>();
+            foreach (Face face in originFaceList)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    originEdgeList.Add(e);
+                }
+            }
+
+            List<Edge> currentEdgeList = new List<Edge>();
+            foreach (Face face in faceLayer.Leaves)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    originEdgeList.Add(e);
+                }
+            }
+
+
+
+
+
+
+        }
 
         /// <summary>
         /// 开始折叠模式
@@ -216,27 +291,56 @@ namespace Clover
         /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
         /// 对于边树，我们将在当前叶子节点的面的边而不在originLeaves的边移除。
         /// </remarks>
-        void StartFoldingModel(List<Face> faces)
+        public void StartFoldingModel(List<Face> faces)
         {
-            originFaceList.Clear();
-            foreach ( Face f in faceLayer.Leaves)
-            {
-                originFaceList.Add(f);
-            }
+            faces = faceLayer.Leaves;
+
+            SaveToOriginLeaves(faces);
 
             
             // 
-            Edge foldingLine = null;
+            //Edge foldingLine = null;
 
-            foreach (Face face in faces)
-            {
-                CutAFace(face, foldingLine);         // 分割面
-                faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
-            }
+            //foreach (Face face in faces)
+            //{
+            //    CutAFace(face, foldingLine);    // 分割面
+            //    faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
+            //}
+
+            // 假定只有一个face现在
+            Face face = faces[0];
+
+            Face f1 = new Face();
+            Face f2 = new Face();
+
+            face.LeftChild = f1;
+            face.RightChild = f2;
+
+            Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
+            vertexLayer.InsertVertex(newV1);
+            Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
+            vertexLayer.InsertVertex(newV2);
+
+            Edge newEdge = new Edge(newV1, newV2);
+
+            f1.AddEdge(face.Edges[0]);
+            f1.AddEdge(face.Edges[1]);
+            f1.AddEdge(newEdge);
+            f2.AddEdge(face.Edges[2]);
+            f2.AddEdge(face.Edges[3]);
+            f2.AddEdge(newEdge);
 
 
+            f1.UpdateVertices();
+            f2.UpdateVertices();
 
+            vertexLayer.GetVertex(3).Z = 50;
 
+            renderController.Delete(face);
+            renderController.New(f1);
+            renderController.New(f2);
+
+            faceLayer.UpdateLeaves(face);
         }
 
         #endregion
@@ -424,7 +528,7 @@ namespace Clover
         }
 
         /// <summary>
-        /// 判定是否有新添或者删除数据结构中的信息
+        /// 判断当前面是否是个需要移动的面
         /// </summary>
 
         bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
@@ -433,10 +537,19 @@ namespace Clover
             if (face == pickedFace)
                 return true;
 
-            // 所有和移动面有共同边的面都是移动面
-
+            // 所有和移动面有共同边的面都是移动面,即拥有选择点的面
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                {
+                    return true; 
+                }
+            }
 
             // 若有面覆盖在该面上，也为移动面
+            // 需要面分组中的层次信息
+            // bla bla bla.
+
             return false;
         }
 
@@ -450,18 +563,18 @@ namespace Clover
         {
             // 求出折线向量
             Vector3D u = new Vector3D();
-            u.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-            u.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-            u.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+            u.X = currentFoldingLine.Vertex2.X - currentFoldingLine.Vertex1.X;
+            u.Y = currentFoldingLine.Vertex2.Y - currentFoldingLine.Vertex1.Y;
+            u.Z = currentFoldingLine.Vertex2.Z - currentFoldingLine.Vertex1.Z;
 
             // 判定面中的每条边与折线是否相交，若有两条相交则折线分割该平面
             int crossCount = 0;
             foreach (Edge edge in face.Edges)
             {
                 Vector3D v = new Vector3D();
-                v.X = edge.Vertex1.X - edge.Vertex2.Y;
-                v.Y = edge.Vertex1.Y - edge.Vertex2.Y;
-                v.Z = edge.Vertex1.Z - edge.Vertex2.Z;
+                v.X = edge.Vertex2.X - edge.Vertex1.X;
+                v.Y = edge.Vertex2.Y - edge.Vertex1.Y;
+                v.Z = edge.Vertex2.Z - edge.Vertex1.Z;
 
                 Vector3D w = new Vector3D();
                 w.X = currentFoldingLine.Vertex1.X - edge.Vertex1.X;
@@ -485,6 +598,12 @@ namespace Clover
                 {
                     sc = (b * e - c * d) / D;
                     tc = (a * e - b * d) / D;
+
+                    // 判断折线点是否在线段上
+                    if (sc != 0.0f && sc != 1.0f)
+                    {
+                        continue;
+                    }
                 }
 
                 // sc, tc 分别为两条直线上的比例参数
@@ -508,12 +627,16 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            if (faceLayer.Leaves.Count < 2)
+                return;
+
             // 假设已经选取了左上角的点，主平面
-            pickedVertex = vertexLayer.Vertices[0];
-            pickedFace = faceLayer.FacecellTree.Root;
+            pickedVertex = vertexLayer.GetVertex(3);
+            pickedFace = faceLayer.Leaves[1];
+            //pickedFace = faceLayer.FacecellTree.Root;
 
             // 计算初始折线
-            CalculateFoldingLine(pickedVertex);
+            currentFoldingLine = CalculateFoldingLine(pickedVertex);
 
             // 创建移动面分组
             List<Face> faceWithFoldingLine = new List<Face>();
@@ -535,6 +658,58 @@ namespace Clover
                 }
             }
 
+            // 对于所有有折线经过的面，对面进行切割
+            foreach (Face face in faceWithFoldingLine)
+            {
+                CutAFace(face, currentFoldingLine); 
+                // 选取有拾取点的那个面为移动面，加入到没有折线面分组
+
+                bool findMovedFace = false;
+                foreach (Edge e in face.LeftChild.Edges)
+                {
+                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                    {
+                        faceWithoutFoldingLine.Add(face.LeftChild);
+                        findMovedFace = true;
+                        break;
+                    }
+                }
+
+                if (!findMovedFace)
+                    faceWithoutFoldingLine.Add(face.RightChild);
+            }
+
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in faceWithoutFoldingLine)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1 != pickedVertex && !e.Vertex1.Moved )
+                    {
+                        e.Vertex1.X += 0.01 * yRel;
+                        e.Vertex1.Y += 0.01 * yRel;
+                        e.Vertex1.Z += 0.01 * yRel;
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2 != pickedVertex && !e.Vertex2.Moved)
+                    {
+                        e.Vertex2.X += 0.01 * yRel;
+                        e.Vertex2.Y += 0.01 * yRel;
+                        e.Vertex2.Z += 0.01 * yRel;
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
         }
 
         #endregion
@@ -602,6 +777,7 @@ namespace Clover
             
             //test
             renderController.AddFoldingLine(0, 0, 1, 1);
+            renderController.AddFoldingLine(0, 1, 1, 0);
 
             model = renderController.Entity;
            

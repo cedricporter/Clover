@@ -118,7 +118,7 @@ namespace Clover
             //RenderingEventArgs re = (RenderingEventArgs)e;
             //Debug.WriteLine(re.RenderingTime);
             visualController.Update();
-            cloverController.Update( 0, 10, null, null );
+            //cloverController.Update( 10, 10, null, null );
         }
 
 
@@ -234,18 +234,33 @@ namespace Clover
 
         #endregion
 
-        
+        #region 键盘响应函数
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up)
+            switch (e.Key)
             {
-                MessageBox.Show("fuck");
+                case Key.G:
+                    cloverController.StartFoldingModel(null);
+                    break;
+                case Key.Up:
+                    cloverController.UpdateVertexPosition(null, 0, 10);
+                    break;
+                case Key.Down:
+                    cloverController.UpdateVertexPosition(null, 0, -10);
+                    break;
+                case Key.Left:
+                    cloverController.UpdateVertexPosition(null, -10, 0);
+                    break;
+                case Key.Right:
+                    cloverController.UpdateVertexPosition(null, 10, 0);
+                    break;
             }
+
+            //cloverController.RenderController.UpdatePosition();
         }
 
-        
-
+        #endregion
         
 
     }

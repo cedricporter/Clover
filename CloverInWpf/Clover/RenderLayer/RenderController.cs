@@ -141,6 +141,19 @@ namespace Clover.RenderLayer
             model.Geometry = NewMesh(face);
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
+
+            //GeometryModel3D fuck = new GeometryModel3D();
+            //MeshGeometry3D fuckm = new MeshGeometry3D();
+            //fuckm.Positions.Add(new Point3D(0, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 100));
+            //fuckm.TriangleIndices.Add(0);
+            //fuckm.TriangleIndices.Add(1);
+            //fuckm.TriangleIndices.Add(2);
+            //fuck.Geometry = fuckm;
+            //fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+            //fuck.BackMaterial = fuck.Material;
+            //modelGroup.Children.Add(fuck);
         }
 
         /// <summary>
@@ -183,9 +196,9 @@ namespace Clover.RenderLayer
         /// <param name="u1"></param>
         /// <param name="v1"></param>
         /// <param name="isUpdate"></param>
-        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1, Boolean isUpdate = false)
+        public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
         {
-            materialController.AddFoldingLine(u0, v0, u1, v1, isUpdate);
+            materialController.AddFoldingLine(u0, v0, u1, v1);
         }
 
         /// <summary>
@@ -207,9 +220,9 @@ namespace Clover.RenderLayer
             // 更新索引
             for (int i = 1; i < face.Vertices.Count - 1; i++)
             {
-                mesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
-                mesh.TriangleIndices.Add(face.Vertices[i].Index);
-                mesh.TriangleIndices.Add(face.Vertices[0].Index);
+                mesh.TriangleIndices.Add(i + 1);
+                mesh.TriangleIndices.Add(i);
+                mesh.TriangleIndices.Add(0);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
 
