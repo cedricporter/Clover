@@ -99,6 +99,8 @@ namespace Clover.Tool
         {
             currMousePos = Mouse.GetPosition(mainWindow);
 
+            // 当鼠标未按下时，触发拾取事件
+            #region 鼠标未按下
             if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
             {
                 Object shadowElement;
@@ -151,11 +153,17 @@ namespace Clover.Tool
                         onLeaveElement(lastOveredElement);
                     }
                 }
-                
-
-                lastOveredElement = currOveredElement;
-                lastMousePos = currMousePos;
             }
+            #endregion
+            #region 鼠标已按下
+            else
+            {
+                onDrag(currSelectedElement);
+            }
+            #endregion
+
+            lastOveredElement = currOveredElement;
+            lastMousePos = currMousePos;
 
             //Debug.WriteLine("=====================");
             //Debug.WriteLine(Mouse.GetPosition(mainWindow.foldingPaperViewport));
@@ -218,6 +226,8 @@ namespace Clover.Tool
         protected abstract void onSelectElement(Object element);
 
         protected abstract void onUnselectElement(Object element);
+
+        protected abstract void onDrag(Object element);
 
 
 

@@ -26,10 +26,21 @@ namespace Clover.Tool
 
         protected override void onSelectElement(Object element)
         {
-            //throw new Exception("The method or operation is not implemented.");
+            // 将视角变换到与当前纸张平行
+            if (element.GetType().ToString() == "Clover.Vertex")
+            {
+                //Clover.Vertex v = (Clover.Vertex)element;
+                //Clover.Edge ad = new Clover.Edge();
+                
+            }
         }
 
         protected override void onUnselectElement(Object element)
+        {
+            //throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onDrag(Object element)
         {
             //throw new Exception("The method or operation is not implemented.");
         }
