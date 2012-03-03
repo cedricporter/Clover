@@ -696,17 +696,31 @@ namespace Clover
                 {
                     if (e.Vertex1 != currentFoldingLine.Vertex1 && e.Vertex1 != currentFoldingLine.Vertex2 && !e.Vertex1.Moved )
                     {
-                        e.Vertex1.X += 0.01 * yRel * f.Normal.X;
-                        e.Vertex1.Y += 0.01 * yRel * f.Normal.Y;
-                        e.Vertex1.Z += 0.01 * yRel * f.Normal.Z;
+                        Vector3D axis = new Vector3D();
+                        axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+                        axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+                        axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
                         e.Vertex1.Moved = true;
                     }
 
                     if (e.Vertex2 != currentFoldingLine.Vertex1 && e.Vertex2 != currentFoldingLine.Vertex2 && !e.Vertex2.Moved)
                     {
-                        e.Vertex2.X += 0.01 * yRel * f.Normal.X;
-                        e.Vertex2.Y += 0.01 * yRel * f.Normal.Y;
-                        e.Vertex2.Z += 0.01 * yRel * f.Normal.Z;
+                        Vector3D axis = new Vector3D();
+                        axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+                        axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+                        axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.Moved = true;
                     }
                 }
