@@ -103,10 +103,14 @@ namespace Clover.Tool
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
-                Point3D pickedVertex = ((Vertex)element).GetPoint3D();
+                Vertex pickedVertex = (Vertex)element;
+                //Point3D pickedVertex = ((Vertex)element).GetPoint3D();
                 // 鼠标拖动顶点，动态生成折线
-                // 记录该点的原始位置,pOrigin未实现
-                Point3D pOrigin = new Point3D();
+                // 记录该点的原始位置
+                Vertex prevVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
+                if (prevVertex == null)
+                    return;
+                Point3D pOrigin = prevVertex.GetPoint3D() ;
                 pOrigin *= Utility.GetInstance().To2DMat;
                 Point p0 = new Point(pOrigin.X, pOrigin.Y);
                 // 当前鼠标位置
