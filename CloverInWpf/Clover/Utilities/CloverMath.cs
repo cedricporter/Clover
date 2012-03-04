@@ -122,7 +122,7 @@ namespace Clover
             {
                 return false;
             }
-            Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f);
+            Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f.Normal, f.Vertices[0].GetPoint3D());
 
             // 判断点在不在face内
             Vector3D[] vector = new Vector3D[f.Vertices.Count];
@@ -257,6 +257,26 @@ namespace Clover
             Vector3D dP = w + (sc * u) - (tc * v);
             // = S1(sc) - S2(tc)    
             return dP.Length;   // return the closest distance
+        }
+
+        /// <summary>
+        /// 计算一个面中两点的中垂线，结果在参数从输出
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="po"></param>
+        /// <param name="pd"></param>
+        /// <param name="t">直线的方向向量</param>
+        /// <param name="p">直线上的一点</param>
+        public static void GetMidperpendicularInFace( Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
+        {
+            Point3D pOriginal = po.GetPoint3D();
+            Point3D pDestination = pd.GetPoint3D();
+            t = Vector3D.CrossProduct( f.Normal, ( pOriginal - pDestination ) );
+            Vector3D p0 = new Vector3D();
+            p.X = ( po.X + pd.X ) / 2;
+            p.Y = ( po.Y + pd.Y ) / 2;
+            p.Z = ( po.Z + pd.Z ) / 2;
+
         }
         
         /// <summary>

@@ -89,6 +89,51 @@ namespace Clover
             return vGroup[vGroup.Count - 2];
         }
 
+        /// <summary>
+        /// 创建一条折线
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="pOriginal"></param>
+        /// <param name="pDestination"></param>
+        /// <returns>返回创建的折线，失败则返回null</returns>
+        public Edge GenerateEdge(Face f, Vertex pOriginal, Vertex pDestination)
+        {
+            Vector3D t = new Vector3D();
+            Point3D p0 = new Point3D();
+            if( !CloverMath.GetMidperpendicularInFace(f, pOriginal, pDestination, ref t, ref p0) )
+                return null;
+
+            Point3D p1 = p0 + t*Double.MaxValue;
+            Point3D p2 = p0 + t*Double.MinValue;
+            Vertex v1, v2;
+            v1 = new Vertex(p1);
+            v2 = new Vertex(p2);
+
+            Edge newe = new Edge(v1, v2);
+            Vertex vresult1 = null;
+            Vertex vresult2 = null;
+            foreach (Edge e in f.Edges)
+            {
+                if (e.IsVerticeIn(pOriginal))
+                {
+                    Point3D p = new Point3D();
+                    CloverMath.GetIntersectionOfTwoSegments( newe, e, ref p );
+                    if (vresult1 == null)
+                    {
+                        vresult1 = new Vertex( p );
+                    }
+                    else
+                    {
+                        vresult2 = new Vertex( p );
+                    }
+                }
+            }
+            if (vresult1 == null || vresult2 == null)
+            {
+                return null;
+            }
+            return new Edge( vresult1, vresult2 );
+        }
         #region 初始化
         public void Initialize(float width, float height)
         {

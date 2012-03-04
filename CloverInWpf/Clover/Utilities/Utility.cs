@@ -101,7 +101,7 @@ namespace Clover
             if ( IsWholeGroup )
             {
                 // 对整个组折叠，折线至少要和组内一个面有交点
-                Vector3D v;
+                Vector3D v = new Vector3D();
                 foreach (Face f in fg1.GetGroup())
                 {
                     if ( CloverMath.IntersectionOfLineAndFace( p1, p2, f, ref v ) )
@@ -114,7 +114,7 @@ namespace Clover
                     return false;
                 // 首先直线要和fg2的至少一个面有交线
                 bool MayIntersection = false;
-                Vector3D v;
+                Vector3D v = new Vector3D();
                 foreach ( Face f in fg2.GetGroup() )
                 {
                     if ( CloverMath.IntersectionOfLineAndFace( p1, p2, f, ref v ) )
