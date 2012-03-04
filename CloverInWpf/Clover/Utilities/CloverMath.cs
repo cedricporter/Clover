@@ -107,6 +107,51 @@ namespace Clover
         }
 
         /// <summary>
+        /// 判断直线是否与一个face有交点，如果有，则在最后一个参数传出来。
+        /// </summary>
+        /// <param name="p1">直线上的点1</param>
+        /// <param name="p2">直线上的点2</param>
+        /// <param name="f"></param>
+        /// <param name="v">结果传出</param>
+        /// <returns></returns>
+        public static bool IntersectionOfLineAndFace(Point3D p1, Point3D p2, Face f, ref Vector3D v)
+        {
+            Vector3D vline = p1 - p2;
+            // 排除平行的情况
+            if ( Math.Abs( Vector3D.DotProduct(vline, f.Normal)) < 0.000001 )
+            {
+                return false;
+            }
+            Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f.Normal, f.Vertices[0].GetPoint3D());
+
+            // 判断点在不在face内
+            Vector3D[] vector = new Vector3D[f.Vertices.Count];
+            int i = 0;
+            foreach (Vertex ve in f.Vertices)
+            {
+                vector[i] = IntersectiongPoint - ve.GetPoint3D();
+                i++;
+            }
+
+            foreach ( Vector3D v1 in vector)
+            {
+                foreach ( Vector3D v2 in vector)
+                {
+                    if ( Vector3D.DotProduct( v1, v2 ) < 0 )
+                    {
+                        v.X = IntersectiongPoint.X;
+                        v.Y = IntersectiongPoint.Y;
+                        v.Z = IntersectiongPoint.Z;
+                        return true;
+                    }
+
+                }
+            }
+            return false;
+             
+        }
+
+        /// <summary>
         /// 求一线段的中垂线
         /// </summary>
         /// <param name="p1">线段的一个端点，计算完后会由该变量返回中垂线的一个端点</param>
@@ -212,6 +257,32 @@ namespace Clover
             Vector3D dP = w + (sc * u) - (tc * v);
             // = S1(sc) - S2(tc)    
             return dP.Length;   // return the closest distance
+        }
+
+        /// <summary>
+        /// 计算一个面中两点的中垂线，结果在参数从输出
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="po"></param>
+        /// <param name="pd"></param>
+        /// <param name="t">直线的方向向量</param>
+        /// <param name="p">直线上的一点</param>
+        public static bool GetMidperpendicularInFace( Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
+        {
+            if ( CloverMath.IsTwoPointsEqual( po.GetPoint3D(), pd.GetPoint3D(), 0.00001 ) ) 
+            {
+                return false;
+            }
+
+            Point3D pOriginal = po.GetPoint3D();
+            Point3D pDestination = pd.GetPoint3D();
+            t = Vector3D.CrossProduct( f.Normal, ( pOriginal - pDestination ) );
+            
+            p.X = ( po.X + pd.X ) / 2;
+            p.Y = ( po.Y + pd.Y ) / 2;
+            p.Z = ( po.Z + pd.Z ) / 2;
+            return true;
+
         }
         
         /// <summary>

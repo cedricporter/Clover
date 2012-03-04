@@ -89,5 +89,84 @@ namespace Clover
         {
             to2DMat = worlCameMat * projViewMat;
         }
+
+        public bool IsFoldLineLegal( Point3D p1, Point3D p2, AbstractLayer.FaceGroup fg1, bool IsWholeGroup, AbstractLayer.FaceGroup fg2 = null )
+        {
+            // 检验参数
+            if ( !IsWholeGroup && fg2 == null)
+            {
+                return false;
+            }
+
+            // 判断是否对整个组折叠
+            if ( IsWholeGroup )
+            {
+                // 对整个组折叠，折线至少要和组内一个面有交点
+                Vector3D v = new Vector3D();
+                foreach (Face f in fg1.GetGroup())
+                {
+                    if ( CloverMath.IntersectionOfLineAndFace( p1, p2, f, ref v ) )
+                        return true;
+                }
+            }
+            else
+            {
+                if ( fg2.GetGroup().Count == 0 )
+                    return false;
+                // 首先直线要和fg2的至少一个面有交线
+                bool MayIntersection = false;
+                Vector3D v = new Vector3D();
+                foreach ( Face f in fg2.GetGroup() )
+                {
+                    if ( CloverMath.IntersectionOfLineAndFace( p1, p2, f, ref v ) )
+                    {
+                        MayIntersection = true;
+                        break;
+                    }
+                        
+                }
+               // 对一个组中的某些面折叠，该新组与原来的组中的所有面有公共线只能没有交点或者交点是公共线的端点
+                if ( MayIntersection )
+                {
+                    List<Edge> CommonEdgeList = new List<Edge>();
+                    
+                    foreach (Face f1 in fg1.GetGroup())
+                    {
+                        foreach (Face f2 in fg2.GetGroup())
+                        {
+                            foreach (Edge e1 in f1.Edges)
+                            {
+                                foreach (Edge e2 in f2.Edges)
+                                {
+                                    if (e1 == e2)
+                                    {
+                                        CommonEdgeList.Add( e1 );
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (CommonEdgeList.Count == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        foreach (Edge e in CommonEdgeList)
+                        {
+                            // 判断直线和线段的交点
+                            //CloverMath.GetIntersectionOfTwoSegments()
+                        }
+                        
+                    }
+
+
+                }
+
+            }
+            
+            return true;
+        }
     }
 }

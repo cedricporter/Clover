@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clover", "Clover\Clover.csproj", "{E385A954-5A23-41E3-9FFB-075E7A8D0EA3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{52ABDE90-B862-4B37-A249-74B94D7D469E} = {52ABDE90-B862-4B37-A249-74B94D7D469E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloverPython", "CloverPython\CloverPython.csproj", "{52ABDE90-B862-4B37-A249-74B94D7D469E}"
 EndProject

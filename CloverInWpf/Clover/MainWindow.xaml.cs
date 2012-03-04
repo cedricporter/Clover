@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;
 using System.Diagnostics;
-
+using CloverPython;
 
 
 namespace Clover
@@ -26,6 +26,7 @@ namespace Clover
         public ToolFactory currentTool = null;
         Utility utility;
         VisualController visualController;
+        CloverInterpreter cloverInterpreter = new CloverInterpreter();
 
         #region 工具窗
 
@@ -64,7 +65,6 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-           
 
             // 杂项
             utility = Utility.GetInstance();
@@ -109,6 +109,7 @@ namespace Clover
             cloverController.UpdatePaper();
             foldingPaperViewport.Children.Add(cloverController.Model);
 
+            cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();
         }
@@ -291,13 +292,13 @@ namespace Clover
         {
             switch (e.Key)
             {
-                case Key.R:
+                case Key.F2:
                     cloverController.Revert();
                     break;
-                case Key.G:
+                case Key.F1:
                     cloverController.StartFoldingModel(null);
                     break;
-                case Key.X:
+                case Key.F3:
                     cloverController.NeilTest();
                     break;
                 case Key.Up:
@@ -322,7 +323,16 @@ namespace Clover
         #endregion
         
 
-        
+        void FuckingKey(Object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
+                histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
+                commandLineTextBox.Text = "";
+            }
+            //e.Handled = true;
+        }
 
     }
 }
