@@ -15,20 +15,33 @@ namespace Clover
 {
     public class CloverController
     {
+        
         #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
         MainWindow mainWindow;  /// 你懂得
+        RenderController renderController;///渲染层
+        ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         #endregion
 
         #region get/set
-        RenderController renderController;///渲染层
-        //public RenderController RenderController
-        //{
-        //    get { return renderController; }
-        //    //set { renderController = value; }
-        //}
+        public Clover.RenderLayer.RenderController RenderController
+        {
+            get { return renderController; }
+        }
+        public Clover.FaceLayer FaceLayer
+        {
+            get { return faceLayer; }
+        }
+        public Clover.EdgeLayer EdgeLayer
+        {
+            get { return edgeLayer; }
+        }
+        public Clover.VertexLayer VertexLayer
+        {
+            get { return vertexLayer; }
+        }
         public List<Edge> Edges
         {
             get 
@@ -47,6 +60,7 @@ namespace Clover
         }
         #endregion
 
+        #region Singleton
         static CloverController instance = null;
         static MainWindow window = null;
 
@@ -65,6 +79,15 @@ namespace Clover
 
             return instance;
 
+        }
+        #endregion
+
+        public Vertex GetPrevVersion(Vertex vertex)
+        {
+            List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
+            if (vGroup.Count < 2)
+                return null;
+            return vGroup[vGroup.Count - 2];
         }
 
         #region 初始化
@@ -228,16 +251,6 @@ namespace Clover
         List<Face> affectedFaceList = new List<Face>();
 
 
-        /// <summary>
-        /// 进入折叠模式前的叶子节点表，用于恢复
-        /// </summary>
-        List<Face> originFaceList = new List<Face>();
-        public List<Face> OriginFaceList
-        {
-            get { return originFaceList; }
-        }
-        int originEdgeListCount = -1;
-        int originVertexListCount = -1;
 
         Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
 
@@ -261,76 +274,9 @@ namespace Clover
 
         }
 
-
-        /// <summary>
-        /// 保存到原始叶节点表
-        /// </summary>
-        /// <param name="leaves">当前的叶子</param>
-        /// <remarks>
-        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
-        /// </remarks>
-        void SaveOriginState()
-        {
-            originFaceList.Clear();
-            foreach ( Face f in faceLayer.Leaves)
-            {
-                originFaceList.Add(f);
-            }
-
-            originEdgeListCount = edgeLayer.Count;
-            //originVertexListCount = vertexLayer.
-        }
-
-        /// <summary>
-        /// 还原到originLeaves
-        /// </summary>
         public void Revert()
         {
-            // 保存进入折叠模式前的叶子节点的所有边
-            List<Edge> originEdgeList = new List<Edge>();
-            foreach (Face face in originFaceList)
-            {
-                foreach (Edge e in face.Edges)
-                {
-                    originEdgeList.Add(e);
-                }
-            }
-
-            // 在折叠模式中的面树叶子的所有的边
-            List<Edge> currentEdgeList = new List<Edge>();
-            foreach (Face face in faceLayer.Leaves)
-            {
-                foreach (Edge e in face.Edges)
-                {
-                    currentEdgeList.Add(e);
-                }
-            }
-
-            List<Edge> beDeletedEdges = currentEdgeList.Except(originEdgeList).ToList();
-
-            foreach (Edge edge in beDeletedEdges)
-            {
-                edge.Parent = null;
-            }
-
-            edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount);
-
-            foreach (Face face in originFaceList)
-            {
-                if (face.LeftChild != null && face.RightChild != null)
-                {
-                    renderController.Delete(face.LeftChild);
-                    renderController.Delete(face.RightChild);
-                    renderController.New(face);
-                }
-                face.LeftChild = face.RightChild = null;
-            }
-
-            //renderController.UpdateAll();
-
-            faceLayer.UpdateLeaves();
-
-            //UpdatePaper();
+            shadowSystem.Revert();
         }
 
         /// <summary>
@@ -346,20 +292,11 @@ namespace Clover
         {
             faces = faceLayer.Leaves;
 
-            SaveOriginState();
-
-            
-            // 
-            //Edge foldingLine = null;
-
-            //foreach (Face face in faces)
-            //{
-            //    CutAFace(face, foldingLine);    // 分割面
-            //    faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
-            //}
+            shadowSystem.SaveOriginState();
 
             // 假定只有一个face现在
             Face face = faces[0];
+            shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
@@ -368,9 +305,9 @@ namespace Clover
             face.RightChild = f2;
 
             Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV1, newV1.Index);
+            //vertexLayer.UpdateVertex(newV1, newV1.Index);
             Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV2, newV2.Index);
+            //vertexLayer.UpdateVertex(newV2, newV2.Index);
 
             Edge newEdge = new Edge(newV1, newV2);
             edgeLayer.AddTree(new EdgeTree(newEdge));
@@ -378,6 +315,7 @@ namespace Clover
             f1.AddEdge(face.Edges[0]);
             f1.AddEdge(face.Edges[1]);
             f1.AddEdge(newEdge);
+
             f2.AddEdge(face.Edges[2]);
             f2.AddEdge(face.Edges[3]);
             f2.AddEdge(newEdge);
@@ -385,15 +323,26 @@ namespace Clover
             // for testing
             currentFoldingLine = newEdge;
 
-
             f1.UpdateVertices();
             f2.UpdateVertices();
+
+            // 保存新的面的所有顶点的历史
+            List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
+            shadowSystem.SaveVertices(totalVertices);
+
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
             //vertexLayer.GetVertex(3).Z = 50;
 
             renderController.Delete(face);
             renderController.New(f1);
             renderController.New(f2);
+
+            // new a transparent face
+            Face tranFace = f2.Clone() as Face;
+            renderController.New(tranFace);
+            renderController.ToGas(tranFace);
 
             faceLayer.UpdateLeaves(face);
         }
@@ -418,84 +367,6 @@ namespace Clover
         float currentAngel;
         Point3D currentVertex;
 
-        Edge CalcaluteFoldingLine(Face face, Vertex pickedVertex)
-        {
-            // 找到所有包含此点的面
-            Face f = face;
-            {
-                Point3D vertex1 = new Point3D();
-                Point3D vertex2 = new Point3D();
-
-                bool findFirstVertex = false;
-                bool CalculateFinished = false;
-                foreach (Edge e in f.Edges)
-                {
-
-                    if (e.Vertex1 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex1.X - e.Vertex2.X;
-                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
-                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
-
-                        v.Normalize();
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex1.X + v.X;
-                            vertex1.Y = e.Vertex1.Y + v.Y;
-                            vertex1.Z = e.Vertex1.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex1.X + v.X;
-                            vertex2.Y = e.Vertex1.Y + v.Y;
-                            vertex2.Z = e.Vertex1.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-
-                    }
-
-                    if (e.Vertex2 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex2.X - e.Vertex1.X;
-                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
-                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
-
-                        v.Normalize();
-
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex2.X + v.X;
-                            vertex1.Y = e.Vertex2.Y + v.Y;
-                            vertex1.Z = e.Vertex2.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex2.X + v.X;
-                            vertex2.Y = e.Vertex2.Y + v.Y;
-                            vertex2.Z = e.Vertex2.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-                    }
-
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
-
-                        Edge edge = new Edge(cVertex1, cVertex2);
-                        return edge;
-                    }
-                }
-            }
-
-            return null;
-        }
         
         /// <summary>
         /// 创建初始的折线顶点·
@@ -744,7 +615,8 @@ namespace Clover
             {
                 foreach (Edge e in f.Edges)
                 {
-                    if (e.Vertex1 != currentFoldingLine.Vertex1 && e.Vertex1 != currentFoldingLine.Vertex2 && !e.Vertex1.Moved )
+                    if (e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
                     {
                         Vector3D axis = new Vector3D();
                         axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
@@ -759,7 +631,8 @@ namespace Clover
                         e.Vertex1.Moved = true;
                     }
 
-                    if (e.Vertex2 != currentFoldingLine.Vertex1 && e.Vertex2 != currentFoldingLine.Vertex2 && !e.Vertex2.Moved)
+                    if (e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
                     {
                         Vector3D axis = new Vector3D();
                         axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;

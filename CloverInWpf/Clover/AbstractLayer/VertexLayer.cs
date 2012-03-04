@@ -8,17 +8,19 @@ namespace Clover
     /// <summary>
     /// Basic vertex structure.
     /// </summary>
-    class VertexLayer
+    public class VertexLayer
     {
         #region Attributes
 
-        // Vertexcell lookup table.
-        List<List<Vertex>> vertexCellTable;
+        #region get/set
         public List<List<Vertex>> VertexCellTable
         {
             get { return vertexCellTable; }
-            set { vertexCellTable = value; }
         }
+        #endregion
+
+        // Vertexcell lookup table.
+        List<List<Vertex>> vertexCellTable = new List<List<Vertex>>();
         CloverController controller;
 
         #endregion
@@ -42,7 +44,6 @@ namespace Clover
         public VertexLayer(CloverController ctrl)
         {
             controller = ctrl;
-            vertexCellTable = new List<List<Vertex>>();
         }
 
         public bool IsVertexExist(int index)
@@ -63,7 +64,7 @@ namespace Clover
         {
             if (!IsVertexExist(index))
                 return null;
-            return vertexCellTable[index][0];
+            return vertexCellTable[index][vertexCellTable[index].Count - 1];
         }
 
         /// <summary>
@@ -110,6 +111,12 @@ namespace Clover
         public void DeleteVertex(int index)
         {
             vertexCellTable.RemoveAt(index);
+        }
+
+        public void DeleteLastVersion(int index)
+        {
+            if (vertexCellTable[index].Count > 0)
+                vertexCellTable[index].RemoveAt(vertexCellTable[index].Count - 1);
         }
 
         public void ClearTable()

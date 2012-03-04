@@ -160,6 +160,7 @@ namespace Clover.RenderLayer
                 Utility.GetInstance().UpdateWorlCameMat();
         }
 
+
         public void Testfuck()
         {
             //frontMaterial = materialController.GetFrontShadow();
@@ -168,6 +169,26 @@ namespace Clover.RenderLayer
                 pair.Value.Material = materialController.GetFrontShadow();
                 pair.Value.BackMaterial = materialController.GetBackShadow();
             }
+        }
+
+        /// <summary>
+        /// 转变成半透明材质
+        /// </summary>
+        /// <param name="face"></param>
+        public void ToGas(Face face)
+        {
+            faceMeshMap[face].Material = materialController.GetFrontShadow();
+            faceMeshMap[face].BackMaterial = materialController.GetBackShadow();
+        }
+
+        /// <summary>
+        /// 转变成不透明材质
+        /// </summary>
+        /// <param name="face"></param>
+        public void ToSolid(Face face)
+        {
+            faceMeshMap[face].Material = frontMaterial;
+            faceMeshMap[face].BackMaterial = backMaterial;
         }
 
         #region 对Mesh的操作
@@ -185,22 +206,22 @@ namespace Clover.RenderLayer
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
 
-            if ( count++ > 2 )
-            {
+            //if ( count++ > 2 )
+            //{
 
-            GeometryModel3D fuck = new GeometryModel3D();
-            MeshGeometry3D fuckm = new MeshGeometry3D();
-            fuckm.Positions.Add(new Point3D(0, 0, 0));
-            fuckm.Positions.Add(new Point3D(100, 0, 0));
-            fuckm.Positions.Add(new Point3D(100, 0, 100));
-            fuckm.TriangleIndices.Add(0);
-            fuckm.TriangleIndices.Add(1);
-            fuckm.TriangleIndices.Add(2);
-            fuck.Geometry = fuckm;
-            fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-            fuck.BackMaterial = fuck.Material;
-            modelGroup.Children.Add(fuck);
-            }
+            //GeometryModel3D fuck = new GeometryModel3D();
+            //MeshGeometry3D fuckm = new MeshGeometry3D();
+            //fuckm.Positions.Add(new Point3D(0, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 100));
+            //fuckm.TriangleIndices.Add(0);
+            //fuckm.TriangleIndices.Add(1);
+            //fuckm.TriangleIndices.Add(2);
+            //fuck.Geometry = fuckm;
+            //fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+            //fuck.BackMaterial = fuck.Material;
+            //modelGroup.Children.Add(fuck);
+            //}
         }
 
         /// <summary>
