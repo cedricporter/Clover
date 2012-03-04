@@ -191,6 +191,25 @@ namespace Clover
             if (currentTool != null)
                 currentTool.onMove();
 
+            //Matrix3D projViewMatIn = Utility.GetInstance().ProjViewMat;
+            //if (!projViewMatIn.HasInverse)
+            //    return;
+            //projViewMatIn.Invert();
+            //Point3D start = new Point3D(e.GetPosition(this.foldingPaperViewport).X, e.GetPosition(this.foldingPaperViewport).Y, -1);
+            //start.X -= foldingPaperViewport.ActualWidth / 2;
+            //start.Y -= foldingPaperViewport.ActualHeight / 2;            
+            //Point3D mid = new Point3D(start.X, start.Y, 0);
+            //start *= projViewMatIn;
+            //mid *= projViewMatIn;
+            //Vector3D dir = mid - start;
+            //dir.Normalize();
+            //Debug.WriteLine(start);
+            //Debug.WriteLine(dir);
+            //start.Z += 300;
+            //mid.Z += 300;
+            //Point3D intersection = CloverMath.IntersectionOfLineAndPlane(start, mid, cloverController.FaceLeaves[0]);
+            //Debug.WriteLine(intersection);
+
             //Debug.WriteLine("======================");
             //Debug.WriteLine(Mouse.GetPosition(this));
             //Point3D p = cloverController.Edges[0].Vertex1.GetPoint3D();
@@ -200,8 +219,7 @@ namespace Clover
             //Debug.WriteLine(p);
             //mat.Invert();
             //p *= mat;
-            //Debug.WriteLine(p);
-            
+            //Debug.WriteLine(p);   
         }
 
         /// <summary>
@@ -269,6 +287,9 @@ namespace Clover
                     break;
                 case Key.G:
                     cloverController.StartFoldingModel(null);
+                    break;
+                case Key.X:
+                    cloverController.NeilTest();
                     break;
                 case Key.Up:
                     cloverController.Update(0, 10, null, null);

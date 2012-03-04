@@ -10,8 +10,16 @@ namespace Clover
 {
     public class Utility
     {
-        Matrix3D WorlCameMat = Matrix3D.Identity; ///从世界坐标系转换到摄像机坐标系的矩阵
-        Matrix3D ProjViewMat = Matrix3D.Identity; ///投影矩阵
+        Matrix3D worlCameMat = Matrix3D.Identity; ///从世界坐标系转换到摄像机坐标系的矩阵
+        public System.Windows.Media.Media3D.Matrix3D WorlCameMat
+        {
+            get { return worlCameMat; }
+        }
+        Matrix3D projViewMat = Matrix3D.Identity; ///投影矩阵
+        public System.Windows.Media.Media3D.Matrix3D ProjViewMat
+        {
+            get { return projViewMat; }
+        }
         Matrix3D to2DMat;
         public System.Windows.Media.Media3D.Matrix3D To2DMat
         {
@@ -38,7 +46,7 @@ namespace Clover
         /// </summary>
         public void UpdateWorlCameMat()
         {
-            WorlCameMat = RenderController.GetInstance().Entity.Transform.Value;
+            worlCameMat = RenderController.GetInstance().Entity.Transform.Value;
 
             UpdateTo2DMat();
         }
@@ -55,7 +63,7 @@ namespace Clover
             double yScale = aspectRatio * xScale;
             double m33 = -1;
             double m43 = zn * m33;
-            ProjViewMat = new Matrix3D(
+            projViewMat = new Matrix3D(
                 xScale, 0, 0, 0,
                 0, yScale, 0, 0,
                 0, 0, m33, -1,
@@ -64,7 +72,7 @@ namespace Clover
             double scaleX = width / 2;
             double scaleY = height / 2;
 
-            ProjViewMat.Append(new Matrix3D(
+            projViewMat.Append(new Matrix3D(
                 scaleX, 0, 0, 0,
                 0, -scaleY, 0, 0,
                 0, 0, 1, 0,
@@ -78,7 +86,7 @@ namespace Clover
         /// </summary>
         public void UpdateTo2DMat()
         {
-            to2DMat = WorlCameMat * ProjViewMat;
+            to2DMat = worlCameMat * projViewMat;
         }
     }
 }

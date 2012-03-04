@@ -736,5 +736,24 @@ namespace Clover
             return model;
         }
         #endregion
+
+        #region Neil测试
+        public void NeilTest()
+        {
+            //创建4个顶点
+            Vertex v0 = new Vertex(123, -50, 23.4);
+            Vertex v1 = new Vertex(-50, 40.2304234, 30.23423423);
+            Vertex v2 = new Vertex(-50, 40.2304234, 30.23423423);
+            Vertex v3 = new Vertex(95.234234, 22, 0);
+
+            Edge e1 = new Edge(v0, v1);
+            Edge e2 = new Edge(v2, v3);
+            Point3D p = new Point3D();
+
+            double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
+
+            return;
+        }
+        #endregion
     }
 }

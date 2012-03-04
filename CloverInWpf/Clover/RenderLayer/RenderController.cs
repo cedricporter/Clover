@@ -160,6 +160,7 @@ namespace Clover
                 Utility.GetInstance().UpdateWorlCameMat();
         }
 
+        #region 改变材质特性
 
         public void Testfuck()
         {
@@ -190,6 +191,8 @@ namespace Clover
             faceMeshMap[face].Material = frontMaterial;
             faceMeshMap[face].BackMaterial = backMaterial;
         }
+
+        #endregion
 
         #region 对Mesh的操作
         int count = 0;
