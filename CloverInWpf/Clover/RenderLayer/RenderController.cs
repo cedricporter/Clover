@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 @note		:	控制渲染层运作
 **/
 
-namespace Clover.RenderLayer
+namespace Clover
 {
     public class RenderController
     {

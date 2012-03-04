@@ -41,7 +41,7 @@ namespace Clover.Tool
 
                 // 首先寻找离我们最近的那个面……
                 Double minVal = Double.MaxValue;
-                Matrix3D mat = RenderLayer.RenderController.GetInstance().Entity.Transform.Value;
+                Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
                 foreach (Face f in faces)
                 {
                     Double val = 0;
@@ -87,7 +87,7 @@ namespace Clover.Tool
                 }
 
                 // 应用旋转
-                RenderLayer.RenderController.GetInstance().BeginRotationSlerp(quat);
+                RenderController.GetInstance().BeginRotationSlerp(quat);
             }
             #endregion
         }

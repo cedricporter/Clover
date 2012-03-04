@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Clover.RenderLayer;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
@@ -26,7 +25,7 @@ namespace Clover
         #endregion
 
         #region get/set
-        public Clover.RenderLayer.RenderController RenderController
+        public Clover.RenderController RenderController
         {
             get { return renderController; }
         }
@@ -341,8 +340,7 @@ namespace Clover
 
             // new a transparent face
             Face tranFace = f2.Clone() as Face;
-            renderController.New(tranFace);
-            renderController.ToGas(tranFace);
+            shadowSystem.CreateTransparentFace(tranFace);
 
             faceLayer.UpdateLeaves(face);
         }
@@ -543,7 +541,7 @@ namespace Clover
                 }
             }
 
-            return crossCount >= 2 ? true : false;
+            return crossCount >= 2;
         }
 
         /// <summary>

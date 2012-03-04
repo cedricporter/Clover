@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media.Media3D;
 using _3DTools;
-using Clover.RenderLayer;
 
 namespace Clover
 {

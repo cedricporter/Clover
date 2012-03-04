@@ -6,7 +6,6 @@ using System.Windows.Input;
 
 using Clover.Tool;
 using Clover.Visual;
-using Clover.RenderLayer;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;

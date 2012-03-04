@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 @note		:	控制纸张双面的材质，包括纹理和折线
 **/
 
-namespace Clover.RenderLayer
+namespace Clover
 {
     class MaterialController
     {
