@@ -74,6 +74,20 @@ namespace Clover
         }
 
         /// <summary>
+        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
+        /// </summary>
+        public void UpdateFaceVerticesToLastedVersion(Face face)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer; 
+            foreach (Edge e in face.Edges)
+            {
+                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+            }
+            face.UpdateVertices();
+        }
+
+        /// <summary>
         /// 还原到originLeaves
         /// </summary>
         public void Revert()

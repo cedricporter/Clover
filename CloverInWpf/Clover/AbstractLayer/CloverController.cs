@@ -296,7 +296,7 @@ namespace Clover
 
             // 假定只有一个face现在
             Face face = faces[0];
-            face.UpdateVerticesToLastedVersion();
+            shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
@@ -330,14 +330,19 @@ namespace Clover
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
             shadowSystem.SaveVertices(totalVertices);
 
-            f1.UpdateVerticesToLastedVersion();
-            f2.UpdateVerticesToLastedVersion();
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
             //vertexLayer.GetVertex(3).Z = 50;
 
             renderController.Delete(face);
             renderController.New(f1);
             renderController.New(f2);
+
+            // new a transparent face
+            Face tranFace = f2.Clone() as Face;
+            renderController.New(tranFace);
+            renderController.ToGas(tranFace);
 
             faceLayer.UpdateLeaves(face);
         }

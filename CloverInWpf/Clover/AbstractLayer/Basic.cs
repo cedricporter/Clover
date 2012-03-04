@@ -95,6 +95,27 @@ namespace Clover
 
             Index = index;
         }
+
+        public static bool operator==(Vertex lhs, Vertex rhs)
+        {
+            // If both are null, or both are same instance, return true.
+            if (System.Object.ReferenceEquals(lhs, rhs))
+                return true;
+
+            // If one is null, but not both, return false.
+            if (((object)lhs == null) || ((object)rhs == null))
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return lhs.GetPoint3D() == rhs.GetPoint3D();
+        }
+
+        public static bool operator!=(Vertex lhs, Vertex rhs)
+        {
+            return !(lhs == rhs);
+        }
     }
 
     /// <summary>
@@ -194,7 +215,7 @@ namespace Clover
     /// <summary>
     /// 抽象的面
     /// </summary>
-    public class Face
+    public class Face : ICloneable
     {
 
         public Face( int layer )
@@ -202,15 +223,37 @@ namespace Clover
             this.layer = layer;
         }
 
+        /// <summary>
+        /// 返回一个新的面，但是他的边和点都不在折叠树里面。
+        /// </summary>
+        /// <returns></returns>
+        public object Clone()
+        {
+            Face newFace = MemberwiseClone() as Face;
+
+            newFace.normal = new Vector3D(normal.X, normal.Y, normal.Z);
+
+            newFace.vertices = new List<Vertex>();
+            newFace.edges = new List<Edge>();
+
+            foreach (Edge e in edges)
+            {
+                newFace.edges.Add(new Edge(e.Vertex1.Clone() as Vertex, e.Vertex2.Clone() as Vertex));
+            }
+
+            newFace.UpdateVertices();
+
+            return newFace;
+        }
+
         #region 成员变量
+        List<Vertex> vertices = new List<Vertex>();
         List<Edge> edges = new List<Edge>();
         Vector3D normal;
-
         Face leftChild = null;
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
-        List<Vertex> vertices = new List<Vertex>();
         #endregion
 
         #region get/set
@@ -260,19 +303,6 @@ namespace Clover
 
         #region 更新
 
-        /// <summary>
-        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
-        /// </summary>
-        public void UpdateVerticesToLastedVersion()
-        {
-            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer; 
-            foreach (Edge e in edges)
-            {
-                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
-                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
-            }
-            UpdateVertices();
-        }
 
         /// <summary>
         /// 更新面的点，方便绘制时使用
