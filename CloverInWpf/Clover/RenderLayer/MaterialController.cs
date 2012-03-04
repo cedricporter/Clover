@@ -62,11 +62,11 @@ namespace Clover.RenderLayer
                 if (i == 1)
                     continue;
                 DiffuseMaterial dm = (transparentFrontMaterial.Children[i] as DiffuseMaterial);
-                dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255); 
+                dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
             }
-                //DiffuseMaterial dm = (transparentFrontMaterial.Children[0] as DiffuseMaterial);
-                //dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
-                return transparentFrontMaterial;
+            //DiffuseMaterial dm = (transparentFrontMaterial.Children[0] as DiffuseMaterial);
+            //dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
+            return transparentFrontMaterial;
         }
 
         /// <summary>
