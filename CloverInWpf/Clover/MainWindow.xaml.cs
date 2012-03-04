@@ -291,13 +291,13 @@ namespace Clover
         {
             switch (e.Key)
             {
-                case Key.R:
+                case Key.F2:
                     cloverController.Revert();
                     break;
-                case Key.G:
+                case Key.F1:
                     cloverController.StartFoldingModel(null);
                     break;
-                case Key.X:
+                case Key.F3:
                     cloverController.NeilTest();
                     break;
                 case Key.Up:
@@ -322,7 +322,15 @@ namespace Clover
         #endregion
         
 
-        
+        void FuckingKey(Object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                histroyTextBox.Text += commandLineTextBox.Text + "\n";
+                commandLineTextBox.Text = "";
+            }
+            //e.Handled = true;
+        }
 
     }
 }
