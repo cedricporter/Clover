@@ -107,6 +107,51 @@ namespace Clover
         }
 
         /// <summary>
+        /// 判断直线是否与一个face有交点，如果有，则在最后一个参数传出来。
+        /// </summary>
+        /// <param name="p1">直线上的点1</param>
+        /// <param name="p2">直线上的点2</param>
+        /// <param name="f"></param>
+        /// <param name="v">结果传出</param>
+        /// <returns></returns>
+        public static bool IntersectionOfLineAndFace(Point3D p1, Point3D p2, Face f, ref Vector3D v)
+        {
+            Vector3D vline = p1 - p2;
+            // 排除平行的情况
+            if ( Math.Abs( Vector3D.DotProduct(vline, f.Normal)) < 0.000001 )
+            {
+                return false;
+            }
+            Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f);
+
+            // 判断点在不在face内
+            Vector3D[] vector = new Vector3D[f.Vertices.Count];
+            int i = 0;
+            foreach (Vertex ve in f.Vertices)
+            {
+                vector[i] = IntersectiongPoint - ve.GetPoint3D();
+                i++;
+            }
+
+            foreach ( Vector3D v1 in vector)
+            {
+                foreach ( Vector3D v2 in vector)
+                {
+                    if ( Vector3D.DotProduct( v1, v2 ) < 0 )
+                    {
+                        v.X = IntersectiongPoint.X;
+                        v.Y = IntersectiongPoint.Y;
+                        v.Z = IntersectiongPoint.Z;
+                        return true;
+                    }
+
+                }
+            }
+            return false;
+             
+        }
+
+        /// <summary>
         /// 求一线段的中垂线
         /// </summary>
         /// <param name="p1">线段的一个端点，计算完后会由该变量返回中垂线的一个端点</param>
