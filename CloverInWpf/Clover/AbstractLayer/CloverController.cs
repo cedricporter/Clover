@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Shapes;
+using Clover.Visual;
 
 namespace Clover
 {
@@ -153,6 +154,10 @@ namespace Clover
             foreach (Vertex v in vertices)
             {
                 vertexLayer.InsertVertex(v);
+
+                VertexInfoVisual vi = new VertexInfoVisual(v);
+                VisualController.GetSingleton().AddVisual(vi);
+                vi.Start();
             }
 
             // create a face

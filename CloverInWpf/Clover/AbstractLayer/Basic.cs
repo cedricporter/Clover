@@ -7,12 +7,15 @@ using System.Windows;
 
 namespace Clover
 {
+    public delegate void Update(object sender, EventArgs e);
+
     public enum FoldingOp
     {
         Blend,
         FoldUp,
         TuckIn
     }
+
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
@@ -30,6 +33,8 @@ namespace Clover
 
         public int Version = 1;
 
+        public Update Update;
+
         #region get/set
         public bool Moved
         {
@@ -39,17 +44,17 @@ namespace Clover
         public double X
         {
             get { return point.X; }
-            set { point.X = value; }
+            set { point.X = value; Update(this, null);  }
         }
         public double Y
         {
             get { return point.Y; }
-            set { point.Y = value; }
+            set { point.Y = value; Update(this, null);  }
         }
         public double Z
         {
             get { return point.Z; }
-            set { point.Z = value; }
+            set { point.Z = value; Update(this, null);}
         }
         #endregion
 
@@ -72,6 +77,7 @@ namespace Clover
         public void SetPoint3D(Point3D vertex)
         {
             point = vertex;
+            Update(this, null);
         }
 
         public Vertex(Point3D vertex)

@@ -169,10 +169,11 @@ namespace Clover
 
         #endregion
 
+        #region 半透明的原始面
         List<Face> transparentFaces = new List<Face>();
 
         /// <summary>
-        /// 删除所有的半透明名
+        /// 删除所有的半透明面
         /// </summary>
         public void ClearTransparentFaces()
         {
@@ -182,7 +183,6 @@ namespace Clover
                 render.Delete(face);
             }
             transparentFaces.Clear();
-
         }
 
         /// <summary>
@@ -198,5 +198,6 @@ namespace Clover
             render.New(face);
             render.ToGas(face);
         }
+        #endregion
     }
 }

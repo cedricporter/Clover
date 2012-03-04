@@ -49,7 +49,8 @@ namespace Clover
             InitializeComponent();
             
             // 测试Visual
-            visualController = VisualController.GetSingleton(this);
+            VisualController.Initialize(this);
+            visualController = VisualController.GetSingleton();
             //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
             //visualController.AddVisual(vi);
             //vi.Start();
@@ -63,12 +64,7 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-            // 初始化纸张
-            CloverController.InitializeInstance(this);
-            cloverController = CloverController.GetInstance();
-            cloverController.Initialize(100, 100);
-            cloverController.UpdatePaper();
-            foldingPaperViewport.Children.Add(cloverController.Model);
+           
 
             // 杂项
             utility = Utility.GetInstance();
@@ -76,6 +72,8 @@ namespace Clover
 
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
+
+            
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
@@ -100,6 +98,17 @@ namespace Clover
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
             //toolBox.Show();
+
+            // 更新矩阵
+            utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
+ 
+            // 初始化纸张
+            CloverController.InitializeInstance(this);
+            cloverController = CloverController.GetInstance();
+            cloverController.Initialize(100, 100);
+            cloverController.UpdatePaper();
+            foldingPaperViewport.Children.Add(cloverController.Model);
+
 
             this.Focus();
         }
@@ -282,13 +291,13 @@ namespace Clover
         {
             switch (e.Key)
             {
-                case Key.R:
+                case Key.F2:
                     cloverController.Revert();
                     break;
-                case Key.G:
+                case Key.F1:
                     cloverController.StartFoldingModel(null);
                     break;
-                case Key.X:
+                case Key.F3:
                     cloverController.NeilTest();
                     break;
                 case Key.Up:
@@ -313,7 +322,15 @@ namespace Clover
         #endregion
         
 
-        
+        void FuckingKey(Object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                histroyTextBox.Text += commandLineTextBox.Text + "\n";
+                commandLineTextBox.Text = "";
+            }
+            //e.Handled = true;
+        }
 
     }
 }

@@ -32,3 +32,8 @@
 /CloverInWpf/3D/obj
 
 /CloverInWpf/bin/Debug/3DTools.dll
+/CloverInWpf/bin/Debug/CloverPython.dll
+/CloverInWpf/Test/bin
+/CloverInWpf/Test/obj
+/CloverInWpf/CloverPython/bin
+/CloverInWpf/CloverPython/obj
