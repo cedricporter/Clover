@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Diagnostics;
 
 /**
 @date		:	2012/02/29
@@ -27,12 +28,17 @@ namespace Clover.Visual
 
         static VisualController instance = null;
 
-        public static VisualController GetSingleton(MainWindow mainWindow)
+        public static void Initialize(MainWindow window)
+        {
+            mainWindow = window;
+        }
+
+        public static VisualController GetSingleton()
         {
             if (instance == null)
             {
+                Debug.Assert(mainWindow != null);
                 instance = new VisualController(mainWindow);;
-
             }
             return instance;
          
@@ -40,14 +46,13 @@ namespace Clover.Visual
 
         #endregion
 
-        MainWindow mainWindow;
+        static MainWindow mainWindow;
         Grid grid = new Grid();
         List<VisualElementFactory> visualList = new List<VisualElementFactory>();
         List<VisualElementFactory> removeList = new List<VisualElementFactory>();
 
         private VisualController(MainWindow mainWindow)
         {
-            this.mainWindow = mainWindow;
             // 初始化视觉容器
             mainWindow.WindowRoot.Children.Add(grid);
         }

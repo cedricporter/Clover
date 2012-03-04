@@ -49,7 +49,8 @@ namespace Clover
             InitializeComponent();
             
             // 测试Visual
-            visualController = VisualController.GetSingleton(this);
+            VisualController.Initialize(this);
+            visualController = VisualController.GetSingleton();
             //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
             //visualController.AddVisual(vi);
             //vi.Start();
@@ -63,12 +64,7 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-            // 初始化纸张
-            CloverController.InitializeInstance(this);
-            cloverController = CloverController.GetInstance();
-            cloverController.Initialize(100, 100);
-            cloverController.UpdatePaper();
-            foldingPaperViewport.Children.Add(cloverController.Model);
+           
 
             // 杂项
             utility = Utility.GetInstance();
@@ -105,10 +101,14 @@ namespace Clover
 
             // 更新矩阵
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
+ 
+            // 初始化纸张
+            CloverController.InitializeInstance(this);
+            cloverController = CloverController.GetInstance();
+            cloverController.Initialize(100, 100);
+            cloverController.UpdatePaper();
+            foldingPaperViewport.Children.Add(cloverController.Model);
 
-            VertexInfoVisual vi = new VertexInfoVisual(cloverController.Edges[0].Vertex1);
-            visualController.AddVisual(vi);
-            vi.Start();
 
             this.Focus();
         }

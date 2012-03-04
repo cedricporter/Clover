@@ -18,6 +18,7 @@ namespace Clover.Visual
             infotext.Background = new SolidColorBrush(Colors.White);
             box.Children.Add(infotext);
             UpdateInfoCallBack(v, null);
+            v.Update += UpdateInfoCallBack;
         }
 
         public void UpdateInfoCallBack(Object sender, EventArgs e)
