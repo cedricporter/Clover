@@ -78,15 +78,16 @@ namespace Clover.Tool
                     return edge.Vertex2;
                 }
                 // 判断线
-                Vector V1 = p22d - p12d;
-                Vector V2 = p - p12d;
-                Double t = (V1 * V2) / (V1 * V1);
-                Point p3 = p12d + t * V1;
-                if ((p - p3).Length < pointThreadhold)
-                {
-                    shadow2DElement = new Clover.Edge2D(p12d, p22d);
-                    return edge;
-                }              
+                // 这一段其实有问题，我只能判断点是否在直线上，而缺少了点是否在两点之间的判断
+                //Vector V1 = p22d - p12d;
+                //Vector V2 = p - p12d;
+                //Double t = (V1 * V2) / (V1 * V1);
+                //Point p3 = p12d + t * V1;
+                //if ((p - p3).Length < pointThreadhold)
+                //{
+                //    shadow2DElement = new Clover.Edge2D(p12d, p22d);
+                //    return edge;
+                //}              
             }
             shadow2DElement = null;
             return null;
@@ -158,7 +159,8 @@ namespace Clover.Tool
             #region 鼠标已按下
             else
             {
-                onDrag(currSelectedElement);
+                if (currSelectedElement != null)
+                    onDrag(currSelectedElement);
             }
             #endregion
 

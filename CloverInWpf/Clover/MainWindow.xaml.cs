@@ -191,6 +191,18 @@ namespace Clover
         {
             if (currentTool != null)
                 currentTool.onMove();
+
+            //Debug.WriteLine("======================");
+            //Debug.WriteLine(Mouse.GetPosition(this));
+            //Point3D p = cloverController.Edges[0].Vertex1.GetPoint3D();
+            //Debug.WriteLine(p);
+            //Matrix3D mat = Utility.GetInstance().To2DMat;
+            //p *= mat;
+            //Debug.WriteLine(p);
+            //mat.Invert();
+            //p *= mat;
+            //Debug.WriteLine(p);
+            
         }
 
         /// <summary>

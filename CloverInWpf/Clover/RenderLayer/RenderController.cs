@@ -41,6 +41,18 @@ namespace Clover.RenderLayer
             set { srcQuaternion = value; }
         }
 
+        TranslateTransform3D translateTransform = new TranslateTransform3D();
+        public System.Windows.Media.Media3D.TranslateTransform3D TranslateTransform
+        {
+            get { return translateTransform; }
+            set 
+            {
+                if (value.OffsetZ < 40 || value.OffsetZ > 1000)
+                    return;
+                translateTransform = value; 
+            }
+        }
+
         RotateTransform3D rotateTransform = new RotateTransform3D();
         public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
         {
@@ -228,8 +240,7 @@ namespace Clover.RenderLayer
             foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
             {
                 Face face = pair.Key;
-                GeometryModel3D model = pair.Value;
-                model.Geometry = NewMesh(face);
+                pair.Value.Geometry = NewMesh(face);
             }
         }
 
@@ -309,13 +320,6 @@ namespace Clover.RenderLayer
                 srcQuaternion = dstQuaternion;
                 RotationSlerpCount = -1;
             }
-            //Quaternion sub = dstQuaternion - srcQuaternion;
-            //Double judge = Math.Pow(sub.W, 2) + Math.Pow(sub.X, 2) + Math.Pow(sub.Y, 2) + Math.Pow(sub.Z, 2);
-            //if (judge < 0.001)
-            //{
-            //    srcQuaternion = dstQuaternion;
-            //    isRotationSlerpRunning = false;
-            //}
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
             CubeNavigator cubeNav = CubeNavigator.GetInstance();

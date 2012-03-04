@@ -10,7 +10,9 @@ using System.Windows.Media.Animation;
 namespace Clover.Tool
 {
     class TestTool : ToolFactory
-    {   
+    {
+        Face nearestFace = null;
+
         public TestTool(MainWindow mainWindow) : base(mainWindow)
         {
             //System.Windows.MessageBox.Show();
@@ -39,7 +41,6 @@ namespace Clover.Tool
 
                 // 首先寻找离我们最近的那个面……
                 Double minVal = Double.MaxValue;
-                Face nearestFace = null;
                 Matrix3D mat = RenderLayer.RenderController.GetInstance().Entity.Transform.Value;
                 foreach (Face f in faces)
                 {
@@ -87,10 +88,6 @@ namespace Clover.Tool
 
                 // 应用旋转
                 RenderLayer.RenderController.GetInstance().BeginRotationSlerp(quat);
-                //RenderLayer.RenderController.GetInstance().RotateTransform = rot;
-                //RenderLayer.RenderController.GetInstance().RotateTransform.BeginAnimation(RotateTransform3D.RotationProperty)
-                //RenderLayer.RenderController.GetInstance().Entity
-
             }
             #endregion
         }
@@ -102,7 +99,36 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            //throw new Exception("The method or operation is not implemented.");
+            #region 如果选中的是点
+
+            if (element.GetType().ToString() == "Clover.Vertex")
+            {
+                // 鼠标拖动顶点，动态生成折线
+                // 获取当前鼠标位置，并转换为3D空间中的射线
+                Point3D p1 = new Point3D(currMousePos.X, currMousePos.Y, 0);
+                Matrix3D to3DMat = Utility.GetInstance().To2DMat;
+                if (!to3DMat.HasInverse)
+                    return;
+                to3DMat.Invert();
+                p1 *= to3DMat;
+                p1.Z = 0;
+                Point3D p2 = p1 + new Vector3D(0, 0, 3000);
+                Point3D Pon = nearestFace.Vertices[0].GetPoint3D();
+                Vector3D N = nearestFace.Normal;
+                // 已知线上两点p1p2,面法线N，面上一点Pon，求射线与面的交点Pt
+                Double t = -Vector3D.DotProduct((p1 - Pon), N) / Vector3D.DotProduct((p2 - p1), N);
+                Point3D Pt = p1 + t * (p2 - p1);
+                // 求Pt与原来的点P0的垂直平分线
+                Point3D P0 = ((Vertex)element).GetPoint3D();
+                Vector3D Vcon = Pt - P0;
+                Point3D Pmid = P0 + Vcon / 2;
+                Vector3D Vver = new Vector3D(Vcon.Y, -Vcon.X, 0);
+                Vver.Normalize();
+            }
+            
+
+            #endregion
+
         }
     }
 }

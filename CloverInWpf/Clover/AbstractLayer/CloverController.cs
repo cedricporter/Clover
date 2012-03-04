@@ -323,7 +323,7 @@ namespace Clover
                 face.LeftChild = face.RightChild = null;
             }
 
-            renderController.UpdateAll();
+            //renderController.UpdateAll();
 
             faceLayer.UpdateLeaves();
 
@@ -854,6 +854,8 @@ namespace Clover
             renderController.AddFoldingLine(0, 0, 1, 1);
             renderController.AddFoldingLine(0, 1, 1, 0);
             //renderController.Testfuck();
+            //renderController.UpdateAll();
+            //renderController.DeleteAll();
 
             model = renderController.Entity;
            
