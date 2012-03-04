@@ -15,20 +15,33 @@ namespace Clover
 {
     public class CloverController
     {
+        
         #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
         VertexLayer vertexLayer;/// 点层
         MainWindow mainWindow;  /// 你懂得
+        RenderController renderController;///渲染层
+        ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         #endregion
 
         #region get/set
-        RenderController renderController;///渲染层
-        //public RenderController RenderController
-        //{
-        //    get { return renderController; }
-        //    //set { renderController = value; }
-        //}
+        public Clover.RenderLayer.RenderController RenderController
+        {
+            get { return renderController; }
+        }
+        public Clover.FaceLayer FaceLayer
+        {
+            get { return faceLayer; }
+        }
+        public Clover.EdgeLayer EdgeLayer
+        {
+            get { return edgeLayer; }
+        }
+        public Clover.VertexLayer VertexLayer
+        {
+            get { return vertexLayer; }
+        }
         public List<Edge> Edges
         {
             get 
@@ -238,16 +251,6 @@ namespace Clover
         List<Face> affectedFaceList = new List<Face>();
 
 
-        /// <summary>
-        /// 进入折叠模式前的叶子节点表，用于恢复
-        /// </summary>
-        List<Face> originFaceList = new List<Face>();
-        public List<Face> OriginFaceList
-        {
-            get { return originFaceList; }
-        }
-        int originEdgeListCount = -1;
-        int originVertexListCount = -1;
 
         Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
 
@@ -271,137 +274,10 @@ namespace Clover
 
         }
 
-
-        /// <summary>
-        /// 为所有顶点保存历史记录
-        /// </summary>
-        void SaveOriginVertices()
-        {
-            for (int i = 0; i < vertexLayer.VertexCellTable.Count; i++)
-            {
-                Vertex v = vertexLayer.Vertices[i].Clone() as Vertex;
-
-                vertexLayer.UpdateVertex(v, v.Index);
-            }
-        }
-
-
-        /// <summary>
-        /// 保存到原始叶节点表
-        /// </summary>
-        /// <param name="leaves">当前的叶子</param>
-        /// <remarks>
-        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
-        /// </remarks>
-        void SaveOriginState()
-        {
-            //SaveOriginVertices();
-
-            originFaceList.Clear();
-            foreach ( Face f in faceLayer.Leaves)
-            {
-                originFaceList.Add(f);
-            }
-
-            originEdgeListCount = edgeLayer.Count;
-            //originVertexListCount = vertexLayer.
-        }
-
-        /// <summary>
-        /// 还原到originLeaves
-        /// </summary>
         public void Revert()
         {
-            // 保存进入折叠模式前的叶子节点的所有边
-            List<Edge> originEdgeList = new List<Edge>();
-            foreach (Face face in originFaceList)
-            {
-                foreach (Edge e in face.Edges)
-                {
-                    originEdgeList.Add(e);
-                }
-            }
-
-            // 在折叠模式中的面树叶子的所有的边
-            List<Edge> currentEdgeList = new List<Edge>();
-            foreach (Face face in faceLayer.Leaves)
-            {
-                foreach (Edge e in face.Edges)
-                {
-                    currentEdgeList.Add(e);
-                }
-            }
-
-            List<Edge> beDeletedEdges = currentEdgeList.Except(originEdgeList).ToList();
-
-            foreach (Edge edge in beDeletedEdges)
-            {
-                edge.Parent = null;
-            }
-
-            edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount);
-
-            foreach (Face face in originFaceList)
-            {
-                if (face.LeftChild != null && face.RightChild != null)
-                {
-                    renderController.Delete(face.LeftChild);
-                    renderController.Delete(face.RightChild);
-                    renderController.New(face);
-                }
-                face.LeftChild = face.RightChild = null;
-            }
-
-            //renderController.UpdateAll();
-
-            faceLayer.UpdateLeaves();
-
-            //UpdatePaper();
+            shadowSystem.Revert();
         }
-
-        // 有逻辑错误
-        ///// <summary>
-        ///// 保存一个面的顶点的历史到vertex layer
-        ///// </summary>
-        ///// <param name="face"></param>
-        //void SaveFaceVertices(Face face)
-        //{
-        //    face.UpdateVertices();
-
-        //    foreach (Vertex v in face.Vertices)
-        //    {
-        //        Vertex newVertex = v.Clone() as Vertex;
-        //        vertexLayer.UpdateVertex(newVertex, v.Index);
-        //    }
-        //}
-
-        /// <summary>
-        /// 保存一些顶点的历史到vertex layer
-        /// </summary>
-        /// <param name="vertices"></param>
-        void SaveVertices(List<Vertex> vertices)
-        {
-            foreach (Vertex v in vertices)
-            {
-                Vertex newVertex = v.Clone() as Vertex;
-                vertexLayer.UpdateVertex(newVertex, v.Index);
-            }
-        }
-
-        /// <summary>
-        /// 更新一个面的所有边的顶点的到vertex layer中最新的vertex
-        /// </summary>
-        /// <param name="face"></param>
-        void UpdateFaceEdgeVertex(Face face)
-        {
-            foreach (Edge e in face.Edges)
-            {
-                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
-                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
-            }
-            face.UpdateVertices();
-        }
-
 
         /// <summary>
         /// 开始折叠模式
@@ -416,20 +292,11 @@ namespace Clover
         {
             faces = faceLayer.Leaves;
 
-            SaveOriginState();
-
-            
-            // 
-            //Edge foldingLine = null;
-
-            //foreach (Face face in faces)
-            //{
-            //    CutAFace(face, foldingLine);    // 分割面
-            //    faceLayer.UpdateLeaves(face);   // 更新叶节点，局部更新
-            //}
+            shadowSystem.SaveOriginState();
 
             // 假定只有一个face现在
             Face face = faces[0];
+            shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
@@ -438,9 +305,9 @@ namespace Clover
             face.RightChild = f2;
 
             Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV1, newV1.Index);
+            //vertexLayer.UpdateVertex(newV1, newV1.Index);
             Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV2, newV2.Index);
+            //vertexLayer.UpdateVertex(newV2, newV2.Index);
 
             Edge newEdge = new Edge(newV1, newV2);
             edgeLayer.AddTree(new EdgeTree(newEdge));
@@ -461,17 +328,21 @@ namespace Clover
 
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
-            SaveVertices(totalVertices);
+            shadowSystem.SaveVertices(totalVertices);
 
-            UpdateFaceEdgeVertex(f1);
-            UpdateFaceEdgeVertex(f2);
-
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
             //vertexLayer.GetVertex(3).Z = 50;
 
             renderController.Delete(face);
             renderController.New(f1);
             renderController.New(f2);
+
+            // new a transparent face
+            Face tranFace = f2.Clone() as Face;
+            renderController.New(tranFace);
+            renderController.ToGas(tranFace);
 
             faceLayer.UpdateLeaves(face);
         }
@@ -865,6 +736,25 @@ namespace Clover
             model = renderController.Entity;
            
             return model;
+        }
+        #endregion
+
+        #region Neil测试
+        public void NeilTest()
+        {
+            //创建4个顶点
+            Vertex v0 = new Vertex(123, -50, 23.4);
+            Vertex v1 = new Vertex(-50, 40.2304234, 30.23423423);
+            Vertex v2 = new Vertex(-50, 40.2304234, 30.23423423);
+            Vertex v3 = new Vertex(95.234234, 22, 0);
+
+            Edge e1 = new Edge(v0, v1);
+            Edge e2 = new Edge(v2, v3);
+            Point3D p = new Point3D();
+
+            double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
+
+            return;
         }
         #endregion
     }

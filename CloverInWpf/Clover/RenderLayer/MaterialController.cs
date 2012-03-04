@@ -47,14 +47,25 @@ namespace Clover.RenderLayer
         public MaterialGroup GetFrontShadow()
         {
             transparentFrontMaterial = frontMaterial.Clone();
-            foreach (Material m in transparentFrontMaterial.Children)
+            //foreach (Material m in transparentFrontMaterial.Children)
+            //{
+            //    DiffuseMaterial dm = (DiffuseMaterial)m;
+            //    if (dm != null)
+            //    {
+            //        if (dm != edgeLayer)
+            //            dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
+            //    }
+            //}
+            for (int i=0; i<transparentFrontMaterial.Children.Count; i++)
             {
-                DiffuseMaterial dm = (DiffuseMaterial)m;
-                if (dm != null)
-                {
-                    dm.Color = dm.AmbientColor = Color.FromArgb(150, 255, 255, 255);
-                }
+                // 第二层为边
+                if (i == 1)
+                    continue;
+                DiffuseMaterial dm = (transparentFrontMaterial.Children[i] as DiffuseMaterial);
+                dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
             }
+            //DiffuseMaterial dm = (transparentFrontMaterial.Children[0] as DiffuseMaterial);
+            //dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
             return transparentFrontMaterial;
         }
 
@@ -70,7 +81,7 @@ namespace Clover.RenderLayer
                 DiffuseMaterial dm = (DiffuseMaterial)m;
                 if (dm != null)
                 {
-                    dm.Color = dm.AmbientColor = Color.FromArgb(150, 255, 255, 255);
+                    dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
                 }
             }
             return transparentBackMaterial;
