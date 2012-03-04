@@ -77,6 +77,8 @@ namespace Clover
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
 
+            
+
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
@@ -100,6 +102,13 @@ namespace Clover
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
             //toolBox.Show();
+
+            // 更新矩阵
+            utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
+
+            VertexInfoVisual vi = new VertexInfoVisual(cloverController.Edges[0].Vertex1);
+            visualController.AddVisual(vi);
+            vi.Start();
 
             this.Focus();
         }
