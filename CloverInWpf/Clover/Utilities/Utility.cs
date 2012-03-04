@@ -153,7 +153,12 @@ namespace Clover
                     }
                     else
                     {
-                        // 
+                        foreach (Edge e in CommonEdgeList)
+                        {
+                            // 判断直线和线段的交点
+                            //CloverMath.GetIntersectionOfTwoSegments()
+                        }
+                        
                     }
 
 
