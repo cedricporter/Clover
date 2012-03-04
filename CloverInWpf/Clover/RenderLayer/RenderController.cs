@@ -61,6 +61,12 @@ namespace Clover
             { 
                 rotateTransform = value;
                 UpdatePosition();
+                // 让VertexInfoVisual更新
+                foreach (Edge edge in CloverController.GetInstance().Edges)
+                {
+                    edge.Vertex1.Update(edge.Vertex1, null);
+                    edge.Vertex2.Update(edge.Vertex2, null);
+                }
             }
         }
         
@@ -73,6 +79,12 @@ namespace Clover
                 if (value > 40 && value < 1000)
                     distance = value;
                 UpdatePosition();
+                // 让VertexInfoVisual更新
+                foreach (Edge edge in CloverController.GetInstance().Edges)
+                {
+                    edge.Vertex1.Update(edge.Vertex1, null);
+                    edge.Vertex2.Update(edge.Vertex2, null);
+                }
             }
         }
 
@@ -158,6 +170,7 @@ namespace Clover
 
             if (instance != null) // 这个判断避免了Utility类和RenderController类无限递归调用
                 Utility.GetInstance().UpdateWorlCameMat();
+            
         }
 
         #region 改变材质特性
