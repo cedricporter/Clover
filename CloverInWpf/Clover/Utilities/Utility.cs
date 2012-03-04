@@ -38,7 +38,6 @@ namespace Clover
             }
             return instance;
         }
-        Utility(){ }
 
         #endregion
 
@@ -62,6 +61,8 @@ namespace Clover
             double zn = 0.125;
             double xScale = 1 / Math.Tan(FoV / 2);
             double yScale = aspectRatio * xScale;
+            //double yScale = 1 / Math.Tan(FoV / 2);
+            //double xScale = yScale / aspectRatio;
             double m33 = -1;
             double m43 = zn * m33;
             projViewMat = new Matrix3D(
