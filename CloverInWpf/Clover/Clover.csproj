@@ -71,6 +71,7 @@
     </Compile>
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
+    <Compile Include="Utilities\CloverMath.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
