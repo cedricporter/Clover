@@ -753,7 +753,7 @@ namespace Clover
             Point3D p = new Point3D();
 
             double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
-
+            int y = CloverMath.GetIntersectionOfTwoSegments(e1, e2, ref p);
             return;
         }
         #endregion
