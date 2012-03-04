@@ -173,22 +173,22 @@ namespace Clover.RenderLayer
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
 
-            if ( count++ > 2 )
-            {
+            //if ( count++ > 2 )
+            //{
 
-            GeometryModel3D fuck = new GeometryModel3D();
-            MeshGeometry3D fuckm = new MeshGeometry3D();
-            fuckm.Positions.Add(new Point3D(0, 0, 0));
-            fuckm.Positions.Add(new Point3D(100, 0, 0));
-            fuckm.Positions.Add(new Point3D(100, 0, 100));
-            fuckm.TriangleIndices.Add(0);
-            fuckm.TriangleIndices.Add(1);
-            fuckm.TriangleIndices.Add(2);
-            fuck.Geometry = fuckm;
-            fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-            fuck.BackMaterial = fuck.Material;
-            modelGroup.Children.Add(fuck);
-            }
+            //GeometryModel3D fuck = new GeometryModel3D();
+            //MeshGeometry3D fuckm = new MeshGeometry3D();
+            //fuckm.Positions.Add(new Point3D(0, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 0));
+            //fuckm.Positions.Add(new Point3D(100, 0, 100));
+            //fuckm.TriangleIndices.Add(0);
+            //fuckm.TriangleIndices.Add(1);
+            //fuckm.TriangleIndices.Add(2);
+            //fuck.Geometry = fuckm;
+            //fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
+            //fuck.BackMaterial = fuck.Material;
+            //modelGroup.Children.Add(fuck);
+            //}
         }
 
         /// <summary>
