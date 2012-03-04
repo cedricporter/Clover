@@ -267,15 +267,21 @@ namespace Clover
         /// <param name="pd"></param>
         /// <param name="t">直线的方向向量</param>
         /// <param name="p">直线上的一点</param>
-        public static void GetMidperpendicularInFace( Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
+        public static bool GetMidperpendicularInFace( Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
         {
+            if ( CloverMath.IsTwoPointsEqual( po.GetPoint3D(), pd.GetPoint3D(), 0.00001 ) ) 
+            {
+                return false;
+            }
+
             Point3D pOriginal = po.GetPoint3D();
             Point3D pDestination = pd.GetPoint3D();
             t = Vector3D.CrossProduct( f.Normal, ( pOriginal - pDestination ) );
-            Vector3D p0 = new Vector3D();
+            
             p.X = ( po.X + pd.X ) / 2;
             p.Y = ( po.Y + pd.Y ) / 2;
             p.Z = ( po.Z + pd.Z ) / 2;
+            return true;
 
         }
         
