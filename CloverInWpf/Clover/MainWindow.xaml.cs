@@ -65,7 +65,6 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-            cloverInterpreter.InitialzeInterpreter();
 
             // 杂项
             utility = Utility.GetInstance();
@@ -110,6 +109,7 @@ namespace Clover
             cloverController.UpdatePaper();
             foldingPaperViewport.Children.Add(cloverController.Model);
 
+            cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();
         }

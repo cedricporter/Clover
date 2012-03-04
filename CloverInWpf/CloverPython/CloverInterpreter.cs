@@ -24,7 +24,9 @@ namespace CloverPython
             @"
 import clr, sys
 clr.AddReference('Clover')
-from Clover import *";
+from Clover import *
+clover = CloverController.GetInstance();
+";
 
             pythonEngine.Execute(initialString, pythonScope);
         }
