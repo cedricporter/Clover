@@ -31,7 +31,7 @@ namespace Clover.Utilities
         }
 
 
-                /// <summary>
+        /// <summary>
         /// 高斯-约旦消元法；
         /// </summary>
         /// <param name="g"></param>
