@@ -232,7 +232,10 @@ namespace Clover
         /// 进入折叠模式前的叶子节点表，用于恢复
         /// </summary>
         List<Face> originFaceList = new List<Face>();
-
+        public List<Face> OriginFaceList
+        {
+            get { return originFaceList; }
+        }
         int originEdgeListCount = -1;
         int originVertexListCount = -1;
 
@@ -339,7 +342,7 @@ namespace Clover
                 face.LeftChild = face.RightChild = null;
             }
 
-            renderController.UpdateAll();
+            //renderController.UpdateAll();
 
             faceLayer.UpdateLeaves();
 
@@ -846,6 +849,8 @@ namespace Clover
             renderController.AddFoldingLine(0, 0, 1, 1);
             renderController.AddFoldingLine(0, 1, 1, 0);
             //renderController.Testfuck();
+            //renderController.UpdateAll();
+            //renderController.DeleteAll();
 
             model = renderController.Entity;
            
