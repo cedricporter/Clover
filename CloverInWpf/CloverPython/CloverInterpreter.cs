@@ -20,16 +20,35 @@ namespace CloverPython
             pythonEngine = Python.CreateEngine();
             pythonScope = pythonEngine.CreateScope();
 
-            namespaceList.Add("import clr, sys");
-            namespaceList.Add("clr.AddReferent('Clover')");
-            namespaceList.Add("from Clover import *");
+            string initialString = 
+            @"
+import clr, sys
+clr.AddReference('Clover')
+from Clover import *
+clover = CloverController.GetInstance();
+";
+
+            pythonEngine.Execute(initialString, pythonScope);
         }
 
         int currentLine = -1;
 
         List<string> codeList = new List<string>();
 
-        List<string> namespaceList = new List<string>();
+
+        /// <summary>
+        /// 执行一行代码
+        /// </summary>
+        /// <param name="line"></param>
+        public string ExecuteOneLine(string line)
+        {
+            var ret = pythonEngine.Execute(line, pythonScope);
+            if (ret != null)
+            {
+                return ret.ToString();
+            }
+            return "";
+        }
 
         /// <summary>
         /// 加载代码

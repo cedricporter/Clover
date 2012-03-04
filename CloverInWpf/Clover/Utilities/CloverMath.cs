@@ -305,7 +305,7 @@ namespace Clover
         /// <returns>0:不相交 1:相交且有唯一交点 2:线段覆盖在另一线段上</returns>
         public static int GetIntersectionOfTwoSegments(Edge e1, Edge e2, ref Point3D intersection)
         {
-            Vector3D u = e1.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
+            Vector3D u = e1.Vertex2.GetPoint3D() - e1.Vertex1.GetPoint3D();
             Vector3D v = e2.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
             Vector3D w = e1.Vertex1.GetPoint3D() - e2.Vertex1.GetPoint3D();
             double D = PerpProduct(u, v);

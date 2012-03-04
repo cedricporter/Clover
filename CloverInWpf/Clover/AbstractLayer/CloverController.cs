@@ -82,6 +82,73 @@ namespace Clover
         }
         #endregion
 
+        /// <summary>
+        /// 计算顶点纹理坐标
+        /// </summary>
+        /// <param name="vertex">需要计算纹理坐标的点</param>
+        /// <param name="edge">该点所在的边</param>
+        /// <param name = "length">该边根节点的总长度</param>>
+        bool CalculateTexcoord(Vertex vertex, Edge edge, double length)
+        {
+            // 确认该点在该直线上
+            double a = vertex.X - edge.Vertex1.X;
+            double b = edge.Vertex2.X - edge.Vertex1.X;
+            double c = vertex.Y - edge.Vertex1.Y;
+            double d = edge.Vertex2.Y - edge.Vertex1.Y;
+            double e = vertex.Z = edge.Vertex1.Z;
+            double f = edge.Vertex2.Z - edge.Vertex1.Z;
+
+            if (Math.Abs(a / b - c / d) > 0.1)
+                return false;
+
+            if (Math.Abs(a / b - e / f) > 0.1)
+                return false;
+
+
+            // 取edge两边纹理坐标的较小值
+            double u, v;
+            if (edge.Vertex1.u == edge.Vertex2.u)
+            {
+                u = edge.Vertex1.u;
+            }
+            else
+            {
+                if (edge.Vertex1.u < edge.Vertex2.u)
+                {
+                    // 求两点之间的距离
+                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
+                    u = edge.Vertex1.u + vd.Length / length;
+                }
+                else
+                {
+                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
+                    u = edge.Vertex2.u + vd.Length / length;
+                }
+            }
+
+            if (edge.Vertex1.v == edge.Vertex2.v)
+            {
+                v = edge.Vertex2.v;
+            }
+            else
+            {
+                if (edge.Vertex1.v <= edge.Vertex2.v)
+                {
+                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
+                    v = edge.Vertex1.v + vd.Length / length;
+                }
+                else
+                {
+                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
+                    v = edge.Vertex2.v + vd.Length / length;
+                }
+            }
+            vertex.u = u;
+            vertex.v = v;
+
+            return true;
+        }
+
         public Vertex GetPrevVersion(Vertex vertex)
         {
             List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
@@ -230,19 +297,95 @@ namespace Clover
         void CutAFace(Face face, Edge edge)
         {
             return;
-            //旭瑜注释的呃。。。。。。。。。。。。。。。。。。。。。。。。。
-            //Face f1 = new Face();
-            //Face f2 = new Face();
+            Face f1 = new Face(face.Layer);
+            Face f2 = new Face(face.Layer);
 
-            //face.LeftChild = f1;
-            //face.RightChild = f2;
+            face.LeftChild = f1;
+            face.RightChild = f2;
 
+            Edge e1, e2;
+            foreach (Edge e in face.Edges)
+            {
+                if (e.IsVerticeIn(edge.Vertex1))
+                    e1 = e;
+                if (e.IsVerticeIn(edge.Vertex2))
+                    e2 = e;
+            }
+
+            int type = 0;
+
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+
+
+            //// 判断折线的两个顶点是否是当前顶点列表中所存在的顶点
+            //int index1, index2;
+            
             //// 创建v1,v2，加入到verticesLayer
             //Vertex v1 = new Vertex(edge.Vertex1);
             //Vertex v2 = new Vertex(edge.Vertex2);
+    
+            //// 判断顶点在原来的vertexLayer中是否存在，所不存在则插入，并返回新顶点的索引
+            //index1 = vertexLayer.IsVertexExist(v1);
+            //index2 = vertexLayer.IsVertexExist(v2);
 
-            //// edge index
-            //int index1 = -1, index2 = -1;
+            //if (-1 == index1)
+            //{
+            //    type++; 
+            //    index1 = vertexLayer.InsertVertex(v1);
+            //}
+
+            //if (-1 == index2)
+            //{
+            //    type++;
+            //    index2 = vertexLayer.InsertVertex(v2);
+            //}
+
+            // type 0:没有增加顶点， type 1：增加了一个顶点 type 2：增加了两个顶点
+            switch (type)
+            { 
+                case 0:
+                    // 种类1
+                    break;
+                case 1:
+                    // 种类2
+                    break;
+                case 2:
+                    // 种类3
+                    break;
+            }
+
+            //// 将折线作为一颗边树的根，插入到边层
+            //edgeLayer.AddTree(new EdgeTree(edge));
+
+            //// 根据折线点分割边节点
+            //foreach (EdgeTree et in edgeLayer.EdgeTreeList)
+            //{
+            //    foreach (Edge e in et.Leaves())
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints(v1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0))
+            //        { 
+            //            e.LeftChild = new Edge(e.Vertex1, v1);
+            //            e.RightChild = new Edge(v1, e.Vertex2);
+            //        }
+                        
+            //    }
+            //}
+
             //for ( int i = 0; i < face.Edges.Count; i++)
             //{
             //    if (face.Edges[i].IsVerticeIn(v1))
@@ -803,7 +946,7 @@ namespace Clover
             Point3D p = new Point3D();
 
             double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
-
+            int y = CloverMath.GetIntersectionOfTwoSegments(e1, e2, ref p);
             return;
         }
         #endregion

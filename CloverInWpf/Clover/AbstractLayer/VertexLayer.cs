@@ -68,6 +68,23 @@ namespace Clover
         }
 
         /// <summary>
+        /// 查找顶点是否在顶点列表中，若存在返回该顶点的索引，若不存在返回-1
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <returns></returns>
+        public int IsVertexExist(Vertex vertex)
+        {
+            int index = 0;
+            foreach (List<Vertex> vl in vertexCellTable)
+            {
+                if (vl[vl.Count - 1].GetPoint3D() == vertex.GetPoint3D())
+                    return index;
+                index++;
+            }
+            return -1;
+        }
+
+        /// <summary>
         /// 插入一个全新的顶点，会建立一个新的顶点链表
         /// </summary>
         /// <param name="vertex"></param>

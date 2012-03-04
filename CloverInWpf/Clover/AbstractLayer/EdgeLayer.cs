@@ -37,7 +37,7 @@ namespace Clover
         /// </summary>
         /// <param name="parentEdge"></param>
         /// <param name="cutVertex"></param>
-        void UpdateTree(Edge parentEdge, Vertex cutVertex)
+        public void UpdateTree(Edge parentEdge, Vertex cutVertex)
         {
             foreach (EdgeTree tree in edgeTreeList)
             {

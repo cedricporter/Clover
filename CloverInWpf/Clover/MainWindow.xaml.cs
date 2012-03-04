@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;
 using System.Diagnostics;
-
+using CloverPython;
 
 
 namespace Clover
@@ -26,6 +26,7 @@ namespace Clover
         public ToolFactory currentTool = null;
         Utility utility;
         VisualController visualController;
+        CloverInterpreter cloverInterpreter = new CloverInterpreter();
 
         #region 工具窗
 
@@ -64,7 +65,6 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-           
 
             // 杂项
             utility = Utility.GetInstance();
@@ -109,6 +109,7 @@ namespace Clover
             cloverController.UpdatePaper();
             foldingPaperViewport.Children.Add(cloverController.Model);
 
+            cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();
         }
@@ -340,7 +341,8 @@ namespace Clover
         {
             if (e.Key == Key.Return)
             {
-                histroyTextBox.Text += commandLineTextBox.Text + "\n";
+                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
+                histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
                 commandLineTextBox.Text = "";
             }
             //e.Handled = true;

@@ -88,6 +88,8 @@ namespace Clover
         public Vertex(Vertex vertex)
         {
             point = new Point3D(vertex.X, vertex.Y, vertex.Z);
+            UVW = new Point(vertex.UVW.X, vertex.UVW.Y);
+
             Index = vertex.Index;
             u = vertex.u;
             v = vertex.v;
@@ -216,6 +218,7 @@ namespace Clover
 
             return false;
         }
+
     }
 
     /// <summary>
