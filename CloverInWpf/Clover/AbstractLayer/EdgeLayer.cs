@@ -66,14 +66,5 @@ namespace Clover
             return true;
         }
 
-        public List<Edge> Leaves()
-        {
-            leaves.Clear();
-            foreach (EdgeTree et in edgeTreeList)
-            { 
-            
-            }
-            return leaves; 
-        }
     }
 }

@@ -236,29 +236,57 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
-            // 判断折线的两个顶点是否是当前顶点列表中所存在的顶点
-            int index1, index2;
-            int type = 0;
-            
-            // 创建v1,v2，加入到verticesLayer
-            Vertex v1 = new Vertex(edge.Vertex1);
-            Vertex v2 = new Vertex(edge.Vertex2);
-    
-            // 判断顶点在原来的vertexLayer中是否存在，所不存在则插入，并返回新顶点的索引
-            index1 = vertexLayer.IsVertexExist(v1);
-            index2 = vertexLayer.IsVertexExist(v2);
-
-            if (-1 == index1)
+            Edge e1, e2;
+            foreach (Edge e in face.Edges)
             {
-                type++; 
-                index1 = vertexLayer.InsertVertex(v1);
+                if (e.IsVerticeIn(edge.Vertex1))
+                    e1 = e;
+                if (e.IsVerticeIn(edge.Vertex2))
+                    e2 = e;
             }
 
-            if (-1 == index2)
+            int type = 0;
+
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
             {
                 type++;
-                index2 = vertexLayer.InsertVertex(v2);
             }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+            {
+                type++;
+            }
+
+
+            //// 判断折线的两个顶点是否是当前顶点列表中所存在的顶点
+            //int index1, index2;
+            
+            //// 创建v1,v2，加入到verticesLayer
+            //Vertex v1 = new Vertex(edge.Vertex1);
+            //Vertex v2 = new Vertex(edge.Vertex2);
+    
+            //// 判断顶点在原来的vertexLayer中是否存在，所不存在则插入，并返回新顶点的索引
+            //index1 = vertexLayer.IsVertexExist(v1);
+            //index2 = vertexLayer.IsVertexExist(v2);
+
+            //if (-1 == index1)
+            //{
+            //    type++; 
+            //    index1 = vertexLayer.InsertVertex(v1);
+            //}
+
+            //if (-1 == index2)
+            //{
+            //    type++;
+            //    index2 = vertexLayer.InsertVertex(v2);
+            //}
 
             // type 0:没有增加顶点， type 1：增加了一个顶点 type 2：增加了两个顶点
             switch (type)
@@ -274,71 +302,71 @@ namespace Clover
                     break;
             }
 
-            // 将折线作为一颗边树的根，插入到边层
-            edgeLayer.AddTree(new EdgeTree(edge));
+            //// 将折线作为一颗边树的根，插入到边层
+            //edgeLayer.AddTree(new EdgeTree(edge));
 
-            // 根据折线点分割边节点
-            foreach (EdgeTree et in edgeLayer.EdgeTreeList)
-            {
-                foreach (Edge e in et.Leaves())
-                {
-                    if (CloverMath.IsPointInTwoPoints(v1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0))
-                    { 
-                        e.LeftChild = new Edge(e.Vertex1, v1);
-                        e.RightChild = new Edge(v1, e.Vertex2);
-                    }
+            //// 根据折线点分割边节点
+            //foreach (EdgeTree et in edgeLayer.EdgeTreeList)
+            //{
+            //    foreach (Edge e in et.Leaves())
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints(v1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0))
+            //        { 
+            //            e.LeftChild = new Edge(e.Vertex1, v1);
+            //            e.RightChild = new Edge(v1, e.Vertex2);
+            //        }
                         
-                }
-            }
+            //    }
+            //}
 
-            for ( int i = 0; i < face.Edges.Count; i++)
-            {
-                if (face.Edges[i].IsVerticeIn(v1))
-                {
-                    index1 = i;
-                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
-                    Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
+            //for ( int i = 0; i < face.Edges.Count; i++)
+            //{
+            //    if (face.Edges[i].IsVerticeIn(v1))
+            //    {
+            //        index1 = i;
+            //        Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v1);
+            //        Edge e2 = new Edge(v1, face.Edges[i].Vertex2.Clone() as Vertex);
 
-                    face.Edges[i].LeftChild = e1;
-                    face.Edges[i].RightChild = e2;
-                }
-                if (face.Edges[i].IsVerticeIn(v2))
-                {
-                    index2 = i;
-                    Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
-                    Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
+            //        face.Edges[i].LeftChild = e1;
+            //        face.Edges[i].RightChild = e2;
+            //    }
+            //    if (face.Edges[i].IsVerticeIn(v2))
+            //    {
+            //        index2 = i;
+            //        Edge e1 = new Edge(face.Edges[i].Vertex1.Clone() as Vertex, v2);
+            //        Edge e2 = new Edge(v2, face.Edges[i].Vertex2.Clone() as Vertex);
 
-                    face.Edges[i].LeftChild = e1;
-                    face.Edges[i].RightChild = e2;
-                }
-            }
+            //        face.Edges[i].LeftChild = e1;
+            //        face.Edges[i].RightChild = e2;
+            //    }
+            //}
 
-            Debug.Assert(index1 != -1 && index2 != -1);
+            //Debug.Assert(index1 != -1 && index2 != -1);
 
-            // 确保逻辑上v1在v2前面
-            if (index1 > index2)
-            {
-                Vertex temp = v1;
-                v1 = v2;
-                v2 = temp;
-                int tempIndex = index1;
-                index1 = index2;    
-                index2 = tempIndex;
-            }
+            //// 确保逻辑上v1在v2前面
+            //if (index1 > index2)
+            //{
+            //    Vertex temp = v1;
+            //    v1 = v2;
+            //    v2 = temp;
+            //    int tempIndex = index1;
+            //    index1 = index2;    
+            //    index2 = tempIndex;
+            //}
 
-            Edge newCutEdge = new Edge(v1, v2);
+            //Edge newCutEdge = new Edge(v1, v2);
 
 
-            face.UpdateVertices();
-            for ( int i = 0; i <= index1; i++)
-            {
-                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
-            }
-            //f1.AddEdge(newEdge);
-            for ( int i = 0; i <= index1; i++)
-            {
-                f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
-            }
+            //face.UpdateVertices();
+            //for ( int i = 0; i <= index1; i++)
+            //{
+            //    f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            //}
+            ////f1.AddEdge(newEdge);
+            //for ( int i = 0; i <= index1; i++)
+            //{
+            //    f1.AddEdge(new Edge(new Vertex(face.Vertices[i]), new Vertex(face.Vertices[i + 1])));
+            //}
 
         }
 
