@@ -47,6 +47,7 @@ namespace Clover
         }
         #endregion
 
+        #region Singleton
         static CloverController instance = null;
         static MainWindow window = null;
 
@@ -65,6 +66,15 @@ namespace Clover
 
             return instance;
 
+        }
+        #endregion
+
+        public Vertex GetPrevVersion(Vertex vertex)
+        {
+            List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
+            if (vGroup.Count < 2)
+                return null;
+            return vGroup[vGroup.Count - 2];
         }
 
         #region 初始化
@@ -263,6 +273,20 @@ namespace Clover
 
 
         /// <summary>
+        /// 为所有顶点保存历史记录
+        /// </summary>
+        void SaveOriginVertices()
+        {
+            for (int i = 0; i < vertexLayer.VertexCellTable.Count; i++)
+            {
+                Vertex v = vertexLayer.Vertices[i].Clone() as Vertex;
+
+                vertexLayer.UpdateVertex(v, v.Index);
+            }
+        }
+
+
+        /// <summary>
         /// 保存到原始叶节点表
         /// </summary>
         /// <param name="leaves">当前的叶子</param>
@@ -271,6 +295,8 @@ namespace Clover
         /// </remarks>
         void SaveOriginState()
         {
+            //SaveOriginVertices();
+
             originFaceList.Clear();
             foreach ( Face f in faceLayer.Leaves)
             {
@@ -333,6 +359,50 @@ namespace Clover
             //UpdatePaper();
         }
 
+        // 有逻辑错误
+        ///// <summary>
+        ///// 保存一个面的顶点的历史到vertex layer
+        ///// </summary>
+        ///// <param name="face"></param>
+        //void SaveFaceVertices(Face face)
+        //{
+        //    face.UpdateVertices();
+
+        //    foreach (Vertex v in face.Vertices)
+        //    {
+        //        Vertex newVertex = v.Clone() as Vertex;
+        //        vertexLayer.UpdateVertex(newVertex, v.Index);
+        //    }
+        //}
+
+        /// <summary>
+        /// 保存一些顶点的历史到vertex layer
+        /// </summary>
+        /// <param name="vertices"></param>
+        void SaveVertices(List<Vertex> vertices)
+        {
+            foreach (Vertex v in vertices)
+            {
+                Vertex newVertex = v.Clone() as Vertex;
+                vertexLayer.UpdateVertex(newVertex, v.Index);
+            }
+        }
+
+        /// <summary>
+        /// 更新一个面的所有边的顶点的到vertex layer中最新的vertex
+        /// </summary>
+        /// <param name="face"></param>
+        void UpdateFaceEdgeVertex(Face face)
+        {
+            foreach (Edge e in face.Edges)
+            {
+                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+            }
+            face.UpdateVertices();
+        }
+
+
         /// <summary>
         /// 开始折叠模式
         /// </summary>
@@ -378,6 +448,7 @@ namespace Clover
             f1.AddEdge(face.Edges[0]);
             f1.AddEdge(face.Edges[1]);
             f1.AddEdge(newEdge);
+
             f2.AddEdge(face.Edges[2]);
             f2.AddEdge(face.Edges[3]);
             f2.AddEdge(newEdge);
@@ -385,9 +456,16 @@ namespace Clover
             // for testing
             currentFoldingLine = newEdge;
 
-
             f1.UpdateVertices();
             f2.UpdateVertices();
+
+            // 保存新的面的所有顶点的历史
+            List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
+            SaveVertices(totalVertices);
+
+            UpdateFaceEdgeVertex(f1);
+            UpdateFaceEdgeVertex(f2);
+
 
             //vertexLayer.GetVertex(3).Z = 50;
 
@@ -418,84 +496,6 @@ namespace Clover
         float currentAngel;
         Point3D currentVertex;
 
-        Edge CalcaluteFoldingLine(Face face, Vertex pickedVertex)
-        {
-            // 找到所有包含此点的面
-            Face f = face;
-            {
-                Point3D vertex1 = new Point3D();
-                Point3D vertex2 = new Point3D();
-
-                bool findFirstVertex = false;
-                bool CalculateFinished = false;
-                foreach (Edge e in f.Edges)
-                {
-
-                    if (e.Vertex1 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex1.X - e.Vertex2.X;
-                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
-                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
-
-                        v.Normalize();
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex1.X + v.X;
-                            vertex1.Y = e.Vertex1.Y + v.Y;
-                            vertex1.Z = e.Vertex1.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex1.X + v.X;
-                            vertex2.Y = e.Vertex1.Y + v.Y;
-                            vertex2.Z = e.Vertex1.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-
-                    }
-
-                    if (e.Vertex2 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex2.X - e.Vertex1.X;
-                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
-                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
-
-                        v.Normalize();
-
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex2.X + v.X;
-                            vertex1.Y = e.Vertex2.Y + v.Y;
-                            vertex1.Z = e.Vertex2.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex2.X + v.X;
-                            vertex2.Y = e.Vertex2.Y + v.Y;
-                            vertex2.Z = e.Vertex2.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-                    }
-
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
-
-                        Edge edge = new Edge(cVertex1, cVertex2);
-                        return edge;
-                    }
-                }
-            }
-
-            return null;
-        }
         
         /// <summary>
         /// 创建初始的折线顶点·
@@ -744,7 +744,8 @@ namespace Clover
             {
                 foreach (Edge e in f.Edges)
                 {
-                    if (e.Vertex1 != currentFoldingLine.Vertex1 && e.Vertex1 != currentFoldingLine.Vertex2 && !e.Vertex1.Moved )
+                    if (e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
                     {
                         Vector3D axis = new Vector3D();
                         axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
@@ -759,7 +760,8 @@ namespace Clover
                         e.Vertex1.Moved = true;
                     }
 
-                    if (e.Vertex2 != currentFoldingLine.Vertex1 && e.Vertex2 != currentFoldingLine.Vertex2 && !e.Vertex2.Moved)
+                    if (e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
                     {
                         Vector3D axis = new Vector3D();
                         axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;

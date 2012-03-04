@@ -63,7 +63,7 @@ namespace Clover
         {
             if (!IsVertexExist(index))
                 return null;
-            return vertexCellTable[index][0];
+            return vertexCellTable[index][vertexCellTable[index].Count - 1];
         }
 
         /// <summary>

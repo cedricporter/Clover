@@ -27,6 +27,9 @@ namespace Clover
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
         bool moved = false;
+
+        public int Version = 1;
+
         #region get/set
         public bool Moved
         {
@@ -52,7 +55,13 @@ namespace Clover
 
         public object Clone()
         {
-            return this.MemberwiseClone();
+            Vertex v = this.MemberwiseClone() as Vertex;
+
+            v.point = new Point3D(point.X, point.Y, point.Z);
+            v.UVW = new Point(UVW.X, UVW.Y);
+            v.Version = this.Version + 1;
+
+            return v;
         }
 
         public Point3D GetPoint3D()
