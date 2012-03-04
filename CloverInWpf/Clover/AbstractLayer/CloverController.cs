@@ -82,6 +82,73 @@ namespace Clover
         }
         #endregion
 
+        /// <summary>
+        /// 计算顶点纹理坐标
+        /// </summary>
+        /// <param name="vertex">需要计算纹理坐标的点</param>
+        /// <param name="edge">该点所在的边</param>
+        /// <param name = "length">该边根节点的总长度</param>>
+        bool CalculateTexcoord(Vertex vertex, Edge edge, double length)
+        {
+            // 确认该点在该直线上
+            double a = vertex.X - edge.Vertex1.X;
+            double b = edge.Vertex2.X - edge.Vertex1.X;
+            double c = vertex.Y - edge.Vertex1.Y;
+            double d = edge.Vertex2.Y - edge.Vertex1.Y;
+            double e = vertex.Z = edge.Vertex1.Z;
+            double f = edge.Vertex2.Z - edge.Vertex1.Z;
+
+            if (Math.Abs(a / b - c / d) > 0.1)
+                return false;
+
+            if (Math.Abs(a / b - e / f) > 0.1)
+                return false;
+
+
+            // 取edge两边纹理坐标的较小值
+            double u, v;
+            if (edge.Vertex1.u == edge.Vertex2.u)
+            {
+                u = edge.Vertex1.u;
+            }
+            else
+            {
+                if (edge.Vertex1.u < edge.Vertex2.u)
+                {
+                    // 求两点之间的距离
+                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
+                    u = edge.Vertex1.u + vd.Length / length;
+                }
+                else
+                {
+                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
+                    u = edge.Vertex2.u + vd.Length / length;
+                }
+            }
+
+            if (edge.Vertex1.v == edge.Vertex2.v)
+            {
+                v = edge.Vertex2.v;
+            }
+            else
+            {
+                if (edge.Vertex1.v <= edge.Vertex2.v)
+                {
+                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
+                    v = edge.Vertex1.v + vd.Length / length;
+                }
+                else
+                {
+                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
+                    v = edge.Vertex2.v + vd.Length / length;
+                }
+            }
+            vertex.u = u;
+            vertex.v = v;
+
+            return true;
+        }
+
         public Vertex GetPrevVersion(Vertex vertex)
         {
             List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
