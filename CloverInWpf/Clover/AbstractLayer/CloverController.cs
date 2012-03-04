@@ -47,6 +47,7 @@ namespace Clover
         }
         #endregion
 
+        #region Singleton
         static CloverController instance = null;
         static MainWindow window = null;
 
@@ -65,6 +66,15 @@ namespace Clover
 
             return instance;
 
+        }
+        #endregion
+
+        public Vertex GetPrevVersion(Vertex vertex)
+        {
+            List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
+            if (vGroup.Count < 2)
+                return null;
+            return vGroup[vGroup.Count - 2];
         }
 
         #region 初始化
