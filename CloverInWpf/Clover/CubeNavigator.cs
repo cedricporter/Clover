@@ -108,13 +108,6 @@ namespace Clover
                 RenderController.GetInstance().RotateTransform = rotts;
                 //RenderController.GetInstance().UpdatePosition();
 
-                // 让VertexInfoVisual更新
-                foreach (Edge edge in CloverController.GetInstance().Edges)
-                {
-                    edge.Vertex1.Update(edge.Vertex1, null);
-                    edge.Vertex2.Update(edge.Vertex2, null);
-                }
-
                 lastQuat = quar;
                 lastMousePos = currMousePos;
             }
