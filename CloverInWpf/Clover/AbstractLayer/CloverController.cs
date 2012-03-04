@@ -112,6 +112,8 @@ namespace Clover
 
                 VertexInfoVisual vi = new VertexInfoVisual(v);
                 VisualController.GetSingleton().AddVisual(vi);
+                v.Update += vi.UpdateInfoCallBack;
+                //CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
                 vi.Start();
             }
 

@@ -32,13 +32,12 @@ using System.Diagnostics;
 
 namespace Clover
 {
-    
+
     public class CubeNavigator
     {
-        
         static MainWindow mainWindow;
-        static Viewport3D cubeNavViewport;
-        static Model3DGroup cubeNavModel;
+        Viewport3D cubeNavViewport;
+        Model3DGroup cubeNavModel;
         public System.Windows.Media.Media3D.Model3DGroup CubeNavModel
         {
             get { return cubeNavModel; }
@@ -47,8 +46,8 @@ namespace Clover
                 cubeNavModel = value;
             }
         }
-        static Point lastMousePos;
-        static Quaternion lastQuat = new Quaternion();
+        Point lastMousePos;
+        Quaternion lastQuat = new Quaternion();
         public System.Windows.Media.Media3D.Quaternion LastQuat
         {
             get { return lastQuat; }
@@ -57,6 +56,7 @@ namespace Clover
                 lastQuat = value; 
             }
         }
+
         static CubeNavigator instance = null;
         public static CubeNavigator GetInstance()
         {
@@ -70,18 +70,22 @@ namespace Clover
         public static void InitializeInstance(MainWindow window)
         {
             mainWindow = window;
+
+        }
+        private CubeNavigator()
+        {
             cubeNavViewport = mainWindow.CubeNavViewport;
             cubeNavModel = mainWindow.CubeNavModel;
             cubeNavViewport.MouseLeftButtonDown += new MouseButtonEventHandler(cubeNavViewport_MouseLeftButtonDown);
             cubeNavViewport.MouseMove += new MouseEventHandler(cubeNavViewport_MouseMove);
         }
 
-        static private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
         {
             lastMousePos = e.GetPosition(mainWindow);
         }
 
-        static private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
+        private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
@@ -103,6 +107,13 @@ namespace Clover
                 RenderController.GetInstance().SrcQuaternion = quar;
                 RenderController.GetInstance().RotateTransform = rotts;
                 //RenderController.GetInstance().UpdatePosition();
+
+                // 让VertexInfoVisual更新
+                foreach (Edge edge in CloverController.GetInstance().Edges)
+                {
+                    edge.Vertex1.Update(edge.Vertex1, null);
+                    edge.Vertex2.Update(edge.Vertex2, null);
+                }
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;

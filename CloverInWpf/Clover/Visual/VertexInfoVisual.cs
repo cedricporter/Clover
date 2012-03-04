@@ -18,7 +18,6 @@ namespace Clover.Visual
             infotext.Background = new SolidColorBrush(Colors.White);
             box.Children.Add(infotext);
             UpdateInfoCallBack(v, null);
-            v.Update += UpdateInfoCallBack;
         }
 
         public void UpdateInfoCallBack(Object sender, EventArgs e)
@@ -28,7 +27,8 @@ namespace Clover.Visual
                 return;
             // 更新内容
             infotext.Text = "索引：" + v.Index.ToString();
-            infotext.Text += "\n位置" + v.GetPoint3D().ToString();
+            Point3D p = v.GetPoint3D();
+            infotext.Text += "\n位置(" + p.X.ToString("#.0") + "," + p.Y.ToString("#.0") + "," + p.Z.ToString("#.0") + ")";
             // 更新位置
             Point3D pos = v.GetPoint3D();
             pos *= Utility.GetInstance().To2DMat;
