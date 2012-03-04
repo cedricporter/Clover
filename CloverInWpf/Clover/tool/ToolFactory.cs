@@ -65,13 +65,13 @@ namespace Clover.Tool
                 Point p22d = new Point(p2.X, p2.Y);
                 Point p = currMousePos;
                 // 判断点
-                if ((p - p12d).Length < pointThreadhold)
+                if (CloverMath.IsTwoPointsEqual(p, p12d, pointThreadhold))
                 {
                     //Debug.WriteLine(p1);
                     shadow2DElement = p12d;
                     return edge.Vertex1;
                 }
-                if ((p - p22d).Length < pointThreadhold)
+                if (CloverMath.IsTwoPointsEqual(p, p22d, pointThreadhold))
                 {
                     //Debug.WriteLine(p2);
                     shadow2DElement = p22d;
