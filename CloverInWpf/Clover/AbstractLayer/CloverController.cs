@@ -349,9 +349,11 @@ namespace Clover
         /// <param name="edge"></param>
         public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
         {
-
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
+
+            AddVisualInfoToVertex(newVertex1);
+            AddVisualInfoToVertex(newVertex2);
 
             Edge newEdge = new Edge(newVertex1, newVertex2);
 
@@ -440,8 +442,8 @@ namespace Clover
                     indexV1 = i;
                     beCutEdge1 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeA.RemoveAt(rangeA.Count - 1);
-                    Edge cutEdge1 = new Edge(vertexList[i].Clone() as Vertex, newVertex1);
-                    Edge cutEdge2 = new Edge(newVertex1, vertexList[i + 1].Clone() as Vertex);
+                    Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
+                    Edge cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
                     rangeA.Add(cutEdge1);
                     rangeA.Add(newEdge);
                     rangeB.Add(cutEdge2);
@@ -467,8 +469,8 @@ namespace Clover
                     indexV2 = i;
                     beCutEdge2 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeB.RemoveAt(rangeB.Count - 1);
-                    Edge cutEdge1 = new Edge(vertexList[i].Clone() as Vertex, newVertex2);
-                    Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1].Clone() as Vertex);
+                    Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
+                    Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);
                     rangeB.Add(cutEdge1);
                     rangeB.Add(newEdge);
                     rangeA.Add(cutEdge2);
@@ -503,9 +505,6 @@ namespace Clover
             shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
             // 更新渲染层的部分
-            AddVisualInfoToVertex(newVertex1);
-            AddVisualInfoToVertex(newVertex2);
-
             renderController.Delete(face);
             renderController.New(f1);
             renderController.New(f2);
