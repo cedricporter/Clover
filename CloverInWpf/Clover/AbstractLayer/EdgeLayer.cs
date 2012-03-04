@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Clover
 {
-    class EdgeLayer
+    public class EdgeLayer
     {
 
         #region get/set

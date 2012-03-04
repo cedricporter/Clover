@@ -100,7 +100,7 @@ namespace Clover
             toolBox = new ToolBox(this);
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
-            toolBox.Show();
+            //toolBox.Show();
 
             this.Focus();
         }
@@ -288,6 +288,9 @@ namespace Clover
                     break;
                 case Key.G:
                     cloverController.StartFoldingModel(null);
+                    break;
+                case Key.X:
+                    cloverController.NeilTest();
                     break;
                 case Key.Up:
                     cloverController.Update(0, 10, null, null);
