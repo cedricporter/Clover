@@ -46,7 +46,7 @@ namespace Clover.Tool
         public ToolFactory(MainWindow mainWindow)
         {
             this.mainWindow = mainWindow;
-            visualController = VisualController.GetSingleton(mainWindow);
+            visualController = VisualController.GetSingleton();
         }
 
         /// <summary>

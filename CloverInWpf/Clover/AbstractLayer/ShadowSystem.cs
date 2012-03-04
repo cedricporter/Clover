@@ -10,6 +10,7 @@ namespace Clover
     /// </summary>
     public class ShadowSystem
     {
+        #region 成员变量
         int originEdgeListCount = -1;
         int originVertexListCount = -1;
 
@@ -17,12 +18,16 @@ namespace Clover
         /// 进入折叠模式前的叶子节点表，用于恢复
         /// </summary>
         List<Face> originFaceList = new List<Face>();
+        #endregion
 
+        #region get/set
         public List<Face> OriginFaceList
         {
             get { return originFaceList; }
         }
+        #endregion
 
+        #region 保存现场
         /// <summary>
         /// 为所有顶点保存历史记录
         /// </summary>
@@ -64,7 +69,7 @@ namespace Clover
             CloverController controller = CloverController.GetInstance();
 
             originFaceList.Clear();
-            foreach ( Face f in controller.FaceLayer.Leaves)
+            foreach (Face f in controller.FaceLayer.Leaves)
             {
                 originFaceList.Add(f);
             }
@@ -73,12 +78,15 @@ namespace Clover
             originVertexListCount = controller.VertexLayer.Vertices.Count;
         }
 
+        #endregion
+
+        #region 还原
         /// <summary>
         /// 更新面的所有的顶点到在vertexLayer中最新的版本。
         /// </summary>
         public void UpdateFaceVerticesToLastedVersion(Face face)
         {
-            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer; 
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             foreach (Edge e in face.Edges)
             {
                 e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
@@ -155,7 +163,41 @@ namespace Clover
             controller.FaceLayer.UpdateLeaves();
 
             //UpdatePaper();
+
+            ClearTransparentFaces();
         }
 
+        #endregion
+
+        #region 半透明的原始面
+        List<Face> transparentFaces = new List<Face>();
+
+        /// <summary>
+        /// 删除所有的半透明面
+        /// </summary>
+        public void ClearTransparentFaces()
+        {
+            RenderController render = CloverController.GetInstance().RenderController;
+            foreach (Face face in transparentFaces)
+            {
+                render.Delete(face);
+            }
+            transparentFaces.Clear();
+        }
+
+        /// <summary>
+        /// 创建半透明面
+        /// </summary>
+        /// <param name="face"></param>
+        public void CreateTransparentFace(Face face)
+        {
+            transparentFaces.Add(face);
+
+            RenderController render = CloverController.GetInstance().RenderController;
+
+            render.New(face);
+            render.ToGas(face);
+        }
+        #endregion
     }
 }

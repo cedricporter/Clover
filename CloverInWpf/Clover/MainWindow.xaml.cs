@@ -6,7 +6,6 @@ using System.Windows.Input;
 
 using Clover.Tool;
 using Clover.Visual;
-using Clover.RenderLayer;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using _3DTools;
@@ -50,7 +49,8 @@ namespace Clover
             InitializeComponent();
             
             // 测试Visual
-            visualController = VisualController.GetSingleton(this);
+            VisualController.Initialize(this);
+            visualController = VisualController.GetSingleton();
             //TextVisualElement vi = new TextVisualElement("Fuck", new Point(200, 200), (SolidColorBrush)App.Current.FindResource("TextBlueBrush"));
             //visualController.AddVisual(vi);
             //vi.Start();
@@ -64,12 +64,7 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-            // 初始化纸张
-            CloverController.InitializeInstance(this);
-            cloverController = CloverController.GetInstance();
-            cloverController.Initialize(100, 100);
-            cloverController.UpdatePaper();
-            foldingPaperViewport.Children.Add(cloverController.Model);
+           
 
             // 杂项
             utility = Utility.GetInstance();
@@ -77,6 +72,8 @@ namespace Clover
 
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
+
+            
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
@@ -101,6 +98,17 @@ namespace Clover
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
             //toolBox.Show();
+
+            // 更新矩阵
+            utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
+ 
+            // 初始化纸张
+            CloverController.InitializeInstance(this);
+            cloverController = CloverController.GetInstance();
+            cloverController.Initialize(100, 100);
+            cloverController.UpdatePaper();
+            foldingPaperViewport.Children.Add(cloverController.Model);
+
 
             this.Focus();
         }
@@ -192,6 +200,25 @@ namespace Clover
             if (currentTool != null)
                 currentTool.onMove();
 
+            //Matrix3D projViewMatIn = Utility.GetInstance().ProjViewMat;
+            //if (!projViewMatIn.HasInverse)
+            //    return;
+            //projViewMatIn.Invert();
+            //Point3D start = new Point3D(e.GetPosition(this.foldingPaperViewport).X, e.GetPosition(this.foldingPaperViewport).Y, -1);
+            //start.X -= foldingPaperViewport.ActualWidth / 2;
+            //start.Y -= foldingPaperViewport.ActualHeight / 2;            
+            //Point3D mid = new Point3D(start.X, start.Y, 0);
+            //start *= projViewMatIn;
+            //mid *= projViewMatIn;
+            //Vector3D dir = mid - start;
+            //dir.Normalize();
+            //Debug.WriteLine(start);
+            //Debug.WriteLine(dir);
+            //start.Z += 300;
+            //mid.Z += 300;
+            //Point3D intersection = CloverMath.IntersectionOfLineAndPlane(start, mid, cloverController.FaceLeaves[0]);
+            //Debug.WriteLine(intersection);
+
             //Debug.WriteLine("======================");
             //Debug.WriteLine(Mouse.GetPosition(this));
             //Point3D p = cloverController.Edges[0].Vertex1.GetPoint3D();
@@ -201,8 +228,7 @@ namespace Clover
             //Debug.WriteLine(p);
             //mat.Invert();
             //p *= mat;
-            //Debug.WriteLine(p);
-            
+            //Debug.WriteLine(p);   
         }
 
         /// <summary>

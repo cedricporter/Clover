@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 @note		:	控制渲染层运作
 **/
 
-namespace Clover.RenderLayer
+namespace Clover
 {
     public class RenderController
     {
@@ -160,6 +160,7 @@ namespace Clover.RenderLayer
                 Utility.GetInstance().UpdateWorlCameMat();
         }
 
+        #region 改变材质特性
 
         public void Testfuck()
         {
@@ -190,6 +191,8 @@ namespace Clover.RenderLayer
             faceMeshMap[face].Material = frontMaterial;
             faceMeshMap[face].BackMaterial = backMaterial;
         }
+
+        #endregion
 
         #region 对Mesh的操作
         int count = 0;

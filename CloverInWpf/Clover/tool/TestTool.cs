@@ -41,7 +41,7 @@ namespace Clover.Tool
 
                 // 首先寻找离我们最近的那个面……
                 Double minVal = Double.MaxValue;
-                Matrix3D mat = RenderLayer.RenderController.GetInstance().Entity.Transform.Value;
+                Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
                 foreach (Face f in faces)
                 {
                     Double val = 0;
@@ -87,7 +87,7 @@ namespace Clover.Tool
                 }
 
                 // 应用旋转
-                RenderLayer.RenderController.GetInstance().BeginRotationSlerp(quat);
+                RenderController.GetInstance().BeginRotationSlerp(quat);
             }
             #endregion
         }
@@ -111,12 +111,15 @@ namespace Clover.Tool
                 if (prevVertex == null)
                     return;
                 Point3D pOrigin = prevVertex.GetPoint3D() ;
-                pOrigin *= Utility.GetInstance().To2DMat;
-                Point p0 = new Point(pOrigin.X, pOrigin.Y);
-                // 当前鼠标位置
-                Point p1 = currMousePos;
-                // 求两者中垂线
-                CloverMath.GetPerpendicularBisector(ref p0, ref p1);
+
+                Matrix3D to3DMat = Utility.GetInstance().To2DMat;
+                if (!to3DMat.HasInverse)
+                    return;
+                to3DMat.Invert();
+                Point3D start = new Point3D(currMousePos.X, currMousePos.Y, 0);
+                start *= to3DMat;
+                Debug.WriteLine(start);
+                
                 
 
                 //// 获取当前鼠标位置，并转换为3D空间中的射线
