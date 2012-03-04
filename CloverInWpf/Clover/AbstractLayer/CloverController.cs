@@ -304,7 +304,7 @@ namespace Clover
             }
 
             originEdgeListCount = edgeLayer.Count;
-            //originVertexListCount = vertexLayer.
+            originVertexListCount = vertexLayer.Vertices.Count;
         }
 
         /// <summary>
@@ -332,6 +332,7 @@ namespace Clover
                 }
             }
 
+            // 当前叶子的边集合减去原来的叶子的边集得到需要删除的边集
             List<Edge> beDeletedEdges = currentEdgeList.Except(originEdgeList).ToList();
 
             foreach (Edge edge in beDeletedEdges)
@@ -341,15 +342,30 @@ namespace Clover
 
             edgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, edgeLayer.EdgeTreeList.Count - originEdgeListCount);
 
+            List<Vertex> beDeletedVertexVersionList = new List<Vertex>();
+
             foreach (Face face in originFaceList)
             {
+                // 内节点一定有两个孩子，否则就出错了。
                 if (face.LeftChild != null && face.RightChild != null)
                 {
+                    beDeletedVertexVersionList.AddRange(face.LeftChild.Vertices.Except(beDeletedVertexVersionList));
                     renderController.Delete(face.LeftChild);
+                    beDeletedVertexVersionList.AddRange(face.RightChild.Vertices.Except(beDeletedVertexVersionList));
                     renderController.Delete(face.RightChild);
                     renderController.New(face);
                 }
                 face.LeftChild = face.RightChild = null;
+            }
+
+            // 还原点表
+            foreach (Vertex v in beDeletedVertexVersionList)
+            {
+                vertexLayer.DeleteLastVersion(v.Index);
+            }
+            for (int i = originVertexListCount; i < vertexLayer.Vertices.Count; i++)
+            {
+                vertexLayer.DeleteVertex(i);
             }
 
             //renderController.UpdateAll();
@@ -430,6 +446,8 @@ namespace Clover
 
             // 假定只有一个face现在
             Face face = faces[0];
+            face.UpdateVertices();
+            UpdateFaceEdgeVertex(face);
 
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
@@ -438,9 +456,9 @@ namespace Clover
             face.RightChild = f2;
 
             Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV1, newV1.Index);
+            //vertexLayer.UpdateVertex(newV1, newV1.Index);
             Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
-            vertexLayer.UpdateVertex(newV2, newV2.Index);
+            //vertexLayer.UpdateVertex(newV2, newV2.Index);
 
             Edge newEdge = new Edge(newV1, newV2);
             edgeLayer.AddTree(new EdgeTree(newEdge));

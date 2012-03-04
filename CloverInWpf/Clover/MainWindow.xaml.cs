@@ -100,7 +100,7 @@ namespace Clover
             toolBox = new ToolBox(this);
             toolBox.Left = Left + toolBoxRelLeft;
             toolBox.Top = Top + toolBoxRelTop;
-            toolBox.Show();
+            //toolBox.Show();
 
             this.Focus();
         }
