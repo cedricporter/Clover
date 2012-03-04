@@ -106,6 +106,22 @@ namespace Clover
             return Pt;
         }
 
+        /// <summary>
+        /// 求一线段的中垂线
+        /// </summary>
+        /// <param name="p1">线段的一个端点，计算完后会由该变量返回中垂线的一个端点</param>
+        /// <param name="p2">线段的另一个端点，计算完后会由该变量返回中垂线的另一个端点</param>
+        /// <author>Kid</author>
+        public static void GetPerpendicularBisector(ref Point p1, ref Point p2)
+        {
+            Vector V1 = p2 - p1;
+            Point Pmid = p1 + V1 / 2;
+            Vector V2 = new Vector(V1.Y, -V1.X);
+            V2.Normalize();
+            p1 = Pmid + 1000 * V2;
+            p2 = Pmid - 1000 * V2;
+        }
+
         
     }
 }

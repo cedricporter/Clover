@@ -232,7 +232,10 @@ namespace Clover
         /// 进入折叠模式前的叶子节点表，用于恢复
         /// </summary>
         List<Face> originFaceList = new List<Face>();
-
+        public List<Face> OriginFaceList
+        {
+            get { return originFaceList; }
+        }
         int originEdgeListCount = -1;
         int originVertexListCount = -1;
 

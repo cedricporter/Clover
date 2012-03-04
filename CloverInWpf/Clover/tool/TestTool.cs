@@ -103,27 +103,38 @@ namespace Clover.Tool
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
+                Point3D pickedVertex = ((Vertex)element).GetPoint3D();
                 // 鼠标拖动顶点，动态生成折线
-                // 获取当前鼠标位置，并转换为3D空间中的射线
-                Point3D p1 = new Point3D(currMousePos.X, currMousePos.Y, 0);
-                Matrix3D to3DMat = Utility.GetInstance().To2DMat;
-                if (!to3DMat.HasInverse)
-                    return;
-                to3DMat.Invert();
-                p1 *= to3DMat;
-                p1.Z = 0;
-                Point3D p2 = p1 + new Vector3D(0, 0, 3000);
-                Point3D Pon = nearestFace.Vertices[0].GetPoint3D();
-                Vector3D N = nearestFace.Normal;
-                // 已知线上两点p1p2,面法线N，面上一点Pon，求射线与面的交点Pt
-                Double t = -Vector3D.DotProduct((p1 - Pon), N) / Vector3D.DotProduct((p2 - p1), N);
-                Point3D Pt = p1 + t * (p2 - p1);
-                // 求Pt与原来的点P0的垂直平分线
-                Point3D P0 = ((Vertex)element).GetPoint3D();
-                Vector3D Vcon = Pt - P0;
-                Point3D Pmid = P0 + Vcon / 2;
-                Vector3D Vver = new Vector3D(Vcon.Y, -Vcon.X, 0);
-                Vver.Normalize();
+                // 记录该点的原始位置,pOrigin未实现
+                Point3D pOrigin = new Point3D();
+                pOrigin *= Utility.GetInstance().To2DMat;
+                Point p0 = new Point(pOrigin.X, pOrigin.Y);
+                // 当前鼠标位置
+                Point p1 = currMousePos;
+                // 求两者中垂线
+                CloverMath.GetPerpendicularBisector(ref p0, ref p1);
+                
+
+                //// 获取当前鼠标位置，并转换为3D空间中的射线
+                //Point3D p1 = new Point3D(currMousePos.X, currMousePos.Y, 0);
+                //Matrix3D to3DMat = Utility.GetInstance().To2DMat;
+                //if (!to3DMat.HasInverse)
+                //    return;
+                //to3DMat.Invert();
+                //p1 *= to3DMat;
+                //p1.Z = 0;
+                //Point3D p2 = p1 + new Vector3D(0, 0, 3000);
+                //Point3D Pon = nearestFace.Vertices[0].GetPoint3D();
+                //Vector3D N = nearestFace.Normal;
+                //// 已知线上两点p1p2,面法线N，面上一点Pon，求射线与面的交点Pt
+                //Double t = -Vector3D.DotProduct((p1 - Pon), N) / Vector3D.DotProduct((p2 - p1), N);
+                //Point3D Pt = p1 + t * (p2 - p1);
+                //// 求Pt与原来的点P0的垂直平分线
+                //Point3D P0 = ((Vertex)element).GetPoint3D();
+                //Vector3D Vcon = Pt - P0;
+                //Point3D Pmid = P0 + Vcon / 2;
+                //Vector3D Vver = new Vector3D(Vcon.Y, -Vcon.X, 0);
+                //Vver.Normalize();
             }
             
 
