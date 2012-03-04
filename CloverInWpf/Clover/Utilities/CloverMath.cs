@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows.Media.Media3D;
 using System.Windows;
 
+
 namespace Clover
 {
     public class CloverMath
@@ -122,6 +123,204 @@ namespace Clover
             p2 = Pmid - 1000 * V2;
         }
 
+        /// <summary>
+        /// 求两线段之间最短距离
+        /// </summary>
+        /// <param name="e1">线段1</param>
+        /// <param name="e2">线段2</param>
+        /// <returns></returns>
+        public static double GetDistanceBetweenTwoSegments(Edge e1, Edge e2)
+        {
+            Vector3D u = new Vector3D();
+            u = e1.Vertex2.GetPoint3D() - e1.Vertex1.GetPoint3D();
+            Vector3D v = new Vector3D();
+            v = e2.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
+            Vector3D w = new Vector3D();
+            w = e1.Vertex1.GetPoint3D() - e2.Vertex1.GetPoint3D();
+
+            double a = Vector3D.DotProduct(u, u);
+            double b = Vector3D.DotProduct(u, v);
+            double c = Vector3D.DotProduct(v, v);
+            double d = Vector3D.DotProduct(u, w);
+            double e = Vector3D.DotProduct(v, w);
+            double D = a * c - b * b;
+            double sc, sN, sD = D;
+            double tc, tN, tD = D;
+
+            // 两条线平行
+            if (D < Double.MinValue)
+            {
+                sN = 0.0f;
+                sD = 1.0f;
+                tN = e;
+                tD = c;
+            }
+            else
+            {
+                sN = (b * e - c * d);
+                tN = (a * e - b * d);
+
+                if (sN < 0.0)
+                {
+                    sN = 0.0;
+                    tN = e;
+                    tD = c;
+                }
+                else if (sN > sD)
+                {
+                    sN = sD;
+                    tN = e + b;
+                    tD = c;
+                }
+            }
+
+            if (tN < 0.0)
+            {
+                tN = 0.0;
+                if (-d < 0.0)
+                {
+                    sN = 0.0;
+                }
+                else if (-d < a)
+                {
+                    sN = sD;
+                }
+                else
+                {
+                    sN = -d;
+                    sD = a;
+                }
+            }
+            else if (tN > tD)
+            {
+                // tc > 1 => the t=1 edge is visible        
+                tN = tD;
+                // recompute sc for this edge      
+                if ((-d + b) < 0.0)
+                    sN = 0;
+                else if ((-d + b) > a)
+                    sN = sD;
+                else
+                {
+                    sN = (-d + b);
+                    sD = a;
+                }
+            }
+            // finally do the division to get sc and tc
+            sc = (Math.Abs(sN) < Double.MinValue ? 0.0 : sN / sD);
+            tc = (Math.Abs(tN) < Double.MinValue ? 0.0 : tN / tD);
+            // get the difference of the two closest points     
+            Vector3D dP = w + (sc * u) - (tc * v);
+            // = S1(sc) - S2(tc)    
+            return dP.Length;   // return the closest distance
+        }
         
+        /// <summary>
+        /// 求补集
+        /// </summary>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        /// <returns></returns>
+        public static double PerpProduct(Vector3D u, Vector3D v)
+        {
+            return (u.X * v.Y - v.X * u.Y);
+        }
+
+        /// <summary>
+        /// 计算两线段之间的交点
+        /// </summary>
+        /// <param name="e1">线段1</param>
+        /// <param name="e2">线段2</param>
+        /// <param name="intersection"></param>
+        /// <returns>0:不相交 1:相交且有唯一交点 2:线段覆盖在另一线段上</returns>
+        public static int GetIntersectionOfTwoSegments(Edge e1, Edge e2, ref Point3D intersection)
+        {
+            Vector3D u = e1.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
+            Vector3D v = e2.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
+            Vector3D w = e1.Vertex1.GetPoint3D() - e2.Vertex1.GetPoint3D();
+            double D = PerpProduct(u, v);
+
+            //判断两线段是否平行
+            if (Math.Abs(D) < Double.MinValue)
+            {
+                if (PerpProduct(u, w) != 0 || PerpProduct(v, w) != 0)
+                {
+                    return 0;   // 两线段不相交 
+                }
+
+                double du = Vector3D.DotProduct(u, u);
+                double dv = Vector3D.DotProduct(v, v);
+
+                if (du == 0 && dv == 0)
+                { 
+                    // 两条线段是两个不同的点
+                    if (e1.Vertex1.GetPoint3D() == e2.Vertex2.GetPoint3D())
+                        return 0;
+                    else
+                    {
+                        intersection.X = e1.Vertex1.X;
+                        intersection.Y = e1.Vertex1.Y;
+                        intersection.Z = e1.Vertex1.Z;
+                        return 1;
+                    }
+                }
+                if (du == 0)
+                { 
+                    // 假如其中一条线段是一个点
+                    return 0;
+                }
+                if (dv == 0)
+                { 
+                    // 同上 
+                    return 0;
+                }
+
+                // 两线段是非平行线段
+                double t0, t1;
+                Vector3D w2 = e1.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
+                if (v.X != 0)
+                {
+                    t0 = w.X / v.X;
+                    t1 = w2.X / v.X;
+                }
+                else
+                {
+                    t0 = w.Y / v.Y;
+                    t1 = w2.Y / v.Y;
+                }
+                if (t0 > t1)
+                {
+                    double t = t0; t0 = t1; t1 = t; 
+                }
+                if (t0 > 1 || t1 < 0)
+                {
+                    return 0;   // 没有重叠 
+                }
+
+                t0 = t0 < 0 ? 0 : t0;
+                t1 = t1 > 1 ? 1 : t1;
+
+                if (t0 == t1)
+                {
+                    intersection.X = e2.Vertex1.X + t0 * v.X;
+                    intersection.Y = e2.Vertex1.Y + t0 * v.Y;
+                    intersection.Z = e2.Vertex1.Z + t0 * v.Z;
+                    return 1;
+                }
+
+                return 2;
+            }
+            double sI = PerpProduct(v, w) / D;
+            if (sI < 0 || sI > 1)
+                return 0;
+            double tI = PerpProduct(u, w) / D;
+            if (tI < 0 || tI > 1)
+                return 0;
+
+            intersection.X = e1.Vertex1.X + sI * u.X;
+            intersection.Y = e1.Vertex1.Y + sI * u.Y;
+            intersection.Z = e1.Vertex1.Z + sI * u.Z;
+            return 1;
+        }
     }
 }
