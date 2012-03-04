@@ -303,7 +303,7 @@ namespace Clover
             face.LeftChild = f1;
             face.RightChild = f2;
 
-            Edge e1, e2;
+            Edge e1 = null, e2 = null;
             foreach (Edge e in face.Edges)
             {
                 if (e.IsVerticeIn(edge.Vertex1))
@@ -313,25 +313,22 @@ namespace Clover
             }
 
             int type = 0;
+            bool isVertex1Cut = false;
+            bool isVertex2Cut = false;
 
-            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
+            if (!CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex1.GetPoint3D(), 0.0001) &&
+                 !CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D(), 0.0001))
             {
                 type++;
-            }
-            if (CloverMath.IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
-            {
-                type++;
-            }
-            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex1.GetPoint3D(), 0.0001))
-            {
-                type++;
-            }
-            if (CloverMath.IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
-            {
-                type++;
+                isVertex1Cut = true;
             }
 
-
+            if (!CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D(), 0.0001) &&
+                !CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D(), 0.0001))
+            {
+                type++;
+                isVertex2Cut = true;
+            }
             //// 判断折线的两个顶点是否是当前顶点列表中所存在的顶点
             //int index1, index2;
             
@@ -359,11 +356,36 @@ namespace Clover
             switch (type)
             { 
                 case 0:
-                    // 种类1
+                    // 种类1 不新增加顶点。只创建一条边并加入边层
+                    edgeLayer.AddTree(new EdgeTree(edge));
                     break;
                 case 1:
-                    // 种类2
-                    break;
+                    // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
+                    edgeLayer.AddTree(new EdgeTree(edge));
+                    
+                    // 取其中一个进行面分割的边.
+                    if (isVertex1Cut)
+                    {
+                        Vertex v = (Vertex)(edge.Vertex1.Clone());
+                        int index = vertexLayer.InsertVertex(v);
+                        if (index < 0) return;
+
+                        e1.LeftChild = new Edge(e1.Vertex1, v);
+                        e1.RightChild = new Edge(v, e1.Vertex2);
+
+                        // 将生成的边分别注册给新生成的两个面
+                        f1.AddEdge(edge);
+                        f1.AddEdge(e1.LeftChild);
+
+                        f2.AddEdge(edge);
+                        f2.AddEdge(e1.RightChild);
+
+                        foreach (Edge e in face.Edges)
+                        { 
+                             
+                        }
+                    }
+                    break; 
                 case 2:
                     // 种类3
                     break;
