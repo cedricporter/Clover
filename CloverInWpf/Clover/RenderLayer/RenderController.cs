@@ -160,6 +160,7 @@ namespace Clover.RenderLayer
                 Utility.GetInstance().UpdateWorlCameMat();
         }
 
+
         public void Testfuck()
         {
             //frontMaterial = materialController.GetFrontShadow();
@@ -168,6 +169,26 @@ namespace Clover.RenderLayer
                 pair.Value.Material = materialController.GetFrontShadow();
                 pair.Value.BackMaterial = materialController.GetBackShadow();
             }
+        }
+
+        /// <summary>
+        /// 转变成半透明材质
+        /// </summary>
+        /// <param name="face"></param>
+        public void ToGas(Face face)
+        {
+            faceMeshMap[face].Material = materialController.GetFrontShadow();
+            faceMeshMap[face].BackMaterial = materialController.GetBackShadow();
+        }
+
+        /// <summary>
+        /// 转变成不透明材质
+        /// </summary>
+        /// <param name="face"></param>
+        public void ToSolid(Face face)
+        {
+            faceMeshMap[face].Material = frontMaterial;
+            faceMeshMap[face].BackMaterial = backMaterial;
         }
 
         #region 对Mesh的操作
