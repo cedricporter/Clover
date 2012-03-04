@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Clover
 {
-    enum FoldingOp
+    public enum FoldingOp
     {
         Blend,
         FoldUp,
@@ -259,6 +259,20 @@ namespace Clover
         #endregion
 
         #region 更新
+
+        /// <summary>
+        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
+        /// </summary>
+        public void UpdateVerticesToLastedVersion()
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer; 
+            foreach (Edge e in edges)
+            {
+                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+            }
+            UpdateVertices();
+        }
 
         /// <summary>
         /// 更新面的点，方便绘制时使用

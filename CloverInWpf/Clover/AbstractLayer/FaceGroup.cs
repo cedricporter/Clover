@@ -21,7 +21,7 @@ namespace Clover.AbstractLayer
 
     }
 
-    class FaceGroup
+    public class FaceGroup
     {
         List<Face> GroupList;
         Vector3D Normal = new Vector3D(); // 组的法向量

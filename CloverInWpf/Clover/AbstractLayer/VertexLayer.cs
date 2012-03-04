@@ -8,7 +8,7 @@ namespace Clover
     /// <summary>
     /// Basic vertex structure.
     /// </summary>
-    class VertexLayer
+    public class VertexLayer
     {
         #region Attributes
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Clover
 {
-    class EdgeTree
+    public class EdgeTree
     {
         Edge root;
 

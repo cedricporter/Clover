@@ -10,7 +10,7 @@ namespace Clover
     /// <summary>
     /// 面树，保存着所有的面，包括历史上存在过的面
     /// </summary>
-    class FacecellTree
+    public class FacecellTree
     {
         #region get/set
         public Clover.Face Root
@@ -82,7 +82,7 @@ namespace Clover
     /// <summary>
     /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
     /// </summary>
-    class LookupTable
+    public class LookupTable
     {
         List<FaceGroup> tables = new List<FaceGroup>();
         
@@ -216,7 +216,7 @@ namespace Clover
     /// <summary>
     /// 面层的抽象
     /// </summary>
-    class FaceLayer
+    public class FaceLayer
     {
         #region get/set
         public Clover.FacecellTree FacecellTree
