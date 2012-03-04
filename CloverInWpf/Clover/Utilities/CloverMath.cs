@@ -90,14 +90,13 @@ namespace Clover
         /// </summary>
         /// <param name="p1">直线上的一点p1</param>
         /// <param name="p2">直线上的一点p2</param>
-        /// <param name="face">平面</param>
+        /// <param name="N">平面的法向量</param>
+        /// <param name="Pon">平面上的一点</param>
         /// <returns>交点</returns>
         /// <remarks>注意！该函数并不提供平行检测！</remarks>
         /// <author>Kid</author>
-        public static Point3D IntersectionOfLineAndPlane(Point3D p1, Point3D p2, Face face)
+        public static Point3D IntersectionOfLineAndPlane(Point3D p1, Point3D p2, Vector3D N, Point3D Pon)
         {
-            Vector3D N = face.Normal;
-            Point3D Pon = face.Vertices[0].GetPoint3D();
             Double D = Vector3D.DotProduct((p2 - p1), N);
             //if (D < 0.0001)
             //    return (Point3D)null;
