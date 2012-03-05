@@ -273,6 +273,7 @@ namespace Clover
                 edgeLayer.AddTree(tree);
 
                 face.AddEdge(edges[i]);
+                edges[i].Face1 = face;
             }
 
             // use root to initialize facecell tree and lookuptable
@@ -1033,6 +1034,59 @@ namespace Clover
             }
 
             return crossCount >= 2;
+        }
+
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
+        {
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
+
+            renderController.UpdateAll();
         }
 
         /// <summary>
