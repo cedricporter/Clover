@@ -375,6 +375,7 @@ namespace Clover
             Vertex newVertex; Vertex otherVertex;
 
             newVertex = cutVertex.Clone() as Vertex;
+            CalculateTexcoord(newVertex, cuttedEdge);
             vertexLayer.InsertVertex(newVertex);
 
             if (edge.Vertex1 != cutVertex)
@@ -417,7 +418,7 @@ namespace Clover
             newFace1.AddEdge(edge);
             edge.Face1 = newFace1;
             newFace1.AddEdge(newEdge1);
-            edge.Face1 = newFace1;
+            newEdge1.Face1 = newFace1;
 
             // 添加face1中的边
             // 从新生成的边开始环绕面
@@ -427,12 +428,16 @@ namespace Clover
                 {
                     currentVertex = e.Vertex2;
                     currentEdge = e;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
                     break;
                 }
                 else if (e.Vertex2 == newEdge1.Vertex1)
                 {
                     currentVertex = e.Vertex1;
                     currentEdge = e;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
                     break;
                 }
             }
@@ -463,16 +468,26 @@ namespace Clover
             }
 
             // 添加face2中的边
+            // 为一个面注册相应的边
+            newFace2.AddEdge(edge);
+            edge.Face2 = newFace2;
+            newFace2.AddEdge(newEdge2);
+            edge.Face2 = newFace2;
+
             foreach (Edge e in face.Edges)
             {
                 if (e.Vertex1 == newEdge2.Vertex2)
                 {
+                    e.Face2 = newFace2;
+                    newFace2.AddEdge(e);
                     currentVertex = e.Vertex2;
                     currentEdge = e;
                     break;
                 }
                 else if (e.Vertex2 == newEdge1.Vertex2)
                 {
+                    e.Face2 = newFace2;
+                    newFace2.AddEdge(e);
                     currentVertex = e.Vertex1;
                     currentEdge = e;
                     break;
@@ -487,6 +502,7 @@ namespace Clover
                     if (e.Vertex1 == currentVertex && e != currentEdge)
                     {
                         //添加该边到新增面的边表
+                        e.Face2 = newFace2;
                         newFace2.AddEdge(e);
                         currentVertex = e.Vertex2;
                         currentEdge = e;
@@ -494,6 +510,7 @@ namespace Clover
                     }
                     else if (e.Vertex2 == currentVertex && e != currentEdge)
                     {
+                        e.Face2 = newFace2;
                         newFace2.AddEdge(e);
                         currentVertex = e.Vertex1;
                         currentEdge = e;
@@ -502,13 +519,34 @@ namespace Clover
                 }
             }
 
-            // 生成一个面的周围的顶点的环形表
-            face.UpdateVertices();
-            List<Vertex> vertexList = new List<Vertex>();
-            vertexList.AddRange(face.Vertices);
-            vertexList.Add(face.Vertices[0]);
+            // 更新当前面中顶点序
+            newFace1.UpdateVertices();
+            newFace2.UpdateVertices();
+
+
+            // 找到所有需要保存到VertexLayer历史的顶点
+            List<Vertex> oldVertexList = UnionVertex(newFace1, newFace2);
+            oldVertexList.Remove(newVertex);
+            oldVertexList.Remove(otherVertex);
+
+            // 为所有的顶点生成一个副本插到历史中。
+            shadowSystem.SaveVertices(oldVertexList);
+
+            // 更新新的面的顶点到最新版
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+
+            // 更新渲染层的部分
+            renderController.Delete(face);
+            renderController.New(newFace1);
+            renderController.New(newFace2);
+
+            newVertex.Update(newVertex, null);
+            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+
+            FaceLayer.UpdateLeaves();
             
-            
+
         }
 
         /// <summary>
@@ -672,13 +710,6 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
-            return;
-            Face f1 = new Face(face.Layer);
-            Face f2 = new Face(face.Layer);
-
-            face.LeftChild = f1;
-            face.RightChild = f2;
-
             Edge e1 = null, e2 = null;
             foreach (Edge e in face.Edges)
             {
@@ -733,9 +764,6 @@ namespace Clover
             { 
                 case 0:
                     // 种类1 不新增加顶点。只创建一条边并加入边层
-                    edgeLayer.AddTree(new EdgeTree(edge));
-                    f1.AddEdge(edge);
-                    f2.AddEdge(edge);
 
                     // 按照顶点序环绕，查找边，并注册到面
 
@@ -747,24 +775,16 @@ namespace Clover
                     // 取其中一个进行面分割的边.
                     if (isVertex1Cut)
                     {
-                        Vertex v = (Vertex)(edge.Vertex1.Clone());
-                        int index = vertexLayer.InsertVertex(v);
-                        if (index < 0) return;
+                        CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
+                    }
 
-                        e1.LeftChild = new Edge(e1.Vertex1, v);
-                        e1.RightChild = new Edge(v, e1.Vertex2);
-
-                        // 将生成的边分别注册给新生成的两个面
-                        f1.AddEdge(edge);
-                        f1.AddEdge(e1.LeftChild);
-
-                        f2.AddEdge(edge);
-                        f2.AddEdge(e1.RightChild);
-
-
+                    if (isVertex2Cut)
+                    {
+                        CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
                     }
                     break; 
                 case 2:
+                    CutAFaceWithAddedTwoVertices(face, edge);
                     // 种类3
                     break;
                 default:
@@ -1442,18 +1462,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            //创建4个顶点
-            Vertex v0 = new Vertex(123, -50, 23.4);
-            Vertex v1 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v2 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v3 = new Vertex(95.234234, 22, 0);
-
-            Edge e1 = new Edge(v0, v1);
-            Edge e2 = new Edge(v2, v3);
-            Point3D p = new Point3D();
-
-            double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
-            int y = CloverMath.GetIntersectionOfTwoSegments(e1, e2, ref p);
+            CutAFace(faceLayer.Leaves[0], new Edge(new Vertex(-50, 50, 0), new Vertex(50, 0, 0)));
             return;
         }
         #endregion
