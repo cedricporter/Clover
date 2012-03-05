@@ -426,40 +426,6 @@ namespace Clover
             vertexLayer.InsertVertex(newVertex1);
             vertexLayer.InsertVertex(newVertex2);
 
-
-            // e1包含newVertex1，e2包含newVertex2
-            Edge e1 = null, e2 = null;
-            foreach (Edge e in face.Edges)
-            {
-                if (e.IsVerticeIn(newVertex1))
-                {
-                    e1 = e;
-                }
-                else if (e.IsVerticeIn(newVertex2))
-                {
-                    e2 = e;
-                }
-            }
-
-            // 计算newVertex1和newVertex2的纹理坐标
-            CalculateTexcoord(newVertex1, e1);
-            CalculateTexcoord(newVertex2, e2);
-
-            Debug.Assert(e1 != null && e2 != null);
-
-            // 分割e1
-            Edge edge1_1 = new Edge(e1.Vertex1.Clone() as Vertex, newVertex1);
-            Edge edge1_2 = new Edge(e1.Vertex2.Clone() as Vertex, newVertex1);
-            e1.LeftChild = edge1_1;
-            e1.RightChild = edge1_2;
-
-            // 分割e2
-            Edge edge2_1 = new Edge(e2.Vertex1.Clone() as Vertex, newVertex2);
-            Edge edge2_2 = new Edge(e2.Vertex2.Clone() as Vertex, newVertex2);
-            e2.LeftChild = edge2_1;
-            e2.RightChild = edge2_2;
-
-
             // 生成一个面的周围的顶点的环形表
             face.UpdateVertices();
             List<Vertex> vertexList = new List<Vertex>();
@@ -476,7 +442,6 @@ namespace Clover
             // 原始边
             List<Edge> rangeA = new List<Edge>();
             List<Edge> rangeB = new List<Edge>();
-            List<Edge> lastRange = null;
 
             // 分割面
             Face f1 = new Face(face.Layer);
@@ -505,18 +470,22 @@ namespace Clover
                 {
                     bFirstRange = false;
 
-                    // 更新纹理坐标，这个应该算个比例，我先取中点作为新点的坐标，到时再改
-                    newVertex1.u = (vertexList[i].u + vertexList[i + 1].u) / 2;
-                    newVertex1.v= (vertexList[i].v + vertexList[i + 1].v) / 2;
-
                     indexV1 = i;
                     beCutEdge1 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeA.RemoveAt(rangeA.Count - 1);
+
+                    // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
                     Edge cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
+                    beCutEdge1.LeftChild = cutEdge1;
+                    beCutEdge1.RightChild = cutEdge2;
+
                     rangeA.Add(cutEdge1);
                     rangeA.Add(newEdge);
                     rangeB.Add(cutEdge2);
+
+                    // 计算newVertex1和newVertex2的纹理坐标
+                    CalculateTexcoord(newVertex1, beCutEdge1);
                 }
                 if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
@@ -532,23 +501,26 @@ namespace Clover
                         bFirstRange = true;
                     }
 
-                    // 更新纹理坐标，这个应该算个比例，我先取中点作为新点的坐标，到时再改
-                    newVertex2.u = (vertexList[i].u + vertexList[i + 1].u) / 2;
-                    newVertex2.v= (vertexList[i].v + vertexList[i + 1].v) / 2;
-
                     indexV2 = i;
                     beCutEdge2 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeB.RemoveAt(rangeB.Count - 1);
+
+                    // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
                     Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);
+                    beCutEdge2.LeftChild = cutEdge1;
+                    beCutEdge2.RightChild = cutEdge2;
+
                     rangeB.Add(cutEdge1);
                     rangeB.Add(newEdge);
                     rangeA.Add(cutEdge2);
+
+                    // 计算newVertex1和newVertex2的纹理坐标
+                    CalculateTexcoord(newVertex2, beCutEdge2);
                 }
             }
 
             Debug.Assert(indexV1 != -1 && indexV2 != -1);
-
 
             foreach (Edge e in rangeA)
             {
@@ -882,8 +854,7 @@ namespace Clover
         }
 
 
-        float currentAngel;
-        Point3D currentVertex;
+
 
         
         /// <summary>
