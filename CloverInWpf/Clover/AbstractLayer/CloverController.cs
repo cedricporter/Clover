@@ -596,7 +596,16 @@ namespace Clover
             }
             return crossCount >= 2;
         }
-
+        
+        /// <summary>
+        /// 通过点找面
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <returns></returns>
+        public List<Face> FindFacesByVertex(Vertex vertex)
+        {
+            return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertex);
+        }
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
