@@ -230,6 +230,7 @@ namespace Clover
         }
         public bool IsVerticeIn(Point3D p)
         {
+            return CloverMath.IsPointInTwoPoints(p, vertex1.GetPoint3D(), vertex2.GetPoint3D(), 0.001);
             double pointThreadhold = 0.001;
             // 判断线
             Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
@@ -288,9 +289,11 @@ namespace Clover
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
+        
         #endregion
 
         #region get/set
+ 
         public List<Edge> Edges
         {
             get { return edges; }
@@ -313,22 +316,22 @@ namespace Clover
         public Clover.Face LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; if (leftChild != null) leftChild.parent = this; }
+            set { leftChild = value; if ( leftChild != null ) leftChild.parent = this; }
         }
         public Clover.Face RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; if (rightChild != null) rightChild.parent = this; }
+            set { rightChild = value; if ( rightChild != null ) rightChild.parent = this; }
         }
         public Clover.Face Parent
         {
             get { return parent; }
-            set 
-            { 
-                if (value == null)
+            set
+            {
+                if ( value == null )
                 {
-                    if (parent.leftChild == this) parent.leftChild = null;
-                    if (parent.rightChild == this) parent.rightChild = null;
+                    if ( parent.leftChild == this ) parent.leftChild = null;
+                    if ( parent.rightChild == this ) parent.rightChild = null;
                 }
                 parent = value;
             }

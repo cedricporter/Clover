@@ -24,6 +24,11 @@ namespace Clover
         RenderController renderController;///渲染层
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
+        LookupTable table;
+        public Clover.LookupTable Table
+        {
+            get { return table; }
+        }
         #endregion
 
         #region get/set
@@ -187,6 +192,8 @@ namespace Clover
 
             face.UpdateVertices();
             faceLayer.UpdateLeaves();
+
+            table = new LookupTable(face);
         }
 
         /// <summary>
@@ -382,6 +389,7 @@ namespace Clover
 
             // 假定只有一个face现在
             Face face = faces[0];
+
             shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
             Face f1 = new Face(face.Layer);
@@ -411,6 +419,13 @@ namespace Clover
 
             f1.UpdateVertices();
             f2.UpdateVertices();
+
+            
+            table.DeleteFace( face );
+            table.AddFace( f1 );
+            table.AddFace( f2 );
+
+            
 
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
@@ -570,7 +585,7 @@ namespace Clover
         /// <param name="face">当前判定平面</param>
         /// <param name="currentFoldingLine">折线亮点坐标</param>
         /// <returns></returns>
-        bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
+        public bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
             int crossCount = 0;
             foreach (Edge e in face.Edges)
@@ -580,6 +595,62 @@ namespace Clover
                     crossCount++;
             }
             return crossCount >= 2;
+        }
+
+
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        {
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
+
+            renderController.UpdateAll();
+
+            table.UpdateLookupTable();
         }
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
@@ -633,6 +704,8 @@ namespace Clover
             }
 
             renderController.UpdateAll();
+
+            table.UpdateLookupTable();
         }
 
         /// <summary>
@@ -643,6 +716,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;

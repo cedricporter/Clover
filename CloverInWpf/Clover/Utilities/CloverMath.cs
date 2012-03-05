@@ -57,7 +57,7 @@ namespace Clover
             Point3D p3 = p1 + t * V1;
             if ((p - p3).Length < threadhold)
             {
-                if (Vector3D.DotProduct((p - p1), (p - p2)) < 0)
+                if (Vector3D.DotProduct((p - p1), (p - p2)) <= 0)
                     return true;
             } 
             return false;
@@ -80,7 +80,7 @@ namespace Clover
             Point p3 = p1 + t * V1;
             if ((p - p3).Length < threadhold)
             {
-                if (((p - p1) * (p - p2)) < 0)
+                if (((p - p1) * (p - p2)) <= 0)
                     return true;
             }
             return false;
@@ -389,6 +389,53 @@ namespace Clover
             intersection.Y = e1.Vertex1.Y + sI * u.Y;
             intersection.Z = e1.Vertex1.Z + sI * u.Z;
             return 1;
+        }
+
+        /// <summary>
+        /// 判断一个点是否位于一个face中
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static bool IsPointInFace(Point3D p, Face f)
+        {
+            Vector3D[] vector = new Vector3D[ f.Vertices.Count ];
+            int i = 0;
+            foreach ( Vertex ve in f.Vertices )
+            {
+                vector[ i ] = p - ve.GetPoint3D();
+                i++;
+            }
+
+            foreach ( Vector3D v1 in vector )
+            {
+                foreach ( Vector3D v2 in vector )
+                {
+                    if ( Vector3D.DotProduct( v1, v2 ) < 0 )
+                    {
+                        return true;
+                    }
+
+                }
+            }
+            return false;
+        }
+
+
+        /// <summary>
+        /// 判断两个face是否相交
+        /// </summary>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
+        /// <returns></returns>
+        public static bool IsIntersectionOfTwoFace(Face f1, Face f2)
+        {
+            foreach (Vertex v in f1.Vertices)
+            {
+                if ( IsPointInFace( v.GetPoint3D(), f2 ) )
+                    return true;
+            }
+            return false;
         }
     }
 }
