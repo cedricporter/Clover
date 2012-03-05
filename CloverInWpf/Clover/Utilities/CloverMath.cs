@@ -125,27 +125,37 @@ namespace Clover
             Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f.Normal, f.Vertices[0].GetPoint3D());
 
             // 判断点在不在face内
-            Vector3D[] vector = new Vector3D[f.Vertices.Count];
-            int i = 0;
-            foreach (Vertex ve in f.Vertices)
+            Point3D[] points = new Point3D[f.Vertices.Count];
+            for (int i = 0; i < points.Length; i++)
+                points[i] = f.Vertices[i].GetPoint3D();
+            if (IsPointInArea(IntersectiongPoint, points))
             {
-                vector[i] = IntersectiongPoint - ve.GetPoint3D();
-                i++;
-            }
-
-            foreach ( Vector3D v1 in vector)
-            {
-                foreach ( Vector3D v2 in vector)
-                {
-                    if ( Vector3D.DotProduct( v1, v2 ) < 0 )
-                    {
-                        p = IntersectiongPoint;
-                        return true;
-                    }
-
-                }
+                p = IntersectiongPoint;
+                return true;
             }
             return false;
+                
+            //Vector3D[] vector = new Vector3D[f.Vertices.Count];
+            //int i = 0;
+            //foreach (Vertex ve in f.Vertices)
+            //{
+            //    vector[i] = IntersectiongPoint - ve.GetPoint3D();
+            //    i++;
+            //}
+
+            //foreach ( Vector3D v1 in vector)
+            //{
+            //    foreach ( Vector3D v2 in vector)
+            //    {
+            //        if ( Vector3D.DotProduct( v1, v2 ) <= 0 )
+            //        {
+            //            p = IntersectiongPoint;
+            //            return true;
+            //        }
+
+            //    }
+            //}
+            //return false;
              
         }
 
@@ -390,5 +400,31 @@ namespace Clover
             intersection.Z = e1.Vertex1.Z + sI * u.Z;
             return 1;
         }
+
+
+        /// <summary>
+        /// 判断一个3D点是否处在由points围成的平面内
+        /// </summary>
+        /// <param name="point">要检查的点</param>
+        /// <param name="points">平面的边界</param>
+        /// <returns>返回true如果点在平面内或平面边界上</returns>
+        /// <author>kid</author>
+        public static Boolean IsPointInArea(Point3D pe, Point3D[] points)
+        {
+            Vector3D lastN = new Vector3D(0, 0, 0);
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector3D v1 = pe - points[i];
+                Vector3D v2 = points[(i + 1) % points.Length] - pe;
+                Vector3D currN = Vector3D.CrossProduct(v1, v2);
+                if (Vector3D.DotProduct(currN, lastN) < 0)
+                    return false;
+                lastN = currN;
+            }
+                return true;
+        }
+
+
+
     }
 }
