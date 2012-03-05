@@ -12,8 +12,11 @@ namespace Clover.Visual
     {
         TextBlock infotext = new TextBlock();
 
+        Vertex vertex;
+
         public VertexInfoVisual(Vertex v)
         {
+            vertex = v;
             infotext.Foreground = new SolidColorBrush(Colors.Black);
             infotext.Background = new SolidColorBrush(Colors.White);
             box.Children.Add(infotext);
@@ -28,7 +31,8 @@ namespace Clover.Visual
             // 更新内容
             infotext.Text = "索引：" + v.Index.ToString();
             Point3D p = v.GetPoint3D();
-            infotext.Text += "\n位置(" + p.X.ToString("#.0") + "," + p.Y.ToString("#.0") + "," + p.Z.ToString("#.0") + ")";
+            infotext.Text += "\n位置( " + p.X.ToString("#.0") + ", " + p.Y.ToString("#.0") + ", " + p.Z.ToString("#.0") + " )";
+            infotext.Text += "\n纹理( " + v.u.ToString("#.0") + ", " + v.v.ToString("#.0") + " )";;
             // 更新位置
             Point3D pos = v.GetPoint3D();
             pos *= Utility.GetInstance().To2DMat;
@@ -48,6 +52,8 @@ namespace Clover.Visual
         public override void FadeOut()
         {
             //throw new Exception("The method or operation is not implemented.");
+            vertex.Update -= UpdateInfoCallBack;
+            state = State.Destroy;
         }
     }
 }

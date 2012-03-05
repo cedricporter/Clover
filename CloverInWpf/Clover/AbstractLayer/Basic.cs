@@ -21,13 +21,11 @@ namespace Clover
     /// </summary>
     public class Vertex : ICloneable
     {
-        Point3D point = new Point3D();
-
-        public Point UVW = new Point();     /// 纹理坐标
-        public double u = 0;
-        public double v = 0;
-
+        Point3D point = new Point3D(); 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
+
+        double _u = 0;
+        double _v = 0;
 
         bool moved = false;
 
@@ -36,6 +34,16 @@ namespace Clover
         public Update Update;
 
         #region get/set
+        public double u
+        {
+            get { return _u; }
+            set { _u = value; if (Update != null) Update(this, null); }
+        }
+        public double v
+        {
+            get { return _v; }
+            set { _v = value; if (Update != null) Update(this, null); }
+        }
         public bool Moved
         {
             get { return moved; }
@@ -44,17 +52,17 @@ namespace Clover
         public double X
         {
             get { return point.X; }
-            set { point.X = value; Update(this, null);  }
+            set { point.X = value; if (Update != null) Update(this, null);  }
         }
         public double Y
         {
             get { return point.Y; }
-            set { point.Y = value; Update(this, null);  }
+            set { point.Y = value; if (Update != null) Update(this, null);  }
         }
         public double Z
         {
             get { return point.Z; }
-            set { point.Z = value; Update(this, null);}
+            set { point.Z = value; if (Update != null) Update(this, null);}
         }
         #endregion
 
@@ -63,7 +71,6 @@ namespace Clover
             Vertex v = this.MemberwiseClone() as Vertex;
 
             v.point = new Point3D(point.X, point.Y, point.Z);
-            v.UVW = new Point(UVW.X, UVW.Y);
             v.Version = this.Version + 1;
 
             return v;
@@ -88,11 +95,10 @@ namespace Clover
         public Vertex(Vertex vertex)
         {
             point = new Point3D(vertex.X, vertex.Y, vertex.Z);
-            UVW = new Point(vertex.UVW.X, vertex.UVW.Y);
 
             Index = vertex.Index;
-            u = vertex.u;
-            v = vertex.v;
+            _u = vertex._u;
+            _v = vertex._v;
         }
 
         public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
