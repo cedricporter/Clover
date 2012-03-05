@@ -95,7 +95,9 @@ namespace Clover
         public MaterialGroup UpdateFrontMaterial(MaterialGroup mat)
         {
             frontMaterial = mat;
-            ImageSource img = ((mat.Children[0] as DiffuseMaterial).Brush as ImageBrush).ImageSource;
+            ImageBrush imgb = ((mat.Children[0] as DiffuseMaterial).Brush as ImageBrush);
+            imgb.ViewportUnits = BrushMappingMode.Absolute;
+            ImageSource img = imgb.ImageSource;
             height = (int)img.Height;
             width = (int)img.Width;
             thickness = (height > width ? height : width) / 100;
@@ -161,6 +163,7 @@ namespace Clover
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
             ImageBrush imgb = new ImageBrush(bmp);
+            imgb.ViewportUnits = BrushMappingMode.Absolute;
 
             if (frontFoldLineLayer != null)
                 frontMaterial.Children.Remove(frontFoldLineLayer);
@@ -196,6 +199,7 @@ namespace Clover
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
             ImageBrush imgb = new ImageBrush(bmp);
+            imgb.ViewportUnits = BrushMappingMode.Absolute;
 
             if (backFoldLineLayer != null)
                 backMaterial.Children.Remove(backFoldLineLayer);
@@ -219,6 +223,7 @@ namespace Clover
             RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(dv);
             ImageBrush imgb = new ImageBrush(bmp);
+            imgb.ViewportUnits = BrushMappingMode.Absolute;
 
             if (edgeLayer != null)
                 frontMaterial.Children.Remove(edgeLayer);
