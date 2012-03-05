@@ -223,9 +223,9 @@ namespace Clover
             vertices[3] = new Vertex(width / 2, height / 2, 0);
             // 初始化纹理坐标
             vertices[0].u = 0; vertices[0].v = 0;
-            vertices[1].u = 1; vertices[1].v = 0;
+            vertices[1].u = 0; vertices[1].v = 1;
             vertices[2].u = 1; vertices[2].v = 1;
-            vertices[3].u = 0; vertices[3].v = 1;
+            vertices[3].u = 1; vertices[3].v = 0;
 
             // add to vertex layer
             foreach (Vertex v in vertices)
