@@ -290,7 +290,6 @@ namespace Clover
         MeshGeometry3D NewMesh(Face face)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
-            CloverController asdf = CloverController.GetInstance();
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
