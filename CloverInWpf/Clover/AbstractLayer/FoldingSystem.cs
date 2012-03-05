@@ -523,19 +523,11 @@ namespace Clover
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
 
-            render.AddVisualInfoToVertex(newVertex1);
-            render.AddVisualInfoToVertex(newVertex2);
-
-            Edge newEdge = new Edge(newVertex1, newVertex2);
-
-            vertexLayer.InsertVertex(newVertex1);
-            vertexLayer.InsertVertex(newVertex2);
-
             // 生成一个面的周围的顶点的环形表
             face.UpdateVertices();
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
-
+            int count = vertexList.Count + 1;
             while (true)
             {
                 if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
@@ -545,8 +537,19 @@ namespace Clover
                 }
                 vertexList.Add(vertexList[0]);
                 vertexList.RemoveAt(0);
+
+                if (count-- == 0)
+                    return;
             }
             vertexList.Add(vertexList[0]);
+
+            render.AddVisualInfoToVertex(newVertex1);
+            render.AddVisualInfoToVertex(newVertex2);
+
+            Edge newEdge = new Edge(newVertex1, newVertex2);
+
+            vertexLayer.InsertVertex(newVertex1);
+            vertexLayer.InsertVertex(newVertex2);
 
             // 要被分割的边
             Edge beCutEdge1 = null;     
