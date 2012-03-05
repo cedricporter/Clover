@@ -85,6 +85,30 @@ namespace Clover
         /// <summary>
         /// 计算顶点纹理坐标
         /// </summary>
+        /// <param name="vertex"></param>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        bool CalculateTexcoord(Vertex vertex, Edge edge)
+        {
+            // 判断该点是否在直线上
+            if (!CloverMath.IsPointInTwoPoints(vertex.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.001))
+                return false;
+
+            // 取中间点到其中一点的距离，以及直线长度
+            Vector3D v1 = vertex.GetPoint3D() - edge.Vertex1.GetPoint3D();
+            Vector3D v2 = edge.Vertex2.GetPoint3D() - edge.Vertex1.GetPoint3D();
+
+            double proportion = v1.Length / v2.Length;
+
+            vertex.u = edge.Vertex1.u + proportion * (edge.Vertex2.u - edge.Vertex1.u);
+            vertex.v = edge.Vertex1.v + proportion * (edge.Vertex2.v - edge.Vertex1.v);
+
+            return true; 
+        }
+
+        /// <summary>
+        /// 计算顶点纹理坐标
+        /// </summary>
         /// <param name="vertex">需要计算纹理坐标的点</param>
         /// <param name="edge">该点所在的边</param>
         /// <param name = "length">该边根节点的总长度</param>>
@@ -339,6 +363,51 @@ namespace Clover
             }
             return null;
         }
+        /// <summary>
+        /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="edge"></param>
+        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge,bool isVertex1Cut )
+        {
+          // 找出需要添加的点和另外一个已经存在的点 
+            Vertex newVertex; Vertex otherVertex;
+            if (isVertex1Cut)
+            {
+                newVertex = edge.Vertex1.Clone() as Vertex;
+                vertexLayer.InsertVertex(newVertex);
+
+                foreach (Vertex v in face.Vertices)
+                {
+                    if (v.GetPoint3D() == edge.Vertex2.GetPoint3D())
+                    {
+                        otherVertex = v;
+                        break;
+                    }
+                }
+
+                // 切割边
+
+            }
+            else
+            {
+                newVertex = edge.Vertex2.Clone() as Vertex;
+                vertexLayer.InsertVertex(newVertex);
+
+                foreach (Vertex v in face.Vertices)
+                {
+                    if (v.GetPoint3D() == edge.Vertex1.GetPoint3D())
+                    {
+                        otherVertex = v;
+                        break;
+                    }
+                }
+            }
+
+           // 切割对应的边 
+
+            
+        }
 
         /// <summary>
         /// 当割点在两条边上时，切割一个面为两个面
@@ -374,6 +443,10 @@ namespace Clover
                     e2 = e;
                 }
             }
+
+            // 计算newVertex1和newVertex2的纹理坐标
+            CalculateTexcoord(newVertex1, e1);
+            CalculateTexcoord(newVertex2, e2);
 
             Debug.Assert(e1 != null && e2 != null);
 
