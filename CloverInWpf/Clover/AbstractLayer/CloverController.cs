@@ -1431,6 +1431,7 @@ namespace Clover
 
             MaterialGroup mgf = new MaterialGroup();
             ImageBrush imb = new ImageBrush();
+            //imb.ViewportUnits = BrushMappingMode.Absolute;
             imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
             mgf.Children.Add(new DiffuseMaterial(imb));
 

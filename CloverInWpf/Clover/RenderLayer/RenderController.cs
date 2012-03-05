@@ -308,10 +308,10 @@ namespace Clover
             }
 
             // fuck you WPF patch
-            mesh.Positions.Add(new Point3D(0, 0, 0));
-            mesh.Positions.Add(new Point3D(0, 0, 0));
-            mesh.TextureCoordinates.Add(new Point(0, 0));
-            mesh.TextureCoordinates.Add(new Point(1, 1));
+            //mesh.Positions.Add(new Point3D(0, 0, 0));
+            //mesh.Positions.Add(new Point3D(0, 0, 0));
+            //mesh.TextureCoordinates.Add(new Point(0, 0));
+            //mesh.TextureCoordinates.Add(new Point(1, 1));
 
             return mesh;
         }
