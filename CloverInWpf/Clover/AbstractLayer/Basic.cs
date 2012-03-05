@@ -22,7 +22,6 @@ namespace Clover
     public class Vertex : ICloneable
     {
         Point3D point = new Point3D(); 
-        public Point UVW = new Point();     /// 纹理坐标
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
         double _u = 0;
@@ -72,7 +71,6 @@ namespace Clover
             Vertex v = this.MemberwiseClone() as Vertex;
 
             v.point = new Point3D(point.X, point.Y, point.Z);
-            v.UVW = new Point(UVW.X, UVW.Y);
             v.Version = this.Version + 1;
 
             return v;
@@ -97,7 +95,6 @@ namespace Clover
         public Vertex(Vertex vertex)
         {
             point = new Point3D(vertex.X, vertex.Y, vertex.Z);
-            UVW = new Point(vertex.UVW.X, vertex.UVW.Y);
 
             Index = vertex.Index;
             _u = vertex._u;

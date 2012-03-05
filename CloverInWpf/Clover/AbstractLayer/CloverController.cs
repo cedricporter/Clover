@@ -247,9 +247,9 @@ namespace Clover
             vertices[3] = new Vertex(width / 2, height / 2, 0);
             // 初始化纹理坐标
             vertices[0].u = 0; vertices[0].v = 0;
-            vertices[1].u = 1; vertices[1].v = 0;
+            vertices[1].u = 0; vertices[1].v = 1;
             vertices[2].u = 1; vertices[2].v = 1;
-            vertices[3].u = 0; vertices[3].v = 1;
+            vertices[3].u = 1; vertices[3].v = 0;
 
             // add to vertex layer
             foreach (Vertex v in vertices)
@@ -582,6 +582,8 @@ namespace Clover
             renderController.New(f1);
             renderController.New(f2);
 
+            newVertex1.Update(newVertex1, null);
+            newVertex2.Update(newVertex2, null);
             //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             FaceLayer.UpdateLeaves();
