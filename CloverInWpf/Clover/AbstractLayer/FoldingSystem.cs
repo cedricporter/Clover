@@ -491,7 +491,7 @@ namespace Clover
 
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
-            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
         }
