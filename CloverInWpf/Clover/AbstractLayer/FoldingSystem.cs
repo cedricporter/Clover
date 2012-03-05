@@ -546,7 +546,7 @@ namespace Clover
                 vertexList.Add(vertexList[0]);
                 vertexList.RemoveAt(0);
             }
-            vertexList.Add(face.Vertices[0]);
+            vertexList.Add(vertexList[0]);
 
             // 要被分割的边
             Edge beCutEdge1 = null;     
