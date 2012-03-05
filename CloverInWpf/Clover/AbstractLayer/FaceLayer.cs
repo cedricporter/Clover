@@ -170,7 +170,7 @@ namespace Clover
         /// <summary>
         /// 当有可能一个group的face不再属于同一个group时候调用，强制更新。
         /// </summary>
-        public void UpDateGroup()
+        public void UpdateGroup()
         {
             foreach (FaceGroup fg in tables)
             {

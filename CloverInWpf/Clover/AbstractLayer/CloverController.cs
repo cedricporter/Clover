@@ -188,6 +188,8 @@ namespace Clover
 
             face.UpdateVertices();
             faceLayer.UpdateLeaves();
+
+            table = new LookupTable(face);
         }
 
         /// <summary>
@@ -374,9 +376,6 @@ namespace Clover
 
             // 假定只有一个face现在
             Face face = faces[0];
-
-            // 建立lookuotable
-            table = new LookupTable( face );
 
             shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
@@ -694,6 +693,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
+            table.UpdateGroup();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
