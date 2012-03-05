@@ -76,6 +76,16 @@ namespace Clover
             return null;
         }
         
+        /// <summary>
+        /// 返回一个组的基面，用以计算其他面的渲染偏差量
+        /// </summary>
+        /// <param name="group"></param>
+        public static Face FindBaseFace(FaceGroup group)
+        {
+            //todo 
+
+            return null;
+        }
 
 
     }
