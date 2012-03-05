@@ -8,8 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clover", "Clover\Clover.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloverPython", "CloverPython\CloverPython.csproj", "{52ABDE90-B862-4B37-A249-74B94D7D469E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{03C19D4D-CC97-412A-AB24-36F13998F1E8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,16 +38,6 @@ Global
 		{52ABDE90-B862-4B37-A249-74B94D7D469E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{52ABDE90-B862-4B37-A249-74B94D7D469E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{52ABDE90-B862-4B37-A249-74B94D7D469E}.Release|x86.ActiveCfg = Release|Any CPU
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Debug|x86.ActiveCfg = Debug|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Debug|x86.Build.0 = Debug|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Release|Any CPU.ActiveCfg = Release|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Release|Mixed Platforms.Build.0 = Release|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Release|x86.ActiveCfg = Release|x86
-		{03C19D4D-CC97-412A-AB24-36F13998F1E8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

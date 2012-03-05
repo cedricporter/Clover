@@ -110,6 +110,24 @@ namespace Clover
             Index = index;
         }
 
+        #region 重载==运算符
+        public override bool Equals(System.Object v)
+        {
+            // If parameter is null return false:
+            if ((object)v == null)
+            {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return ((Vertex)v).GetPoint3D() == this.GetPoint3D();
+        }
+
+        public override int GetHashCode()
+        {
+            return Index ^ _v.GetHashCode() ^ _v.GetHashCode() ^ moved.GetHashCode() ^ Version ^ point.GetHashCode() ^ Update.GetHashCode();
+        }
+
         public static bool operator==(Vertex lhs, Vertex rhs)
         {
             // If both are null, or both are same instance, return true.
@@ -130,6 +148,7 @@ namespace Clover
         {
             return !(lhs == rhs);
         }
+        #endregion
     }
 
     /// <summary>
