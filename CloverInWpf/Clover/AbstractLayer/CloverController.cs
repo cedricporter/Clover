@@ -368,43 +368,40 @@ namespace Clover
         /// </summary>
         /// <param name="face"></param>
         /// <param name="edge"></param>
-        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge,bool isVertex1Cut )
+        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge, Vertex cutVertex)
         {
-          // 找出需要添加的点和另外一个已经存在的点 
+            // 找出需要添加的点和另外一个已经存在的点 
             Vertex newVertex; Vertex otherVertex;
-            if (isVertex1Cut)
+
+            newVertex = cutVertex.Clone() as Vertex;
+            vertexLayer.InsertVertex(newVertex);
+
+            if (edge.Vertex1 != cutVertex)
             {
-                newVertex = edge.Vertex1.Clone() as Vertex;
-                vertexLayer.InsertVertex(newVertex);
-
-                foreach (Vertex v in face.Vertices)
-                {
-                    if (v.GetPoint3D() == edge.Vertex2.GetPoint3D())
-                    {
-                        otherVertex = v;
-                        break;
-                    }
-                }
-
-                // 切割边
-
+                otherVertex = edge.Vertex1;
             }
             else
             {
-                newVertex = edge.Vertex2.Clone() as Vertex;
-                vertexLayer.InsertVertex(newVertex);
-
-                foreach (Vertex v in face.Vertices)
+                otherVertex = edge.Vertex2; 
+            }
+            foreach (Vertex v in face.Vertices)
+            {
+                if (v.GetPoint3D() == otherVertex.GetPoint3D())
                 {
-                    if (v.GetPoint3D() == edge.Vertex1.GetPoint3D())
-                    {
-                        otherVertex = v;
-                        break;
-                    }
+                    otherVertex = v;
+                    break;
                 }
             }
 
-           // 切割对应的边 
+
+            // 切割边
+            Edge newEdge1 = new Edge(cuttedEdge.Vertex1, newVertex);
+            Edge newEdge2 = new Edge(newVertex, cuttedEdge.Vertex2);
+
+            // 将新生成的边添加到原来边的左右子树
+            cuttedEdge.LeftChild = newEdge1;
+            cuttedEdge.RightChild = newEdge2;
+
 
             
         }
