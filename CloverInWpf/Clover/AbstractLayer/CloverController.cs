@@ -85,6 +85,30 @@ namespace Clover
         /// <summary>
         /// 计算顶点纹理坐标
         /// </summary>
+        /// <param name="vertex"></param>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        bool CalculateTexcoord(Vertex vertex, Edge edge)
+        {
+            // 判断该点是否在直线上
+            if (!CloverMath.IsPointInTwoPoints(vertex.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.001))
+                return false;
+
+            // 取中间点到其中一点的距离，以及直线长度
+            Vector3D v1 = vertex.GetPoint3D() - edge.Vertex1.GetPoint3D();
+            Vector3D v2 = edge.Vertex2.GetPoint3D() - edge.Vertex1.GetPoint3D();
+
+            double proportion = v1.Length / v2.Length;
+
+            vertex.u = edge.Vertex1.u + proportion * (edge.Vertex2.u - edge.Vertex1.u);
+            vertex.v = edge.Vertex1.v + proportion * (edge.Vertex2.v - edge.Vertex1.v);
+
+            return true; 
+        }
+
+        /// <summary>
+        /// 计算顶点纹理坐标
+        /// </summary>
         /// <param name="vertex">需要计算纹理坐标的点</param>
         /// <param name="edge">该点所在的边</param>
         /// <param name = "length">该边根节点的总长度</param>>
@@ -249,6 +273,7 @@ namespace Clover
                 edgeLayer.AddTree(tree);
 
                 face.AddEdge(edges[i]);
+                edges[i].Face1 = face;
             }
 
             // use root to initialize facecell tree and lookuptable
@@ -339,6 +364,190 @@ namespace Clover
             }
             return null;
         }
+        /// <summary>
+        /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="edge"></param>
+        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge, Vertex cutVertex)
+        {
+            // 找出需要添加的点和另外一个已经存在的点 
+            Vertex newVertex; Vertex otherVertex;
+
+            newVertex = cutVertex.Clone() as Vertex;
+            CalculateTexcoord(newVertex, cuttedEdge);
+            vertexLayer.InsertVertex(newVertex);
+
+            if (edge.Vertex1 != cutVertex)
+            {
+                otherVertex = edge.Vertex1;
+            }
+            else
+            {
+                otherVertex = edge.Vertex2; 
+            }
+            foreach (Vertex v in face.Vertices)
+            {
+                if (v.GetPoint3D() == otherVertex.GetPoint3D())
+                {
+                    otherVertex = v;
+                    break;
+                }
+            }
+
+
+            // 切割边
+            Edge newEdge1 = new Edge(cuttedEdge.Vertex1, newVertex);
+            Edge newEdge2 = new Edge(newVertex, cuttedEdge.Vertex2);
+
+            // 将新生成的边添加到原来边的左右子树
+            cuttedEdge.LeftChild = newEdge1;
+            cuttedEdge.RightChild = newEdge2;
+
+            // 分割面
+            Face newFace1 = new Face(face.Layer);
+            Face newFace2 = new Face(face.Layer);
+
+            face.LeftChild = newFace1;
+            face.RightChild = newFace2;
+
+            Vertex currentVertex = null;
+            Edge currentEdge = null;
+
+            // 为一个面注册相应的边
+            newFace1.AddEdge(edge);
+            edge.Face1 = newFace1;
+            newFace1.AddEdge(newEdge1);
+            newEdge1.Face1 = newFace1;
+
+            // 添加face1中的边
+            // 从新生成的边开始环绕面
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == newEdge1.Vertex1)
+                {
+                    currentVertex = e.Vertex2;
+                    currentEdge = e;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
+                    break;
+                }
+                else if (e.Vertex2 == newEdge1.Vertex1)
+                {
+                    currentVertex = e.Vertex1;
+                    currentEdge = e;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
+                    break;
+                }
+            }
+
+            while (currentVertex != otherVertex)
+            {
+                foreach (Edge e in face.Edges)
+                {
+
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        //添加该边到新增面的边表
+                        e.Face1 = newFace1;
+                        newFace1.AddEdge(e);
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        e.Face1 = newFace1;
+                        newFace1.AddEdge(e);
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        break;
+                    }
+                }
+            }
+
+            // 添加face2中的边
+            // 为一个面注册相应的边
+            newFace2.AddEdge(edge);
+            edge.Face2 = newFace2;
+            newFace2.AddEdge(newEdge2);
+            edge.Face2 = newFace2;
+
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == newEdge2.Vertex2)
+                {
+                    e.Face2 = newFace2;
+                    newFace2.AddEdge(e);
+                    currentVertex = e.Vertex2;
+                    currentEdge = e;
+                    break;
+                }
+                else if (e.Vertex2 == newEdge1.Vertex2)
+                {
+                    e.Face2 = newFace2;
+                    newFace2.AddEdge(e);
+                    currentVertex = e.Vertex1;
+                    currentEdge = e;
+                    break;
+                }
+            }
+
+            while (currentVertex != otherVertex)
+            {
+                foreach (Edge e in face.Edges)
+                {
+
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        //添加该边到新增面的边表
+                        e.Face2 = newFace2;
+                        newFace2.AddEdge(e);
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        e.Face2 = newFace2;
+                        newFace2.AddEdge(e);
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        break;
+                    }
+                }
+            }
+
+            // 更新当前面中顶点序
+            newFace1.UpdateVertices();
+            newFace2.UpdateVertices();
+
+
+            // 找到所有需要保存到VertexLayer历史的顶点
+            List<Vertex> oldVertexList = UnionVertex(newFace1, newFace2);
+            oldVertexList.Remove(newVertex);
+            oldVertexList.Remove(otherVertex);
+
+            // 为所有的顶点生成一个副本插到历史中。
+            shadowSystem.SaveVertices(oldVertexList);
+
+            // 更新新的面的顶点到最新版
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+
+            // 更新渲染层的部分
+            renderController.Delete(face);
+            renderController.New(newFace1);
+            renderController.New(newFace2);
+
+            newVertex.Update(newVertex, null);
+            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+
+            FaceLayer.UpdateLeaves();
+            
+
+        }
 
         /// <summary>
         /// 当割点在两条边上时，切割一个面为两个面
@@ -360,36 +569,6 @@ namespace Clover
             vertexLayer.InsertVertex(newVertex1);
             vertexLayer.InsertVertex(newVertex2);
 
-
-            // e1包含newVertex1，e2包含newVertex2
-            Edge e1 = null, e2 = null;
-            foreach (Edge e in face.Edges)
-            {
-                if (e.IsVerticeIn(newVertex1))
-                {
-                    e1 = e;
-                }
-                else if (e.IsVerticeIn(newVertex2))
-                {
-                    e2 = e;
-                }
-            }
-
-            Debug.Assert(e1 != null && e2 != null);
-
-            // 分割e1
-            Edge edge1_1 = new Edge(e1.Vertex1.Clone() as Vertex, newVertex1);
-            Edge edge1_2 = new Edge(e1.Vertex2.Clone() as Vertex, newVertex1);
-            e1.LeftChild = edge1_1;
-            e1.RightChild = edge1_2;
-
-            // 分割e2
-            Edge edge2_1 = new Edge(e2.Vertex1.Clone() as Vertex, newVertex2);
-            Edge edge2_2 = new Edge(e2.Vertex2.Clone() as Vertex, newVertex2);
-            e2.LeftChild = edge2_1;
-            e2.RightChild = edge2_2;
-
-
             // 生成一个面的周围的顶点的环形表
             face.UpdateVertices();
             List<Vertex> vertexList = new List<Vertex>();
@@ -406,7 +585,6 @@ namespace Clover
             // 原始边
             List<Edge> rangeA = new List<Edge>();
             List<Edge> rangeB = new List<Edge>();
-            List<Edge> lastRange = null;
 
             // 分割面
             Face f1 = new Face(face.Layer);
@@ -435,18 +613,22 @@ namespace Clover
                 {
                     bFirstRange = false;
 
-                    // 更新纹理坐标，这个应该算个比例，我先取中点作为新点的坐标，到时再改
-                    newVertex1.u = (vertexList[i].u + vertexList[i + 1].u) / 2;
-                    newVertex1.v= (vertexList[i].v + vertexList[i + 1].v) / 2;
-
                     indexV1 = i;
                     beCutEdge1 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeA.RemoveAt(rangeA.Count - 1);
+
+                    // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
                     Edge cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
+                    beCutEdge1.LeftChild = cutEdge1;
+                    beCutEdge1.RightChild = cutEdge2;
+
                     rangeA.Add(cutEdge1);
                     rangeA.Add(newEdge);
                     rangeB.Add(cutEdge2);
+
+                    // 计算newVertex1和newVertex2的纹理坐标
+                    CalculateTexcoord(newVertex1, beCutEdge1);
                 }
                 if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
@@ -462,23 +644,26 @@ namespace Clover
                         bFirstRange = true;
                     }
 
-                    // 更新纹理坐标，这个应该算个比例，我先取中点作为新点的坐标，到时再改
-                    newVertex2.u = (vertexList[i].u + vertexList[i + 1].u) / 2;
-                    newVertex2.v= (vertexList[i].v + vertexList[i + 1].v) / 2;
-
                     indexV2 = i;
                     beCutEdge2 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
                     rangeB.RemoveAt(rangeB.Count - 1);
+
+                    // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
                     Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);
+                    beCutEdge2.LeftChild = cutEdge1;
+                    beCutEdge2.RightChild = cutEdge2;
+
                     rangeB.Add(cutEdge1);
                     rangeB.Add(newEdge);
                     rangeA.Add(cutEdge2);
+
+                    // 计算newVertex1和newVertex2的纹理坐标
+                    CalculateTexcoord(newVertex2, beCutEdge2);
                 }
             }
 
             Debug.Assert(indexV1 != -1 && indexV2 != -1);
-
 
             foreach (Edge e in rangeA)
             {
@@ -525,13 +710,6 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
-            return;
-            Face f1 = new Face(face.Layer);
-            Face f2 = new Face(face.Layer);
-
-            face.LeftChild = f1;
-            face.RightChild = f2;
-
             Edge e1 = null, e2 = null;
             foreach (Edge e in face.Edges)
             {
@@ -586,7 +764,9 @@ namespace Clover
             { 
                 case 0:
                     // 种类1 不新增加顶点。只创建一条边并加入边层
-                    edgeLayer.AddTree(new EdgeTree(edge));
+
+                    // 按照顶点序环绕，查找边，并注册到面
+
                     break;
                 case 1:
                     // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
@@ -595,28 +775,19 @@ namespace Clover
                     // 取其中一个进行面分割的边.
                     if (isVertex1Cut)
                     {
-                        Vertex v = (Vertex)(edge.Vertex1.Clone());
-                        int index = vertexLayer.InsertVertex(v);
-                        if (index < 0) return;
+                        CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
+                    }
 
-                        e1.LeftChild = new Edge(e1.Vertex1, v);
-                        e1.RightChild = new Edge(v, e1.Vertex2);
-
-                        // 将生成的边分别注册给新生成的两个面
-                        f1.AddEdge(edge);
-                        f1.AddEdge(e1.LeftChild);
-
-                        f2.AddEdge(edge);
-                        f2.AddEdge(e1.RightChild);
-
-                        foreach (Edge e in face.Edges)
-                        { 
-                             
-                        }
+                    if (isVertex2Cut)
+                    {
+                        CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
                     }
                     break; 
                 case 2:
+                    CutAFaceWithAddedTwoVertices(face, edge);
                     // 种类3
+                    break;
+                default:
                     break;
             }
 
@@ -808,8 +979,7 @@ namespace Clover
         }
 
 
-        float currentAngel;
-        Point3D currentVertex;
+
 
         
         /// <summary>
@@ -990,6 +1160,112 @@ namespace Clover
             return crossCount >= 2;
         }
 
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
+        {
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
+
+            renderController.UpdateAll();
+        }
+
+
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        {
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+            // 判断是否贴合，若有贴合更新组
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
+
+            renderController.UpdateAll();
+        }
         /// <summary>
         /// 根据鼠标位移在每个渲染帧前更新结构
         /// </summary>
@@ -1186,18 +1462,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            //创建4个顶点
-            Vertex v0 = new Vertex(123, -50, 23.4);
-            Vertex v1 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v2 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v3 = new Vertex(95.234234, 22, 0);
-
-            Edge e1 = new Edge(v0, v1);
-            Edge e2 = new Edge(v2, v3);
-            Point3D p = new Point3D();
-
-            double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
-            int y = CloverMath.GetIntersectionOfTwoSegments(e1, e2, ref p);
+            CutAFace(faceLayer.Leaves[0], new Edge(new Vertex(-50, 50, 0), new Vertex(50, 0, 0)));
             return;
         }
         #endregion

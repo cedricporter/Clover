@@ -23,6 +23,7 @@ namespace CloverPython
             string initialString = 
             @"
 import clr, sys
+import System.Collections.Generic.List as List
 clr.AddReference('Clover')
 from Clover import *
 clover = CloverController.GetInstance();
@@ -42,10 +43,17 @@ clover = CloverController.GetInstance();
         /// <param name="line"></param>
         public string ExecuteOneLine(string line)
         {
-            var ret = pythonEngine.Execute(line, pythonScope);
-            if (ret != null)
+            try
             {
-                return ret.ToString();
+                var ret = pythonEngine.Execute(line, pythonScope);
+                if (ret != null)
+                {
+                    return ret.ToString();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return ex.Message;
             }
             return "";
         }
