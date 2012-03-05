@@ -332,7 +332,7 @@ namespace Clover
             render.New(newFace2);
 
             newVertex.Update(newVertex, null);
-            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
             
@@ -395,22 +395,15 @@ namespace Clover
             bool bFirstRange = true;
             for (int i = 0; i < vertexList.Count - 1; i++)
             {
-                if (bFirstRange)
-                {
-                    rangeA.Add(FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]));
-                }
-                else
-                {
-                    rangeB.Add(FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]));
-                }
+                Edge currentEdge = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
 
                 if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
                     bFirstRange = false;
 
                     indexV1 = i;
-                    beCutEdge1 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
-                    rangeA.RemoveAt(rangeA.Count - 1);
+                    beCutEdge1 = currentEdge;
+                    //rangeA.RemoveAt(rangeA.Count - 1);
 
                     // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
@@ -424,6 +417,8 @@ namespace Clover
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex1, beCutEdge1);
+
+                    continue;
                 }
                 if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
@@ -440,8 +435,8 @@ namespace Clover
                     }
 
                     indexV2 = i;
-                    beCutEdge2 = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
-                    rangeB.RemoveAt(rangeB.Count - 1);
+                    beCutEdge2 = currentEdge;
+                    //rangeB.RemoveAt(rangeB.Count - 1);
 
                     // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
@@ -455,6 +450,17 @@ namespace Clover
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex2, beCutEdge2);
+
+                    continue;
+                }
+
+                if (bFirstRange)
+                {
+                    rangeA.Add(currentEdge);
+                }
+                else
+                {
+                    rangeB.Add(currentEdge);
                 }
             }
 
