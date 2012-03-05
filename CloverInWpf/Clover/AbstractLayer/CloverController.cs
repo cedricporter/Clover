@@ -250,6 +250,17 @@ namespace Clover
         }
 
 
+        /// <summary>
+        /// 当割点不在边上时，切割一个面为两个面
+        /// </summary>
+        /// <param name="oldFace"></param>
+        /// <param name="leftChild"></param>
+        /// <param name="rightChild"></param>
+        /// <param name="edge"></param>
+        public void CutAFaceWithoutVertex(Face face, Edge edge)
+        {
+            foldingSystem.CutAFaceWithoutAddedVertex(face, edge);
+        }
 
         /// <summary>
         /// 切割一个面为两个面
@@ -291,9 +302,7 @@ namespace Clover
             { 
                 case 0:
                     // 种类1 不新增加顶点。只创建一条边并加入边层
-
-                    // 按照顶点序环绕，查找边，并注册到面
-
+                    CutAFaceWithoutVertex(face, edge);
                     break;
                 case 1:
                     // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
@@ -563,61 +572,13 @@ namespace Clover
         /// <returns></returns>
         bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
-            // 求出折线向量
-            Vector3D u = new Vector3D();
-            u.X = currentFoldingLine.Vertex2.X - currentFoldingLine.Vertex1.X;
-            u.Y = currentFoldingLine.Vertex2.Y - currentFoldingLine.Vertex1.Y;
-            u.Z = currentFoldingLine.Vertex2.Z - currentFoldingLine.Vertex1.Z;
-
-            // 判定面中的每条边与折线是否相交，若有两条相交则折线分割该平面
             int crossCount = 0;
-            foreach (Edge edge in face.Edges)
-            {
-                Vector3D v = new Vector3D();
-                v.X = edge.Vertex2.X - edge.Vertex1.X;
-                v.Y = edge.Vertex2.Y - edge.Vertex1.Y;
-                v.Z = edge.Vertex2.Z - edge.Vertex1.Z;
-
-                Vector3D w = new Vector3D();
-                w.X = currentFoldingLine.Vertex1.X - edge.Vertex1.X;
-                w.Y = currentFoldingLine.Vertex1.Y - edge.Vertex1.Y;
-                w.Z = currentFoldingLine.Vertex1.Z - edge.Vertex1.Z;
-
-                double a = Vector3D.DotProduct(u, u);
-                double b = Vector3D.DotProduct(u, v);
-                double c = Vector3D.DotProduct(v, v);
-                double d = Vector3D.DotProduct(u, w);
-                double e = Vector3D.DotProduct(v, w);
-                double D = a * c - b * b;
-                double sc, tc;
-
-                // 两条线平行
-                if (D < 0.00001)
-                {
-                    return false;
-                }
-                else
-                {
-                    sc = (b * e - c * d) / D;
-                    tc = (a * e - b * d) / D;
-
-                    // 判断折线点是否在线段上
-                    if (sc != 0.0f && sc != 1.0f)
-                    {
-                        continue;
-                    }
-                }
-
-                // sc, tc 分别为两条直线上的比例参数
-                Vector3D dp = new Vector3D();
-                dp = w + (sc * u) - (tc * v);
-
-                if (dp.Length < 0.00001)
-                {
+            foreach (Edge e in face.Edges)
+            { 
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
                     crossCount++;
-                }
             }
-
             return crossCount >= 2;
         }
 
