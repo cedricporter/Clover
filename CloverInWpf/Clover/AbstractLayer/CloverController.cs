@@ -402,7 +402,111 @@ namespace Clover
             cuttedEdge.LeftChild = newEdge1;
             cuttedEdge.RightChild = newEdge2;
 
+            // 分割面
+            Face newFace1 = new Face(face.Layer);
+            Face newFace2 = new Face(face.Layer);
 
+            face.LeftChild = newFace1;
+            face.RightChild = newFace2;
+
+            Vertex currentVertex = null;
+            Edge currentEdge = null;
+
+            // 为一个面注册相应的边
+            newFace1.AddEdge(edge);
+            edge.Face1 = newFace1;
+            newFace1.AddEdge(newEdge1);
+            edge.Face1 = newFace1;
+
+            // 添加face1中的边
+            // 从新生成的边开始环绕面
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == newEdge1.Vertex1)
+                {
+                    currentVertex = e.Vertex2;
+                    currentEdge = e;
+                    break;
+                }
+                else if (e.Vertex2 == newEdge1.Vertex1)
+                {
+                    currentVertex = e.Vertex1;
+                    currentEdge = e;
+                    break;
+                }
+            }
+
+            while (currentVertex != otherVertex)
+            {
+                foreach (Edge e in face.Edges)
+                {
+
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        //添加该边到新增面的边表
+                        e.Face1 = newFace1;
+                        newFace1.AddEdge(e);
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        e.Face1 = newFace1;
+                        newFace1.AddEdge(e);
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        break;
+                    }
+                }
+            }
+
+            // 添加face2中的边
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == newEdge2.Vertex2)
+                {
+                    currentVertex = e.Vertex2;
+                    currentEdge = e;
+                    break;
+                }
+                else if (e.Vertex2 == newEdge1.Vertex2)
+                {
+                    currentVertex = e.Vertex1;
+                    currentEdge = e;
+                    break;
+                }
+            }
+
+            while (currentVertex != otherVertex)
+            {
+                foreach (Edge e in face.Edges)
+                {
+
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        //添加该边到新增面的边表
+                        newFace2.AddEdge(e);
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        newFace2.AddEdge(e);
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        break;
+                    }
+                }
+            }
+
+            // 生成一个面的周围的顶点的环形表
+            face.UpdateVertices();
+            List<Vertex> vertexList = new List<Vertex>();
+            vertexList.AddRange(face.Vertices);
+            vertexList.Add(face.Vertices[0]);
+            
             
         }
 
