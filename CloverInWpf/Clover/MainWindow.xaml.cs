@@ -315,6 +315,9 @@ namespace Clover
                 case Key.F3:
                     cloverController.NeilTest();
                     break;
+                case Key.F4:
+                    cloverController.CutAFaceWithAddedTwoVertices(cloverController.FaceLayer.Leaves[0], new Edge(new Vertex(-50, 0, 0), new Vertex(50, 0, 0)));
+                    break;
                 case Key.Up:
                     cloverController.Update(0, 10, null, null);
                     //cloverController.UpdateVertexPosition(null, 0, 10);
