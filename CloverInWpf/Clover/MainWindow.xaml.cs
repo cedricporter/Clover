@@ -201,49 +201,28 @@ namespace Clover
             if (currentTool != null)
                 currentTool.onMove();
 
-            //Matrix3D projViewMatIn = Utility.GetInstance().ProjViewMat;
-            //if ( !projViewMatIn.HasInverse )
-            //    return;
-            //projViewMatIn.Invert();
-            //Point3D start = new Point3D( e.GetPosition( this.foldingPaperViewport ).X, e.GetPosition( this.foldingPaperViewport ).Y, -1 );
-            //start.X -= foldingPaperViewport.ActualWidth / 2;
-            //start.Y -= foldingPaperViewport.ActualHeight / 2;
-            //Point3D mid = new Point3D( start.X, start.Y, 0 );
-            //start *= projViewMatIn;
-            //mid *= projViewMatIn;
-            //Vector3D dir = mid - start;
-            //dir.Normalize();
-            //Debug.WriteLine( start );
-            //Debug.WriteLine( dir );
-            //start.Z += 300;
-            //mid.Z += 300;
-            //Point3D intersection = CloverMath.IntersectionOfLineAndPlane( start, mid, cloverController.FaceLeaves[ 0 ] );
-            //Debug.WriteLine( intersection );
 
-            Debug.WriteLine( "======================" );
-            Debug.WriteLine( Mouse.GetPosition( this ) );
+            //Debug.WriteLine( "======================" );
+            //Debug.WriteLine( Mouse.GetPosition( this ) );
 
             
-            Point3D p1 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.00001 );
-            Point3D p2 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.99999 );
+            //Point3D p1 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.0000001 );
+            //Point3D p2 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.9999999 );
 
-            //Point3D p = cloverController.Edges[ 2 ].Vertex1.GetPoint3D();
-            Debug.WriteLine( p1 );
-            Debug.WriteLine( p2 );
-            Matrix3D mat = Utility.GetInstance().To2DMat;
-            //p *= mat;
-            //Debug.WriteLine( p );
+            //Debug.WriteLine( p1 );
+            //Debug.WriteLine( p2 );
+            //Matrix3D mat = Utility.GetInstance().To2DMat;
 
             
-            mat.Invert();
-            p1 *= mat;
-            p2 *= mat;
-            Debug.WriteLine( p1 );
-            Debug.WriteLine( p2 );  
-            Vector3D v = new Vector3D();
-            CloverMath.IntersectionOfLineAndFace( p1, p2, cloverController.FaceLayer.FacecellTree.Root, ref v );
-            Debug.WriteLine( ">>>>>>>>>>" );
-            Debug.WriteLine( v );
+            //mat.Invert();
+            //p1 *= mat;
+            //p2 *= mat;
+            //Debug.WriteLine( p1 );
+            //Debug.WriteLine( p2 );
+            //Point3D v = new Point3D();
+            //CloverMath.IntersectionOfLineAndFace( p1, p2, cloverController.FaceLayer.FacecellTree.Root, ref v );
+            //Debug.WriteLine( ">>>>>>>>>>" );
+            //Debug.WriteLine( v );
         }
 
         /// <summary>

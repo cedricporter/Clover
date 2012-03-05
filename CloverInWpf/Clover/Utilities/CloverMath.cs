@@ -114,7 +114,7 @@ namespace Clover
         /// <param name="f"></param>
         /// <param name="v">结果传出</param>
         /// <returns></returns>
-        public static bool IntersectionOfLineAndFace(Point3D p1, Point3D p2, Face f, ref Vector3D v)
+        public static bool IntersectionOfLineAndFace(Point3D p1, Point3D p2, Face f, ref Point3D p)
         {
             Vector3D vline = p1 - p2;
             // 排除平行的情况
@@ -139,9 +139,7 @@ namespace Clover
                 {
                     if ( Vector3D.DotProduct( v1, v2 ) < 0 )
                     {
-                        v.X = IntersectiongPoint.X;
-                        v.Y = IntersectiongPoint.Y;
-                        v.Z = IntersectiongPoint.Z;
+                        p = IntersectiongPoint;
                         return true;
                     }
 

@@ -238,6 +238,7 @@ namespace Clover
             foldingSystem.CutAFaceWithAddedTwoVertices(face, edge);
         }
 
+       
         /// <summary>
         /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
         /// </summary>
@@ -245,40 +246,7 @@ namespace Clover
         /// <param name="edge"></param>
         public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge, Vertex cutVertex)
         {
-            // 找出需要添加的点和另外一个已经存在的点 
-            Vertex newVertex; Vertex otherVertex;
-
-            newVertex = cutVertex.Clone() as Vertex;
-            vertexLayer.InsertVertex(newVertex);
-
-            if (edge.Vertex1 != cutVertex)
-            {
-                otherVertex = edge.Vertex1;
-            }
-            else
-            {
-                otherVertex = edge.Vertex2; 
-            }
-            foreach (Vertex v in face.Vertices)
-            {
-                if (v.GetPoint3D() == otherVertex.GetPoint3D())
-                {
-                    otherVertex = v;
-                    break;
-                }
-            }
-
-
-            // 切割边
-            Edge newEdge1 = new Edge(cuttedEdge.Vertex1, newVertex);
-            Edge newEdge2 = new Edge(newVertex, cuttedEdge.Vertex2);
-
-            // 将新生成的边添加到原来边的左右子树
-            cuttedEdge.LeftChild = newEdge1;
-            cuttedEdge.RightChild = newEdge2;
-
-
-            
+            foldingSystem.CutAFaceWithAddedOneVertex(face, edge, cuttedEdge, cutVertex);
         }
 
 
@@ -291,13 +259,6 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
-            return;
-            Face f1 = new Face(face.Layer);
-            Face f2 = new Face(face.Layer);
-
-            face.LeftChild = f1;
-            face.RightChild = f2;
-
             Edge e1 = null, e2 = null;
             foreach (Edge e in face.Edges)
             {
@@ -352,9 +313,6 @@ namespace Clover
             { 
                 case 0:
                     // 种类1 不新增加顶点。只创建一条边并加入边层
-                    edgeLayer.AddTree(new EdgeTree(edge));
-                    f1.AddEdge(edge);
-                    f2.AddEdge(edge);
 
                     // 按照顶点序环绕，查找边，并注册到面
 
@@ -366,24 +324,16 @@ namespace Clover
                     // 取其中一个进行面分割的边.
                     if (isVertex1Cut)
                     {
-                        Vertex v = (Vertex)(edge.Vertex1.Clone());
-                        int index = vertexLayer.InsertVertex(v);
-                        if (index < 0) return;
+                        CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
+                    }
 
-                        e1.LeftChild = new Edge(e1.Vertex1, v);
-                        e1.RightChild = new Edge(v, e1.Vertex2);
-
-                        // 将生成的边分别注册给新生成的两个面
-                        f1.AddEdge(edge);
-                        f1.AddEdge(e1.LeftChild);
-
-                        f2.AddEdge(edge);
-                        f2.AddEdge(e1.RightChild);
-
-
+                    if (isVertex2Cut)
+                    {
+                        CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
                     }
                     break; 
                 case 2:
+                    CutAFaceWithAddedTwoVertices(face, edge);
                     // 种类3
                     break;
                 default:
@@ -1008,18 +958,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            //创建4个顶点
-            Vertex v0 = new Vertex(123, -50, 23.4);
-            Vertex v1 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v2 = new Vertex(-50, 40.2304234, 30.23423423);
-            Vertex v3 = new Vertex(95.234234, 22, 0);
-
-            Edge e1 = new Edge(v0, v1);
-            Edge e2 = new Edge(v2, v3);
-            Point3D p = new Point3D();
-
-            double x = CloverMath.GetDistanceBetweenTwoSegments(e1, e2);
-            int y = CloverMath.GetIntersectionOfTwoSegments(e1, e2, ref p);
+            CutAFace(faceLayer.Leaves[0], new Edge(new Vertex(-50, 50, 0), new Vertex(50, 0, 0)));
             return;
         }
         #endregion
