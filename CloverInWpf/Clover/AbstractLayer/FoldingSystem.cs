@@ -643,6 +643,10 @@ namespace Clover
             render.New(f1);
             render.New(f2);
 
+            controller.Table.DeleteFace(face);
+            controller.Table.AddFace(f1);
+            controller.Table.AddFace(f2);
+
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
