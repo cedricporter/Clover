@@ -19,6 +19,7 @@ namespace Clover.Visual
             vertex = v;
             infotext.Foreground = new SolidColorBrush(Colors.Black);
             infotext.Background = new SolidColorBrush(Colors.White);
+            infotext.Opacity = 0.5;
             box.Children.Add(infotext);
             UpdateInfoCallBack(v, null);
         }
