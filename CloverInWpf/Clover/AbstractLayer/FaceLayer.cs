@@ -103,7 +103,7 @@ namespace Clover
 
 
         /// <summary>
-        /// 得到面所在的分组，如果错误返回null。
+        /// 得到面所在的分组,如果获取失败返回null,当获取失败时检查一下是否忘记add了。
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
@@ -130,7 +130,7 @@ namespace Clover
         {
             foreach (FaceGroup fg in tables)
             {
-                if ( fg.IsMatch(f))
+                if ( fg.IsMatch(f) )
                 {
                     fg.AddFace( f );
                     return;
@@ -139,6 +139,27 @@ namespace Clover
             FaceGroup newfg = new FaceGroup( f );
             tables.Add( newfg );
         }
+
+
+        /// <summary>
+        /// 删除looktable的某个face，不存在则会失败返回false
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool DeleteFace(Face f)
+        {
+            foreach (FaceGroup fg in tables)
+            {
+                if ( fg.DeleteFace( f ) )
+                {
+                    UpdateTable();
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
 
         /// <summary>
         /// 刷新table中的列表，删除空的组
@@ -150,9 +171,14 @@ namespace Clover
                 if (fg.GetGroup().Count == 0)
                 {
                     tables.Remove( fg );
+                    if (tables.Count == 0)
+                    {
+                        return;
+                    }
                 }
             }
         }
+
 
         /// <summary>
         /// 自动叠合的时候调用。
@@ -161,11 +187,13 @@ namespace Clover
         /// <param name="fg2">合并的源</param>
         /// <param name="IsOver">fg2 是否位于 fg1的上面</param>
         /// <param name="op">目前的折叠操作类型</param>
-        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsOver,FoldingOp op )
+        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsOver, FoldingOp op )
         {
             switch(op)
             {
                 case FoldingOp.Blend:
+                    break;
+
                 case FoldingOp.FoldUp:
 
                     if ( IsOver )
@@ -176,8 +204,19 @@ namespace Clover
                             fg1.GetGroup()[ i ].Layer = layer;
                             layer++;
                         }
+                        // 根据是否覆盖来调整layer的值
+                        for ( int i = fg1.GetGroup().Count - 1; i >= 0; i-- )
+                        {
+
+                            if ( !CloverMath.IsIntersectionOfTwoFace( fg2.GetGroup()[ fg2.GetGroup().Count - 1 ], fg1.GetGroup()[ i ] ) )
+                            {
+                                layer--;
+                            }
+                        }
+
                         for ( int i = fg2.GetGroup().Count - 1; i >= 0; i-- )
                         {
+
                             fg2.GetGroup()[ i ].Layer = layer;
                             layer++;
                             fg1.AddFace( fg2.GetGroup()[ i ] );

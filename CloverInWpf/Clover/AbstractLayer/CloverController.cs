@@ -24,6 +24,7 @@ namespace Clover
         RenderController renderController;///渲染层
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
+        LookupTable table;
         #endregion
 
         #region get/set
@@ -373,6 +374,10 @@ namespace Clover
 
             // 假定只有一个face现在
             Face face = faces[0];
+
+            // 建立lookuotable
+            table = new LookupTable( face );
+
             shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
             Face f1 = new Face(face.Layer);
@@ -402,6 +407,13 @@ namespace Clover
 
             f1.UpdateVertices();
             f2.UpdateVertices();
+
+            
+            table.DeleteFace( face );
+            table.AddFace( f1 );
+            table.AddFace( f2 );
+
+            
 
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();

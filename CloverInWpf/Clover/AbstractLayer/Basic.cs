@@ -313,22 +313,22 @@ namespace Clover
         public Clover.Face LeftChild
         {
             get { return leftChild; }
-            set { leftChild = value; if (leftChild != null) leftChild.parent = this; }
+            set { leftChild = value; if ( leftChild != null ) leftChild.parent = this; }
         }
         public Clover.Face RightChild
         {
             get { return rightChild; }
-            set { rightChild = value; if (rightChild != null) rightChild.parent = this; }
+            set { rightChild = value; if ( rightChild != null ) rightChild.parent = this; }
         }
         public Clover.Face Parent
         {
             get { return parent; }
-            set 
-            { 
-                if (value == null)
+            set
+            {
+                if ( value == null )
                 {
-                    if (parent.leftChild == this) parent.leftChild = null;
-                    if (parent.rightChild == this) parent.rightChild = null;
+                    if ( parent.leftChild == this ) parent.leftChild = null;
+                    if ( parent.rightChild == this ) parent.rightChild = null;
                 }
                 parent = value;
             }
