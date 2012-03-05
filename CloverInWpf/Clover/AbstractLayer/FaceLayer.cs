@@ -153,14 +153,14 @@ namespace Clover
         /// <returns></returns>
         public bool DeleteFace(Face f)
         {
-            foreach (FaceGroup fg in tables)
+
+            for ( int i = 0; i < tables.Count; i++ )
             {
-                if ( fg.DeleteFace( f ) )
+                if (tables[i].DeleteFace(f))
                 {
                     UpdateTable();
                     return true;
                 }
-
             }
             return false;
         }
@@ -172,36 +172,37 @@ namespace Clover
         /// </summary>
         public void UpdateGroup()
         {
-            foreach (FaceGroup fg in tables)
+
+            for ( int i = 0; i < tables.Count; i++ )
             {
-                foreach (Face f in fg.GetGroup())
+                for ( int j = 0; j < tables[ i ].GetGroup().Count; i++ )
                 {
-                    if (!fg.IsMatch(f))
+                    if ( !tables[ i ].IsMatch( tables[ i ].GetGroup()[j] ) )
                     {
-                        fg.DeleteFace( f );
+                        Face f = tables[ i ].GetGroup()[ j ];
+                        tables[ i ].DeleteFace( f );
                         AddFace( f );
                     }
                 }
             }
+           
         }
 
 
         /// <summary>
         /// 刷新table中的列表，删除空的组
         /// </summary>
-        void UpdateTable()
+        public void UpdateTable()
         {
-            foreach (FaceGroup fg in tables)
+            for ( int i = 0; i < tables.Count; i++ )
             {
-                if (fg.GetGroup().Count == 0)
+                if ( tables[i].GetGroup().Count == 0 )
                 {
-                    tables.Remove( fg );
-                    if (tables.Count == 0)
-                    {
-                        return;
-                    }
+                    tables.Remove( tables[ i ] );
                 }
             }
+            
+            
         }
 
 
