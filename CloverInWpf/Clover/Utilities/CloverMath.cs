@@ -49,7 +49,7 @@ namespace Clover
         /// <param name="threadhold">容许的误差值</param>
         /// <returns>返回true如果判断成立</returns>
         /// <author>Kid</author>
-        public static Boolean IsPointInTwoPoints(Point3D p, Point3D p1, Point3D p2, Double threadhold)
+        public static Boolean IsPointInTwoPoints(Point3D p, Point3D p1, Point3D p2, Double threadhold = 0.0001)
         {
             Vector3D V1 = p2 - p1;
             Vector3D V2 = p - p1;
@@ -72,7 +72,7 @@ namespace Clover
         /// <param name="threadhold">容许的误差值</param>
         /// <returns>返回true如果判断成立</returns>
         /// <author>Kid</author>
-        public static Boolean IsPointInTwoPoints(Point p, Point p1, Point p2, Double threadhold)
+        public static Boolean IsPointInTwoPoints(Point p, Point p1, Point p2, Double threadhold = 0.0001)
         {
             Vector V1 = p2 - p1;
             Vector V2 = p - p1;

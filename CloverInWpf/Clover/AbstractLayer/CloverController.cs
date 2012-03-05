@@ -607,6 +607,11 @@ namespace Clover
             return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertex);
         }
 
+        public List<Face> FindFacesByVertex(int index)
+        {
+            return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertexLayer.GetVertex(index));
+        }
+
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点

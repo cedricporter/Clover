@@ -578,15 +578,34 @@ namespace Clover
                     currentEdgeList = rangeA;
 
                     beCutEdge1 = currentEdge;
+                    Edge cutEdge1 = null;
+                    Edge cutEdge2 = null;
 
-                    // 分割一条边生成两条新的边
-                    Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
-                    Edge cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
-                    beCutEdge1.LeftChild = cutEdge1;
-                    beCutEdge1.RightChild = cutEdge2;
-
-                    rangeB.Add(cutEdge1);
-                    rangeA.Add(cutEdge2);
+                    // 两个孩子为空，新建两条边
+                    if (beCutEdge1.LeftChild == null && beCutEdge1.RightChild == null)
+                    {
+                        // 分割一条边生成两条新的边
+                        cutEdge1 = new Edge(vertexList[i], newVertex1);
+                        cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
+                        beCutEdge1.LeftChild = cutEdge1;
+                        beCutEdge1.RightChild = cutEdge2;
+                        rangeB.Add(cutEdge1);
+                        rangeA.Add(cutEdge2);
+                    }
+                    else
+                    {
+                        if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D(), 0.001)
+                            || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            rangeB.Add(beCutEdge1.LeftChild);
+                            rangeA.Add(beCutEdge1.RightChild);
+                        }
+                        else
+                        {
+                            rangeA.Add(beCutEdge1.LeftChild);
+                            rangeB.Add(beCutEdge1.RightChild);
+                        }
+                    }
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex1, beCutEdge1);
@@ -598,15 +617,32 @@ namespace Clover
 
                     beCutEdge2 = currentEdge;
 
-                    // 分割一条边生成两条新的边
-                    Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
-                    Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);
-                    beCutEdge2.LeftChild = cutEdge1;
-                    beCutEdge2.RightChild = cutEdge2;
+                    // 两个孩子为空，新建两条边
+                    if (beCutEdge2.LeftChild == null && beCutEdge2.RightChild == null)
+                    {
+                        // 分割一条边生成两条新的边
+                        Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
+                        Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);
+                        beCutEdge2.LeftChild = cutEdge1;
+                        beCutEdge2.RightChild = cutEdge2;
 
-                    rangeA.Add(cutEdge1);
-                    rangeB.Add(cutEdge2);
-
+                        rangeA.Add(cutEdge1);
+                        rangeB.Add(cutEdge2);
+                    }
+                    else
+                    {
+                        if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)
+                            || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            rangeA.Add(beCutEdge2.LeftChild);
+                            rangeB.Add(beCutEdge2.RightChild);
+                        }
+                        else
+                        {
+                            rangeB.Add(beCutEdge2.LeftChild);
+                            rangeA.Add(beCutEdge2.RightChild);
+                        }
+                    }
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex2, beCutEdge2);
                     continue;
