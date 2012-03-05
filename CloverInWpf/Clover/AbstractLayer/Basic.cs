@@ -288,9 +288,11 @@ namespace Clover
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
+        
         #endregion
 
         #region get/set
+ 
         public List<Edge> Edges
         {
             get { return edges; }
