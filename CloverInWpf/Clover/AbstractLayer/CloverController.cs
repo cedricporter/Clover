@@ -358,6 +358,11 @@ namespace Clover
                 case 0:
                     // 种类1 不新增加顶点。只创建一条边并加入边层
                     edgeLayer.AddTree(new EdgeTree(edge));
+                    f1.AddEdge(edge);
+                    f2.AddEdge(edge);
+
+                    // 按照顶点序环绕，查找边，并注册到面
+
                     break;
                 case 1:
                     // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
@@ -380,14 +385,13 @@ namespace Clover
                         f2.AddEdge(edge);
                         f2.AddEdge(e1.RightChild);
 
-                        foreach (Edge e in face.Edges)
-                        { 
-                             
-                        }
+
                     }
                     break; 
                 case 2:
                     // 种类3
+                    break;
+                default:
                     break;
             }
 
