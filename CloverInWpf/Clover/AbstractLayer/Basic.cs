@@ -230,6 +230,7 @@ namespace Clover
         }
         public bool IsVerticeIn(Point3D p)
         {
+            //return CloverMath.IsPointInTwoPoints(p, vertex1.GetPoint3D(), vertex2.GetPoint3D(), 0.001);
             double pointThreadhold = 0.001;
             // 判断线
             Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();

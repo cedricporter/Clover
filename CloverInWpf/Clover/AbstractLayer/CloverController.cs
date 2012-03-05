@@ -561,7 +561,7 @@ namespace Clover
         /// <param name="face">当前判定平面</param>
         /// <param name="currentFoldingLine">折线亮点坐标</param>
         /// <returns></returns>
-        bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
+        public bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
         {
             // 求出折线向量
             Vector3D u = new Vector3D();

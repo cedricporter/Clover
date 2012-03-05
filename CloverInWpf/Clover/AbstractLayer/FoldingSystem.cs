@@ -368,11 +368,19 @@ namespace Clover
             face.UpdateVertices();
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
+
+            while (true)
+            {
+                if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
+                    || CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001))
+                {
+                    break;
+                }
+                vertexList.Add(vertexList[0]);
+                vertexList.RemoveAt(0);
+            }
             vertexList.Add(face.Vertices[0]);
 
-            // 割点的要插入的下标
-            int indexV1 = -1;
-            int indexV2 = -1;
             // 要被分割的边
             Edge beCutEdge1 = null;     
             Edge beCutEdge2 = null;
@@ -391,19 +399,15 @@ namespace Clover
             newEdge.Face1 = f1;
             newEdge.Face2 = f2;
 
-            // 将边分成两组，一个面得到一组
-            bool bFirstRange = true;
+            List<Edge> currentEdgeList = null;
             for (int i = 0; i < vertexList.Count - 1; i++)
             {
                 Edge currentEdge = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
-
                 if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
-                    bFirstRange = false;
+                    currentEdgeList = rangeA;
 
-                    indexV1 = i;
                     beCutEdge1 = currentEdge;
-                    //rangeA.RemoveAt(rangeA.Count - 1);
 
                     // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex1);
@@ -411,32 +415,18 @@ namespace Clover
                     beCutEdge1.LeftChild = cutEdge1;
                     beCutEdge1.RightChild = cutEdge2;
 
-                    rangeA.Add(cutEdge1);
-                    rangeA.Add(newEdge);
-                    rangeB.Add(cutEdge2);
+                    rangeB.Add(cutEdge1);
+                    rangeA.Add(cutEdge2);
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex1, beCutEdge1);
-
                     continue;
                 }
-                if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
+                else if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
-                    if (bFirstRange)
-                    {
-                        bFirstRange = false;
-                        List<Edge> temp = rangeA;
-                        rangeA = rangeB;
-                        rangeB = temp;
-                    }
-                    else
-                    {
-                        bFirstRange = true;
-                    }
+                    currentEdgeList = rangeB;
 
-                    indexV2 = i;
                     beCutEdge2 = currentEdge;
-                    //rangeB.RemoveAt(rangeB.Count - 1);
 
                     // 分割一条边生成两条新的边
                     Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
@@ -444,27 +434,18 @@ namespace Clover
                     beCutEdge2.LeftChild = cutEdge1;
                     beCutEdge2.RightChild = cutEdge2;
 
-                    rangeB.Add(cutEdge1);
-                    rangeB.Add(newEdge);
-                    rangeA.Add(cutEdge2);
+                    rangeA.Add(cutEdge1);
+                    rangeB.Add(cutEdge2);
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex2, beCutEdge2);
-
                     continue;
                 }
-
-                if (bFirstRange)
-                {
-                    rangeA.Add(currentEdge);
-                }
-                else
-                {
-                    rangeB.Add(currentEdge);
-                }
+                currentEdgeList.Add(currentEdge);
             }
 
-            Debug.Assert(indexV1 != -1 && indexV2 != -1);
+            rangeA.Add(newEdge);
+            rangeB.Add(newEdge);
 
             foreach (Edge e in rangeA)
             {
