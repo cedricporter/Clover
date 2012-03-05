@@ -170,12 +170,12 @@ namespace Clover
         /// <summary>
         /// 当有可能一个group的face不再属于同一个group时候调用，强制更新。
         /// </summary>
-        public void UpdateGroup()
+        private void UpdateGroup()
         {
 
             for ( int i = 0; i < tables.Count; i++ )
             {
-                for ( int j = 0; j < tables[ i ].GetGroup().Count; i++ )
+                for ( int j = 0; j < tables[ i ].GetGroup().Count; j++ )
                 {
                     if ( !tables[ i ].IsMatch( tables[ i ].GetGroup()[j] ) )
                     {
@@ -192,7 +192,7 @@ namespace Clover
         /// <summary>
         /// 刷新table中的列表，删除空的组
         /// </summary>
-        public void UpdateTable()
+        private void UpdateTable()
         {
             for ( int i = 0; i < tables.Count; i++ )
             {
@@ -202,7 +202,13 @@ namespace Clover
                 }
             }
             
-            
+        }
+
+        public void UpdateLookupTable()
+        {
+            UpdateGroup();
+            UpdateTable();
+
         }
 
 

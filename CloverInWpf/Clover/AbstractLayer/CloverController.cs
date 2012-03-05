@@ -693,8 +693,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
-            table.UpdateGroup();
-
+            table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
