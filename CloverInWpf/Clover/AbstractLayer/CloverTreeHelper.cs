@@ -21,6 +21,8 @@ namespace Clover
             {
                 foreach (Edge edge in face.Edges)
                 {
+                    //if ( CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), vertex.GetPoint3D(), 0.001)
+                    //    || CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), vertex.GetPoint3D(), 0.001))
                     if (edge.IsVerticeIn(vertex))
                     {
                         list.Add(face);

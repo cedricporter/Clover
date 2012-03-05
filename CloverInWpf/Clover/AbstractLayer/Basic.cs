@@ -83,7 +83,9 @@ namespace Clover
 
         public void SetPoint3D(Point3D vertex)
         {
-            point = vertex;
+            point.X = vertex.X;
+            point.Y = vertex.Y;
+            point.Z = vertex.Z;
             Update(this, null);
         }
 

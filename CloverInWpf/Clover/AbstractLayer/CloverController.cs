@@ -668,6 +668,15 @@ namespace Clover
 
             // 判断是否贴合，若有贴合更新组
 
+            // For Testing
+            foreach (List<Vertex> list in vertexLayer.VertexCellTable)
+            {
+                for (int i = 0; i < list.Count - 1; i++)
+                {
+                    list[i].SetPoint3D(list[list.Count - 1].GetPoint3D());
+                }
+            }
+
 
             // 修正所有点的移动属性
             foreach (Vertex v in vertexLayer.Vertices)
