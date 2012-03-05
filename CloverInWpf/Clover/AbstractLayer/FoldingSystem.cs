@@ -375,7 +375,7 @@ namespace Clover
 
             // 为一个面注册相应的边
             newFace1.AddEdge(foldingEdge);
-            edge.Face1 = newFace1;
+            foldingEdge.Face1 = newFace1;
             newFace1.AddEdge(newEdge1);
             newEdge1.Face1 = newFace1;
 
