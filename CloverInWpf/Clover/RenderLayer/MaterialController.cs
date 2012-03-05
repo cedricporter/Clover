@@ -31,7 +31,8 @@ namespace Clover
         MaterialGroup backMaterial = null;
         MaterialGroup transparentFrontMaterial = null;
         MaterialGroup transparentBackMaterial = null;
-        DiffuseMaterial edgeLayer = null;
+        DiffuseMaterial frontEdgeLayer = null;
+        DiffuseMaterial backEdgeLayer = null;
         DiffuseMaterial frontFoldLineLayer = null;
         DiffuseMaterial backFoldLineLayer = null;
 
@@ -102,9 +103,9 @@ namespace Clover
             width = (int)img.Width;
             thickness = (height > width ? height : width) / 100;
 
-            UpdateEdgeLayer();
+            UpdateFrontEdgeLayer();
 
-            return mat;
+            return frontMaterial;
         }
 
         /// <summary>
@@ -115,7 +116,10 @@ namespace Clover
         public MaterialGroup UpdateBackMaterial(MaterialGroup mat)
         {
             backMaterial = mat;
-            return mat;
+
+            UpdateBackEdgeLayer();
+
+            return backMaterial;
         }
 
         #region 添加折线
@@ -212,7 +216,7 @@ namespace Clover
         /// <summary>
         /// 当分辨率改变时改变纸张的边的分辨率
         /// </summary>
-        void UpdateEdgeLayer()
+        void UpdateFrontEdgeLayer()
         {
             Rect rect = new Rect(new Size(width, height));
             DrawingVisual dv = new DrawingVisual();
@@ -225,10 +229,32 @@ namespace Clover
             ImageBrush imgb = new ImageBrush(bmp);
             imgb.ViewportUnits = BrushMappingMode.Absolute;
 
-            if (edgeLayer != null)
-                frontMaterial.Children.Remove(edgeLayer);
-            edgeLayer = new DiffuseMaterial(imgb);
-            frontMaterial.Children.Add(edgeLayer);
+            if (frontEdgeLayer != null)
+                frontMaterial.Children.Remove(frontEdgeLayer);
+            frontEdgeLayer = new DiffuseMaterial(imgb);
+            frontMaterial.Children.Add(frontEdgeLayer);
+        }
+
+        /// <summary>
+        /// 当分辨率改变时改变纸张的边的分辨率
+        /// </summary>
+        void UpdateBackEdgeLayer()
+        {
+            Rect rect = new Rect(new Size(width, height));
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            dc.DrawRectangle((Brush)null, new Pen(new SolidColorBrush(Colors.Black), thickness), rect);
+            dc.Close();
+
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp.Render(dv);
+            ImageBrush imgb = new ImageBrush(bmp);
+            imgb.ViewportUnits = BrushMappingMode.Absolute;
+
+            if (backEdgeLayer != null)
+                backMaterial.Children.Remove(backEdgeLayer);
+            backEdgeLayer = new DiffuseMaterial(imgb);
+            backMaterial.Children.Add(backEdgeLayer);
         }
 
 
