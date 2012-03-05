@@ -509,6 +509,8 @@ namespace Clover
             renderController.New(f1);
             renderController.New(f2);
 
+            newVertex1.Update(newVertex1, null);
+            newVertex2.Update(newVertex2, null);
             //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             FaceLayer.UpdateLeaves();
