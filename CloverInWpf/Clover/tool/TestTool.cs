@@ -116,9 +116,12 @@ namespace Clover.Tool
                 if (!to3DMat.HasInverse)
                     return;
                 to3DMat.Invert();
-                Point3D start = new Point3D(currMousePos.X, currMousePos.Y, 0);
+                Point3D start = new Point3D(currMousePos.X, currMousePos.Y, 0.0000001);
+                Point3D end = new Point3D(currMousePos.X, currMousePos.Y, 0.9999999);
                 start *= to3DMat;
-                Debug.WriteLine(start);
+                end *= to3DMat;
+                Point3D P1 = new Point3D();
+                CloverMath.IntersectionOfLineAndFace(start, end, nearestFace, ref P1);
                 
                 
 
