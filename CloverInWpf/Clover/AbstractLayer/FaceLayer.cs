@@ -103,7 +103,7 @@ namespace Clover
 
 
         /// <summary>
-        /// 得到面所在的分组，如果错误返回null。
+        /// 得到面所在的分组,如果获取失败返回null,当获取失败时检查一下是否忘记add了。
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
@@ -122,23 +122,69 @@ namespace Clover
             return null;
         }
 
+
+        
         /// <summary>
-        /// 将一个face增加到table中，table会自动生成或者插入到合适的分组中
+        /// 往lookuptable中加入face，会自动匹配加入group中或新增group。
+        /// 否则强制新建一个group
         /// </summary>
         /// <param name="f"></param>
         public void AddFace(Face f)
         {
+
             foreach (FaceGroup fg in tables)
             {
-                if ( fg.IsMatch(f))
+                if ( fg.IsMatch(f) )
                 {
                     fg.AddFace( f );
                     return;
                 }
             }
-            FaceGroup newfg = new FaceGroup( f );
-            tables.Add( newfg );
+            FaceGroup newfgt = new FaceGroup( f );
+            tables.Add( newfgt );
         }
+        
+        
+
+        /// <summary>
+        /// 删除looktable的某个face，不存在则会失败返回false
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool DeleteFace(Face f)
+        {
+            foreach (FaceGroup fg in tables)
+            {
+                if ( fg.DeleteFace( f ) )
+                {
+                    UpdateTable();
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
+
+
+        /// <summary>
+        /// 当有可能一个group的face不再属于同一个group时候调用，强制更新。
+        /// </summary>
+        public void UpDateGroup()
+        {
+            foreach (FaceGroup fg in tables)
+            {
+                foreach (Face f in fg.GetGroup())
+                {
+                    if (!fg.IsMatch(f))
+                    {
+                        fg.DeleteFace( f );
+                        AddFace( f );
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// 刷新table中的列表，删除空的组
@@ -150,9 +196,14 @@ namespace Clover
                 if (fg.GetGroup().Count == 0)
                 {
                     tables.Remove( fg );
+                    if (tables.Count == 0)
+                    {
+                        return;
+                    }
                 }
             }
         }
+
 
         /// <summary>
         /// 自动叠合的时候调用。
@@ -160,53 +211,62 @@ namespace Clover
         /// <param name="fg1">合并后的目标</param>
         /// <param name="fg2">合并的源</param>
         /// <param name="IsOver">fg2 是否位于 fg1的上面</param>
-        /// <param name="op">目前的折叠操作类型</param>
-        public void Autofold(FaceGroup fg1, FaceGroup fg2, bool IsOver,FoldingOp op )
+        public void AutofoldUp(FaceGroup fg1, FaceGroup fg2, bool IsOver )
         {
-            switch(op)
+
+            if ( IsOver )
             {
-                case FoldingOp.Blend:
-                case FoldingOp.FoldUp:
+                int layer = 0;
+                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                {
+                    fg1.GetGroup()[ i ].Layer = layer;
+                    layer++;
+                }
+                // 根据是否覆盖来调整layer的值
+                for ( int i = fg1.GetGroup().Count - 1; i >= 0; i-- )
+                {
 
-                    if ( IsOver )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( fg2.GetGroup()[ fg2.GetGroup().Count - 1 ], fg1.GetGroup()[ i ] ) )
                     {
-                        int layer = 0;
-                        for ( int i = 0; i < fg1.GetGroup().Count; i++ )
-                        {
-                            fg1.GetGroup()[ i ].Layer = layer;
-                            layer++;
-                        }
-                        for ( int i = fg2.GetGroup().Count - 1; i >= 0; i-- )
-                        {
-                            fg2.GetGroup()[ i ].Layer = layer;
-                            layer++;
-                            fg1.AddFace( fg2.GetGroup()[ i ] );
-                        }
-                        UpdateTable();
-                        
-                    }
-                    else
-                    {
-                        int layer = 0;
-                        for ( int i = 0; i < fg1.GetGroup().Count; i++ )
-                        {
-                            fg1.GetGroup()[ i ].Layer = layer;
-                            layer++;
-                        }
-                        layer = fg1.GetBottomLayer();
                         layer--;
-                        for ( int i = 0; i < fg2.GetGroup().Count; i++ )
-                        {
-                            fg2.GetGroup()[ i ].Layer = layer;
-                            fg1.AddFace( fg2.GetGroup()[ i ] );
-                            layer--;
-                        }
-                        UpdateTable();
                     }
-                    break;
+                }
 
-                case FoldingOp.TuckIn:
-                    break;
+                for ( int i = fg2.GetGroup().Count - 1; i >= 0; i-- )
+                {
+
+                    fg2.GetGroup()[ i ].Layer = layer;
+                    layer++;
+                    fg1.AddFace( fg2.GetGroup()[ i ] );
+                }
+                UpdateTable();
+                        
+            }
+            else
+            {
+                int layer = 0;
+                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                {
+                    fg1.GetGroup()[ i ].Layer = layer;
+                    layer++;
+                }
+                layer = fg1.GetBottomLayer();
+                layer--;
+                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                {
+                    if ( !CloverMath.IsIntersectionOfTwoFace( fg2.GetGroup()[ 0 ], fg1.GetGroup()[ i ] ) )
+                    {
+                        layer++;
+                    }
+                }
+
+                for ( int i = 0; i < fg2.GetGroup().Count; i++ )
+                {
+                    fg2.GetGroup()[ i ].Layer = layer;
+                    fg1.AddFace( fg2.GetGroup()[ i ] );
+                    layer--;
+                }
+                UpdateTable();
             }
         }
     }

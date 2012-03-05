@@ -149,6 +149,167 @@ namespace Clover
         #endregion
 
         #region 分割面
+
+        /// <summary>
+        /// 当两个切割点都为原来的顶点时，切割一个面为两个面
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="edge"></param>
+        public void CutAFaceWithoutAddedVertex(Face face, Edge edge)
+        {
+            CloverController controller = CloverController.GetInstance();
+            RenderController render = controller.RenderController;
+            VertexLayer vertexLayer = controller.VertexLayer;
+            EdgeLayer edgeLayer = controller.EdgeLayer;
+            FaceLayer faceLayer = controller.FaceLayer;
+            ShadowSystem shadowSystem = controller.ShadowSystem;
+            Vertex cutVertex1 = null;
+            Vertex cutVertex2 = null;
+
+            foreach (Vertex v in face.Vertices)
+            {
+                if (v.GetPoint3D() == edge.Vertex1.GetPoint3D())
+                    cutVertex1 = v;
+
+                if (v.GetPoint3D() == edge.Vertex2.GetPoint3D())
+                    cutVertex2 = v;
+            }
+
+            // 生成折线边
+            Edge foldingEdge = new Edge(cutVertex1, cutVertex2);
+
+            // 分割面
+            Face newFace1 = new Face(face.Layer);
+            Face newFace2 = new Face(face.Layer);
+
+            face.LeftChild = newFace1;
+            face.RightChild = newFace2;
+
+            foldingEdge.Face1 = newFace1;
+            foldingEdge.Face2 = newFace2;
+
+            Vertex currentVertex = null;
+            Edge currentEdge = null;
+            Edge startEdge = null;
+
+            // 为新面1注册边
+            newFace1.AddEdge(foldingEdge);
+
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == foldingEdge.Vertex1)
+                {
+                    startEdge = e;
+                    currentEdge = e;
+                    currentVertex = e.Vertex2;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
+                }
+                else if (e.Vertex2 == foldingEdge.Vertex1)
+                {
+                    startEdge = e;
+                    currentEdge = e;
+                    currentVertex = e.Vertex1;
+                    newFace1.AddEdge(e);
+                    e.Face1 = newFace1;
+                }
+            }
+
+            while (currentVertex != foldingEdge.Vertex2)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        newFace1.AddEdge(e);
+                        e.Face1 = newFace1;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        newFace1.AddEdge(e);
+                        e.Face1 = newFace1;
+                        break;
+                    }
+                }
+            }
+
+            // 为新面2注册边
+            newFace2.AddEdge(foldingEdge);
+
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == foldingEdge.Vertex1 && e != startEdge)
+                {
+                    currentEdge = e;
+                    currentVertex = e.Vertex2;
+                    newFace2.AddEdge(e);
+                    e.Face2 = newFace2;
+                }
+                else if (e.Vertex2 == foldingEdge.Vertex1 && e != startEdge)
+                {
+                    currentEdge = e;
+                    currentVertex = e.Vertex1;
+                    newFace2.AddEdge(e);
+                    e.Face2 = newFace2;
+                }
+            }
+
+            while (currentVertex != foldingEdge.Vertex2)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    if (e.Vertex1 == currentVertex && e != currentEdge)
+                    {
+                        currentVertex = e.Vertex2;
+                        currentEdge = e;
+                        newFace2.AddEdge(e);
+                        e.Face2 = newFace2;
+                        break;
+                    }
+                    else if (e.Vertex2 == currentVertex && e != currentEdge)
+                    {
+                        currentVertex = e.Vertex1;
+                        currentEdge = e;
+                        newFace2.AddEdge(e);
+                        e.Face2 = newFace2;
+                        break;
+                    }
+                }
+            }
+
+            // 更新当前面中顶点序
+            newFace1.UpdateVertices();
+            newFace2.UpdateVertices();
+
+
+            // 找到所有需要保存到VertexLayer历史的顶点
+            List<Vertex> oldVertexList = UnionVertex(newFace1, newFace2);
+            oldVertexList.Remove(cutVertex1);
+            oldVertexList.Remove(cutVertex2);
+
+            // 为所有的顶点生成一个副本插到历史中。
+            shadowSystem.SaveVertices(oldVertexList);
+
+            // 更新新的面的顶点到最新版
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
+            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+
+            // 更新渲染层的部分
+            render.Delete(face);
+            render.New(newFace1);
+            render.New(newFace2);
+
+            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+
+            faceLayer.UpdateLeaves();
+            return;
+        }
+
         /// <summary>
         /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
         /// </summary>
@@ -159,8 +320,9 @@ namespace Clover
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
             VertexLayer vertexLayer = controller.VertexLayer;
+            EdgeLayer edgeLayer = controller.EdgeLayer;
+            FaceLayer faceLayer = controller.FaceLayer;
             ShadowSystem shadowSystem = controller.ShadowSystem;
-
             // 找出需要添加的点和另外一个已经存在的点 
             Vertex newVertex; Vertex otherVertex;
 
@@ -185,6 +347,9 @@ namespace Clover
                 }
             }
 
+            // 生成折线边
+            Edge foldingEdge = new Edge(newVertex, otherVertex);
+            edgeLayer.AddTree(new EdgeTree(foldingEdge));
 
             // 切割边
             Edge newEdge1 = new Edge(cuttedEdge.Vertex1, newVertex);
@@ -204,8 +369,12 @@ namespace Clover
             Vertex currentVertex = null;
             Edge currentEdge = null;
 
+            // 为折线边注册面
+            foldingEdge.Face1 = newFace1;
+            foldingEdge.Face2 = newFace2;
+
             // 为一个面注册相应的边
-            newFace1.AddEdge(edge);
+            newFace1.AddEdge(foldingEdge);
             edge.Face1 = newFace1;
             newFace1.AddEdge(newEdge1);
             newEdge1.Face1 = newFace1;
@@ -259,7 +428,7 @@ namespace Clover
 
             // 添加face2中的边
             // 为一个面注册相应的边
-            newFace2.AddEdge(edge);
+            newFace2.AddEdge(foldingEdge);
             edge.Face2 = newFace2;
             newFace2.AddEdge(newEdge2);
             edge.Face2 = newFace2;
@@ -332,11 +501,9 @@ namespace Clover
             render.New(newFace2);
 
             newVertex.Update(newVertex, null);
-            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            //renderController.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
-            controller.FaceLayer.UpdateLeaves();
-            
-
+            faceLayer.UpdateLeaves();
         }
 
         /// <summary>
