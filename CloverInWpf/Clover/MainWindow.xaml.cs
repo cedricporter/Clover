@@ -342,10 +342,11 @@ namespace Clover
 
         void FuckingKey(Object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Return)
+            if (e.Key == Key.F5)
             {
                 string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
-                histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
+                histroyTextBox.Text += commandLineTextBox.Text + "\n";
+                //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
                 commandLineTextBox.Text = "";
             }
             //e.Handled = true;

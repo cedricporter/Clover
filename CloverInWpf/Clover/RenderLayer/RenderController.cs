@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Clover.Visual;
 
 /**
 @date		:	2012/03/01
@@ -323,6 +324,19 @@ namespace Clover
         public void AddFoldingLine(Double u0, Double v0, Double u1, Double v1)
         {
             materialController.AddFoldingLine(u0, v0, u1, v1);
+        }
+
+        /// <summary>
+        /// 为一个顶点添加提示信息
+        /// </summary>
+        /// <param name="v"></param>
+        public void AddVisualInfoToVertex(Vertex v)
+        {
+            VertexInfoVisual vi = new VertexInfoVisual(v);
+            VisualController.GetSingleton().AddVisual(vi);
+            v.Update += vi.UpdateInfoCallBack;
+            //CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
+            vi.Start();
         }
 
         #region 动画

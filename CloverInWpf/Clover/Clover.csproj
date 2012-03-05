@@ -67,6 +67,7 @@
     </ApplicationDefinition>
     <Compile Include="AbstractLayer\Convert3DInfoTo2D.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
+    <Compile Include="AbstractLayer\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="AbstractLayer\ShadowSystem.cs" />
     <Compile Include="RenderLayer\MaterialController.cs" />
