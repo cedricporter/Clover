@@ -113,43 +113,43 @@ namespace Clover
         }
 
         #region 重载==运算符
-        public override bool Equals(System.Object v)
-        {
-            // If parameter is null return false:
-            if ((object)v == null)
-            {
-                return false;
-            }
+        //public override bool Equals(System.Object v)
+        //{
+        //    // If parameter is null return false:
+        //    if ((object)v == null)
+        //    {
+        //        return false;
+        //    }
 
-            // Return true if the fields match:
-            return ((Vertex)v).GetPoint3D() == this.GetPoint3D();
-        }
+        //    // Return true if the fields match:
+        //    return ((Vertex)v).GetPoint3D() == this.GetPoint3D();
+        //}
 
-        public override int GetHashCode()
-        {
-            return Index ^ _v.GetHashCode() ^ _v.GetHashCode() ^ moved.GetHashCode() ^ Version ^ point.GetHashCode() ^ Update.GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return Index ^ _v.GetHashCode() ^ _v.GetHashCode() ^ moved.GetHashCode() ^ Version ^ point.GetHashCode() ^ Update.GetHashCode();
+        //}
 
-        public static bool operator==(Vertex lhs, Vertex rhs)
-        {
-            // If both are null, or both are same instance, return true.
-            if (System.Object.ReferenceEquals(lhs, rhs))
-                return true;
+        //public static bool operator==(Vertex lhs, Vertex rhs)
+        //{
+        //    // If both are null, or both are same instance, return true.
+        //    if (System.Object.ReferenceEquals(lhs, rhs))
+        //        return true;
 
-            // If one is null, but not both, return false.
-            if (((object)lhs == null) || ((object)rhs == null))
-            {
-                return false;
-            }
+        //    // If one is null, but not both, return false.
+        //    if (((object)lhs == null) || ((object)rhs == null))
+        //    {
+        //        return false;
+        //    }
 
-            // Return true if the fields match:
-            return lhs.GetPoint3D() == rhs.GetPoint3D();
-        }
+        //    // Return true if the fields match:
+        //    return lhs.GetPoint3D() == rhs.GetPoint3D();
+        //}
 
-        public static bool operator!=(Vertex lhs, Vertex rhs)
-        {
-            return !(lhs == rhs);
-        }
+        //public static bool operator!=(Vertex lhs, Vertex rhs)
+        //{
+        //    return !(lhs == rhs);
+        //}
         #endregion
     }
 
@@ -233,18 +233,19 @@ namespace Clover
         public bool IsVerticeIn(Point3D p)
         {
             return CloverMath.IsPointInTwoPoints(p, vertex1.GetPoint3D(), vertex2.GetPoint3D(), 0.001);
-            double pointThreadhold = 0.001;
-            // 判断线
-            Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
-            Vector3D V2 = p - vertex1.GetPoint3D();
-            Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
-            Point3D p3 = vertex1.GetPoint3D() + t * V1;
-            if ((p - p3).Length < pointThreadhold)
-            {
-                return true;
-            }
 
-            return false;
+            //double pointThreadhold = 0.001;
+            //// 判断线
+            //Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
+            //Vector3D V2 = p - vertex1.GetPoint3D();
+            //Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
+            //Point3D p3 = vertex1.GetPoint3D() + t * V1;
+            //if ((p - p3).Length < pointThreadhold)
+            //{
+            //    return true;
+            //}
+
+            //return false;
         }
 
     }
@@ -366,13 +367,13 @@ namespace Clover
                 {
                     if (!ignoreList.Contains(e))
                     {
-                        if (e.Vertex1 == currentVertex)
+                        if (CloverMath.IsTwoPointsEqual(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
                         {
                             ignoreList.Add(e);
                             if (!vertices.Contains(e.Vertex2))
                                 vertices.Add(currentVertex = e.Vertex2);
                         }
-                        else if (e.Vertex2 == currentVertex)
+                        else if (CloverMath.IsTwoPointsEqual(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
                         {
                             ignoreList.Add(e);
                             if (!vertices.Contains(e.Vertex1))

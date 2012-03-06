@@ -143,10 +143,12 @@ namespace Clover.Tool
                     // 传给下一层处理
                     Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
                     UpdateFoldLine(edge);
+
+
                 }
                 else if(mode == FoldingMode.Blending)
                 {
-                    
+
                 }
                 
             }
@@ -322,7 +324,7 @@ namespace Clover.Tool
         }
 
         /// <summary>
-        /// 退出xx模式
+        /// 鼠标双击，退出xx模式
         /// </summary>
         protected override void exit()
         {
@@ -341,6 +343,9 @@ namespace Clover.Tool
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
+
+            // 完成
+
 
             mode = FoldingMode.DoingNothing;
         }

@@ -312,7 +312,7 @@ namespace Clover
             foreach (FaceGroup g in lt.Tables)
             {
                 float baseval = 0;
-                float step = 1.1f;
+                float step = 0.01f;
                 foreach (Face f in g.GetGroup())
                 {
                     Vector3D offset = g.Normal * baseval;

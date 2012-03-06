@@ -522,6 +522,8 @@ namespace Clover
 
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
+            Vertex newVertexOld1 = newVertex1;
+            Vertex newVertexOld2 = newVertex2;
 
             // 生成一个面的周围的顶点的环形表
             face.UpdateVertices();
@@ -543,9 +545,6 @@ namespace Clover
             }
             vertexList.Add(vertexList[0]);
 
-            render.AddVisualInfoToVertex(newVertex1);
-            render.AddVisualInfoToVertex(newVertex2);
-
             // 要被分割的边
             Edge beCutEdge1 = null;     
             Edge beCutEdge2 = null;
@@ -559,6 +558,8 @@ namespace Clover
             Face f2 = new Face(face.Layer);
             face.LeftChild = f1;
             face.RightChild = f2;
+
+            List<Vertex> ignoreAddHistoryVertexList = new List<Vertex>();
 
             List<Edge> currentEdgeList = null;
             for (int i = 0; i < vertexList.Count - 1; i++)
@@ -585,6 +586,30 @@ namespace Clover
                     }
                     else
                     {
+                        // 对于已经割过的边，我们“必须”使用它原来的顶点
+                        if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D()))
+                        {
+                            newVertex2 = beCutEdge1.LeftChild.Vertex1;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), beCutEdge1.LeftChild.Vertex2.GetPoint3D()))
+                        {
+                            newVertex2 = beCutEdge1.LeftChild.Vertex2;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), beCutEdge1.RightChild.Vertex1.GetPoint3D()))
+                        {
+                            newVertex2 = beCutEdge1.RightChild.Vertex1;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), beCutEdge1.RightChild.Vertex2.GetPoint3D()))
+                        {
+                            newVertex2 = beCutEdge1.RightChild.Vertex2;
+                        }
+                        else
+                        {
+                            System.Windows.MessageBox.Show("fuck2");
+                        }
+
+                        ignoreAddHistoryVertexList.Add(newVertex2);
+
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex2.GetPoint3D(), 0.001))
                         {
@@ -622,14 +647,29 @@ namespace Clover
                     }
                     else
                     {
-                        if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D()))
+                        // 对于已经割过的边，我们“必须”使用它原来的顶点
+                        if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D()))
                         {
-                            newVertex1 = beCutEdge1.LeftChild.Vertex1;
+                            newVertex1 = beCutEdge2.LeftChild.Vertex1;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D()))
+                        {
+                            newVertex1 = beCutEdge2.LeftChild.Vertex2;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge2.RightChild.Vertex1.GetPoint3D()))
+                        {
+                            newVertex1 = beCutEdge1.RightChild.Vertex1;
+                        }
+                        else if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge2.RightChild.Vertex2.GetPoint3D()))
+                        {
+                            newVertex1 = beCutEdge1.RightChild.Vertex2;
                         }
                         else
                         {
-                            newVertex1 = beCutEdge1.LeftChild.Vertex2;
+                            System.Windows.MessageBox.Show("fuck");
                         }
+
+                        ignoreAddHistoryVertexList.Add(newVertex1);
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D(), 0.001))
@@ -652,8 +692,17 @@ namespace Clover
 
             Edge newEdge = new Edge(newVertex1, newVertex2);
 
-            vertexLayer.InsertVertex(newVertex1);
-            vertexLayer.InsertVertex(newVertex2);
+            if (newVertex1 == newVertexOld1)
+            {
+                vertexLayer.InsertVertex(newVertex1);
+                render.AddVisualInfoToVertex(newVertex1);
+            }
+            if (newVertex2 == newVertexOld2)
+            {
+                vertexLayer.InsertVertex(newVertex2);
+                render.AddVisualInfoToVertex(newVertex2);
+            }
+
 
             // 更新新边的Faces指针 
             newEdge.Face1 = f1;
@@ -678,6 +727,7 @@ namespace Clover
             List<Vertex> oldVertexList = UnionVertex(f1, f2);
             oldVertexList.Remove(newVertex1);
             oldVertexList.Remove(newVertex2);
+            oldVertexList = oldVertexList.Except(ignoreAddHistoryVertexList).ToList();
 
             // 为所有的顶点生成一个副本插到历史中。
             shadowSystem.SaveVertices(oldVertexList);
