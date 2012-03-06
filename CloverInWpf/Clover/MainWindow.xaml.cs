@@ -305,6 +305,7 @@ namespace Clover
                 histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
                 //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
                 commandLineTextBox.Text = "";
+                histroyTextBox.ScrollToEnd();
             }
             //e.Handled = true;
         }
