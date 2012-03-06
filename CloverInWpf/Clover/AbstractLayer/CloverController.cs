@@ -168,10 +168,10 @@ namespace Clover
         {
             // Create 4 original vertices
             Vertex[] vertices = new Vertex[4];
-            vertices[0] = new Vertex(-width / 2, height / 2, 0);
-            vertices[1] = new Vertex(-width / 2, -height / 2, 0);
-            vertices[2] = new Vertex(width / 2, -height / 2, 0);
-            vertices[3] = new Vertex(width / 2, height / 2, 0);
+            vertices[0] = new Vertex(-width / 2, height / 2, -10);
+            vertices[1] = new Vertex(-width / 2, -height / 2, 10);
+            vertices[2] = new Vertex(width / 2, -height / 2, 10);
+            vertices[3] = new Vertex(width / 2, height / 2, -10);
             // 初始化纹理坐标
             vertices[0].u = 0; vertices[0].v = 0;
             vertices[1].u = 0; vertices[1].v = 1;

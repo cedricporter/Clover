@@ -256,11 +256,11 @@ namespace Clover.Tool
                 quat = new Quaternion(new Vector3D(1, 0, 0), 110);
             else
             {
-                //Vector3D axis = Vector3D.CrossProduct(vector1, vector3);
-                //axis.Normalize();
-                //Double deg = Vector3D.AngleBetween(vector1, vector2);
-                //quat = new Quaternion(axis, deg);
-                quat = new Quaternion();
+                Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
+                axis.Normalize();
+                Double deg = Vector3D.AngleBetween(vector1, vector2);
+                quat = new Quaternion(axis, deg);
+                quat = new Quaternion(new Vector3D(1, 0, 0), -70) * quat;
             }
             return quat;
         }
