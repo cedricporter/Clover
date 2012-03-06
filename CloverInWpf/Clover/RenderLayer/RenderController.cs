@@ -237,7 +237,7 @@ namespace Clover
             modelGroup.Children.Remove(faceMeshMap[face]);
             faceMeshMap.Remove(face);
             // 让纸张散开
-            AntiOverlap();
+            //AntiOverlap();
         }
 
         /// <summary>
@@ -306,20 +306,20 @@ namespace Clover
         /// </summary>
         void AntiOverlap()
         {
-            //LookupTable lt = CloverController.GetInstance().Table;
-            //if (lt == null || lt.Tables.Count == 0)
-            //    return;
-            //foreach (FaceGroup g in lt.Tables)
-            //{
-            //    float baseval = 0;
-            //    float step = 0.1f;
-            //    foreach (Face f in g.GetGroup())
-            //    {
-            //        Vector3D offset = g.Normal * baseval;
-            //        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-            //        baseval += step;
-            //    }
-            //}
+            LookupTable lt = CloverController.GetInstance().Table;
+            if (lt == null || lt.Tables.Count == 0)
+                return;
+            foreach (FaceGroup g in lt.Tables)
+            {
+                float baseval = 0;
+                float step = 0.1f;
+                foreach (Face f in g.GetGroup())
+                {
+                    Vector3D offset = g.Normal * baseval;
+                    faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                    baseval += step;
+                }
+            }
         }
 
         #endregion
