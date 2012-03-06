@@ -215,14 +215,14 @@ namespace Clover
         //public bool CheckForAutoFoldUp( ref List<AutoFoldInfo> atuofoldinfolist, double threshold = 0.174 )
         //{
         //    atuofoldinfolist = null;
-        //    foreach (FaceGroup fgfix in tables)
+        //    foreach ( FaceGroup fgfix in tables )
         //    {
-        //        foreach (FaceGroup fgmove in tables)
+        //        foreach ( FaceGroup fgmove in tables )
         //        {
-        //            if (fgfix != fgmove)
+        //            if ( fgfix != fgmove )
         //            {
-        //                double ang = CalculatePlaneAngle(fgfix.Normal, fgmove.Normal);
-        //                if ( ang  < threshold)
+        //                double ang = CalculatePlaneAngle( fgfix.Normal, fgmove.Normal );
+        //                if ( ang  < threshold )
         //                {
         //                    AutoFoldInfo autofoldinfo = new AutoFoldInfo();
         //                    autofoldinfo.fgFix = fgfix;
@@ -234,7 +234,7 @@ namespace Clover
         //        }
         //    }
 
-        //    if ( atuofoldinfolist.Count > 0)
+        //    if ( atuofoldinfolist.Count > 0 )
         //    {
         //        return true;
         //    }
