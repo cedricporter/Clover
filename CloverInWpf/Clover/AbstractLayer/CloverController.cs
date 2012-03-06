@@ -25,6 +25,7 @@ namespace Clover
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
         LookupTable table;
+        Point3D projectionPoint;
         public Clover.LookupTable Table
         {
             get { return table; }
@@ -32,6 +33,11 @@ namespace Clover
         #endregion
 
         #region get/set
+        public Point3D ProjectionPoint
+        {
+            get { return projectionPoint;  }
+            set { projectionPoint = value; }
+        }
         public Clover.RenderController RenderController
         {
             get { return renderController; }
