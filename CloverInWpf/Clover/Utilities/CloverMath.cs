@@ -401,7 +401,10 @@ namespace Clover
         }
 
 
+        //double CalculatePlaneAngle( Vector3D nor1, Vector3D nor2 )
+        //{
 
+        //}
 
 
         /// <summary>

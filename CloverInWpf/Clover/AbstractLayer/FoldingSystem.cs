@@ -677,15 +677,17 @@ namespace Clover
             shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
             shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
+
+            controller.Table.DeleteFace( face );
+            controller.Table.AddFace( f1 );
+            controller.Table.AddFace( f2 );
+
             // 更新渲染层的部分
             render.Delete(face);
             render.New(f1);
-            render.New(f2);
+            render.New( f2 );
 
-            // 更新Group
-            controller.Table.DeleteFace(face);
-            controller.Table.AddFace(f1);
-            controller.Table.AddFace(f2);
+            render.AntiOverlap();
 
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
