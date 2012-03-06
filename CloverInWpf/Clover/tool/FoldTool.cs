@@ -43,71 +43,78 @@ namespace Clover.Tool
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
         {
-            //System.Windows.MessageBox.Show();
+
         }
 
         protected override void onEnterElement(Object element)
         {
-            //Type t = element.GetType();
-            Debug.WriteLine(element.GetType());
+
         }
 
         protected override void onLeaveElement(Object element)
         {
-            //Debug.WriteLine(element.GetType());
+
         }
 
+        /// <summary>
+        /// 选取元素
+        /// </summary>
+        /// <param name="element"></param>
         protected override void onSelectElement(Object element)
         {
             #region 选取到的是点
             // 将视角变换到与当前纸张平行
             if (element.GetType().ToString() == "Clover.Vertex")
             {
-                
                 pickedVertex = (Vertex)element;
                 // 寻找所有拥有该点的面的集合
                 List<Face> faces = CloverTreeHelper.GetReferenceFaces(pickedVertex);
-
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
-
-                // 计算旋转
-                Quaternion quat = CalculateRotation();
-
-                // 应用旋转
-                RenderController.GetInstance().BeginRotationSlerp(quat);
-
-                // 进入折叠模式
-                mode = FoldingMode.FoldingUp;
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
-                // 显示模式
-                currentModeVi = new CurrentModeVisual("Folding Mode");
-                VisualController.GetSingleton().AddVisual(currentModeVi);
-                currentModeVi.Start();
-                // 计算并记录选择点的2D位置
-                //Point3D p3d = pickedVertex.GetPoint3D();
-                //p3d *= Utility.GetInstance().To2DMat;
-                //Origin2Dpos = new Point(p3d.X, p3d.Y); 
-                // 显示连线提示
-                lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
-                VisualController.GetSingleton().AddVisual(lineVi);
-                lineVi.Start();
-                foldLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
-                VisualController.GetSingleton().AddVisual(foldLineVi);
-                foldLineVi.Start();
+
+                if (Mouse.LeftButton == MouseButtonState.Pressed)
+                {
+                    // 进入Folding模式
+                    EnterFoldingUp();
+                }
+                else if (Mouse.RightButton == MouseButtonState.Pressed)
+                {
+                    // 进入Blending模式
+                    EnterBlending();
+                }  
 
             }
             #endregion
         }
 
+        /// <summary>
+        /// 鼠标单击，切换模式
+        /// </summary>
+        protected override void onClick()
+        {
+            if (mode == FoldingMode.DoingNothing)
+                return;
+
+            if (mode == FoldingMode.FoldingUp && Mouse.RightButton == MouseButtonState.Pressed)
+            {
+                ExitFoldingUp();
+                EnterBlending();
+            }
+            else if (mode == FoldingMode.Blending && Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                ExitBlending();
+                EnterFoldingUp();
+            }
+        }
+
         protected override void onUnselectElement(Object element)
         {
-            //throw new Exception("The method or operation is not implemented.");
         }
 
         protected override void onOverElement(Object element)
@@ -115,21 +122,32 @@ namespace Clover.Tool
 
         }
 
+        /// <summary>
+        /// 拖动元素
+        /// </summary>
+        /// <param name="element"></param>
         protected override void onDrag(Object element)
         {
             #region 如果选中的是点
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
-                // 视觉效果
-                currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X - 5, currMousePos.Y);
-                lineVi.EndPoint = currMousePos;
-                // 求2D到3D的投影点
-                Point3D projectionPoint = Get3DProjectionPoint();
-                // 传给下一层处理
-                // todo
-                Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
-                UpdateFoldLine(edge);
+                if (mode == FoldingMode.FoldingUp)
+                {
+                    // 视觉效果
+                    currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X - 5, currMousePos.Y);
+                    lineVi.EndPoint = currMousePos;
+                    // 求2D到3D的投影点
+                    Point3D projectionPoint = Get3DProjectionPoint();
+                    // 传给下一层处理
+                    // todo
+                    Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
+                    UpdateFoldLine(edge);
+                }
+                else if(mode == FoldingMode.Blending)
+                {
+                    
+                }
                 
             }
 
@@ -185,7 +203,7 @@ namespace Clover.Tool
         /// 计算旋转量
         /// </summary>
         /// <returns></returns>
-        Quaternion CalculateRotation()
+        Quaternion CalculateFoldingUpRotation()
         {
             Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
 
@@ -275,12 +293,12 @@ namespace Clover.Tool
         {
             if (mode == FoldingMode.DoingNothing)
                 return;
-            foldLineVi.End();
-            foldLineVi = null;
-            lineVi.End();
-            lineVi = null;
-            currentModeVi.End();
-            currentModeVi = null;
+
+            if (mode == FoldingMode.FoldingUp)
+                ExitFoldingUp();
+            else if (mode == FoldingMode.Blending)
+                ExitBlending();
+
             currSelectedElementVi.End();
             currSelectedElementVi = null;
             currOveredElementVi.End();
@@ -290,6 +308,63 @@ namespace Clover.Tool
             LockViewport(false);
 
             mode = FoldingMode.DoingNothing;
+        }
+
+        /// <summary>
+        /// 进入Folding模式
+        /// </summary>
+        void EnterFoldingUp()
+        {
+            mode = FoldingMode.FoldingUp;
+            // 计算旋转
+            Quaternion quat = CalculateFoldingUpRotation();
+            // 应用旋转
+            RenderController.GetInstance().BeginRotationSlerp(quat);
+            // 显示模式
+            currentModeVi = new CurrentModeVisual("Folding Up Mode");
+            VisualController.GetSingleton().AddVisual(currentModeVi);
+            currentModeVi.Start();
+            // 显示连线提示
+            lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+            VisualController.GetSingleton().AddVisual(lineVi);
+            lineVi.Start();
+            foldLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+            VisualController.GetSingleton().AddVisual(foldLineVi);
+            foldLineVi.Start();
+        }
+
+        /// <summary>
+        /// 退出Folding模式
+        /// </summary>
+        void ExitFoldingUp()
+        {
+            foldLineVi.End();
+            foldLineVi = null;
+            lineVi.End();
+            lineVi = null;
+            currentModeVi.End();
+            currentModeVi = null;
+        }
+
+        /// <summary>
+        /// 进入Blending模式
+        /// </summary>
+        void EnterBlending()
+        {
+            mode = FoldingMode.Blending;
+            // 显示模式
+            currentModeVi = new CurrentModeVisual("Blending Mode");
+            VisualController.GetSingleton().AddVisual(currentModeVi);
+            currentModeVi.Start();
+        }
+
+        /// <summary>
+        /// 退出Blending模式
+        /// </summary>
+        void ExitBlending()
+        {
+            currentModeVi.End();
+            currentModeVi = null;
         }
 
     }

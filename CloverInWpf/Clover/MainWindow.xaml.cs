@@ -193,7 +193,7 @@ namespace Clover
         }
 
         /// <summary>
-        /// 当鼠标在折纸视口上。。。
+        /// 当鼠标在折纸视口上
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -204,11 +204,11 @@ namespace Clover
         }
 
         /// <summary>
-        /// 当鼠标左键按下，，
+        /// 当鼠标按下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
@@ -320,6 +320,8 @@ namespace Clover
             }
             //e.Handled = true;
         }
+
+        
 
         
 

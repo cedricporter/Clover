@@ -441,8 +441,6 @@ namespace Clover
             table.AddFace( f1 );
             table.AddFace( f2 );
 
-            
-
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
             shadowSystem.SaveVertices(totalVertices);

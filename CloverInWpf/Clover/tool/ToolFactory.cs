@@ -205,6 +205,8 @@ namespace Clover.Tool
         /// </summary>
         public void onPress()
         {
+            #region 可锁部分
+            
             if (!isOnPressLocked)
             {
                 lastSelectedElement = currSelectedElement;
@@ -249,6 +251,10 @@ namespace Clover.Tool
                     }
                 }
             }
+
+            #endregion
+
+            onClick();
         }
 
         /// <summary>
@@ -276,6 +282,8 @@ namespace Clover.Tool
         protected abstract void onUnselectElement(Object element);
 
         protected abstract void onDrag(Object element);
+
+        protected abstract void onClick();
 
         protected abstract void exit();
 
