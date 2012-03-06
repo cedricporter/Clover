@@ -473,5 +473,72 @@ namespace Clover
             }
             return false;
         }
+
+        public static Edge GetPerpendicularBisector3D(Face face, Point3D p1, Point3D p2)
+        {
+            // 定义中垂线的两个点
+            Point3D pbP1 = new Point3D();
+            Point3D pbP2 = new Point3D();
+
+            // 取线段中点
+            Point3D middlePoint = new Point3D();
+            middlePoint.X = (p1.X + p2.X) / 2;
+            middlePoint.Y = (p1.Y + p2.Y) / 2;
+            middlePoint.Z = (p1.X + p2.Z) / 2;
+
+            // 取中截面法向量
+            Vector3D normal = new Vector3D();
+            normal = p1 - p2;
+            normal.Normalize();
+                
+            // 求中截面平面方程
+            double A = normal.X;
+            double B = normal.Y;
+            double C = normal.Z;
+            double D = -(A * middlePoint.X) - (B * middlePoint.Y) - (C * middlePoint.Z);
+
+            double Den = Math.Sqrt((A * A + B * B + C * C));
+            // 求该截面与空间线段的交点
+            bool findFirst = false;
+            bool finished = false;
+            foreach (Edge e in face.Edges)
+            { 
+                 // 求空间点到该平面上的两个投影点
+                double d1 = A * e.Vertex1.X + B * e.Vertex1.Y + C * e.Vertex1.Z + D / Den;
+                double d2 = A * e.Vertex2.X + B * e.Vertex2.Y + C * e.Vertex2.Z + D / Den;
+
+                Point3D proP1 = e.Vertex1.GetPoint3D() + d1 * normal;
+                Point3D proP2 = e.Vertex2.GetPoint3D() + d2 * normal;
+
+                Edge proE = new Edge( new Vertex(proP1), new Vertex(proP2));
+                // 求空间两直线之间的交点
+
+                if (!findFirst)
+                {
+                    if (1 == GetIntersectionOfTwoSegments(e, proE, ref pbP1))
+                    {
+                        findFirst = true;
+                    }
+                }
+                else
+                {
+                    if (1 == GetIntersectionOfTwoSegments(e, proE, ref pbP2))
+                    {
+                        finished = true;
+                        break; 
+                    }
+                }
+            }
+
+            if (finished)
+            {
+                Vertex vertex1 = new Vertex(pbP1);
+                Vertex vertex2 = new Vertex(pbP2);
+                Edge perpendicularBisector = new Edge(vertex1, vertex2);
+                return perpendicularBisector;
+            }
+
+            return null;
+        }
     }
 }

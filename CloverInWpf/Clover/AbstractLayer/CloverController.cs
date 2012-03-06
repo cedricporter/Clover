@@ -447,6 +447,18 @@ namespace Clover
             faceLayer.UpdateLeaves(face);
         }
 
+
+        public Edge UpdateFoldingLine(Face face, Vertex originVertex, Vertex ProjectionVertex)
+        {
+            Vertex vertex1 = originVertex.Clone() as Vertex;
+            Vertex vertex2 = ProjectionVertex.Clone() as Vertex;
+            
+            // 求空间折线
+            Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+
+            return foldingLine;
+        }
+
         #endregion
 
         #region 更新
@@ -942,7 +954,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            CutAFace(faceLayer.Leaves[0], new Edge(new Vertex(-50, 50, 0), new Vertex(50, 0, 0)));
+            Edge e = UpdateFoldingLine(faceLayer.Leaves[0], new Vertex(50, 50, 0), new Vertex(-50, -50, 0));
             return;
         }
         #endregion
