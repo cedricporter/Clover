@@ -74,8 +74,6 @@ namespace Clover
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
 
-            
-
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);

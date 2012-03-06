@@ -29,10 +29,9 @@ namespace Clover.Tool
     {
         Face nearestFace = null;
         Vertex pickedVertex = null;
-        Vertex pickedVertexOrigin = null;
-        Point pickedVertex2DPos = new Point();
         Point Origin2Dpos = new Point();
-        CurrentModeVisual vi = null;
+        CurrentModeVisual currentModeVi = null;
+        DashLineVisual lineVi = null;
 
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
@@ -79,13 +78,28 @@ namespace Clover.Tool
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
                 // 显示模式
-                vi = new CurrentModeVisual("Folding Mode");
-                VisualController.GetSingleton().AddVisual(vi);
-                vi.Start();
+                currentModeVi = new CurrentModeVisual("Folding Mode");
+                VisualController.GetSingleton().AddVisual(currentModeVi);
+                currentModeVi.Start();
                 // 计算并记录选择点的2D位置
                 Point3D p3d = pickedVertex.GetPoint3D();
                 p3d *= Utility.GetInstance().To2DMat;
                 Origin2Dpos = new Point(p3d.X, p3d.Y); 
+                // 显示连线提示
+                lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+                VisualController.GetSingleton().AddVisual(lineVi);
+                lineVi.Start();
+                // 
+                Edge foldLine3D = CloverController.GetInstance().CurrentFoldingLine;
+                if (foldLine3D != null)
+                {
+                    Point3D p1 = foldLine3D.Vertex1.GetPoint3D();
+                    Point3D p2 = foldLine3D.Vertex2.GetPoint3D();
+                    p1 *= Utility.GetInstance().To2DMat;
+                    p2 *= Utility.GetInstance().To2DMat;
+                    
+                }
+
             }
             #endregion
         }
@@ -108,6 +122,7 @@ namespace Clover.Tool
             {
                 // 视觉效果
                 currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X, currMousePos.Y);
+                lineVi.EndPoint = currMousePos;
                 // 求2D到3D的投影点
                 Point3D projectionPoint = Get3DProjectionPoint();
                 // 传给下一层处理
