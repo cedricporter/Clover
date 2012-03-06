@@ -18,7 +18,7 @@ namespace Clover
         /// <param name="threadhold">容许的误差值</param>
         /// <returns>返回true如果判断成立</returns>
         /// <author>Kid</author>
-        public static Boolean IsTwoPointsEqual(Point p1, Point p2, Double threadhold)
+        public static Boolean IsTwoPointsEqual(Point p1, Point p2, Double threadhold = 0.001)
         {
             if ((p2 - p1).Length < threadhold)
                 return true;
@@ -33,7 +33,7 @@ namespace Clover
         /// <param name="threadhold">容许的误差值</param>
         /// <returns>返回true如果判断成立</returns>
         /// <author>Kid</author>
-        public static Boolean IsTwoPointsEqual(Point3D p1, Point3D p2, Double threadhold)
+        public static Boolean IsTwoPointsEqual(Point3D p1, Point3D p2, Double threadhold = 0.001)
         {
             if ((p2 - p1).Length < threadhold)
                 return true;

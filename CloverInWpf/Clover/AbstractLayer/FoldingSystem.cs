@@ -622,6 +622,15 @@ namespace Clover
                     }
                     else
                     {
+                        if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D()))
+                        {
+                            newVertex1 = beCutEdge1.LeftChild.Vertex1;
+                        }
+                        else
+                        {
+                            newVertex1 = beCutEdge1.LeftChild.Vertex2;
+                        }
+
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D(), 0.001))
                         {
