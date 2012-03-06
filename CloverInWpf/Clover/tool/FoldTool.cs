@@ -32,6 +32,7 @@ namespace Clover.Tool
         Point Origin2Dpos = new Point();
         CurrentModeVisual currentModeVi = null;
         DashLineVisual lineVi = null;
+        DashLineVisual foldLineVi = null;
 
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
@@ -89,16 +90,9 @@ namespace Clover.Tool
                 lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
                 VisualController.GetSingleton().AddVisual(lineVi);
                 lineVi.Start();
-                // 
-                Edge foldLine3D = CloverController.GetInstance().CurrentFoldingLine;
-                if (foldLine3D != null)
-                {
-                    Point3D p1 = foldLine3D.Vertex1.GetPoint3D();
-                    Point3D p2 = foldLine3D.Vertex2.GetPoint3D();
-                    p1 *= Utility.GetInstance().To2DMat;
-                    p2 *= Utility.GetInstance().To2DMat;
-                    
-                }
+                foldLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+                VisualController.GetSingleton().AddVisual(foldLineVi);
+                foldLineVi.Start();
 
             }
             #endregion
@@ -121,12 +115,15 @@ namespace Clover.Tool
             if (element.GetType().ToString() == "Clover.Vertex")
             {
                 // 视觉效果
-                currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X, currMousePos.Y);
+                currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X - 5, currMousePos.Y);
                 lineVi.EndPoint = currMousePos;
                 // 求2D到3D的投影点
                 Point3D projectionPoint = Get3DProjectionPoint();
                 // 传给下一层处理
                 // todo
+                Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
+                UpdateFoldLine(edge);
+                
             }
             
 
@@ -234,6 +231,21 @@ namespace Clover.Tool
             return CloverMath.IntersectionOfLineAndPlane(start, end, nearestFace.Normal, nearestFace.Vertices[0].GetPoint3D());   
         }
 
+        /// <summary>
+        /// 更新折线
+        /// </summary>
+        /// <param name="edge"></param>
+        void UpdateFoldLine(Edge edge)
+        {
+            if (edge == null || foldLineVi == null)
+                return;
+            Point3D p1 = edge.Vertex1.GetPoint3D();
+            Point3D p2 = edge.Vertex2.GetPoint3D();
+            p1 *= Utility.GetInstance().To2DMat;
+            p2 *= Utility.GetInstance().To2DMat;
+            foldLineVi.StartPoint = new Point(p1.X, p1.Y);
+            foldLineVi.EndPoint = new Point(p2.X, p2.Y);
+        }
 
     }
 }
