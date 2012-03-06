@@ -67,7 +67,6 @@ namespace Clover
             tools.Add(tool);
             currentTool = tool;
 
-
             // 杂项
             utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();

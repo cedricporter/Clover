@@ -82,6 +82,7 @@
     <Compile Include="Utilities\CloverTreeHelper.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />
     <Compile Include="Utilities\Utility.cs" />
+    <Compile Include="Visual\CurrentModeVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
     <Compile Include="Visual\TextVisualElement.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
