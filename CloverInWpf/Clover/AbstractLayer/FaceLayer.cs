@@ -212,6 +212,36 @@ namespace Clover
         }
 
 
+        public bool CheckForAutoFoldUp( ref List<AutoFoldInfo> atuofoldinfolist, double threshold = 0.174 )
+        {
+            atuofoldinfolist = null;
+            foreach (FaceGroup fgfix in tables)
+            {
+                foreach (FaceGroup fgmove in tables)
+                {
+                    if (fgfix != fgmove)
+                    {
+                        double ang = CalculatePlaneAngle(fgfix.Normal, fgmove.Normal);
+                        if ( ang  < threshold)
+                        {
+                            AutoFoldInfo autofoldinfo = new AutoFoldInfo();
+                            autofoldinfo.fgFix = fgfix;
+                            autofoldinfo.fgMov = fgmove;
+                            autofoldinfo.angle = ang;
+
+                        }
+                    }
+                }
+            }
+
+            if ( atuofoldinfolist.Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
         /// <summary>
         /// 自动叠合的时候调用。
         /// </summary>
