@@ -7,6 +7,7 @@ using System.Windows.Media.Media3D;
 using System.Diagnostics;
 using System.Windows.Controls;
 using Clover.Visual;
+using System.Windows;
 
 /**
 @date		:	2012/03/03
@@ -27,7 +28,10 @@ namespace Clover.Tool
     class FoldTool : ToolFactory
     {
         Face nearestFace = null;
-        Vertex selectedVertex = null;
+        Vertex pickedVertex = null;
+        Vertex pickedVertexOrigin = null;
+        Point pickedVertex2DPos = new Point();
+        Point Origin2Dpos = new Point();
         CurrentModeVisual vi = null;
 
         public FoldTool(MainWindow mainWindow)
@@ -54,9 +58,9 @@ namespace Clover.Tool
             if (element.GetType().ToString() == "Clover.Vertex")
             {
                 
-                selectedVertex = (Vertex)element;
+                pickedVertex = (Vertex)element;
                 // 寻找所有拥有该点的面的集合
-                List<Face> faces = CloverTreeHelper.GetReferenceFaces(selectedVertex);
+                List<Face> faces = CloverTreeHelper.GetReferenceFaces(pickedVertex);
 
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
@@ -71,10 +75,17 @@ namespace Clover.Tool
                 // 进入折叠模式
                 // 锁定视角
                 LockViewport(true);
+                // 锁定鼠标OnPress和OnMove
+                IsOnMoveLocked = true;
+                IsOnPressLocked = true;
                 // 显示模式
                 vi = new CurrentModeVisual("Folding Mode");
                 VisualController.GetSingleton().AddVisual(vi);
                 vi.Start();
+                // 计算并记录选择点的2D位置
+                Point3D p3d = pickedVertex.GetPoint3D();
+                p3d *= Utility.GetInstance().To2DMat;
+                Origin2Dpos = new Point(p3d.X, p3d.Y); 
             }
             #endregion
         }
@@ -82,6 +93,11 @@ namespace Clover.Tool
         protected override void onUnselectElement(Object element)
         {
             //throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onOverElement(Object element)
+        {
+
         }
 
         protected override void onDrag(Object element)
@@ -97,7 +113,7 @@ namespace Clover.Tool
                 Vertex prevVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
                 if (prevVertex == null)
                     return;
-                Point3D pOrigin = prevVertex.GetPoint3D() ;
+                Point3D pOrigin = prevVertex.GetPoint3D();
 
                 Matrix3D to3DMat = Utility.GetInstance().To2DMat;
                 if (!to3DMat.HasInverse)
@@ -197,5 +213,7 @@ namespace Clover.Tool
             }
             
         }
+
+        void 
     }
 }

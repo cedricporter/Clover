@@ -97,6 +97,11 @@ namespace Clover.Tool
             //throw new Exception("The method or operation is not implemented.");
         }
 
+        protected override void onOverElement(Object element)
+        {
+
+        }
+
         protected override void onDrag(Object element)
         {
             #region 如果选中的是点
