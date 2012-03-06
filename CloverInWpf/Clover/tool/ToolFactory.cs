@@ -38,10 +38,28 @@ namespace Clover.Tool
         MainWindow mainWindow;
         VisualController visualController;
 
-        VisualElementFactory lastOveredElementVi = null;
-        VisualElementFactory currOveredElementVi = null;
-        VisualElementFactory lastSelectedElementVi = null;
-        VisualElementFactory currSelectedElementVi = null;
+        protected VisualElementFactory lastOveredElementVi = null;
+        protected VisualElementFactory currOveredElementVi = null;
+        protected VisualElementFactory lastSelectedElementVi = null;
+        protected VisualElementFactory currSelectedElementVi = null;
+
+        #region get/set
+        
+        Boolean isOnMoveLocked = false;
+        public System.Boolean IsOnMoveLocked
+        {
+            get { return isOnMoveLocked; }
+            set { isOnMoveLocked = value; }
+        }
+
+        Boolean isOnPressLocked = false;
+        public System.Boolean IsOnPressLocked
+        {
+            get { return isOnPressLocked; }
+            set { isOnPressLocked = value; }
+        }
+
+        #endregion
 
         public ToolFactory(MainWindow mainWindow)
         {
@@ -100,71 +118,82 @@ namespace Clover.Tool
         {
             currMousePos = Mouse.GetPosition(mainWindow);
 
-            // 当鼠标未按下时，触发拾取事件
-            #region 鼠标未按下
-            if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
+            if (!isOnMoveLocked)
             {
-                Object shadowElement;
-                currOveredElement = ExcuteHitTest(out shadowElement);
-
-                // 上一帧拾取到的元素和这一帧拾取到的不同
-                if (currOveredElement != lastOveredElement)
+                #region 鼠标未按下
+                // 当鼠标未按下时，触发拾取事件
+                if (Mouse.LeftButton != MouseButtonState.Pressed && Mouse.RightButton != MouseButtonState.Pressed)
                 {
-                    if (isVisualEnable)
-                    {
-                        lastOveredElementVi = currOveredElementVi;
-                        currOveredElementVi = null;
-                    }
-                    if (currOveredElement != null)
-                    {
-                        if (isVisualEnable)
-                        {
-                            // 当前拾取到的是点
-                            if (currOveredElement.GetType().ToString() == "Clover.Vertex")
-                            {
-                                Point pos = (Point)shadowElement;
-                                currOveredElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
-                                    pos.X, pos.Y);
-                                currOveredElementVi.Start();
-                                visualController.AddVisual(currOveredElementVi);
-                            }
-                            // 当前拾取到的是边
-                            //else if (currOveredElement.GetType().ToString() == "Clover.Edge")
-                            //{
-                            //    Clover.Edge2D edge2d = (Clover.Edge2D)shadowElement;
-                            //    currOveredElementVi = new EdgeHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
-                            //        edge2d.p1, edge2d.p2);
-                            //    currOveredElementVi.Start();
-                            //    visualController.AddVisual(currOveredElementVi);
-                            //}
-                        }
-                        onEnterElement(currOveredElement);
-                    }
-                    if (lastOveredElement != null)
+                    Object shadowElement;
+                    currOveredElement = ExcuteHitTest(out shadowElement);
+
+                    // 上一帧拾取到的元素和这一帧拾取到的不同
+                    if (currOveredElement != lastOveredElement)
                     {
                         if (isVisualEnable)
                         {
-                            // 使上一个视觉元素消失
-                            if (lastOveredElementVi != null)
-                            {
-                                lastOveredElementVi.End();
-                                lastOveredElementVi = null;
-                            }
+                            lastOveredElementVi = currOveredElementVi;
+                            currOveredElementVi = null;
                         }
-                        onLeaveElement(lastOveredElement);
+                        if (currOveredElement != null)
+                        {
+                            if (isVisualEnable)
+                            {
+                                // 当前拾取到的是点
+                                if (currOveredElement.GetType().ToString() == "Clover.Vertex")
+                                {
+                                    Point pos = (Point)shadowElement;
+                                    currOveredElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
+                                        pos.X, pos.Y);
+                                    currOveredElementVi.Start();
+                                    visualController.AddVisual(currOveredElementVi);
+                                }
+                                // 当前拾取到的是边
+                                //else if (currOveredElement.GetType().ToString() == "Clover.Edge")
+                                //{
+                                //    Clover.Edge2D edge2d = (Clover.Edge2D)shadowElement;
+                                //    currOveredElementVi = new EdgeHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"),
+                                //        edge2d.p1, edge2d.p2);
+                                //    currOveredElementVi.Start();
+                                //    visualController.AddVisual(currOveredElementVi);
+                                //}
+                            }
+                            onEnterElement(currOveredElement);
+                        }
+                        if (lastOveredElement != null)
+                        {
+                            if (isVisualEnable)
+                            {
+                                // 使上一个视觉元素消失
+                                if (lastOveredElementVi != null)
+                                {
+                                    lastOveredElementVi.End();
+                                    lastOveredElementVi = null;
+                                }
+                            }
+                            onLeaveElement(lastOveredElement);
+                        }
                     }
                 }
+                #endregion
+
+                lastOveredElement = currOveredElement;
             }
-            #endregion
-            #region 鼠标已按下
             else
             {
-                if (currSelectedElement != null)
-                    onDrag(currSelectedElement);
+                #region 鼠标未按下
+                if (currOveredElement != null)
+                    onOverElement(currOveredElement);
+                #endregion
+                #region 鼠标已按下
+                if (Mouse.LeftButton == MouseButtonState.Pressed || Mouse.RightButton == MouseButtonState.Pressed)
+                {
+                    if (currSelectedElement != null)
+                        onDrag(currSelectedElement);
+                }
+                #endregion
             }
-            #endregion
 
-            lastOveredElement = currOveredElement;
             lastMousePos = currMousePos;
 
             //Debug.WriteLine("=====================");
@@ -177,53 +206,60 @@ namespace Clover.Tool
         /// </summary>
         public void onPress()
         {
-            lastSelectedElement = currSelectedElement;
-            currSelectedElement = currOveredElement;
-            // 两次选取的点不一样
-            if (currSelectedElement != lastSelectedElement)
+            if (!isOnPressLocked)
             {
-                if (isVisualEnable)
-                {
-                    lastSelectedElementVi = currSelectedElementVi;
-                    currSelectedElementVi = null;
-                }
-                if (currSelectedElement != null)
+                lastSelectedElement = currSelectedElement;
+                currSelectedElement = currOveredElement;
+                // 两次选取的点不一样
+                if (currSelectedElement != lastSelectedElement)
                 {
                     if (isVisualEnable)
                     {
-                        // 当前拾取到的是点
-                        if (currOveredElement.GetType().ToString() == "Clover.Vertex")
-                        {
-                            Point3D p = ((Clover.Vertex)currSelectedElement).GetPoint3D();
-                            p *= Utility.GetInstance().To2DMat;
-                            currSelectedElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementRedBrush"),
-                                p.X, p.Y);
-                            currSelectedElementVi.Start();
-                            visualController.AddVisual(currSelectedElementVi);
-                        }
+                        lastSelectedElementVi = currSelectedElementVi;
+                        currSelectedElementVi = null;
                     }
-                    onSelectElement(currSelectedElement);
-                }
-                if (lastSelectedElement != null)
-                {
-                    if (isVisualEnable)
+                    if (currSelectedElement != null)
                     {
-                        // 使上一个视觉元素消失
-                        if (lastSelectedElementVi != null)
+                        if (isVisualEnable)
                         {
-                            lastSelectedElementVi.End();
-                            lastSelectedElementVi = null;
+                            // 当前拾取到的是点
+                            if (currOveredElement.GetType().ToString() == "Clover.Vertex")
+                            {
+                                Point3D p = ((Clover.Vertex)currSelectedElement).GetPoint3D();
+                                p *= Utility.GetInstance().To2DMat;
+                                currSelectedElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementRedBrush"),
+                                    p.X, p.Y);
+                                currSelectedElementVi.Start();
+                                visualController.AddVisual(currSelectedElementVi);
+                            }
                         }
+                        onSelectElement(currSelectedElement);
                     }
-                    onUnselectElement(lastSelectedElement);
-                }   
+                    if (lastSelectedElement != null)
+                    {
+                        if (isVisualEnable)
+                        {
+                            // 使上一个视觉元素消失
+                            if (lastSelectedElementVi != null)
+                            {
+                                lastSelectedElementVi.End();
+                                lastSelectedElementVi = null;
+                            }
+                        }
+                        onUnselectElement(lastSelectedElement);
+                    }
+                }
             }
             
+            
         }
+
 
         protected abstract void onEnterElement(Object element);
 
         protected abstract void onLeaveElement(Object element);
+
+        protected abstract void onOverElement(Object element);
 
         protected abstract void onSelectElement(Object element);
 

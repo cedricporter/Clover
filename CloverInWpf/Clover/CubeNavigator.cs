@@ -37,6 +37,11 @@ namespace Clover
     {
         static MainWindow mainWindow;
         Viewport3D cubeNavViewport;
+        public System.Windows.Controls.Viewport3D CubeNavViewport
+        {
+            get { return cubeNavViewport; }
+            set { cubeNavViewport = value; }
+        }
         Model3DGroup cubeNavModel;
         public System.Windows.Media.Media3D.Model3DGroup CubeNavModel
         {
@@ -76,16 +81,16 @@ namespace Clover
         {
             cubeNavViewport = mainWindow.CubeNavViewport;
             cubeNavModel = mainWindow.CubeNavModel;
-            cubeNavViewport.MouseLeftButtonDown += new MouseButtonEventHandler(cubeNavViewport_MouseLeftButtonDown);
-            cubeNavViewport.MouseMove += new MouseEventHandler(cubeNavViewport_MouseMove);
+            cubeNavViewport.MouseLeftButtonDown += cubeNavViewport_MouseLeftButtonDown;
+            cubeNavViewport.MouseMove += cubeNavViewport_MouseMove;
         }
 
-        private void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        public void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
         {
             lastMousePos = e.GetPosition(mainWindow);
         }
 
-        private void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
+        public void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {

@@ -6,6 +6,18 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows;
 
+/**
+@date		:	2012/03/03
+@filename	: 	MaterialController.cs
+@author		:	屠文翔	
+			 -     _     - 
+			| | - (_) __| |
+			| |/ /| |/ _  |
+			|   < | |||_| |
+			|_|\_\|_|\____|
+@note		:	线段高亮
+**/
+
 namespace Clover.Visual
 {
     class EdgeHeightLightVisual : VisualElementFactory

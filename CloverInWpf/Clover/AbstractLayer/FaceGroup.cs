@@ -37,7 +37,12 @@ namespace Clover.AbstractLayer
     public class FaceGroup
     {
         List<Face> GroupList;
-        Vector3D Normal = new Vector3D(); // 组的法向量
+        Vector3D normal = new Vector3D(); // 组的法向量
+        public System.Windows.Media.Media3D.Vector3D Normal
+        {
+            get { return normal; }
+            set { normal = value; }
+        }
         double A, B, C, D; // 面组中所有面的所在的平面的方程
 
         /// <summary>
@@ -49,12 +54,12 @@ namespace Clover.AbstractLayer
             if (f != null)
             {
                 GroupList = new List<Face>();
-                Normal = f.Normal;
-                Normal.Normalize();
+                normal = f.Normal;
+                normal.Normalize();
                 GroupList.Add( f );
-                A = Normal.X;
-                B = Normal.Y;
-                C = Normal.Z;
+                A = normal.X;
+                B = normal.Y;
+                C = normal.Z;
                 D = -( f.Vertices[ 0 ].X * A + f.Vertices[ 0 ].Y * B + f.Vertices[ 0 ].Z * C );
             }
         }

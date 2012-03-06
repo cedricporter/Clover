@@ -6,6 +6,18 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
+/**
+@date		:	2012/03/03
+@filename	: 	MaterialController.cs
+@author		:	屠文翔	
+			 -     _     - 
+			| | - (_) __| |
+			| |/ /| |/ _  |
+			|   < | |||_| |
+			|_|\_\|_|\____|
+@note		:	调试用顶点信息
+**/
+
 namespace Clover.Visual
 {
     class VertexInfoVisual : VisualElementFactory

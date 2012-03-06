@@ -63,8 +63,9 @@ namespace Clover
             // 创建工具
             ToolFactory tool = new TestTool(this);
             tools.Add(tool);
+            tool = new FoldTool(this);
+            tools.Add(tool);
             currentTool = tool;
-
 
             // 杂项
             utility = Utility.GetInstance();
@@ -200,29 +201,6 @@ namespace Clover
         {
             if (currentTool != null)
                 currentTool.onMove();
-
-
-            //Debug.WriteLine( "======================" );
-            //Debug.WriteLine( Mouse.GetPosition( this ) );
-
-            
-            //Point3D p1 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.0000001 );
-            //Point3D p2 = new Point3D( Mouse.GetPosition( this ).X, Mouse.GetPosition( this ).Y, 0.9999999 );
-
-            //Debug.WriteLine( p1 );
-            //Debug.WriteLine( p2 );
-            //Matrix3D mat = Utility.GetInstance().To2DMat;
-
-            
-            //mat.Invert();
-            //p1 *= mat;
-            //p2 *= mat;
-            //Debug.WriteLine( p1 );
-            //Debug.WriteLine( p2 );
-            //Point3D v = new Point3D();
-            //CloverMath.IntersectionOfLineAndFace( p1, p2, cloverController.FaceLayer.FacecellTree.Root, ref v );
-            //Debug.WriteLine( ">>>>>>>>>>" );
-            //Debug.WriteLine( v );
         }
 
         /// <summary>
