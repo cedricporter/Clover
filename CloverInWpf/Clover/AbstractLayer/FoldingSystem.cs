@@ -682,6 +682,7 @@ namespace Clover
             render.New(f1);
             render.New(f2);
 
+            // 更新Group
             controller.Table.DeleteFace(face);
             controller.Table.AddFace(f1);
             controller.Table.AddFace(f2);
