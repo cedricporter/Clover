@@ -492,6 +492,8 @@ namespace Clover
             
             // 求空间折线
             Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+            if (foldingLine == null)
+                return null;
 
             // 计算纹理坐标
             foreach (Edge e in face.Edges)

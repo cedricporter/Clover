@@ -546,11 +546,6 @@ namespace Clover
             render.AddVisualInfoToVertex(newVertex1);
             render.AddVisualInfoToVertex(newVertex2);
 
-            Edge newEdge = new Edge(newVertex1, newVertex2);
-
-            vertexLayer.InsertVertex(newVertex1);
-            vertexLayer.InsertVertex(newVertex2);
-
             // 要被分割的边
             Edge beCutEdge1 = null;     
             Edge beCutEdge2 = null;
@@ -564,10 +559,6 @@ namespace Clover
             Face f2 = new Face(face.Layer);
             face.LeftChild = f1;
             face.RightChild = f2;
-
-            // 更新新边的Faces指针 
-            newEdge.Face1 = f1;
-            newEdge.Face2 = f2;
 
             List<Edge> currentEdgeList = null;
             for (int i = 0; i < vertexList.Count - 1; i++)
@@ -649,6 +640,15 @@ namespace Clover
                 }
                 currentEdgeList.Add(currentEdge);
             }
+
+            Edge newEdge = new Edge(newVertex1, newVertex2);
+
+            vertexLayer.InsertVertex(newVertex1);
+            vertexLayer.InsertVertex(newVertex2);
+
+            // 更新新边的Faces指针 
+            newEdge.Face1 = f1;
+            newEdge.Face2 = f2;
 
             rangeA.Add(newEdge);
             rangeB.Add(newEdge);
