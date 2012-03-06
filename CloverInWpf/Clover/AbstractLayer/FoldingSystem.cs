@@ -43,7 +43,7 @@ namespace Clover
         /// <param name="vertex"></param>
         /// <param name="edge"></param>
         /// <returns></returns>
-        bool CalculateTexcoord(Vertex vertex, Edge edge)
+        public bool CalculateTexcoord(Vertex vertex, Edge edge)
         {
             // 判断该点是否在直线上
             if (!CloverMath.IsPointInTwoPoints(vertex.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.001))
@@ -67,7 +67,7 @@ namespace Clover
         /// <param name="vertex">需要计算纹理坐标的点</param>
         /// <param name="edge">该点所在的边</param>
         /// <param name = "length">该边根节点的总长度</param>>
-        bool CalculateTexcoord(Vertex vertex, Edge edge, double length)
+        public bool CalculateTexcoord(Vertex vertex, Edge edge, double length)
         {
             // 确认该点在该直线上
             double a = vertex.X - edge.Vertex1.X;

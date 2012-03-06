@@ -112,6 +112,8 @@ namespace Clover.Tool
                 Point3D projectionPoint = Get3DProjectionPoint();
                 // 传给下一层处理
                 // todo
+                CloverController.GetInstance().ProjectionPoint = projectionPoint;
+                CloverController.GetInstance().PickedPoint = pickedVertex.GetPoint3D();
             }
             
 

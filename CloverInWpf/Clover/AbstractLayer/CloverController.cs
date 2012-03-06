@@ -26,6 +26,7 @@ namespace Clover
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
         LookupTable table;
         Point3D projectionPoint;
+        Point3D pickedPoint;
         public Clover.LookupTable Table
         {
             get { return table; }
@@ -37,6 +38,11 @@ namespace Clover
         {
             get { return projectionPoint;  }
             set { projectionPoint = value; }
+        }
+        public Point3D PickedPoint
+        {
+            get { return pickedPoint; }
+            set { pickedPoint = value; }
         }
         public Clover.RenderController RenderController
         {
@@ -483,6 +489,19 @@ namespace Clover
             // 求空间折线
             Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
 
+            // 计算纹理坐标
+            foreach (Edge e in face.Edges)
+            {
+                if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
+                {
+                    foldingSystem.CalculateTexcoord(foldingLine.Vertex1, e);
+                }
+
+                if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
+                {
+                    foldingSystem.CalculateTexcoord(foldingLine.Vertex2, e);
+                }
+            }
             return foldingLine;
         }
 
@@ -983,7 +1002,9 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            Edge e = UpdateFoldingLine(faceLayer.Leaves[0], new Vertex(50, 50, 0), new Vertex(-50, -50, 0));
+            Edge e = UpdateFoldingLine(faceLayer.Leaves[0], new Vertex(pickedPoint), new Vertex(projectionPoint));
+            currentFoldingLine = e;
+            renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
             return;
         }
         #endregion
