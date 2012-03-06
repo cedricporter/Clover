@@ -32,7 +32,8 @@ clover = CloverController.GetInstance();
 CutFace2 = clover.CutAFaceWithAddedTwoVertices
 RotateFaces = clover.RotateFaces
 FindFacesByVertex = clover.FindFacesByVertex
-
+GetFoldingLine = clover.GetFoldingLine
+GetVertex = clover.GetVertex
 ";
 
             pythonEngine.Execute(initialString, pythonScope);

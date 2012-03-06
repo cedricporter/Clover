@@ -447,6 +447,27 @@ namespace Clover
             faceLayer.UpdateLeaves(face);
         }
 
+        /// <summary>
+        /// 通过索引获取点
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public Vertex GetVertex(int index)
+        {
+            return vertexLayer.GetVertex(index);
+        }
+
+        /// <summary>
+        /// 获取一个面的折线
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="originVertex"></param>
+        /// <param name="newVertex"></param>
+        /// <returns></returns>
+        public Edge GetFoldingLine(Face face, Vertex originVertex, Vertex newVertex)
+        {
+            return UpdateFoldingLine(face, originVertex, newVertex);
+        }
 
         public Edge UpdateFoldingLine(Face face, Vertex originVertex, Vertex ProjectionVertex)
         {
