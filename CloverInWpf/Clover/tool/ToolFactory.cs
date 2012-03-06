@@ -86,13 +86,11 @@ namespace Clover.Tool
                 // 判断点
                 if (CloverMath.IsTwoPointsEqual(p, p12d, pointThreadhold))
                 {
-                    //Debug.WriteLine(p1);
                     shadow2DElement = p12d;
                     return edge.Vertex1;
                 }
                 if (CloverMath.IsTwoPointsEqual(p, p22d, pointThreadhold))
                 {
-                    //Debug.WriteLine(p2);
                     shadow2DElement = p22d;
                     return edge.Vertex2;
                 }
@@ -253,13 +251,18 @@ namespace Clover.Tool
             }
         }
 
-        ///// <summary>
-        ///// 主循环
-        ///// </summary>
-        //public static void onRendering(Object sender, RenderingEventArgs e)
-        //{
-        //    currentTool.onIdle();
-        //}
+        /// <summary>
+        /// 鼠标双击
+        /// </summary>
+        public void onDoubleClick()
+        {
+            exit();
+        }
+
+        /// <summary>
+        /// 主循环
+        /// </summary>
+        public abstract void onIdle();
 
 
         protected abstract void onEnterElement(Object element);
@@ -274,14 +277,9 @@ namespace Clover.Tool
 
         protected abstract void onDrag(Object element);
 
-        public abstract void onIdle();
-
         protected abstract void exit();
 
-        public void onMiddleClick()
-        {
-            exit();
-        }
+        
 
 
 

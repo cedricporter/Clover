@@ -34,7 +34,11 @@ namespace Clover.Tool
         CurrentModeVisual currentModeVi = null;
         DashLineVisual lineVi = null;
         DashLineVisual foldLineVi = null;
-        Boolean isFoldingMode = false;
+        enum FoldingMode
+        {
+            DoingNothing, FoldingUp, Blending
+        }
+        FoldingMode mode = FoldingMode.DoingNothing;
 
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
@@ -75,7 +79,7 @@ namespace Clover.Tool
                 RenderController.GetInstance().BeginRotationSlerp(quat);
 
                 // 进入折叠模式
-                isFoldingMode = true;
+                mode = FoldingMode.FoldingUp;
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
@@ -86,9 +90,9 @@ namespace Clover.Tool
                 VisualController.GetSingleton().AddVisual(currentModeVi);
                 currentModeVi.Start();
                 // 计算并记录选择点的2D位置
-                Point3D p3d = pickedVertex.GetPoint3D();
-                p3d *= Utility.GetInstance().To2DMat;
-                Origin2Dpos = new Point(p3d.X, p3d.Y); 
+                //Point3D p3d = pickedVertex.GetPoint3D();
+                //p3d *= Utility.GetInstance().To2DMat;
+                //Origin2Dpos = new Point(p3d.X, p3d.Y); 
                 // 显示连线提示
                 lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
                 VisualController.GetSingleton().AddVisual(lineVi);
@@ -134,7 +138,7 @@ namespace Clover.Tool
 
         public override void onIdle()
         {
-            if (isFoldingMode)
+            if (mode != FoldingMode.DoingNothing)
             {
                 // 更新视觉坐标。。
                 Point3D p3d = pickedVertex.GetPoint3D();
@@ -264,15 +268,28 @@ namespace Clover.Tool
             foldLineVi.EndPoint = new Point(p2.X, p2.Y);
         }
 
+        /// <summary>
+        /// 退出xx模式
+        /// </summary>
         protected override void exit()
         {
-            if (!isFoldingMode)
+            if (mode == FoldingMode.DoingNothing)
                 return;
             foldLineVi.End();
+            foldLineVi = null;
             lineVi.End();
+            lineVi = null;
+            currentModeVi.End();
+            currentModeVi = null;
+            currSelectedElementVi.End();
+            currSelectedElementVi = null;
+            currOveredElementVi.End();
+            currOveredElementVi = null;
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
+
+            mode = FoldingMode.DoingNothing;
         }
 
     }

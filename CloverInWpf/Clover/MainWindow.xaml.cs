@@ -215,6 +215,17 @@ namespace Clover
         }
 
         /// <summary>
+        /// 双击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ToolFactory.currentTool != null)
+                ToolFactory.currentTool.onDoubleClick();
+        }
+
+        /// <summary>
         /// 改变折纸的距离
         /// </summary>
         /// <param name="sender"></param>
@@ -289,9 +300,6 @@ namespace Clover
                 case Key.Right:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     break;
-                case Key.F7:
-                    ToolFactory.currentTool.onMiddleClick();
-                    break;
             }
 
             //cloverController.RenderController.UpdatePosition();
@@ -312,6 +320,8 @@ namespace Clover
             }
             //e.Handled = true;
         }
+
+        
 
     }
 }
