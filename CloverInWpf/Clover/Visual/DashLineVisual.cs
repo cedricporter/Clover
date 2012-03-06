@@ -93,12 +93,12 @@ namespace Clover.Visual
 
         public override void FadeOut()
         {
-            //if (box.Opacity > 0)
-            //{
-            //    box.Opacity -= 0.1;
-            //}
-            //else
-            //    state = VisualElementFactory.State.Destroy;
+            if (box.Opacity > 0)
+            {
+                box.Opacity -= 0.1;
+            }
+            else
+                state = VisualElementFactory.State.Destroy;
         }
     }
 }

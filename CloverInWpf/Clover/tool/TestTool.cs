@@ -154,6 +154,15 @@ namespace Clover.Tool
             
 
             #endregion
+        }
+
+        protected override void exit()
+        {
+
+        }
+
+        public override void onIdle()
+        {
 
         }
     }

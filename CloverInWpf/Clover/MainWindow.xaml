@@ -5,12 +5,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.MainWindow"
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged" 
-        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseMove="Window_MouseMove">
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
 
 
         
-        <Grid x:Name="MainContainer" Margin="4,0,4,4" MouseWheel="Grid_MouseWheel"  MinWidth="10">
+        <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
         
             <TextBox x:Name="commandLineTextBox" TextWrapping="Wrap" AcceptsReturn="True"  Height="400" Width="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" KeyDown="FuckingKey"/>
             <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Height="400" Width="200" Background="White" Margin="0,0,50,0"  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>

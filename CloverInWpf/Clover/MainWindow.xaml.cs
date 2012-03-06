@@ -23,7 +23,6 @@ namespace Clover
 
         CubeNavigator cubeNav;
         List<ToolFactory> tools = new List<ToolFactory>();
-        public ToolFactory currentTool = null;
         Utility utility;
         VisualController visualController;
         CloverInterpreter cloverInterpreter = new CloverInterpreter();
@@ -65,7 +64,7 @@ namespace Clover
             tools.Add(tool);
             tool = new FoldTool(this);
             tools.Add(tool);
-            currentTool = tool;
+            ToolFactory.currentTool = tool;
 
             // 杂项
             utility = Utility.GetInstance();
@@ -129,6 +128,9 @@ namespace Clover
             visualController.Update();
 
             RenderController.GetInstance().RenderAnimations();
+
+            if (ToolFactory.currentTool != null)
+                ToolFactory.currentTool.onIdle();
         }
 
 
@@ -197,8 +199,8 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_MouseMove(object sender, MouseEventArgs e)
         {
-            if (currentTool != null)
-                currentTool.onMove();
+            if (ToolFactory.currentTool != null)
+                ToolFactory.currentTool.onMove();
         }
 
         /// <summary>
@@ -208,8 +210,8 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (currentTool != null)
-                currentTool.onPress();
+            if (ToolFactory.currentTool != null)
+                ToolFactory.currentTool.onPress();
         }
 
         /// <summary>
@@ -217,7 +219,7 @@ namespace Clover
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             RenderController renCtrl = RenderController.GetInstance();
             if (e.Delta > 0)
@@ -286,6 +288,9 @@ namespace Clover
                     break;
                 case Key.Right:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
+                    break;
+                case Key.F7:
+                    ToolFactory.currentTool.onMiddleClick();
                     break;
             }
 

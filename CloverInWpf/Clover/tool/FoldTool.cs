@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using Clover.Visual;
 using System.Windows;
+using System.Windows.Input;
 
 /**
 @date		:	2012/03/03
@@ -33,6 +34,7 @@ namespace Clover.Tool
         CurrentModeVisual currentModeVi = null;
         DashLineVisual lineVi = null;
         DashLineVisual foldLineVi = null;
+        Boolean isFoldingMode = false;
 
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
@@ -73,6 +75,7 @@ namespace Clover.Tool
                 RenderController.GetInstance().BeginRotationSlerp(quat);
 
                 // 进入折叠模式
+                isFoldingMode = true;
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
@@ -125,10 +128,24 @@ namespace Clover.Tool
                 UpdateFoldLine(edge);
                 
             }
-            
 
             #endregion
+        }
 
+        public override void onIdle()
+        {
+            if (isFoldingMode)
+            {
+                // 更新视觉坐标。。
+                Point3D p3d = pickedVertex.GetPoint3D();
+                p3d *= Utility.GetInstance().To2DMat;
+                Origin2Dpos = new Point(p3d.X, p3d.Y);
+                if (lineVi != null)
+                    lineVi.StartPoint = Origin2Dpos;
+                if (currOveredElementVi != null)
+                    currOveredElementVi.TransformGroup = new TranslateTransform(Origin2Dpos.X - 5, Origin2Dpos.Y);
+                
+            }
         }
 
         /// <summary>
@@ -245,6 +262,17 @@ namespace Clover.Tool
             p2 *= Utility.GetInstance().To2DMat;
             foldLineVi.StartPoint = new Point(p1.X, p1.Y);
             foldLineVi.EndPoint = new Point(p2.X, p2.Y);
+        }
+
+        protected override void exit()
+        {
+            if (!isFoldingMode)
+                return;
+            foldLineVi.End();
+            lineVi.End();
+            IsOnMoveLocked = false;
+            IsOnPressLocked = false;
+            LockViewport(false);
         }
 
     }
