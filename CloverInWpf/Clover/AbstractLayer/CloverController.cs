@@ -441,8 +441,6 @@ namespace Clover
             table.AddFace( f1 );
             table.AddFace( f2 );
 
-            
-
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
             shadowSystem.SaveVertices(totalVertices);
@@ -492,6 +490,8 @@ namespace Clover
             
             // 求空间折线
             Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+            if (foldingLine == null)
+                return null;
 
             // 计算纹理坐标
             foreach (Edge e in face.Edges)
