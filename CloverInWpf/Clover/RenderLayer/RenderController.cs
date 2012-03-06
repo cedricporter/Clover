@@ -8,6 +8,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Clover.Visual;
+using Clover.AbstractLayer;
 
 /**
 @date		:	2012/03/01
@@ -209,7 +210,7 @@ namespace Clover
         #endregion
 
         #region 对Mesh的操作
-        int count = 0;
+
         /// <summary>
         /// 添加一个新面
         /// </summary>
@@ -222,23 +223,8 @@ namespace Clover
             model.Geometry = NewMesh(face);
             modelGroup.Children.Add(model);
             faceMeshMap[face] = model;
-
-            //if ( count++ > 2 )
-            //{
-
-            //GeometryModel3D fuck = new GeometryModel3D();
-            //MeshGeometry3D fuckm = new MeshGeometry3D();
-            //fuckm.Positions.Add(new Point3D(0, 0, 0));
-            //fuckm.Positions.Add(new Point3D(100, 0, 0));
-            //fuckm.Positions.Add(new Point3D(100, 0, 100));
-            //fuckm.TriangleIndices.Add(0);
-            //fuckm.TriangleIndices.Add(1);
-            //fuckm.TriangleIndices.Add(2);
-            //fuck.Geometry = fuckm;
-            //fuck.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Black));
-            //fuck.BackMaterial = fuck.Material;
-            //modelGroup.Children.Add(fuck);
-            //}
+            // 让纸张散开
+            AntiOverlap();
         }
 
         /// <summary>
@@ -250,6 +236,8 @@ namespace Clover
             //bool asdf = modelGroup.Children[0].IsFrozen;
             modelGroup.Children.Remove(faceMeshMap[face]);
             faceMeshMap.Remove(face);
+            // 让纸张散开
+            AntiOverlap();
         }
 
         /// <summary>
@@ -259,6 +247,8 @@ namespace Clover
         {
             modelGroup.Children.Clear();
             faceMeshMap.Clear();
+            // 让纸张散开
+            AntiOverlap();
         }
 
         /// <summary>
@@ -267,7 +257,9 @@ namespace Clover
         /// <param name="face"></param>
         public void Update(Face face)
         {
-            faceMeshMap[face].Geometry = NewMesh(face);     
+            faceMeshMap[face].Geometry = NewMesh(face);
+            // 让纸张散开
+            AntiOverlap();
         }
 
         /// <summary>
@@ -280,6 +272,8 @@ namespace Clover
                 Face face = pair.Key;
                 pair.Value.Geometry = NewMesh(face);
             }
+            // 让纸张散开
+            AntiOverlap();
         }
 
         /// <summary>
@@ -306,14 +300,26 @@ namespace Clover
                 mesh.TriangleIndices.Add(i + 1);
                 //Debug.WriteLine(face.Vertices[i].point);
             }
-
-            // fuck you WPF patch
-            //mesh.Positions.Add(new Point3D(0, 0, 0));
-            //mesh.Positions.Add(new Point3D(0, 0, 0));
-            //mesh.TextureCoordinates.Add(new Point(0, 0));
-            //mesh.TextureCoordinates.Add(new Point(1, 1));
-
             return mesh;
+        }
+
+        /// <summary>
+        /// 反重叠，让纸张散开
+        /// </summary>
+        void AntiOverlap()
+        {
+            LookupTable lt = CloverController.GetInstance().Table;
+            foreach (FaceGroup g in lt.Tables)
+            {
+                float baseval = 0;
+                float step = 0.1f;
+                foreach (Face f in g.GetGroup())
+                {
+                    Vector3D offset = g.Normal * baseval;
+                    faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                    baseval += step;
+                }
+            }
         }
 
         #endregion
@@ -343,6 +349,10 @@ namespace Clover
             //CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
             vi.Start();
         }
+
+
+        
+
 
         #region 动画
 
