@@ -31,6 +31,7 @@ namespace Clover.Tool
         Face nearestFace = null;
         Vertex pickedVertex = null;
         Point Origin2Dpos = new Point();
+        Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
         DashLineVisual lineVi = null;
         DashLineVisual foldLineVi = null;
@@ -138,9 +139,8 @@ namespace Clover.Tool
                     currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X - 5, currMousePos.Y);
                     lineVi.EndPoint = currMousePos;
                     // 求2D到3D的投影点
-                    Point3D projectionPoint = Get3DProjectionPoint();
+                    projectionPoint = Get3DProjectionPoint();
                     // 传给下一层处理
-                    // todo
                     Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
                     UpdateFoldLine(edge);
                 }
@@ -226,6 +226,41 @@ namespace Clover.Tool
                 axis.Normalize();
                 Double deg = Vector3D.AngleBetween(vector1, vector2);
                 quat = new Quaternion(axis, deg);
+            }
+            return quat;
+        }
+
+        /// <summary>
+        /// 计算旋转量
+        /// </summary>
+        /// <returns></returns>
+        Quaternion CalculateBlendingRotation()
+        {
+            Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
+
+            // 判断该面是正面朝向用户还是背面朝向用户
+            Vector3D vector1 = nearestFace.Normal * mat;
+            Vector3D vector2 = new Vector3D(0, 0, 1);
+            Vector3D vector3 = projectionPoint - pickedVertex.GetPoint3D();
+            if (Vector3D.DotProduct(vector1, vector2) < 0)
+                vector1 = nearestFace.Normal * -1;
+            else
+                vector1 = nearestFace.Normal;
+            // 计算旋转
+            Quaternion quat;
+            if (vector1 == new Vector3D(0, 0, 1))
+            {
+                quat = new Quaternion(new Vector3D(1, 0, 0), -70);
+            }
+            else if (vector1 == new Vector3D(0, 0, -1))
+                quat = new Quaternion(new Vector3D(1, 0, 0), 110);
+            else
+            {
+                //Vector3D axis = Vector3D.CrossProduct(vector1, vector3);
+                //axis.Normalize();
+                //Double deg = Vector3D.AngleBetween(vector1, vector2);
+                //quat = new Quaternion(axis, deg);
+                quat = new Quaternion();
             }
             return quat;
         }
@@ -352,6 +387,10 @@ namespace Clover.Tool
         void EnterBlending()
         {
             mode = FoldingMode.Blending;
+            // 计算旋转
+            Quaternion quat = CalculateBlendingRotation();
+            // 应用旋转
+            RenderController.GetInstance().BeginRotationSlerp(quat);
             // 显示模式
             currentModeVi = new CurrentModeVisual("Blending Mode");
             VisualController.GetSingleton().AddVisual(currentModeVi);
