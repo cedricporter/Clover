@@ -26,7 +26,13 @@ import clr, sys
 import System.Collections.Generic.List as List
 clr.AddReference('Clover')
 from Clover import *
+# 获取CloverController的实例
 clover = CloverController.GetInstance();
+# 取出所有的函数指针
+CutFace2 = clover.CutAFaceWithAddedTwoVertices
+RotateFaces = clover.RotateFaces
+FindFacesByVertex = clover.FindFacesByVertex
+
 ";
 
             pythonEngine.Execute(initialString, pythonScope);
@@ -53,7 +59,7 @@ clover = CloverController.GetInstance();
             }
             catch (System.Exception ex)
             {
-                return ex.Message;
+                return ex.ToString();
             }
             return "";
         }
