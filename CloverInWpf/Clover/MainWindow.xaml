@@ -11,8 +11,8 @@
         
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MouseMove="Grid_MouseMove" MouseWheel="Grid_MouseWheel"  MinWidth="10">
         
-            <TextBox x:Name="commandLineTextBox" TextWrapping="Wrap" AcceptsReturn="True"  Height="60" Width="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" KeyDown="FuckingKey"/>
-            <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Height="60" Width="200" Background="White" Margin="0,0,50,0"  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            <TextBox x:Name="commandLineTextBox" TextWrapping="Wrap" AcceptsReturn="True"  Height="400" Width="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" KeyDown="FuckingKey"/>
+            <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Height="400" Width="200" Background="White" Margin="0,0,50,0"  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
             <!-- 折纸 -->
             <Viewport3D x:Name="foldingPaperViewport">
                 <Viewport3D.Camera>

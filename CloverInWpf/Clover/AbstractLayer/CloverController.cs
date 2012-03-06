@@ -666,14 +666,14 @@ namespace Clover
         /// <returns></returns>
         public List<Face> FindFacesByVertex(Vertex vertex)
         {
-            //return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertex);
-            return CloverTreeHelper.GetReferenceFaces(vertex);
+            return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertex);
+            //return CloverTreeHelper.GetReferenceFaces(vertex);
         }
 
         public List<Face> FindFacesByVertex(int index)
         {
-            //return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertexLayer.GetVertex(index));
-            return CloverTreeHelper.GetReferenceFaces(vertexLayer.GetVertex(index));
+            return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertexLayer.GetVertex(index));
+            //return CloverTreeHelper.GetReferenceFaces(vertexLayer.GetVertex(index));
         }
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
