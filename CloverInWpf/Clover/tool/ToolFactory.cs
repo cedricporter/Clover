@@ -38,10 +38,10 @@ namespace Clover.Tool
         MainWindow mainWindow;
         VisualController visualController;
 
-        VisualElementFactory lastOveredElementVi = null;
-        VisualElementFactory currOveredElementVi = null;
-        VisualElementFactory lastSelectedElementVi = null;
-        VisualElementFactory currSelectedElementVi = null;
+        protected VisualElementFactory lastOveredElementVi = null;
+        protected VisualElementFactory currOveredElementVi = null;
+        protected VisualElementFactory lastSelectedElementVi = null;
+        protected VisualElementFactory currSelectedElementVi = null;
 
         #region get/set
         

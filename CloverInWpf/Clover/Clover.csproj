@@ -84,7 +84,6 @@
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Visual\CurrentModeVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
-    <Compile Include="Visual\TextVisualElement.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
     <Compile Include="Visual\VertexInfoVisual.cs" />
     <Compile Include="Visual\VisualController.cs" />

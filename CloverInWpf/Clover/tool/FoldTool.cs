@@ -106,26 +106,12 @@ namespace Clover.Tool
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
-                Vertex pickedVertex = (Vertex)element;
-                //Point3D pickedVertex = ((Vertex)element).GetPoint3D();
-                // 鼠标拖动顶点，动态生成折线
-                // 记录该点的原始位置
-                Vertex prevVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
-                if (prevVertex == null)
-                    return;
-                Point3D pOrigin = prevVertex.GetPoint3D();
-
-                Matrix3D to3DMat = Utility.GetInstance().To2DMat;
-                if (!to3DMat.HasInverse)
-                    return;
-                to3DMat.Invert();
-                Point3D start = new Point3D(currMousePos.X, currMousePos.Y, 0.0000001);
-                Point3D end = new Point3D(currMousePos.X, currMousePos.Y, 0.9999999);
-                start *= to3DMat;
-                end *= to3DMat;
-                Point3D P1 = new Point3D();
-                CloverMath.IntersectionOfLineAndFace(start, end, nearestFace, ref P1);
-                
+                // 视觉效果
+                currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X, currMousePos.Y);
+                // 求2D到3D的投影点
+                Point3D projectionPoint = Get3DProjectionPoint();
+                // 传给下一层处理
+                // todo
             }
             
 
@@ -214,6 +200,25 @@ namespace Clover.Tool
             
         }
 
-        void 
+        /// <summary>
+        /// 求2D到3D的投影点
+        /// 杨旭瑜提供
+        /// </summary>
+        /// <returns></returns>
+        Point3D Get3DProjectionPoint()
+        {
+            Matrix3D to3DMat = Utility.GetInstance().To2DMat;
+            if (!to3DMat.HasInverse)
+                return new Point3D(0, 0, 0);
+            to3DMat.Invert();
+            Point3D start = new Point3D(currMousePos.X, currMousePos.Y, 0.0000001);
+            Point3D end = new Point3D(currMousePos.X, currMousePos.Y, 0.9999999);
+            start *= to3DMat;
+            end *= to3DMat;
+
+            return CloverMath.IntersectionOfLineAndPlane(start, end, nearestFace.Normal, nearestFace.Vertices[0].GetPoint3D());   
+        }
+
+
     }
 }

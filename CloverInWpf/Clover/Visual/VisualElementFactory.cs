@@ -20,7 +20,7 @@ using System.Windows;
 
 namespace Clover.Visual
 {
-    abstract class VisualElementFactory
+    public abstract class VisualElementFactory
     {
         public enum State
         {
