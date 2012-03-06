@@ -924,6 +924,7 @@ namespace Clover
             renderController.UpdateAll();
         }
 
+        
         #endregion
 
         #region 更新图形层的模型
