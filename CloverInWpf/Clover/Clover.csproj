@@ -83,6 +83,7 @@
     <Compile Include="Utilities\LinearEquation.cs" />
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Visual\CurrentModeVisual.cs" />
+    <Compile Include="Visual\DashLineVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
     <Compile Include="Visual\VertexInfoVisual.cs" />

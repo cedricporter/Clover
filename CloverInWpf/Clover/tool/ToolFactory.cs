@@ -31,6 +31,7 @@ namespace Clover.Tool
         static public Object currOveredElement = null;
         static public Object lastSelectedElement = null;
         static public Object currSelectedElement = null;
+        static public ToolFactory currentTool = null;
 
         Double pointThreadhold = 10;         /// 拾取点误差
         //Double lineThreadhold = 0.15;      /// 拾取线误差
@@ -250,9 +251,15 @@ namespace Clover.Tool
                     }
                 }
             }
-            
-            
         }
+
+        ///// <summary>
+        ///// 主循环
+        ///// </summary>
+        //public static void onRendering(Object sender, RenderingEventArgs e)
+        //{
+        //    currentTool.onIdle();
+        //}
 
 
         protected abstract void onEnterElement(Object element);
@@ -266,6 +273,15 @@ namespace Clover.Tool
         protected abstract void onUnselectElement(Object element);
 
         protected abstract void onDrag(Object element);
+
+        public abstract void onIdle();
+
+        protected abstract void exit();
+
+        public void onMiddleClick()
+        {
+            exit();
+        }
 
 
 
