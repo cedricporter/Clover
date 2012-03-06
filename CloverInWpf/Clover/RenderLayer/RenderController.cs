@@ -247,8 +247,6 @@ namespace Clover
         {
             modelGroup.Children.Clear();
             faceMeshMap.Clear();
-            // 让纸张散开
-            AntiOverlap();
         }
 
         /// <summary>
@@ -309,6 +307,8 @@ namespace Clover
         void AntiOverlap()
         {
             LookupTable lt = CloverController.GetInstance().Table;
+            if (lt == null || lt.Tables.Count == 0)
+                return;
             foreach (FaceGroup g in lt.Tables)
             {
                 float baseval = 0;

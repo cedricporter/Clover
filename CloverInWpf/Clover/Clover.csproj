@@ -65,7 +65,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AbstractLayer\CloverTreeHelper.cs" />
     <Compile Include="AbstractLayer\Convert3DInfoTo2D.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
     <Compile Include="AbstractLayer\FoldingSystem.cs" />
@@ -76,9 +75,11 @@
     <Compile Include="ToolBox.xaml.cs">
       <DependentUpon>ToolBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
     <Compile Include="Utilities\CloverMath.cs" />
+    <Compile Include="Utilities\CloverTreeHelper.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />
     <Compile Include="Utilities\Utility.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
