@@ -125,37 +125,13 @@ namespace Clover
             Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f.Normal, f.Vertices[0].GetPoint3D());
 
             // 判断点在不在face内
-            Point3D[] points = new Point3D[f.Vertices.Count];
-            for (int i = 0; i < points.Length; i++)
-                points[i] = f.Vertices[i].GetPoint3D();
-            if (IsPointInArea(IntersectiongPoint, points))
+            if ( IsPointInArea( IntersectiongPoint, f ) )
             {
                 p = IntersectiongPoint;
                 return true;
             }
             return false;
                 
-            //Vector3D[] vector = new Vector3D[f.Vertices.Count];
-            //int i = 0;
-            //foreach (Vertex ve in f.Vertices)
-            //{
-            //    vector[i] = IntersectiongPoint - ve.GetPoint3D();
-            //    i++;
-            //}
-
-            //foreach ( Vector3D v1 in vector)
-            //{
-            //    foreach ( Vector3D v2 in vector)
-            //    {
-            //        if ( Vector3D.DotProduct( v1, v2 ) <= 0 )
-            //        {
-            //            p = IntersectiongPoint;
-            //            return true;
-            //        }
-
-            //    }
-            //}
-            //return false;
              
         }
 
@@ -409,53 +385,23 @@ namespace Clover
         /// <param name="points">平面的边界</param>
         /// <returns>返回true如果点在平面内或平面边界上</returns>
         /// <author>kid</author>
-        public static Boolean IsPointInArea(Point3D pe, Point3D[] points)
+        public static Boolean IsPointInArea( Point3D pe, Face f )
         {
-            Vector3D lastN = new Vector3D(0, 0, 0);
-            for (int i = 0; i < points.Length; i++)
+            Vector3D lastN = new Vector3D( 0, 0, 0 );
+            for ( int i = 0; i < f.Vertices.Count; i++ )
             {
-                Vector3D v1 = pe - points[i];
-                Vector3D v2 = points[(i + 1) % points.Length] - pe;
-                Vector3D currN = Vector3D.CrossProduct(v1, v2);
-                if (Vector3D.DotProduct(currN, lastN) < 0)
+                Vector3D v1 = pe - f.Vertices[ i ].GetPoint3D();
+                Vector3D v2 = f.Vertices[ ( i + 1 ) % f.Vertices.Count ].GetPoint3D() - pe;
+                Vector3D currN = Vector3D.CrossProduct( v1, v2 );
+                if ( Vector3D.DotProduct( currN, lastN ) < 0 )
                     return false;
                 lastN = currN;
             }
-                return true;
+            return true;
         }
 
 
 
-
-        /// <summary>
-        /// 判断一个点是否位于一个face中
-        /// </summary>
-        /// <param name="p"></param>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static bool IsPointInFace(Point3D p, Face f)
-        {
-            Vector3D[] vector = new Vector3D[ f.Vertices.Count ];
-            int i = 0;
-            foreach ( Vertex ve in f.Vertices )
-            {
-                vector[ i ] = p - ve.GetPoint3D();
-                i++;
-            }
-
-            foreach ( Vector3D v1 in vector )
-            {
-                foreach ( Vector3D v2 in vector )
-                {
-                    if ( Vector3D.DotProduct( v1, v2 ) < 0 )
-                    {
-                        return true;
-                    }
-
-                }
-            }
-            return false;
-        }
 
 
         /// <summary>
@@ -468,7 +414,7 @@ namespace Clover
         {
             foreach (Vertex v in f1.Vertices)
             {
-                if ( IsPointInFace( v.GetPoint3D(), f2 ) )
+                if ( IsPointInArea( v.GetPoint3D(), f2 ) )
                     return true;
             }
             return false;
