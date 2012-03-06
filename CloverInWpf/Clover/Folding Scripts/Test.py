@@ -1,4 +1,4 @@
-vertex = GetVertex(0)
+﻿vertex = GetVertex(0)
 face = FindFacesByVertex(0)[0]
 edge = GetFoldingLine(face, vertex, Vertex(0, 0))
 

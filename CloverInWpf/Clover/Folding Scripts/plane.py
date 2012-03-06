@@ -1,14 +1,14 @@
-#
-# 2B·É»ú By ET
+ï»¿#
+# 2Bé£æœº By ET
 #
 
-# ÏÈÔÚÖĞ¼ä»­ÌõÕÛÏß
+# å…ˆåœ¨ä¸­é—´ç”»æ¡æŠ˜çº¿
 edgeMiddle = Edge(Vertex(-50, 0, 0), Vertex(50, 0,0))
 face = FindFacesByVertex(0)[0]
 CutFace2(face, edgeMiddle)
 
 for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 13, -1)]:
-    # ×óÉÏ½ÇÍù»ØÕÛ
+    # å·¦ä¸Šè§’å¾€å›æŠ˜
     edge = Edge(Vertex(50, sign * 10, 0), Vertex(10, sign * 50,0))
     face = FindFacesByVertex(v1)[0]
     CutFace2(face, edge)
@@ -16,7 +16,7 @@ for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 13, -1)]:
     faces = FindFacesByVertex(v1)
     RotateFaces(faces, edge, 180)
 
-    # ÉÏÃæ1/4·´ÕÛ
+    # ä¸Šé¢1/4åæŠ˜
     edge = Edge(Vertex(-50, sign * 30, 0), Vertex(30, sign * 30,0))
     face = FindFacesByVertex(v2)[0]
     CutFace2(face, edge)
@@ -25,10 +25,10 @@ for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 13, -1)]:
     face = FindFacesByVertex(v1)[0]
     CutFace2(face, edge)
 
-    # ³á°òÍù»ØÕÛ
+    # ç¿…è†€å¾€å›æŠ˜
     faces = FindFacesByVertex(v3)
     RotateFaces(faces, edge, sign * 90)
 
-# ¶ÔÕÛ
+# å¯¹æŠ˜
 faces = FindFacesByVertex(16)
 RotateFaces(faces, edgeMiddle, 180)
