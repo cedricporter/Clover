@@ -146,7 +146,8 @@ namespace Clover.Tool
                         projectionPoint = nearestPoint;
                     // 视觉效果
                     Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
-                    currSelectedElementVi.TransformGroup = new TranslateTransform(visualPoint.X - 5, visualPoint.Y);
+                    (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
+                    (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                     
                     // 传给下一层处理
@@ -178,8 +179,10 @@ namespace Clover.Tool
                 if (lineVi != null)
                     lineVi.StartPoint = Origin2Dpos;
                 if (currOveredElementVi != null)
-                    currOveredElementVi.TransformGroup = new TranslateTransform(Origin2Dpos.X - 5, Origin2Dpos.Y);
-
+                {
+                    (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
+                    (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
+                }
             }
         }
 

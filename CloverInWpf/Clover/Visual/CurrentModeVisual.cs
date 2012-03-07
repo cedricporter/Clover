@@ -25,6 +25,7 @@ namespace Clover.Visual
     {
 
         int posY = 60;
+        TranslateTransform ts;
 
         public CurrentModeVisual(String text)
         {
@@ -41,7 +42,8 @@ namespace Clover.Visual
             innerBox.Children.Add(textblock);
             box.Children.Add(innerBox);
             box.Opacity = 0;
-            TransformGroup = new TranslateTransform(10, posY);
+            ts = new TranslateTransform(10, posY);
+            TransformGroup = ts;
         }
 
         public override void FadeIn()
@@ -49,7 +51,8 @@ namespace Clover.Visual
             if (box.Opacity < 1)
             {
                 box.Opacity += 0.1;
-                TransformGroup = new TranslateTransform(10, posY);
+                ts.Y = posY;
+                //TransformGroup = new TranslateTransform(10, posY);
                 posY -= 1;
             }
             else
@@ -66,7 +69,8 @@ namespace Clover.Visual
             if (box.Opacity > 0)
             {
                 box.Opacity -= 0.1;
-                TransformGroup = new TranslateTransform(10, posY);
+                //TransformGroup = new TranslateTransform(10, posY);
+                ts.Y = posY;
                 posY += 1;
             }
             else
