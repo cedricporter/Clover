@@ -12,7 +12,7 @@
         
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
-            <Viewport3D x:Name="foldingPaperViewport" d:IsLocked="True">
+            <Viewport3D x:Name="foldingPaperViewport" IsHitTestVisible="False" d:IsLocked="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
@@ -136,7 +136,7 @@
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
-                    <Separator BorderThickness="10" Style="{DynamicResource SeparatorStyle1}"></Separator>
+                    <Separator BorderThickness="10" Style="{StaticResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
                         <MenuItem Header="3D Model"/>
                         <MenuItem Header="Annotated Paper"/>

@@ -105,23 +105,25 @@ namespace Clover
                 bmp.Render(dv);
 
                 // 将略缩图加入菜单
-                img = new Image();
-                img.Source = bmp;
-                System.Windows.Shapes.Rectangle hl = new System.Windows.Shapes.Rectangle();
-                hl.Fill = new SolidColorBrush(Color.FromArgb(100, 0, 116, 255));
-                hl.Height = hl.Width = 100;
-                hl.Visibility = Visibility.Hidden;
                 Canvas box = new Canvas();
                 box.Height = box.Width = 100;
                 box.Margin = new Thickness(5);
                 box.Cursor = Cursors.Hand;
-                box .Effect = (Effect)App.Current.FindResource("DropShadowEffect1px");
-                box.Children.Add(img);
-                box.Children.Add(hl);
+                box.Effect = (Effect)App.Current.FindResource("DropShadowEffect1px");
                 box.MouseLeftButtonDown += OnPreviewClick;
                 box.MouseEnter += OnPreviewEnter;
                 box.MouseLeave += OnPreviewLeave;
                 mainWindow.PaperPreviewPanel.Children.Add(box);
+                img = new Image();
+                img.Source = bmp;
+                box.Children.Add(img);
+                System.Windows.Shapes.Rectangle hl = new System.Windows.Shapes.Rectangle();
+                hl.Fill = new SolidColorBrush(Color.FromArgb(100, 0, 116, 255));
+                hl.Height = hl.Width = 100;
+                hl.Visibility = Visibility.Hidden;
+                box.Children.Add(hl);
+                
+                
 
                 // 将信息装入列表
                 PaperTextureInfo info = new PaperTextureInfo();

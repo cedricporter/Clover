@@ -30,6 +30,7 @@ namespace Clover.Visual
         public CurrentModeVisual(String text)
         {
             Grid innerBox = new Grid();
+            box.Children.Add(innerBox);
             Rectangle bg = new Rectangle();
             bg.RadiusX = bg.RadiusY = 15;
             bg.Fill = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0));
@@ -40,7 +41,6 @@ namespace Clover.Visual
             textblock.FontSize = 14;
             textblock.Foreground = new SolidColorBrush(Colors.White);
             innerBox.Children.Add(textblock);
-            box.Children.Add(innerBox);
             box.Opacity = 0;
             ts = new TranslateTransform(10, posY);
             TransformGroup = ts;
