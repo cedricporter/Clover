@@ -831,7 +831,6 @@ namespace Clover
         /// <param name="foldingLine"></param>
         public void AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
         {
-            currentFoldingLine = foldingLine;
             table.UpdateLookupTable();
             
 
@@ -860,7 +859,7 @@ namespace Clover
                 bool findMovedFace = false;
                 foreach (Edge e in face.LeftChild.Edges)
                 {
-                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                    if (e.Vertex1.GetPoint3D() == pickedVertex.GetPoint3D() || e.Vertex2.GetPoint3D() == pickedVertex.GetPoint3D())
                     {
                         faceWithoutFoldingLine.Add(face.LeftChild);
                         findMovedFace = true;
@@ -871,6 +870,46 @@ namespace Clover
                 if (!findMovedFace)
                     faceWithoutFoldingLine.Add(face.RightChild);
             }
+        }
+
+        /// <summary>
+        /// 直接折叠到投影点上
+        /// </summary>
+        /// <param name="pickedFace"></param>
+        /// <param name="pickedVertex"></param>
+        /// <param name="projectionPoint"></param>
+        public Edge FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
+        {
+            // 根据顶点生成折线
+            currentFoldingLine = CloverMath.GetPerpendicularBisector3D(pickedFace, pickedVertex.GetPoint3D(), projectionPoint);
+
+            if (currentFoldingLine == null)
+            {
+                MessageBox.Show("Fuck 木有折线");
+                return null; 
+            }
+            // 查找所有需要移动的面
+            AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
+            
+            // 计算所需旋转角度
+            Point3D crossPoint = new Point3D();
+            Edge segmentFromOriginToPro = new Edge( pickedVertex, new Vertex(projectionPoint));
+
+            if( 1 != CloverMath.GetIntersectionOfTwoSegments( currentFoldingLine, segmentFromOriginToPro, ref crossPoint) )
+            {
+                MessageBox.Show("Fuck 木有交点");
+                return null;
+            }
+
+            Vector3D v1 = pickedVertex.GetPoint3D() - crossPoint;
+            Vector3D v2 = projectionPoint - crossPoint;
+
+            double angle = Vector3D.AngleBetween(v1, v2);
+
+            // 根据旋转角度对所有移动面进行旋转
+            RotateFaces(faceWithoutFoldingLine, currentFoldingLine, angle);
+
+            return currentFoldingLine; 
         }
         /// <summary>
         /// 根据鼠标位移在每个渲染帧前更新结构
@@ -982,7 +1021,7 @@ namespace Clover
             //    v.Moved = false; 
             //}
 
-            RotateFaces(faceWithoutFoldingLine, currentFoldingLine, -10, 0);
+            RotateFaces(faceWithoutFoldingLine, currentFoldingLine, yRel, xRel);
             renderController.UpdateAll();
         }
 

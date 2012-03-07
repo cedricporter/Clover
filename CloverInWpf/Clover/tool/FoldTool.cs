@@ -143,7 +143,8 @@ namespace Clover.Tool
                     // 求2D到3D的投影点
                     projectionPoint = Get3DProjectionPoint();
                     // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
+                    Edge edge = CloverController.GetInstance().FoldingUpToPoint(nearestFace, pickedVertex, new Point3D(0, 0, 0));
+                   
                     // 更新折线显示
                     UpdateFoldLine(edge);
                     // 更新提示信息
