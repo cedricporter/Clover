@@ -53,6 +53,14 @@ namespace Clover
 
         #endregion
 
+        public struct PaperTextureInfo
+        {
+            public Canvas box;
+            public String path;
+        }
+
+        List<PaperTextureInfo> infoList = new List<PaperTextureInfo>();
+
         /// <summary>
         /// 从指定路径扫描纹理文件
         /// </summary>
@@ -112,22 +120,52 @@ namespace Clover
                 box.MouseEnter += OnPreviewEnter;
                 box.MouseLeave += OnPreviewLeave;
                 mainWindow.PaperPreviewPanel.Children.Add(box);
+
+                // 将信息装入列表
+                PaperTextureInfo info = new PaperTextureInfo();
+                info.path = file;
+                info.box = box;
+                infoList.Add(info);
             }
         }
 
+        /// <summary>
+        /// 高亮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnPreviewEnter(Object sender, EventArgs e)
         {
             (sender as Canvas).Children[1].Visibility = Visibility.Visible;
         }
 
+        /// <summary>
+        /// 停止高亮
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnPreviewLeave(Object sender, EventArgs e)
         {
             (sender as Canvas).Children[1].Visibility = Visibility.Hidden;
         }
 
+        /// <summary>
+        /// 选择指定的图片作为纸张纹理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void OnPreviewClick(Object sender, EventArgs e)
         {
-
+            Canvas box = (Canvas)sender;
+            foreach (PaperTextureInfo info in infoList)
+            {
+                if (info.box == box)
+                {
+                    // 应用纹理
+                    MessageBox.Show(info.path);
+                    return;
+                }
+            }
         }
 
     }
