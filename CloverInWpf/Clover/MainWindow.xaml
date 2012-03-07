@@ -67,19 +67,30 @@
 	        </Viewport3D>	        
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
-            <Grid x:Name="Overlays" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Panel.ZIndex="20"/>
-            <Grid Margin="8,42,0,0" HorizontalAlignment="Left" Width="169.5" Height="45" VerticalAlignment="Top" Visibility="Hidden">
-            	<Rectangle Fill="#7F000000" Margin="0" RadiusX="15" RadiusY="15"/>
-            	<TextBlock Margin="20.5,10.363,20,0" TextWrapping="Wrap" FontSize="18.667" Foreground="White" VerticalAlignment="Top"><Run Language="zh-cn" Text="Folding Mode"/></TextBlock>
-            </Grid>      
+            <!-- 工具栏 -->
+            <Grid x:Name="ToolBox"  Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Height="30" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                        Tool Box
+                    </TextBlock>
+                </Grid>
+                <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
+                <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            </Grid>
 		</Grid>
         
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
         	<Grid x:Name="MenuBarBackground" Margin="0">
-        		<Rectangle Fill="{StaticResource BackgroundStrokeBlack}" Margin="4,0"/>
-        		<Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
-        		<Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
-        	</Grid>
+                <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+            </Grid>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
             	<MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="New">

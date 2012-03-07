@@ -748,9 +748,9 @@ namespace Clover
                 v.Moved = false; 
             }
 
-            renderController.UpdateAll();
-
+            // 必须先更新group后更新render
             table.UpdateLookupTable();
+            renderController.UpdateAll();
         }
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
