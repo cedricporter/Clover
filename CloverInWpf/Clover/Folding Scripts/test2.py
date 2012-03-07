@@ -39,7 +39,5 @@ edge = Edge(Vertex(-50, 30, 0), Vertex(30, 30,0))
 face = FindFacesByVertex(7)
 CutFaces(face, edge)
 
-
-
 faces = FindFacesByVertex(7)
 RotateFaces(faces, edge, 90)

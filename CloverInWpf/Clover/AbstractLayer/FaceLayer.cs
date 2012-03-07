@@ -120,7 +120,7 @@ namespace Clover
     /// <summary>
     /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
     /// </summary>
-    public class LookupTable
+    public class LookupTable : ICloneable
     {
         List<FaceGroup> tables = new List<FaceGroup>();
         
@@ -169,7 +169,6 @@ namespace Clover
         /// <param name="f"></param>
         public void AddFace(Face f)
         {
-
             foreach (FaceGroup fg in tables)
             {
                 if ( fg.IsMatch(f) )
@@ -226,7 +225,22 @@ namespace Clover
            
         }
 
+        public object Clone()
+        {
+            LookupTable newtables = new LookupTable( null );
+            newtables.tables.Clear();
+            foreach ( FaceGroup fg in tables )
+            {
+                foreach (Face f in fg.GetGroup())
+                {
+                    newtables.AddFace( f );
+                }
+            }
+            return newtables;
+        }
 
+
+        
         /// <summary>
         /// 刷新table中的列表，删除空的组
         /// </summary>

@@ -21,18 +21,22 @@ namespace Clover
     public class SnapshotNode
     {
         SnapshotNode type;
+        List<Face> faceLeaves = new List<Face>();
+
+        #region get/set
         public Clover.SnapshotNode Type
         {
             get { return type; }
             set { type = value; }
         }
-        List<Face> faceLeaves = new List<Face>();
         public List<Face> FaceLeaves
         {
             get { return faceLeaves; }
             set { faceLeaves = value; }
         }
+        #endregion
 
+        #region API
         public SnapshotNode(List<Face> leaves)
         {
             foreach (Face f in leaves)
@@ -45,6 +49,7 @@ namespace Clover
         {
             faceLeaves.Add(face);
         }
+        #endregion
 
     }
 
