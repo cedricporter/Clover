@@ -7,7 +7,7 @@ edgeMiddle = Edge(Vertex(-50, 0, 0), Vertex(50, 0,0))
 face = FindFacesByVertex(0)[0]
 CutFace2(face, edgeMiddle)
 
-for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 13, -1)]:
+for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 12, -1)]:
     # 左上角往回折
     edge = Edge(Vertex(50, sign * 10, 0), Vertex(10, sign * 50,0))
     face = FindFacesByVertex(v1)[0]
@@ -30,5 +30,5 @@ for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 13, -1)]:
     RotateFaces(faces, edge, sign * 90)
 
 # 对折
-faces = FindFacesByVertex(16)
+faces = FindFacesByVertex(9)
 RotateFaces(faces, edgeMiddle, 180)

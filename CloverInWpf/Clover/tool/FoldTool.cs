@@ -35,6 +35,8 @@ namespace Clover.Tool
         CurrentModeVisual currentModeVi = null;
         DashLineVisual lineVi = null;
         DashLineVisual foldLineVi = null;
+        FoldLinePercentageVisual foldLineInfoVi1 = null;
+        FoldLinePercentageVisual foldLineInfoVi2 = null;
         enum FoldingMode
         {
             DoingNothing, FoldingUp, Blending
@@ -88,7 +90,7 @@ namespace Clover.Tool
                 {
                     // 进入Blending模式
                     EnterBlending();
-                }  
+                }
 
             }
             #endregion
@@ -142,15 +144,16 @@ namespace Clover.Tool
                     projectionPoint = Get3DProjectionPoint();
                     // 传给下一层处理
                     Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
+                    // 更新折线显示
                     UpdateFoldLine(edge);
-
-
+                    // 更新提示信息
+                    UpdateFoldLineInfo(edge);
                 }
-                else if(mode == FoldingMode.Blending)
+                else if (mode == FoldingMode.Blending)
                 {
 
                 }
-                
+
             }
 
             #endregion
@@ -168,7 +171,7 @@ namespace Clover.Tool
                     lineVi.StartPoint = Origin2Dpos;
                 if (currOveredElementVi != null)
                     currOveredElementVi.TransformGroup = new TranslateTransform(Origin2Dpos.X - 5, Origin2Dpos.Y);
-                
+
             }
         }
 
@@ -180,7 +183,7 @@ namespace Clover.Tool
         {
             Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
             Double minVal = Double.MaxValue;
-            
+
             foreach (Face f in faces)
             {
                 Double val = 0;
@@ -285,7 +288,7 @@ namespace Clover.Tool
                 cubeNavViewport.MouseLeftButtonDown += cubeNav.cubeNavViewport_MouseLeftButtonDown;
                 cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
             }
-            
+
         }
 
         /// <summary>
@@ -304,7 +307,7 @@ namespace Clover.Tool
             start *= to3DMat;
             end *= to3DMat;
 
-            return CloverMath.IntersectionOfLineAndPlane(start, end, nearestFace.Normal, nearestFace.Vertices[0].GetPoint3D());   
+            return CloverMath.IntersectionOfLineAndPlane(start, end, nearestFace.Normal, nearestFace.Vertices[0].GetPoint3D());
         }
 
         /// <summary>
@@ -324,7 +327,7 @@ namespace Clover.Tool
         }
 
         /// <summary>
-        /// 鼠标双击，退出xx模式
+        /// 退出xx模式
         /// </summary>
         protected override void exit()
         {
@@ -340,12 +343,10 @@ namespace Clover.Tool
             currSelectedElementVi = null;
             currOveredElementVi.End();
             currOveredElementVi = null;
+            currSelectedElement = currOveredElement = null;
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
-
-            // 完成
-
 
             mode = FoldingMode.DoingNothing;
         }
@@ -371,6 +372,13 @@ namespace Clover.Tool
             foldLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
             VisualController.GetSingleton().AddVisual(foldLineVi);
             foldLineVi.Start();
+            // 显示折线提示
+            foldLineInfoVi1 = new FoldLinePercentageVisual(new Point(-100, -100), new Point(-100, -100), 0);
+            foldLineInfoVi2 = new FoldLinePercentageVisual(new Point(-100, -100), new Point(-100, -100), 0);
+            VisualController.GetSingleton().AddVisual(foldLineInfoVi1);
+            VisualController.GetSingleton().AddVisual(foldLineInfoVi2);
+            foldLineInfoVi1.Start();
+            foldLineInfoVi2.Start();
         }
 
         /// <summary>
@@ -384,6 +392,10 @@ namespace Clover.Tool
             lineVi = null;
             currentModeVi.End();
             currentModeVi = null;
+            foldLineInfoVi1.End();
+            foldLineInfoVi1 = null;
+            foldLineInfoVi2.End();
+            foldLineInfoVi2 = null;
         }
 
         /// <summary>
@@ -409,6 +421,48 @@ namespace Clover.Tool
         {
             currentModeVi.End();
             currentModeVi = null;
+        }
+
+        /// <summary>
+        /// 更新折线提示
+        /// </summary>
+        /// <param name="edge"></param>
+        void UpdateFoldLineInfo(Edge edge)
+        {
+            if (edge == null)
+                return;
+            KeyValuePair<Vertex, Edge> pair1 = new KeyValuePair<Vertex, Edge>();
+            KeyValuePair<Vertex, Edge> pair2 = new KeyValuePair<Vertex, Edge>();
+            foreach (Edge e in nearestFace.Edges)
+            {
+                if (pair1.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair1 = new KeyValuePair<Vertex, Edge>(edge.Vertex1, e);
+                if (pair2.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair2 = new KeyValuePair<Vertex, Edge>(edge.Vertex2, e);
+            }
+            Point3D p5, p6, p1, p2, p3, p4;
+            p5 = pair1.Key.GetPoint3D();
+            p6 = pair2.Key.GetPoint3D();
+            p1 = pair1.Value.Vertex1.GetPoint3D();
+            p2 = pair1.Value.Vertex2.GetPoint3D();
+            p3 = pair2.Value.Vertex1.GetPoint3D();
+            p4 = pair2.Value.Vertex2.GetPoint3D();
+            Double offset1 = (p1 - p5).Length / (p1 - p2).Length;
+            Double offset2 = (p3 - p6).Length / (p3 - p4).Length;
+
+            Matrix3D to2DMat = Utility.GetInstance().To2DMat;
+            p1 *= to2DMat;
+            p2 *= to2DMat;
+            p3 *= to2DMat;
+            p4 *= to2DMat;
+
+            foldLineInfoVi1.Point1 = new Point(p1.X, p1.Y);
+            foldLineInfoVi1.Point2 = new Point(p2.X, p2.Y);
+            foldLineInfoVi2.Point1 = new Point(p3.X, p3.Y);
+            foldLineInfoVi2.Point2 = new Point(p4.X, p4.Y);
+            foldLineInfoVi1.Offset = offset1;
+            foldLineInfoVi2.Offset = offset2;
+
         }
 
     }

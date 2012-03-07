@@ -33,6 +33,9 @@ namespace Clover
 
         public Update Update;
 
+        static int vertex_count = 0;
+        int id;
+
         #region get/set
         public double u
         {
@@ -69,6 +72,7 @@ namespace Clover
         public object Clone()
         {
             Vertex v = this.MemberwiseClone() as Vertex;
+            v.id = vertex_count++;
 
             v.point = new Point3D(point.X, point.Y, point.Z);
             v.Version = this.Version + 1;
@@ -92,6 +96,8 @@ namespace Clover
         public Vertex(Point3D vertex)
         {
             point = vertex;
+
+            id = vertex_count++;
         }
 
         public Vertex(Vertex vertex)
@@ -101,6 +107,8 @@ namespace Clover
             Index = vertex.Index;
             _u = vertex._u;
             _v = vertex._v;
+
+            id = vertex_count++;
         }
 
         public Vertex(double x = 0, double y = 0, double z = 0, int index = -1)
@@ -110,6 +118,8 @@ namespace Clover
             point.Z = z;
 
             Index = index;
+
+            id = vertex_count++;
         }
 
         #region 重载==运算符
@@ -349,6 +359,9 @@ namespace Clover
         /// </summary>
         public void UpdateVertices()
         {
+            // testing
+            CloverController ctrl = CloverController.GetInstance();
+
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();
 
