@@ -12,7 +12,6 @@
         
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
         
-            <TextBox x:Name="commandLineTextBox" TextWrapping="Wrap" AcceptsReturn="True"  Height="400" Width="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" KeyDown="FuckingKey"/>
             <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Height="400" Width="200" Background="White" Margin="0,0,50,0"  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
             <!-- 折纸 -->
             <Viewport3D x:Name="foldingPaperViewport">
@@ -82,6 +81,22 @@
                 <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                 <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
                 <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            </Grid>
+            <!-- 命令行窗口 -->
+            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                        Command Line
+                    </TextBlock>
+                </Grid>
+                <Grid Margin="10, 40, 10, 10">
+                    <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" Background="Black" Foreground="#33FF33" KeyDown="FuckingKey"/>
+                </Grid>
             </Grid>
 		</Grid>
         
