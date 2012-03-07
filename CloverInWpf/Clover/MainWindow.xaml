@@ -117,10 +117,12 @@
                     <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
                 </Grid>
             </Grid>
-            <Grid x:Name="PaperSelect" Margin="80,0,0,151" VerticalAlignment="Bottom" HorizontalAlignment="Left" MinWidth="120" MinHeight="120" MaxWidth="360" MaxHeight="360">
+            <Grid x:Name="PaperSelect" Margin="80,0,0,151" VerticalAlignment="Bottom" HorizontalAlignment="Left" MinWidth="120" MinHeight="120" MaxWidth="360" MaxHeight="360" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="3" d:IsLocked="True"/>
-                <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
+                <!--<ScrollViewer>-->
+                    <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
+                <!--</ScrollViewer>-->
             </Grid>
 		</Grid>
         
