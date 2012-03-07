@@ -526,95 +526,6 @@ namespace Clover
         }
 
 
-
-
-        
-        /// <summary>
-        /// 创建初始的折线顶点·
-        /// </summary>
-        /// <param name="xRel"></param>
-        /// <param name="yRel"></param>
-        Edge CalculateFoldingLine(Vertex pickedVertex)
-        {
-            // 找到所有包含此点的面
-            foreach(Face f in faceLayer.Leaves)
-            {
-                Point3D vertex1 = new Point3D();
-                Point3D vertex2 = new Point3D();
-
-                bool findFirstVertex = false;
-                bool CalculateFinished = false;
-                foreach (Edge e in f.Edges)
-                {
-                    // 边的第一个顶点是否是选中点
-                    if (e.Vertex1 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex2.X - e.Vertex1.X;
-                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
-                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
-
-                        v.Normalize();
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex1.X + v.X;
-                            vertex1.Y = e.Vertex1.Y + v.Y;
-                            vertex1.Z = e.Vertex1.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex1.X + v.X;
-                            vertex2.Y = e.Vertex1.Y + v.Y;
-                            vertex2.Z = e.Vertex1.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-                    }
-                    
-                    // 边的第二个顶点是否是选中点
-                    if (e.Vertex2 == pickedVertex)
-                    {
-
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex1.X - e.Vertex2.X;
-                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
-                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
-
-                        v.Normalize();
-
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex2.X + v.X;
-                            vertex1.Y = e.Vertex2.Y + v.Y;
-                            vertex1.Z = e.Vertex2.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex2.X + v.X;
-                            vertex2.Y = e.Vertex2.Y + v.Y;
-                            vertex2.Z = e.Vertex2.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-
-
-                        
-                    }
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
-
-                        Edge edge = new Edge(cVertex1, cVertex2);
-                        return edge;
-                    }
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// 判断当前面是否是个需要移动的面
         /// </summary>
@@ -657,6 +568,40 @@ namespace Clover
                     crossCount++;
             }
             return crossCount >= 2;
+        }
+
+        /// <summary>
+        /// 找到折线穿过面的那条线段
+        /// </summary>
+        /// <param name="face">要测试的面</param>
+        /// <param name="currentFoldingLine">当前的折线</param>
+        /// <returns>对于测试面的折线</returns>
+        public Edge GetFoldingLineOnAFace(Face face, Edge currentFoldingLine)
+        {
+            Vertex vertex1 = new Vertex();
+            Vertex vertex2 = new Vertex();
+
+            bool findFirst = false;
+            
+            foreach (Edge e in face.Edges)
+            { 
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
+                {
+                    if (!findFirst)
+                    {
+                        vertex1.SetPoint3D(crossPoint);
+                        findFirst = true;
+                    }
+                    else
+                    {
+                        vertex2.SetPoint3D(crossPoint);
+                        Edge foldingLine = new Edge(vertex1, vertex2);
+                        return foldingLine;
+                    }
+                }
+            }
+            return null;
         }
         
         /// <summary>
@@ -880,6 +825,7 @@ namespace Clover
         /// <param name="projectionPoint"></param>
         public Edge FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
         {
+            shadowSystem.SaveOriginState();
             // 根据顶点生成折线
             currentFoldingLine = CloverMath.GetPerpendicularBisector3D(pickedFace, pickedVertex.GetPoint3D(), projectionPoint);
 

@@ -32,6 +32,10 @@ namespace Clover
                 List<Vertex> list = new List<Vertex>();
                 foreach (List<Vertex> l in vertexCellTable)
                 {
+                    if (list.Count < 1)
+                    {
+                        continue; 
+                    }
                     list.Add(l[l.Count - 1]);
                 }
                 return list;
