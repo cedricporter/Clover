@@ -1028,6 +1028,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
+            Edge e = foldingSystem.GetFoldingLineOnAFace(FaceLayer.Leaves[0], new Edge(new Vertex(100, 100, 0), new Vertex(-100, -100, 0)));
             return;
         }
         #endregion
