@@ -520,6 +520,9 @@ namespace Clover
             VertexLayer vertexLayer = controller.VertexLayer;
             ShadowSystem shadowSystem = controller.ShadowSystem;
 
+            //// 快照
+            //shadowSystem.Snapshot();
+
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
             Vertex newVertexOld1 = newVertex1;
@@ -779,6 +782,53 @@ namespace Clover
         }
         #endregion
 
-       
+        public void CutFaces(List<Face> faceList, Edge foldingLine)
+        {
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            shadowSystem.Snapshot();
+
+            foreach (Face face in faceList)
+            {
+                Edge edge = GetFoldingLineOnAFace(face, foldingLine);
+
+                Debug.Assert(edge != null);
+
+                CutAFaceWithAddedTwoVertices(face, edge);
+            }
+        }
+
+        /// <summary>
+        /// 找到折线穿过面的那条线段
+        /// </summary>
+        /// <param name="face">要测试的面</param>
+        /// <param name="currentFoldingLine">当前的折线</param>
+        /// <returns>对于测试面的折线</returns>
+        public Edge GetFoldingLineOnAFace(Face face, Edge currentFoldingLine)
+        {
+            Vertex vertex1 = new Vertex();
+            Vertex vertex2 = new Vertex();
+
+            bool findFirst = false;
+            
+            foreach (Edge e in face.Edges)
+            { 
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
+                {
+                    if (!findFirst)
+                    {
+                        vertex1.SetPoint3D(crossPoint);
+                        findFirst = true;
+                    }
+                    else
+                    {
+                        vertex2.SetPoint3D(crossPoint);
+                        Edge foldingLine = new Edge(vertex1, vertex2);
+                        return foldingLine;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

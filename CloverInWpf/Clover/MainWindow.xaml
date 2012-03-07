@@ -12,7 +12,7 @@
         
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
-            <Viewport3D x:Name="foldingPaperViewport">
+            <Viewport3D x:Name="foldingPaperViewport" d:IsLocked="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
@@ -79,9 +79,10 @@
                 <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                 <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
                 <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                <Button Content="Paper" Height="40" Width="40" Template="{StaticResource RectangleButtonTemplate1}" Margin="0,0,0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
             </Grid>
             <!-- 命令行窗口 -->
-            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -99,7 +100,7 @@
                 </Grid>
             </Grid>
             <!-- 输出窗口 -->
-            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -114,6 +115,13 @@
                 </Grid>
                 <Grid Margin="10, 40, 10, 10">
                     <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
+                </Grid>
+            </Grid>
+            <Grid x:Name="PaperSelect" Margin="80,0,0,105" HorizontalAlignment="Left" Height="166" VerticalAlignment="Bottom" Width="283" Visibility="Hidden">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="3" d:IsLocked="True"/>
+                <Grid Margin="4">
+                    
                 </Grid>
             </Grid>
 		</Grid>

@@ -32,6 +32,10 @@ namespace Clover
         #endregion
 
         #region get/set
+        public Clover.FoldingSystem FoldingSystem
+        {
+            get { return foldingSystem; }
+        }
         public Clover.RenderController RenderController
         {
             get { return renderController; }
@@ -91,6 +95,7 @@ namespace Clover
 
         }
         #endregion
+
         public Vertex GetPrevVersion(Vertex vertex)
         {
             List<Vertex> vGroup = vertexLayer.VertexCellTable[vertex.Index];
@@ -352,6 +357,10 @@ namespace Clover
 
         }
 
+        public void CutFaces(List<Face> faces,  Edge edge)
+        {
+            foldingSystem.CutFaces(faces, edge);
+        }
 
         /// <summary>
         /// 当前都影响的面，在拖动的过程中需要实时计算，因为随时会有新的受影响

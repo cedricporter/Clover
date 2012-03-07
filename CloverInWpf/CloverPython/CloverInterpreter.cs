@@ -34,6 +34,7 @@ RotateFaces = clover.RotateFaces
 FindFacesByVertex = clover.FindFacesByVertex
 GetFoldingLine = clover.GetFoldingLine
 GetVertex = clover.GetVertex
+CutFaces = clover.CutFaces
 ";
 
             pythonEngine.Execute(initialString, pythonScope);
@@ -60,7 +61,7 @@ GetVertex = clover.GetVertex
             }
             catch (System.Exception ex)
             {
-                throw ex;
+                //throw ex;
                 return ex.Message;
             }
             return "";

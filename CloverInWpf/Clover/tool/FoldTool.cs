@@ -137,17 +137,25 @@ namespace Clover.Tool
             {
                 if (mode == FoldingMode.FoldingUp)
                 {
-                    // 视觉效果
-                    currSelectedElementVi.TransformGroup = new TranslateTransform(currMousePos.X - 5, currMousePos.Y);
-                    lineVi.EndPoint = currMousePos;
                     // 求2D到3D的投影点
                     projectionPoint = Get3DProjectionPoint();
+                    // 磁性处理
+                    Point3D nearestPoint;
+                    Boolean isAttached = AbstractLayer.Magnet.PerformVertexAttach(projectionPoint, nearestFace, out nearestPoint);
+                    if (isAttached)
+                        projectionPoint = nearestPoint;
+                    // 视觉效果
+                    Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
+                    currSelectedElementVi.TransformGroup = new TranslateTransform(visualPoint.X - 5, visualPoint.Y);
+                    lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
+                    
                     // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().UpdateFoldingLine(nearestFace, pickedVertex.GetPoint3D(), projectionPoint);
-                    // 更新折线显示
-                    UpdateFoldLine(edge);
-                    // 更新提示信息
-                    UpdateFoldLineInfo(edge);
+                    //Edge edge = CloverController.GetInstance().FoldingUpToPoint(nearestFace, pickedVertex, new Point3D(0, 0, 0));
+                   
+                    //// 更新折线显示
+                    //UpdateFoldLine(edge);
+                    //// 更新提示信息
+                    //UpdateFoldLineInfo(edge);
                 }
                 else if (mode == FoldingMode.Blending)
                 {
@@ -440,6 +448,8 @@ namespace Clover.Tool
                 if (pair2.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
                     pair2 = new KeyValuePair<Vertex, Edge>(edge.Vertex2, e);
             }
+            if (pair1.Key == null || pair2.Key == null)
+                return;
             Point3D p5, p6, p1, p2, p3, p4;
             p5 = pair1.Key.GetPoint3D();
             p6 = pair2.Key.GetPoint3D();

@@ -59,7 +59,7 @@ namespace Clover
             {
                 if (Vector3D.DotProduct((p - p1), (p - p2)) <= 0)
                     return true;
-            } 
+            }
             return false;
         }
 
@@ -118,21 +118,21 @@ namespace Clover
         {
             Vector3D vline = p1 - p2;
             // 排除平行的情况
-            if ( Math.Abs( Vector3D.DotProduct(vline, f.Normal)) < 0.000001 )
+            if (Math.Abs(Vector3D.DotProduct(vline, f.Normal)) < 0.000001)
             {
                 return false;
             }
             Point3D IntersectiongPoint = IntersectionOfLineAndPlane(p1, p2, f.Normal, f.Vertices[0].GetPoint3D());
 
             // 判断点在不在face内
-            if ( IsPointInArea( IntersectiongPoint, f ) )
+            if (IsPointInArea(IntersectiongPoint, f))
             {
                 p = IntersectiongPoint;
                 return true;
             }
             return false;
-                
-             
+
+
         }
 
         /// <summary>
@@ -251,24 +251,24 @@ namespace Clover
         /// <param name="pd"></param>
         /// <param name="t">直线的方向向量</param>
         /// <param name="p">直线上的一点</param>
-        public static bool GetMidperpendicularInFace( Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
+        public static bool GetMidperpendicularInFace(Face f, Vertex po, Vertex pd, ref Vector3D t, ref Point3D p)
         {
-            if ( CloverMath.IsTwoPointsEqual( po.GetPoint3D(), pd.GetPoint3D(), 0.00001 ) ) 
+            if (CloverMath.IsTwoPointsEqual(po.GetPoint3D(), pd.GetPoint3D(), 0.00001))
             {
                 return false;
             }
 
             Point3D pOriginal = po.GetPoint3D();
             Point3D pDestination = pd.GetPoint3D();
-            t = Vector3D.CrossProduct( f.Normal, ( pOriginal - pDestination ) );
-            
-            p.X = ( po.X + pd.X ) / 2;
-            p.Y = ( po.Y + pd.Y ) / 2;
-            p.Z = ( po.Z + pd.Z ) / 2;
+            t = Vector3D.CrossProduct(f.Normal, (pOriginal - pDestination));
+
+            p.X = (po.X + pd.X) / 2;
+            p.Y = (po.Y + pd.Y) / 2;
+            p.Z = (po.Z + pd.Z) / 2;
             return true;
 
         }
-        
+
         /// <summary>
         /// 求补集
         /// </summary>
@@ -306,7 +306,7 @@ namespace Clover
                 double dv = Vector3D.DotProduct(v, v);
 
                 if (du == 0 && dv == 0)
-                { 
+                {
                     // 两条线段是两个不同的点
                     if (e1.Vertex1.GetPoint3D() == e2.Vertex2.GetPoint3D())
                         return 0;
@@ -319,12 +319,12 @@ namespace Clover
                     }
                 }
                 if (du == 0)
-                { 
+                {
                     // 假如其中一条线段是一个点
                     return 0;
                 }
                 if (dv == 0)
-                { 
+                {
                     // 同上 
                     return 0;
                 }
@@ -344,7 +344,7 @@ namespace Clover
                 }
                 if (t0 > t1)
                 {
-                    double t = t0; t0 = t1; t1 = t; 
+                    double t = t0; t0 = t1; t1 = t;
                 }
                 if (t0 > 1 || t1 < 0)
                 {
@@ -385,15 +385,15 @@ namespace Clover
         /// <param name="points">平面的边界</param>
         /// <returns>返回true如果点在平面内或平面边界上</returns>
         /// <author>kid</author>
-        public static Boolean IsPointInArea( Point3D pe, Face f )
+        public static Boolean IsPointInArea(Point3D pe, Face f)
         {
-            Vector3D lastN = new Vector3D( 0, 0, 0 );
-            for ( int i = 0; i < f.Vertices.Count; i++ )
+            Vector3D lastN = new Vector3D(0, 0, 0);
+            for (int i = 0; i < f.Vertices.Count; i++)
             {
-                Vector3D v1 = pe - f.Vertices[ i ].GetPoint3D();
-                Vector3D v2 = f.Vertices[ ( i + 1 ) % f.Vertices.Count ].GetPoint3D() - pe;
-                Vector3D currN = Vector3D.CrossProduct( v1, v2 );
-                if ( Vector3D.DotProduct( currN, lastN ) < 0 )
+                Vector3D v1 = pe - f.Vertices[i].GetPoint3D();
+                Vector3D v2 = f.Vertices[(i + 1) % f.Vertices.Count].GetPoint3D() - pe;
+                Vector3D currN = Vector3D.CrossProduct(v1, v2);
+                if (Vector3D.DotProduct(currN, lastN) < 0)
                     return false;
                 lastN = currN;
             }
@@ -407,19 +407,19 @@ namespace Clover
         /// <param name="f1"></param>
         /// <param name="f2"></param>
         /// <returns></returns>
-       public static double CalculatePlaneAngle( Face f1, Face f2 )
+        public static double CalculatePlaneAngle(Face f1, Face f2)
         {
             // 找出面面交线的方向向量
-            Vector3D intersectionlinevec = Vector3D.CrossProduct( f1.Normal, f2.Normal );
+            Vector3D intersectionlinevec = Vector3D.CrossProduct(f1.Normal, f2.Normal);
 
             // 两个平面平行时候
-            if ( intersectionlinevec.Length == 0 )
+            if (intersectionlinevec.Length == 0)
             {
                 return 0.0;
             }
-            
+
             // 找出与面垂直的分割面
-            Vector3D cutFacenor = Vector3D.CrossProduct( intersectionlinevec, f1.Normal );
+            Vector3D cutFacenor = Vector3D.CrossProduct(intersectionlinevec, f1.Normal);
 
             double A = cutFacenor.X;
             double B = cutFacenor.Y;
@@ -429,42 +429,42 @@ namespace Clover
             foreach (Edge e in f1.Edges)
             {
                 Vector3D ve = e.Vertex2.GetPoint3D() - e.Vertex1.GetPoint3D();
-                if( IsTwoVectorTheSameDir(ve, cutFacenor))
+                if (IsTwoVectorTheSameDir(ve, cutFacenor))
                 {
                     p = e.Vertex1.GetPoint3D();
                     break;
                 }
-                
+
             }
 
-            D = -( cutFacenor.X * p.X + cutFacenor.Y * p.Y + cutFacenor.Z * p.Z );
- 
+            D = -(cutFacenor.X * p.X + cutFacenor.Y * p.Y + cutFacenor.Z * p.Z);
+
             // 检测两个面的夹角是钝角还是锐角
             bool IsObtuseAngle = false;
             foreach (Vertex vertice1 in f1.Vertices)
             {
-                foreach ( Vertex vertice2 in f2.Vertices )
+                foreach (Vertex vertice2 in f2.Vertices)
                 {
                     double space1 = A * vertice1.X + B * vertice1.Y + C * vertice1.Z + D;
                     double space2 = A * vertice2.X + B * vertice2.Y + C * vertice2.Z + D;
 
-                    if (space1 * space2 < 0 )
+                    if (space1 * space2 < 0)
                     {
                         IsObtuseAngle = true;
                         break;
                     }
                 }
-                if ( IsObtuseAngle )
+                if (IsObtuseAngle)
                 {
                     break;
                 }
             }
 
             // 可以开始计算二面角了
-            double cosAngle = Vector3D.DotProduct( f1.Normal, f2.Normal );
-            cosAngle = cosAngle / ( f1.Normal.Length * f2.Normal.Length );
+            double cosAngle = Vector3D.DotProduct(f1.Normal, f2.Normal);
+            cosAngle = cosAngle / (f1.Normal.Length * f2.Normal.Length);
 
-            double angle = Math.Acos( Math.Abs( cosAngle ) );
+            double angle = Math.Acos(Math.Abs(cosAngle));
             if (IsObtuseAngle)
             {
                 return Math.PI - angle;
@@ -489,13 +489,13 @@ namespace Clover
             double YerrMarg = Math.Abs(v1.Y - v2.Y);
             double ZerrMarg = Math.Abs(v1.Z - v2.Z);
 
-            if ( XerrMarg < threshold && YerrMarg  < threshold && ZerrMarg  < threshold )
+            if (XerrMarg < threshold && YerrMarg < threshold && ZerrMarg < threshold)
             {
                 return true;
             }
 
             Vector3D t = v1 + v2;
-            if ( Math.Abs( t.X ) < threshold && Math.Abs( t.Y ) < threshold  && Math.Abs( t.Z ) < threshold )
+            if (Math.Abs(t.X) < threshold && Math.Abs(t.Y) < threshold && Math.Abs(t.Z) < threshold)
             {
                 return true;
             }
@@ -512,7 +512,7 @@ namespace Clover
         {
             foreach (Vertex v in f1.Vertices)
             {
-                if ( IsPointInArea( v.GetPoint3D(), f2 ) )
+                if (IsPointInArea(v.GetPoint3D(), f2))
                     return true;
             }
             return false;
@@ -534,7 +534,7 @@ namespace Clover
             Vector3D normal = new Vector3D();
             normal = p1 - p2;
             normal.Normalize();
-                
+
             // 求中截面平面方程
             double A = normal.X;
             double B = normal.Y;
@@ -546,15 +546,15 @@ namespace Clover
             bool findFirst = false;
             bool finished = false;
             foreach (Edge e in face.Edges)
-            { 
-                 // 求空间点到该平面上的两个投影点
+            {
+                // 求空间点到该平面上的两个投影点
                 double d1 = A * e.Vertex1.X + B * e.Vertex1.Y + C * e.Vertex1.Z + D / Den;
                 double d2 = A * e.Vertex2.X + B * e.Vertex2.Y + C * e.Vertex2.Z + D / Den;
 
                 Point3D proP1 = e.Vertex1.GetPoint3D() + d1 * normal;
                 Point3D proP2 = e.Vertex2.GetPoint3D() + d2 * normal;
 
-                Edge proE = new Edge( new Vertex(proP1), new Vertex(proP2));
+                Edge proE = new Edge(new Vertex(proP1), new Vertex(proP2));
                 // 求空间两直线之间的交点
 
                 if (!findFirst)
@@ -569,7 +569,7 @@ namespace Clover
                     if (1 == GetIntersectionOfTwoSegments(e, proE, ref pbP2))
                     {
                         finished = true;
-                        break; 
+                        break;
                     }
                 }
             }
@@ -583,6 +583,33 @@ namespace Clover
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// 返回线段上离指定点最近的点
+        /// </summary>
+        /// <param name="p">指定点</param>
+        /// <param name="p1">线段的一段</param>
+        /// <param name="p2">线段的另一端</param>
+        /// <param name="nearestPoint">返回最近的点</param>
+        /// <returns></returns>
+        public static Point3D GetNearestPointOnSegment(Point3D p, Point3D p1, Point3D p2)
+        {
+            Vector3D V1 = p2 - p1;
+            Vector3D V2 = p - p1;
+            Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
+            Point3D p3 = p1 + t * V1;
+            if (Vector3D.DotProduct((p - p1), (p - p2)) <= 0)
+                return p3;
+            else
+            {
+                Double dis1 = (p - p1).Length;
+                Double dis2 = (p - p2).Length;
+                if (dis1 < dis2)
+                    return p1;
+                else
+                    return p2;
+            }
         }
     }
 }
