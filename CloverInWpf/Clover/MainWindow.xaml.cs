@@ -92,9 +92,9 @@ namespace Clover
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // 各种窗口
-            toolBox = new ToolBox(this);
-            toolBox.Left = Left + toolBoxRelLeft;
-            toolBox.Top = Top + toolBoxRelTop;
+            //toolBox = new ToolBox(this);
+            //toolBox.Left = Left + toolBoxRelLeft;
+            //toolBox.Top = Top + toolBoxRelTop;
             //toolBox.Show();
 
             // 更新矩阵
@@ -319,10 +319,7 @@ namespace Clover
                 histroyTextBox.ScrollToEnd();
             }
             //e.Handled = true;
-        }
-
-        
-
+        }   
         
 
     }
