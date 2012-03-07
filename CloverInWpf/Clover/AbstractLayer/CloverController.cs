@@ -441,8 +441,6 @@ namespace Clover
             table.AddFace( f1 );
             table.AddFace( f2 );
 
-            
-
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
             shadowSystem.SaveVertices(totalVertices);
@@ -492,6 +490,8 @@ namespace Clover
             
             // 求空间折线
             Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+            if (foldingLine == null)
+                return null;
 
             // 计算纹理坐标
             foreach (Edge e in face.Edges)
@@ -732,14 +732,14 @@ namespace Clover
 
             // 判断是否贴合，若有贴合更新组
 
-            // For Testing
-            foreach (List<Vertex> list in vertexLayer.VertexCellTable)
-            {
-                for (int i = 0; i < list.Count - 1; i++)
-                {
-                    list[i].SetPoint3D(list[list.Count - 1].GetPoint3D());
-                }
-            }
+            //// For Testing
+            //foreach (List<Vertex> list in vertexLayer.VertexCellTable)
+            //{
+            //    for (int i = 0; i < list.Count - 1; i++)
+            //    {
+            //        list[i].SetPoint3D(list[list.Count - 1].GetPoint3D());
+            //    }
+            //}
 
 
             // 修正所有点的移动属性
@@ -748,9 +748,9 @@ namespace Clover
                 v.Moved = false; 
             }
 
-            renderController.UpdateAll();
-
+            // 必须先更新group后更新render
             table.UpdateLookupTable();
+            renderController.UpdateAll();
         }
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
@@ -767,13 +767,18 @@ namespace Clover
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
                         axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                        axis.Normalize();
 
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
-
+                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
+                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.01 * xRel);
                         RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-
+                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
+                        //e.Vertex1.SetPoint3D(translateToOrigin.Transform(e.Vertex1.GetPoint3D()));
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-                        e.Vertex1.Moved = true;
+                        //e.Vertex1.SetPoint3D(translateBack.Transform(e.Vertex1.GetPoint3D()));
                     }
 
                     if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
@@ -783,12 +788,19 @@ namespace Clover
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
                         axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                        axis.Normalize();
 
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
-
+                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
+                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.01 * xRel);
                         RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
 
+                        //e.Vertex2.SetPoint3D(translateToOrigin.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.Moved = true;
                     }
                 }
@@ -924,6 +936,7 @@ namespace Clover
             renderController.UpdateAll();
         }
 
+        
         #endregion
 
         #region 更新图形层的模型

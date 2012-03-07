@@ -156,6 +156,11 @@ namespace Clover.Tool
             #endregion
         }
 
+        protected override void onClick()
+        {
+
+        }
+
         protected override void exit()
         {
 
@@ -165,5 +170,7 @@ namespace Clover.Tool
         {
 
         }
+
+
     }
 }

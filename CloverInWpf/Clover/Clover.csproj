@@ -72,9 +72,6 @@
     <Compile Include="AbstractLayer\ShadowSystem.cs" />
     <Compile Include="RenderLayer\MaterialController.cs" />
     <Compile Include="RenderLayer\RenderController.cs" />
-    <Compile Include="ToolBox.xaml.cs">
-      <DependentUpon>ToolBox.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
@@ -85,6 +82,7 @@
     <Compile Include="Visual\CurrentModeVisual.cs" />
     <Compile Include="Visual\DashLineVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
+    <Compile Include="Visual\FoldLinePercentageVisual.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
     <Compile Include="Visual\VertexInfoVisual.cs" />
     <Compile Include="Visual\VisualController.cs" />
@@ -108,10 +106,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ToolBox.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 using Clover.Tool;
 using Clover.Visual;
@@ -26,14 +27,6 @@ namespace Clover
         Utility utility;
         VisualController visualController;
         CloverInterpreter cloverInterpreter = new CloverInterpreter();
-
-        #region 工具窗
-
-        public ToolBox toolBox;
-        public Double toolBoxRelLeft = 10;
-        public Double toolBoxRelTop = 70;
-
-        #endregion
         
         #region 折纸部分
 
@@ -95,9 +88,9 @@ namespace Clover
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // 各种窗口
-            toolBox = new ToolBox(this);
-            toolBox.Left = Left + toolBoxRelLeft;
-            toolBox.Top = Top + toolBoxRelTop;
+            //toolBox = new ToolBox(this);
+            //toolBox.Left = Left + toolBoxRelLeft;
+            //toolBox.Top = Top + toolBoxRelTop;
             //toolBox.Show();
 
             // 更新矩阵
@@ -171,8 +164,7 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (toolBox != null)
-                toolBox.Close();
+
         }
 
         #endregion
@@ -187,16 +179,53 @@ namespace Clover
         private void MenuBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
-            // 使工具窗位置相对主窗口静止
-            if (toolBox != null)
-            {
-                toolBox.Left = Left + toolBoxRelLeft;
-                toolBox.Top = Top + toolBoxRelTop;
-            }
         }
 
+        #region 处理子窗口的移动，缩放，关闭等
+        
+        Point lastMousePos1 = new Point(-100, -100);
+        Grid capturedGrid = null;
+        private void Grid_Capture(Object sender, MouseButtonEventArgs e)
+        {
+            capturedGrid = (Grid)((Grid)sender).Parent;
+        }
+        private void Grid_Lost(Object sender, MouseButtonEventArgs e)
+        {
+            lastMousePos1.X = lastMousePos1.Y = -100;
+            capturedGrid = null;
+        }
+        private void Gird_Close(Object sender, RoutedEventArgs e)
+        {
+            capturedGrid = (Grid)((Grid)((Button)sender).Parent).Parent;
+            capturedGrid.Visibility = Visibility.Hidden;
+        }
+        private void Grid_Move(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed || capturedGrid == null)
+                return;
+            Point currMousePos = e.GetPosition(this);
+            if (lastMousePos1.X == -100 && lastMousePos1.Y == -100)
+                lastMousePos1 = currMousePos;
+            Vector offset = currMousePos - lastMousePos1;
+            Grid_SizeOrPositionChange(offset, new Vector(0, 0));
+            lastMousePos1 = currMousePos;
+        }
+        private void Grid_SizeOrPositionChange(Vector translateOffset, Vector scaleOffset)
+        {
+            Double lastX = capturedGrid.RenderTransform.Value.OffsetX;
+            Double lastY = capturedGrid.RenderTransform.Value.OffsetY;
+            //Double scaleX = capturedGrid.RenderTransform.Value.M11;
+            //Double scaleY = capturedGrid.RenderTransform.Value.M22;
+            TransformGroup tsg = new TransformGroup();
+            //tsg.Children.Add(new ScaleTransform(scaleOffset.X + scaleX, scaleOffset.Y + scaleY));
+            tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
+            capturedGrid.RenderTransform = tsg;   
+        }
+
+        #endregion
+
         /// <summary>
-        /// 当鼠标在折纸视口上。。。
+        /// 当鼠标在折纸视口上
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -204,14 +233,16 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onMove();
+
+            Grid_Move(sender, e);
         }
 
         /// <summary>
-        /// 当鼠标左键按下，，
+        /// 当鼠标按下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
@@ -221,6 +252,17 @@ namespace Clover
                 MessageBox.Show( d.ToString() );
             }
 
+        }
+
+        /// <summary>
+        /// 双击
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ToolFactory.currentTool != null)
+                ToolFactory.currentTool.onDoubleClick();
         }
 
         /// <summary>
@@ -254,12 +296,6 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // 使工具窗位置相对主窗口静止
-            if (toolBox != null)
-            {
-                toolBox.Left = Left + toolBoxRelLeft;
-                toolBox.Top = Top + toolBoxRelTop;
-            }
             // 更新矩阵
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
         }
@@ -298,9 +334,6 @@ namespace Clover
                 case Key.Right:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     break;
-                case Key.F7:
-                    ToolFactory.currentTool.onMiddleClick();
-                    break;
             }
 
             //cloverController.RenderController.UpdatePosition();
@@ -321,6 +354,45 @@ namespace Clover
             }
             //e.Handled = true;
         }
+
+        #region 窗口开启关闭选项
+
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.Visibility = Visibility.Hidden;
+        }
+
+        private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.Visibility = Visibility.Hidden;
+            if (CommandLineMenuItem.IsChecked == true)
+                CommandLineMenuItem.IsChecked = false;
+        }
+
+        private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
+        {
+            Output.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
+        {
+            Output.Visibility = Visibility.Hidden;
+            if (OutputMenuItem.IsChecked == true)
+                OutputMenuItem.IsChecked = false;
+        }
+
+        #endregion
+
 
     }
 }
