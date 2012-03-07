@@ -82,7 +82,7 @@
                 <Button Content="Paper" Height="40" Width="40" Template="{StaticResource RectangleButtonTemplate1}" Margin="0,0,0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
             </Grid>
             <!-- 命令行窗口 -->
-            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" d:IsHidden="True">
+            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -100,7 +100,7 @@
                 </Grid>
             </Grid>
             <!-- 输出窗口 -->
-            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsHidden="True">
+            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
