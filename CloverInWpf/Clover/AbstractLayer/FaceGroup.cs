@@ -67,6 +67,7 @@ namespace Clover.AbstractLayer
             get { return d; }
             set { d = value; }
         }
+
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
         /// </summary>
