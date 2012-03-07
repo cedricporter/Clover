@@ -27,8 +27,8 @@ namespace Clover
         int height = 2;                 ///材质垂直分辨率
         int width = 2;                  ///材质水平分辨率
         Double thickness = 0;              ///线条粗细
-        MaterialGroup frontMaterial = null;
-        MaterialGroup backMaterial = null;
+        MaterialGroup frontMaterial = new MaterialGroup();
+        MaterialGroup backMaterial = new MaterialGroup();
         MaterialGroup transparentFrontMaterial = null;
         MaterialGroup transparentBackMaterial = null;
         DiffuseMaterial frontEdgeLayer = null;
@@ -93,10 +93,13 @@ namespace Clover
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public MaterialGroup UpdateFrontMaterial(MaterialGroup mat)
+        public MaterialGroup UpdateFrontMaterial(DiffuseMaterial mat)
         {
-            frontMaterial = mat;
-            ImageBrush imgb = ((mat.Children[0] as DiffuseMaterial).Brush as ImageBrush);
+            if (frontMaterial.Children.Count == 0)
+                frontMaterial.Children.Add(mat);
+            else
+                frontMaterial.Children[0] = mat;
+            ImageBrush imgb = (mat.Brush as ImageBrush);
             imgb.ViewportUnits = BrushMappingMode.Absolute;
             ImageSource img = imgb.ImageSource;
             height = (int)img.Height;
@@ -113,9 +116,12 @@ namespace Clover
         /// </summary>
         /// <param name="mat"></param>
         /// <returns></returns>
-        public MaterialGroup UpdateBackMaterial(MaterialGroup mat)
+        public MaterialGroup UpdateBackMaterial(DiffuseMaterial mat)
         {
-            backMaterial = mat;
+            if (backMaterial.Children.Count == 0)
+                backMaterial.Children.Add(mat);
+            else
+                backMaterial.Children[0] = mat;
 
             UpdateBackEdgeLayer();
 

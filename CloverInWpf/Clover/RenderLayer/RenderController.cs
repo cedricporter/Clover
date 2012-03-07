@@ -91,29 +91,29 @@ namespace Clover
         }
 
         MaterialGroup frontMaterial;
-	    public System.Windows.Media.Media3D.MaterialGroup FrontMaterial
+	    public System.Windows.Media.Media3D.DiffuseMaterial FrontMaterial
 	    {
-            get { return frontMaterial; }
+            get { return (DiffuseMaterial)frontMaterial.Children[0]; }
             set
             {
                 frontMaterial = materialController.UpdateFrontMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
-                    pair.Value.Material = value;
+                    pair.Value.Material = frontMaterial;
                 }
             }
         }
 
         MaterialGroup backMaterial;
-        public System.Windows.Media.Media3D.MaterialGroup BackMaterial
+        public System.Windows.Media.Media3D.DiffuseMaterial BackMaterial
         {
-            get { return backMaterial; }
+            get { return (DiffuseMaterial)backMaterial.Children[0]; }
             set 
             { 
                 backMaterial = materialController.UpdateBackMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
-                    pair.Value.BackMaterial = value;
+                    pair.Value.BackMaterial = backMaterial;
                 }
             }
         }

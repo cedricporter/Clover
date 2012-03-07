@@ -10,6 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Effects;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
+using Clover.AbstractLayer;
 //using System.Windows.Shapes;
 
 
@@ -162,7 +164,10 @@ namespace Clover
                 if (info.box == box)
                 {
                     // 应用纹理
-                    MessageBox.Show(info.path);
+                    ImageBrush imb = new ImageBrush();
+                    imb.ImageSource = new BitmapImage(new Uri(@info.path, UriKind.Relative));
+                    DiffuseMaterial mgf = new DiffuseMaterial(imb);
+                    CloverController.GetInstance().RenderController.FrontMaterial = mgf;
                     return;
                 }
             }
