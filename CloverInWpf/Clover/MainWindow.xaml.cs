@@ -23,6 +23,7 @@ namespace Clover
     {
 
         CubeNavigator cubeNav;
+        PaperSelector paperSelector;
         List<ToolFactory> tools = new List<ToolFactory>();
         Utility utility;
         VisualController visualController;
@@ -50,7 +51,11 @@ namespace Clover
 
             // 导航立方
             CubeNavigator.InitializeInstance(this);
-            cubeNav = CubeNavigator.GetInstance();    
+            cubeNav = CubeNavigator.GetInstance();
+            // 纸张纹理选择器
+            PaperSelector.InitializeInstance(this);
+            paperSelector = PaperSelector.GetInstance();
+            paperSelector.LoadPaperTextures("media/paper");
 
             // 创建工具
             ToolFactory tool = new TestTool(this);
