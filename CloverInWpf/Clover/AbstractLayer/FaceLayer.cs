@@ -7,32 +7,70 @@ using Clover.AbstractLayer;
 
 namespace Clover
 {
+    public enum FacecellTreeState
+    {
+        Normal,     /// 正常模式，Leaves返回真正的叶节点
+        Undoing     /// 撤销模式中，Leaves返回currentLeaves
+    }
+
     /// <summary>
     /// 面树，保存着所有的面，包括历史上存在过的面
     /// </summary>
     public class FacecellTree
     {
         #region get/set
-        public Clover.Face Root
-        {
-            get { return root; }
-        }
-        #endregion
-
-        Face root;
-        List<Face> leaves = new List<Face>();
-
-        public FacecellTree(Face r)
-        {
-            root = r;
-        }
-
         /// <summary>
         /// 返回所有叶节点，每次自动更新，如果要更高的运行效率，可以拆成另外两个函数
         /// </summary>
         public List<Face> Leaves
         {
+            get 
+            {
+                switch (currentState)
+                {
+                    case FacecellTreeState.Normal:
+                        return leaves;
+                    case FacecellTreeState.Undoing:
+                        return currentLeaves; 
+                    default:
+                        return leaves;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 真正的叶节点
+        /// </summary>
+        public List<Face> RealLeaves
+        {
             get { /*Update();*/ return leaves; }
+        }
+        public Clover.Face Root
+        {
+            get { return root; }
+        }
+        public List<Face> CurrentLeaves
+        {
+            get { return currentLeaves; }
+            set { currentLeaves = value; }
+        }
+        public Clover.FacecellTreeState CurrentState
+        {
+            get { return currentState; }
+            set { currentState = value; }
+        }
+        #endregion
+
+        Face root;
+        List<Face> leaves = new List<Face>();
+        List<Face> currentLeaves = new List<Face>();
+
+        /// 当前状态，
+        FacecellTreeState currentState;
+
+        public FacecellTree(Face r)
+        {
+            root = r;
         }
 
         /// <summary>
@@ -323,6 +361,23 @@ namespace Clover
         public List<Face> Leaves
         { 
             get { return facecellTree.Leaves; }
+        }
+        public List<Face> CurrentLeaves
+        {
+            get { return facecellTree.CurrentLeaves; }
+            set 
+            {
+                facecellTree.CurrentLeaves.Clear();
+                foreach (Face f in value)
+                {
+                    facecellTree.CurrentLeaves.Add(f);
+                }
+            }
+        }
+        public FacecellTreeState State
+        {
+            get { return facecellTree.CurrentState; }
+            set { facecellTree.CurrentState = value; }
         }
         #endregion
 
