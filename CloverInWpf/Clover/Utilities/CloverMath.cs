@@ -401,11 +401,106 @@ namespace Clover
         }
 
 
-        //double CalculatePlaneAngle( Vector3D nor1, Vector3D nor2 )
-        //{
+        /// <summary>
+        /// 计算两个face的二面角
+        /// </summary>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
+        /// <returns></returns>
+       public static double CalculatePlaneAngle( Face f1, Face f2 )
+        {
+            // 找出面面交线的方向向量
+            Vector3D intersectionlinevec = Vector3D.CrossProduct( f1.Normal, f2.Normal );
 
-        //}
+            // 两个平面平行时候
+            if ( intersectionlinevec.Length == 0 )
+            {
+                return 0.0;
+            }
+            
+            // 找出与面垂直的分割面
+            Vector3D cutFacenor = Vector3D.CrossProduct( intersectionlinevec, f1.Normal );
 
+            double A = cutFacenor.X;
+            double B = cutFacenor.Y;
+            double C = cutFacenor.Z;
+            double D = 0;
+            Point3D p = new Point3D();
+            foreach (Edge e in f1.Edges)
+            {
+                Vector3D ve = e.Vertex2.GetPoint3D() - e.Vertex1.GetPoint3D();
+                if( IsTwoVectorTheSameDir(ve, cutFacenor))
+                {
+                    p = e.Vertex1.GetPoint3D();
+                    break;
+                }
+                
+            }
+
+            D = -( cutFacenor.X * p.X + cutFacenor.Y * p.Y + cutFacenor.Z * p.Z );
+ 
+            // 检测两个面的夹角是钝角还是锐角
+            bool IsObtuseAngle = false;
+            foreach (Vertex vertice1 in f1.Vertices)
+            {
+                foreach ( Vertex vertice2 in f2.Vertices )
+                {
+                    double space1 = A * vertice1.X + B * vertice1.Y + C * vertice1.Z + D;
+                    double space2 = A * vertice2.X + B * vertice2.Y + C * vertice2.Z + D;
+
+                    if (space1 * space2 < 0 )
+                    {
+                        IsObtuseAngle = true;
+                        break;
+                    }
+                }
+                if ( IsObtuseAngle )
+                {
+                    break;
+                }
+            }
+
+            // 可以开始计算二面角了
+            double cosAngle = Vector3D.DotProduct( f1.Normal, f2.Normal );
+            cosAngle = cosAngle / ( f1.Normal.Length * f2.Normal.Length );
+
+            double angle = Math.Acos( Math.Abs( cosAngle ) );
+            if (IsObtuseAngle)
+            {
+                return Math.PI - angle;
+            }
+            return angle;
+        }
+
+
+
+        /// <summary>
+        /// 判断两个向量方向是否相同或相反
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static bool IsTwoVectorTheSameDir(Vector3D v1, Vector3D v2)
+        {
+            double threshold = 0.000001;
+            v1.Normalize();
+            v2.Normalize();
+            double XerrMarg = Math.Abs(v1.X - v2.X);
+            double YerrMarg = Math.Abs(v1.Y - v2.Y);
+            double ZerrMarg = Math.Abs(v1.Z - v2.Z);
+
+            if ( XerrMarg < threshold && YerrMarg  < threshold && ZerrMarg  < threshold )
+            {
+                return true;
+            }
+
+            Vector3D t = v1 + v2;
+            if ( Math.Abs( t.X ) < threshold && Math.Abs( t.Y ) < threshold  && Math.Abs( t.Z ) < threshold )
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// 判断两个face是否相交

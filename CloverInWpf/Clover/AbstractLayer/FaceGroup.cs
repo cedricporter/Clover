@@ -43,8 +43,30 @@ namespace Clover.AbstractLayer
             get { return normal; }
             set { normal = value; }
         }
-        double A, B, C, D; // 面组中所有面的所在的平面的方程
-
+        double a;
+        public double A
+        {
+            get { return a; }
+            set { a = value; }
+        }
+        double b;
+        public double B
+        {
+            get { return b; }
+            set { b = value; }
+        }
+        double c;
+        public double C
+        {
+            get { return c; }
+            set { c = value; }
+        }
+        double d;
+        public double D
+        {
+            get { return d; }
+            set { d = value; }
+        }
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
         /// </summary>
@@ -57,10 +79,10 @@ namespace Clover.AbstractLayer
                 normal = f.Normal;
                 normal.Normalize();
                 GroupList.Add( f );
-                A = normal.X;
-                B = normal.Y;
-                C = normal.Z;
-                D = -( f.Vertices[ 0 ].X * A + f.Vertices[ 0 ].Y * B + f.Vertices[ 0 ].Z * C );
+                a = normal.X;
+                b = normal.Y;
+                c = normal.Z;
+                d = -( f.Vertices[ 0 ].X * a + f.Vertices[ 0 ].Y * b + f.Vertices[ 0 ].Z * c );
             }
         }
 

@@ -242,6 +242,9 @@ namespace Clover
             
         }
 
+        /// <summary>
+        /// 更新lookuptable
+        /// </summary>
         public void UpdateLookupTable()
         {
             UpdateGroup();
@@ -250,69 +253,106 @@ namespace Clover
         }
 
 
-        //public bool CheckForAutoFoldUp( ref List<AutoFoldInfo> atuofoldinfolist, double threshold = 0.174 )
-        //{
-        //    atuofoldinfolist = null;
-        //    foreach ( FaceGroup fgfix in tables )
-        //    {
-        //        foreach ( FaceGroup fgmove in tables )
-        //        {
-        //            if ( fgfix != fgmove )
-        //            {
-        //                double ang = CalculatePlaneAngle( fgfix.Normal, fgmove.Normal );
-        //                if ( ang  < threshold )
-        //                {
-        //                    AutoFoldInfo autofoldinfo = new AutoFoldInfo();
-        //                    autofoldinfo.fgFix = fgfix;
-        //                    autofoldinfo.fgMov = fgmove;
-        //                    autofoldinfo.angle = ang;
+        /// <summary>
+        /// 检索group中的组有没有非常靠近的面
+        /// </summary>
+        /// <param name="atuofoldinfolist">保存着可以可能会自动贴合的group对</param>
+        /// <param name="threshold">用弧度表示的角度</param>
+        /// <returns></returns>
+        public bool CheckForAutoFoldUp( ref List<FoldUpInfo> atuofoldinfolist, double threshold = 0.174 )
+        {
+           
+            foreach ( FaceGroup fgfix in tables )
+            {
+                foreach ( FaceGroup fgmove in tables )
+                {
+                    if ( fgfix != fgmove )
+                    {
+                        double ang = CloverMath.CalculatePlaneAngle( fgfix.GetGroup()[0], fgmove.GetGroup()[0] );
+                        if ( ang  < threshold )
+                        {
+                            bool IsContain = false;
+                            foreach ( FoldUpInfo info in atuofoldinfolist )
+                            {
+                                if (info.fgFix == fgfix && info.fgMov == fgmove ||
+                                    info.fgMov == fgfix && info.fgFix == fgmove 
+                                    )
+                                {
+                                    IsContain = true;
+                                    break;
+                                }
+                            }
 
-        //                }
-        //            }
-        //        }
-        //    }
+                            if ( IsContain )
+                            {
+                                continue;
+                            }
+                            FoldUpInfo foldupinfo = new FoldUpInfo();
+                            foldupinfo.fgFix = fgfix;
+                            foldupinfo.fgMov = fgmove;
+                            foldupinfo.angle = ang;
 
-        //    if ( atuofoldinfolist.Count > 0 )
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
+                            foreach ( Vertex ver in fgfix.GetGroup()[0].Vertices )
+                            {
+                                if ((ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D) > 0)
+                                {
+                                    foldupinfo.IsOver = true;
+                                    break;
+                                }
+
+                                if ( ( ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D ) < 0 )
+                                {
+                                    foldupinfo.IsOver = false;
+                                    break;
+                                }
+
+                            }
+                            atuofoldinfolist.Add( foldupinfo );
+                        }
+                    }
+                }
+            }
+
+            if ( atuofoldinfolist.Count > 0 )
+            {
+                return true;
+            }
+            return false;
+        }
+
 
 
         /// <summary>
-        /// 自动叠合的时候调用。
+        /// 当foldup时调用，以便group排序;注意，一定要先调用后才可以updatelookuptable;
         /// </summary>
-        /// <param name="fg1">合并后的目标</param>
-        /// <param name="fg2">合并的源</param>
-        /// <param name="IsOver">fg2 是否位于 fg1的上面</param>
-        public void AutofoldUp(FaceGroup fg1, FaceGroup fg2, bool IsOver )
+        /// <param name="foldupinfo"></param>
+        public void FoldUp(FoldUpInfo foldupinfo )
         {
 
-            if ( IsOver )
+            if ( foldupinfo.IsOver )
             {
                 int layer = 0;
-                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
                 {
-                    fg1.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
                     layer++;
                 }
                 // 根据是否覆盖来调整layer的值
-                for ( int i = fg1.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgFix.GetGroup().Count - 1; i >= 0; i-- )
                 {
 
-                    if ( !CloverMath.IsIntersectionOfTwoFace( fg2.GetGroup()[ fg2.GetGroup().Count - 1 ], fg1.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ foldupinfo.fgMov.GetGroup().Count - 1 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
                     {
                         layer--;
                     }
                 }
 
-                for ( int i = fg2.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgMov.GetGroup().Count - 1; i >= 0; i-- )
                 {
 
-                    fg2.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
                     layer++;
-                    fg1.AddFace( fg2.GetGroup()[ i ] );
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
                 }
                 UpdateTable();
                         
@@ -320,25 +360,25 @@ namespace Clover
             else
             {
                 int layer = 0;
-                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
                 {
-                    fg1.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
                     layer++;
                 }
-                layer = fg1.GetBottomLayer();
+                layer = foldupinfo.fgFix.GetBottomLayer();
                 layer--;
-                for ( int i = 0; i < fg1.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
                 {
-                    if ( !CloverMath.IsIntersectionOfTwoFace( fg2.GetGroup()[ 0 ], fg1.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ 0 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
                     {
                         layer++;
                     }
                 }
 
-                for ( int i = 0; i < fg2.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgMov.GetGroup().Count; i++ )
                 {
-                    fg2.GetGroup()[ i ].Layer = layer;
-                    fg1.AddFace( fg2.GetGroup()[ i ] );
+                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
                     layer--;
                 }
                 UpdateTable();

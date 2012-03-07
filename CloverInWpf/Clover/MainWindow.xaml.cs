@@ -70,6 +70,9 @@ namespace Clover
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
+
+
+
         }
 
         ~MainWindow()
@@ -243,6 +246,9 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
+
+            
+
         }
 
         /// <summary>
@@ -254,6 +260,17 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
+            //List<FoldUpInfo> l = new List<FoldUpInfo>();
+            //if( cloverController.Table.CheckForAutoFoldUp( ref l ) )
+            //{
+            //    //MessageBox.Show( "3" );
+
+
+
+            //    //cloverController.RotateFaces()
+            //    //cloverController.Table.FoldUp( l[ 0 ] );
+            //    //cloverController.Table.UpdateLookupTable();
+            //}
         }
 
         /// <summary>
