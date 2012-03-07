@@ -30,7 +30,7 @@ namespace Clover.Visual
         Point p1, p2, p3, p4;
 
         #region get/set
-        
+
         Point point1, point2;
         public System.Windows.Point Point2
         {
@@ -66,7 +66,7 @@ namespace Clover.Visual
             p4 = point2;
             if ((p4 - p3) * dir < 0)
                 p3 = p4;
-            
+
             line1.X1 = p1.X;
             line1.Y1 = p1.Y;
             line1.X2 = p2.X;
