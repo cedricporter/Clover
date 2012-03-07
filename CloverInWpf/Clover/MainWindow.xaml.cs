@@ -77,6 +77,9 @@ namespace Clover
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
+
+
+
         }
 
         ~MainWindow()
@@ -212,6 +215,12 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
+            if(cloverController.FaceLayer.Leaves.Count >= 2)
+            {
+                double d = CloverMath.CalculatePlaneAngle( cloverController.FaceLayer.Leaves[ 0 ], cloverController.FaceLayer.Leaves[ 1 ] );
+                MessageBox.Show( d.ToString() );
+            }
+
         }
 
         /// <summary>
