@@ -124,14 +124,17 @@
                     <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
                 <!--</ScrollViewer>-->
             </Grid>
+            <Canvas Margin="99,0,0,118" Height="29" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="275">
+                <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Height="100" Width="100"  Margin="0"/>
+                <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+            </Canvas>
 		</Grid>
         
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
-        	<Grid x:Name="MenuBarBackground" Margin="0">
-                <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
-                <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
-            </Grid>
+            <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="4,0"/>
+            <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+            <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
             	<MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="New">
