@@ -27,14 +27,6 @@ namespace Clover
         Utility utility;
         VisualController visualController;
         CloverInterpreter cloverInterpreter = new CloverInterpreter();
-
-        #region 工具窗
-
-        public ToolBox toolBox;
-        public Double toolBoxRelLeft = 10;
-        public Double toolBoxRelTop = 70;
-
-        #endregion
         
         #region 折纸部分
 
@@ -169,8 +161,7 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (toolBox != null)
-                toolBox.Close();
+
         }
 
         #endregion
@@ -185,15 +176,9 @@ namespace Clover
         private void MenuBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
-            // 使工具窗位置相对主窗口静止
-            if (toolBox != null)
-            {
-                toolBox.Left = Left + toolBoxRelLeft;
-                toolBox.Top = Top + toolBoxRelTop;
-            }
         }
 
-        #region 移动子窗口
+        #region 处理子窗口的移动，缩放，关闭等
         
         Point lastMousePos1 = new Point(-100, -100);
         Grid capturedGrid = null;
@@ -206,6 +191,11 @@ namespace Clover
             lastMousePos1.X = lastMousePos1.Y = -100;
             capturedGrid = null;
         }
+        private void Gird_Close(Object sender, RoutedEventArgs e)
+        {
+            capturedGrid = (Grid)((Grid)((Button)sender).Parent).Parent;
+            capturedGrid.Visibility = Visibility.Hidden;
+        }
         private void Grid_Move(object sender, MouseEventArgs e)
         {
             if (e.LeftButton != MouseButtonState.Pressed || capturedGrid == null)
@@ -213,11 +203,20 @@ namespace Clover
             Point currMousePos = e.GetPosition(this);
             if (lastMousePos1.X == -100 && lastMousePos1.Y == -100)
                 lastMousePos1 = currMousePos;
+            Vector offset = currMousePos - lastMousePos1;
+            Grid_SizeOrPositionChange(offset, new Vector(0, 0));
+            lastMousePos1 = currMousePos;
+        }
+        private void Grid_SizeOrPositionChange(Vector translateOffset, Vector scaleOffset)
+        {
             Double lastX = capturedGrid.RenderTransform.Value.OffsetX;
             Double lastY = capturedGrid.RenderTransform.Value.OffsetY;
-            Vector offset = currMousePos - lastMousePos1;
-            capturedGrid.RenderTransform = new TranslateTransform(offset.X + lastX, offset.Y + lastY);
-            lastMousePos1 = currMousePos;
+            //Double scaleX = capturedGrid.RenderTransform.Value.M11;
+            //Double scaleY = capturedGrid.RenderTransform.Value.M22;
+            TransformGroup tsg = new TransformGroup();
+            //tsg.Children.Add(new ScaleTransform(scaleOffset.X + scaleX, scaleOffset.Y + scaleY));
+            tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
+            capturedGrid.RenderTransform = tsg;   
         }
 
         #endregion
@@ -288,12 +287,6 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // 使工具窗位置相对主窗口静止
-            if (toolBox != null)
-            {
-                toolBox.Left = Left + toolBoxRelLeft;
-                toolBox.Top = Top + toolBoxRelTop;
-            }
             // 更新矩阵
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
         }
@@ -351,8 +344,46 @@ namespace Clover
                 histroyTextBox.ScrollToEnd();
             }
             //e.Handled = true;
-        }   
-        
+        }
+
+        #region 窗口开启关闭选项
+
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.Visibility = Visibility.Hidden;
+        }
+
+        private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.Visibility = Visibility.Hidden;
+            if (CommandLineMenuItem.IsChecked == true)
+                CommandLineMenuItem.IsChecked = false;
+        }
+
+        private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
+        {
+            Output.Visibility = Visibility.Visible;
+        }
+
+        private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
+        {
+            Output.Visibility = Visibility.Hidden;
+            if (OutputMenuItem.IsChecked == true)
+                OutputMenuItem.IsChecked = false;
+        }
+
+        #endregion
+
 
     }
 }
