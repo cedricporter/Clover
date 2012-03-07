@@ -260,6 +260,7 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
+           
             //List<FoldUpInfo> l = new List<FoldUpInfo>();
             //if( cloverController.Table.CheckForAutoFoldUp( ref l ) )
             //{
