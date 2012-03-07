@@ -2,9 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Clover
 {
+    /// <summary>
+    /// 快照节点的类型
+    /// </summary>
+    public enum ShapshotNodeKind
+    {
+        RotateKind,
+        CutKind
+    }
+    
+    /// <summary>
+    /// 快照节点
+    /// </summary>
+    public class SnapshotNode
+    {
+        SnapshotNode type;
+        public Clover.SnapshotNode Type
+        {
+            get { return type; }
+            set { type = value; }
+        }
+        List<Face> faceLeaves = new List<Face>();
+        public List<Face> FaceLeaves
+        {
+            get { return faceLeaves; }
+            set { faceLeaves = value; }
+        }
+
+        public SnapshotNode(List<Face> leaves)
+        {
+            foreach (Face f in leaves)
+            {
+                faceLeaves.Add(f);
+            }
+        }
+
+        public void Add(Face face)
+        {
+            faceLeaves.Add(face);
+        }
+
+    }
+
     /// <summary>
     /// 影子，用于恢复折纸数据结构
     /// </summary>
@@ -165,6 +208,148 @@ namespace Clover
             //UpdatePaper();
 
             ClearTransparentFaces();
+        }
+
+        List<SnapshotNode> snapshotList = new List<SnapshotNode>();
+
+
+        private void AddSnapshot(SnapshotNode snapshot)
+        {
+            snapshotList.Add(snapshot);
+        }
+
+        /// <summary>
+        /// 检查Undo完了有没有新的snapshot，
+        /// 有的话，删除所有的后续状态
+        /// </summary>
+        void CheckUndoTree()
+        {
+            // 如果没有undo过，那么不需要删除redo状态
+            if (operationLevel == snapshotList.Count - 1)
+                return;
+
+            CloverController controller = CloverController.GetInstance();
+
+            foreach (Face face in snapshotList[operationLevel].FaceLeaves)
+            {
+                face.LeftChild = null;
+                face.RightChild = null;
+            }
+
+            // 保存进入折叠模式前的叶子节点的所有边
+            List<Edge> originEdgeList = new List<Edge>();
+            foreach (Face face in snapshotList[operationLevel - 1].FaceLeaves)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    originEdgeList.Add(e);
+                }
+            }
+
+            // 在折叠模式中的面树叶子的所有的边
+            List<Edge> currentEdgeList = new List<Edge>();
+            foreach (Face face in snapshotList[operationLevel].FaceLeaves)
+            {
+                foreach (Edge e in face.Edges)
+                {
+                    currentEdgeList.Add(e);
+                }
+            }
+
+            // 当前叶子的边集合减去原来的叶子的边集得到需要删除的边集
+            List<Edge> beDeletedEdges = currentEdgeList.Except(originEdgeList).ToList();
+
+            foreach (Edge edge in beDeletedEdges)
+            {
+                edge.Parent = null;
+            }
+
+            controller.EdgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, controller.EdgeLayer.EdgeTreeList.Count - originEdgeListCount);
+
+            List<Vertex> beDeletedVertexVersionList = new List<Vertex>();
+
+            foreach (Face face in originFaceList)
+            {
+                // 内节点一定有两个孩子，否则就出错了。
+                if (face.LeftChild != null && face.RightChild != null)
+                {
+                    beDeletedVertexVersionList.AddRange(face.LeftChild.Vertices.Except(beDeletedVertexVersionList));
+                    controller.RenderController.Delete(face.LeftChild);
+                    beDeletedVertexVersionList.AddRange(face.RightChild.Vertices.Except(beDeletedVertexVersionList));
+                    controller.RenderController.Delete(face.RightChild);
+                    controller.RenderController.New(face);
+                }
+                face.LeftChild = face.RightChild = null;
+            }
+
+            // 还原点表
+            foreach (Vertex v in beDeletedVertexVersionList)
+            {
+                controller.VertexLayer.DeleteLastVersion(v.Index);
+            }
+            for (int i = originVertexListCount; i < controller.VertexLayer.Vertices.Count; i++)
+            {
+                controller.VertexLayer.DeleteVertex(i);
+            }
+
+            snapshotList.RemoveRange(operationLevel, snapshotList.Count - operationLevel + 1);
+
+        }
+
+
+        /// <summary>
+        /// 拍快照
+        /// </summary>
+        public void Snapshot(List<Face> leaves)
+        {
+            SnapshotNode snapshot = new SnapshotNode(leaves);
+
+            AddSnapshot(snapshot);
+
+            // 当前操作的层数
+            operationLevel++;
+        }
+        public void Snapshot()
+        {
+            Snapshot(CloverController.GetInstance().FaceLeaves);
+        }
+
+        int operationLevel = -1;    /// 当前level
+
+        /// <summary>
+        /// 撤销
+        /// </summary>
+        public void Undo()
+        {
+            CloverController controller = CloverController.GetInstance();
+
+            // 没有历史记录了
+            if (operationLevel <= -1)
+                return;
+
+            controller.FaceLayer.CurrentLeaves = snapshotList[operationLevel].FaceLeaves;
+            controller.FaceLayer.State = FacecellTreeState.Undoing;
+
+
+            controller.RenderController.DeleteAll();
+            foreach (Face f in controller.FaceLayer.CurrentLeaves)
+            {
+                controller.RenderController.New(f);
+            }
+
+            controller.RenderController.UpdateAll();
+
+            // 修改操作层数
+            operationLevel--;
+        }
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        public void Redo()
+        {
+            //throw NotImplementedException;
+            System.Windows.MessageBox.Show("Redo is nto implementedException");
         }
 
         #endregion

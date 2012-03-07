@@ -60,7 +60,7 @@ GetVertex = clover.GetVertex
             }
             catch (System.Exception ex)
             {
-                throw ex;
+                //throw ex;
                 return ex.Message;
             }
             return "";

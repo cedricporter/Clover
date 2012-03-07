@@ -32,6 +32,10 @@ namespace Clover
         #endregion
 
         #region get/set
+        public Clover.FoldingSystem FoldingSystem
+        {
+            get { return foldingSystem; }
+        }
         public Clover.RenderController RenderController
         {
             get { return renderController; }

@@ -465,6 +465,9 @@ namespace Clover
         /// <param name="edge"></param>
         public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
         {
+            // 快照
+            shadowSystem.Snapshot();
+
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
             Vertex newVertexOld1 = newVertex1;
