@@ -149,13 +149,13 @@ namespace Clover.Tool
                     currSelectedElementVi.TransformGroup = new TranslateTransform(visualPoint.X - 5, visualPoint.Y);
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                     
-                    // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().FoldingUpToPoint(nearestFace, pickedVertex, new Point3D(0, 0, 0));
+                    //// 传给下一层处理
+                    //Edge edge = CloverController.GetInstance().FoldingUpToPoint(nearestFace, pickedVertex, new Point3D(0, 0, 0));
                    
-                    // 更新折线显示
-                    UpdateFoldLine(edge);
-                    // 更新提示信息
-                    UpdateFoldLineInfo(edge);
+                    //// 更新折线显示
+                    //UpdateFoldLine(edge);
+                    //// 更新提示信息
+                    //UpdateFoldLineInfo(edge);
                 }
                 else if (mode == FoldingMode.Blending)
                 {
