@@ -491,10 +491,11 @@ namespace Clover
         public Point p1, p2;
     }
 
-    public class AutoFoldInfo
+    public class FoldUpInfo
     {
         public AbstractLayer.FaceGroup fgFix;
         public AbstractLayer.FaceGroup fgMov;
         public double angle;
+        public bool IsOver;
     }
 }
