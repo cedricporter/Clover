@@ -136,6 +136,7 @@
     <Content Include="Folding Scripts\plane.py" />
     <Content Include="Folding Scripts\Test.py" />
     <Content Include="Folding Scripts\test2.py" />
+    <Content Include="Folding Scripts\副本 plane.py" />
     <Content Include="media\paper\paper1.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

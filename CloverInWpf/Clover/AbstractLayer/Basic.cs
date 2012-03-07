@@ -90,7 +90,9 @@ namespace Clover
             point.X = vertex.X;
             point.Y = vertex.Y;
             point.Z = vertex.Z;
-            Update(this, null);
+
+            if (Update != null)
+                Update(this, null);
         }
 
         public Vertex(Point3D vertex)
