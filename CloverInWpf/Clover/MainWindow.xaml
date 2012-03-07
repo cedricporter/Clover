@@ -5,15 +5,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.MainWindow"
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged"  
-        MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
+        MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
 
 
         
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
-        
-            <TextBox x:Name="commandLineTextBox" TextWrapping="Wrap" AcceptsReturn="True"  Height="400" Width="500" Background="White" HorizontalAlignment="Left" VerticalAlignment="Bottom" KeyDown="FuckingKey"/>
-            <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Height="400" Width="200" Background="White" Margin="0,0,50,0"  HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
             <!-- 折纸 -->
             <Viewport3D x:Name="foldingPaperViewport">
                 <Viewport3D.Camera>
@@ -34,7 +31,7 @@
 	                 | /5   | /6
 	                1|/____2|/ 
 	        -->
-	        <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True">
+	        <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True" Panel.ZIndex="30">
 	            <Viewport3D.Camera>
 	                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
 	            </Viewport3D.Camera>
@@ -68,10 +65,10 @@
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
-            <Grid x:Name="ToolBox"  Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+            <Grid x:Name="ToolBox" Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" VerticalAlignment="Top" Margin="5,3">
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
@@ -82,6 +79,42 @@
                 <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                 <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
                 <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+            </Grid>
+            <!-- 命令行窗口 -->
+            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                        Command Line
+                    </TextBlock>
+                    <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
+                            Click="MenuItem_Unchecked_1">X</Button>
+                </Grid>
+                <Grid Margin="10, 40, 10, 10">
+                    <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" TextWrapping="Wrap" Background="Black" Foreground="#33FF33" KeyDown="FuckingKey"/>
+                </Grid>
+            </Grid>
+            <!-- 输出窗口 -->
+            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                        Output
+                    </TextBlock>
+                    <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
+                            Click="MenuItem_Unchecked_2">X</Button>
+                </Grid>
+                <Grid Margin="10, 40, 10, 10">
+                    <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
+                </Grid>
             </Grid>
 		</Grid>
         
@@ -105,7 +138,9 @@
                     </MenuItem>
 				</MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
-                    <MenuItem Header="ToolBox"/>
+                    <MenuItem x:Name="ToolBoxMenuItem"  Header="ToolBox" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked"/>
+                    <MenuItem x:Name="CommandLineMenuItem" Header="Command Line" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked_1" Unchecked="MenuItem_Unchecked_1"/>
+                    <MenuItem x:Name="OutputMenuItem" Header="Output" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked_2" Unchecked="MenuItem_Unchecked_2"/>
                 </MenuItem>
                 <MenuItem Header="_Setting" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header=""/>

@@ -89,6 +89,7 @@
     				<!--<Border x:Name="GlyphPanel" BorderBrush="#CDD3E6" BorderThickness="1" Background="#E6EFF4" CornerRadius="3" Height="22" Margin="1" Visibility="Hidden" Width="22">
     					<Path x:Name="Glyph" Data="{StaticResource Checkmark}" Fill="#0C12A1" FlowDirection="LeftToRight" Height="11" Width="9"/>
     				</Border>-->
+                    <Ellipse x:Name="GlyphPanel" Height="8" Width="8" Fill="#2D71B6" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Hidden"/>
                     <ContentPresenter Grid.Column="2" Effect="{StaticResource DropShadowEffect1px}" ContentSource="Header" TextBlock.Foreground="{StaticResource TextWhiteBrush}"  Margin="0,8,0,10" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
     				<!--<TextBlock Grid.Column="4" Margin="{TemplateBinding Padding}" Text="{TemplateBinding InputGestureText}"/>-->
     			</Grid>
@@ -97,10 +98,10 @@
     			<Trigger Property="Icon" Value="{x:Null}">
     				<Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
     			</Trigger>
-    			<!--<Trigger Property="IsChecked" Value="true">
+    			<Trigger Property="IsChecked" Value="true">
     				<Setter Property="Visibility" TargetName="GlyphPanel" Value="Visible"/>
     				<Setter Property="Visibility" TargetName="Icon" Value="Collapsed"/>
-    			</Trigger>-->
+    			</Trigger>
     			<Trigger Property="IsHighlighted" Value="true">
     				<Setter Property="Visibility" TargetName="Bg" Value="Visible"/>
     				<!--<Setter Property="Stroke" TargetName="Bg" Value="#8071CBF1"/>
