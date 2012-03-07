@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="Clover.MainWindow"
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged"  
-        MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
+        MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
 
 
@@ -68,10 +68,10 @@
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
-            <Grid x:Name="ToolBox"  Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+            <Grid x:Name="ToolBox" Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" VerticalAlignment="Top" Margin="5,3">
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>

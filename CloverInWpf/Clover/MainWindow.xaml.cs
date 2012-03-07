@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Controls;
 
 using Clover.Tool;
 using Clover.Visual;
@@ -192,6 +193,35 @@ namespace Clover
             }
         }
 
+        #region 移动子窗口
+        
+        Point lastMousePos1 = new Point(-100, -100);
+        Grid capturedGrid = null;
+        private void Grid_Capture(Object sender, MouseButtonEventArgs e)
+        {
+            capturedGrid = (Grid)((Grid)sender).Parent;
+        }
+        private void Grid_Lost(Object sender, MouseButtonEventArgs e)
+        {
+            lastMousePos1.X = lastMousePos1.Y = -100;
+            capturedGrid = null;
+        }
+        private void Grid_Move(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton != MouseButtonState.Pressed || capturedGrid == null)
+                return;
+            Point currMousePos = e.GetPosition(this);
+            if (lastMousePos1.X == -100 && lastMousePos1.Y == -100)
+                lastMousePos1 = currMousePos;
+            Double lastX = capturedGrid.RenderTransform.Value.OffsetX;
+            Double lastY = capturedGrid.RenderTransform.Value.OffsetY;
+            Vector offset = currMousePos - lastMousePos1;
+            capturedGrid.RenderTransform = new TranslateTransform(offset.X + lastX, offset.Y + lastY);
+            lastMousePos1 = currMousePos;
+        }
+
+        #endregion
+
         /// <summary>
         /// 当鼠标在折纸视口上
         /// </summary>
@@ -201,6 +231,8 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onMove();
+
+            Grid_Move(sender, e);
         }
 
         /// <summary>
