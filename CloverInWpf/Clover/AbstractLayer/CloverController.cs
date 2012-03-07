@@ -820,13 +820,64 @@ namespace Clover
             table.UpdateLookupTable();
         }
 
+        // 创建移动面分组
+        List<Face> faceWithFoldingLine = new List<Face>();
+        List<Face> faceWithoutFoldingLine = new List<Face>();
+
+        /// <summary>
+        /// 判定移动的面
+        /// </summary>
+        /// <param name="pickedFace"></param>
+        /// <param name="foldingLine"></param>
+        public void AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
+        {
+            table.UpdateLookupTable();
+            
+
+            // 根据面组遍历所有面，判定是否属于移动面并分组插入
+            foreach (Face face in faceLayer.Leaves)
+            {
+                if (TestMovedFace(face, pickedFace, pickedVertex))
+                {
+                    if (TestFoldingLineCrossed(face, foldingLine))
+                    {
+                        faceWithFoldingLine.Add(face);
+                    }
+                    else
+                    {
+                        faceWithoutFoldingLine.Add(face);
+                    }
+                }
+            }
+
+            // 对于所有有折线经过的面，对面进行切割
+            foreach (Face face in faceWithFoldingLine)
+            {
+                CutAFace(face, foldingLine); 
+                // 选取有拾取点的那个面为移动面，加入到没有折线面分组
+
+                bool findMovedFace = false;
+                foreach (Edge e in face.LeftChild.Edges)
+                {
+                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                    {
+                        faceWithoutFoldingLine.Add(face.LeftChild);
+                        findMovedFace = true;
+                        break;
+                    }
+                }
+
+                if (!findMovedFace)
+                    faceWithoutFoldingLine.Add(face.RightChild);
+            }
+        }
         /// <summary>
         /// 根据鼠标位移在每个渲染帧前更新结构
         /// </summary>
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
+        public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace, Edge foldingLine)
         {
             table.UpdateLookupTable();
             // testing
@@ -834,16 +885,13 @@ namespace Clover
                 return;
 
             // 假设已经选取了左上角的点，主平面
-            pickedVertex = vertexLayer.GetVertex(3);
-            pickedFace = faceLayer.Leaves[1];
+            //pickedVertex = vertexLayer.GetVertex(3);
+            //pickedFace = faceLayer.Leaves[1];
             //pickedFace = faceLayer.FacecellTree.Root;
 
             // 计算初始折线
             //currentFoldingLine = CalculateFoldingLine(pickedVertex);
 
-            // 创建移动面分组
-            List<Face> faceWithFoldingLine = new List<Face>();
-            List<Face> faceWithoutFoldingLine = new List<Face>();
 
             // 根据面组遍历所有面，判定是否属于移动面并分组插入
             foreach (Face face in faceLayer.Leaves)
