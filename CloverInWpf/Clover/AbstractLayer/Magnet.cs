@@ -20,7 +20,7 @@ namespace Clover.AbstractLayer
 {
     public class Magnet
     {
-        static Boolean isMagnetismEnable = false;
+        static Boolean isMagnetismEnable = true;
 
         static Double vertexMagnetismVal = 5;
         static Double edgeMagnetismVal = 5;
@@ -29,25 +29,34 @@ namespace Clover.AbstractLayer
         /// 在给定的Face中寻找可吸附的边或点
         /// </summary>
         /// <param name="vertex"></param>
-        public static Object PerformVertexAttach(Point3D point, Face face)
+        public static Boolean PerformVertexAttach(Point3D point, Face face, out Point3D outPoint)
         {
             if (!isMagnetismEnable)
-                return null;
-
-            //Object attachedObject = null;
+            {
+                outPoint = new Point3D();
+                return false;
+            }
+            // 先判断吸附点
             foreach (Vertex v in face.Vertices)
             {
                 if (CloverMath.IsTwoPointsEqual(point, v.GetPoint3D(), vertexMagnetismVal))
-                    return v;
+                {
+                    outPoint = v.GetPoint3D();
+                    return true;
+                }
             }
-
+            // 再判断吸附边缘
             foreach (Edge e in face.Edges)
             {
                 if (CloverMath.IsPointInTwoPoints(point, e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), edgeMagnetismVal))
-                    return e;
+                {
+                    outPoint = CloverMath.GetNearestPointOnSegment(point, e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D());
+                    return true;
+                }
             }
 
-            return null;
+            outPoint = new Point3D();
+            return false;
         }
 
 
