@@ -226,7 +226,23 @@ namespace Clover
            
         }
 
+        public object Clone()
+        {
+            LookupTable newtables = new LookupTable( null );
+            newtables.tables.Clear();
+            foreach ( FaceGroup fg in tables )
+            {
+                foreach (Face f in fg.GetGroup())
+                {
+                    newtables.AddFace( f );
+                }
+            }
+            return newtables;
 
+        }
+
+
+        
         /// <summary>
         /// 刷新table中的列表，删除空的组
         /// </summary>
