@@ -204,6 +204,9 @@ namespace Clover
             
         }
 
+        /// <summary>
+        /// 更新lookuptable
+        /// </summary>
         public void UpdateLookupTable()
         {
             UpdateGroup();
@@ -212,9 +215,15 @@ namespace Clover
         }
 
 
+        /// <summary>
+        /// 检索group中的组有没有非常靠近的面
+        /// </summary>
+        /// <param name="atuofoldinfolist">保存着可以可能会自动贴合的group对</param>
+        /// <param name="threshold">用弧度表示的角度</param>
+        /// <returns></returns>
         public bool CheckForAutoFoldUp( ref List<AutoFoldInfo> atuofoldinfolist, double threshold = 0.174 )
         {
-            atuofoldinfolist = null;
+           
             foreach ( FaceGroup fgfix in tables )
             {
                 foreach ( FaceGroup fgmove in tables )
@@ -228,7 +237,7 @@ namespace Clover
                             autofoldinfo.fgFix = fgfix;
                             autofoldinfo.fgMov = fgmove;
                             autofoldinfo.angle = ang;
-
+                            atuofoldinfolist.Add( autofoldinfo );
                         }
                     }
                 }

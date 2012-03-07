@@ -246,11 +246,8 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
-            if(cloverController.FaceLayer.Leaves.Count >= 2)
-            {
-                double d = CloverMath.CalculatePlaneAngle( cloverController.FaceLayer.Leaves[ 0 ], cloverController.FaceLayer.Leaves[ 1 ] );
-                MessageBox.Show( d.ToString() );
-            }
+
+            
 
         }
 
@@ -263,6 +260,7 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
+
         }
 
         /// <summary>
