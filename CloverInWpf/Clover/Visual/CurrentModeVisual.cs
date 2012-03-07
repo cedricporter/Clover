@@ -28,16 +28,18 @@ namespace Clover.Visual
 
         public CurrentModeVisual(String text)
         {
+            Grid innerBox = new Grid();
             Rectangle bg = new Rectangle();
             bg.RadiusX = bg.RadiusY = 15;
             bg.Fill = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0));
-            box.Children.Add(bg);
+            innerBox.Children.Add(bg);
             TextBlock textblock = new TextBlock();
             textblock.Margin = new Thickness(24, 12, 24, 12);
             textblock.Text = text;
             textblock.FontSize = 14;
             textblock.Foreground = new SolidColorBrush(Colors.White);
-            box.Children.Add(textblock);
+            innerBox.Children.Add(textblock);
+            box.Children.Add(innerBox);
             box.Opacity = 0;
             TransformGroup = new TranslateTransform(10, posY);
         }

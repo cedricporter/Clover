@@ -383,7 +383,7 @@ namespace Clover
 
         private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
         {
-            CommandLine.Visibility = Visibility.Visible;
+            //CommandLine.Visibility = Visibility.Visible;
         }
 
         private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
@@ -395,7 +395,7 @@ namespace Clover
 
         private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
         {
-            Output.Visibility = Visibility.Visible;
+            //Output.Visibility = Visibility.Visible;
         }
 
         private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)

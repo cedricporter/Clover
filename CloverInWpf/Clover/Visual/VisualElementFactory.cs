@@ -32,7 +32,7 @@ namespace Clover.Visual
         /// <summary>
         /// 容器 
         /// </summary>
-        public Grid box = new Grid();
+        public Canvas box = new Canvas();
 
         /// <summary>
         /// 变换
