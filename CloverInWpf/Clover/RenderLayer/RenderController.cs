@@ -364,6 +364,8 @@ namespace Clover
         public void RenderAnimations()
         {
             RotationSlerp();
+
+            //AntiOverlap();
         }
 
         #region 从3D视角变为2D视角的插值动画

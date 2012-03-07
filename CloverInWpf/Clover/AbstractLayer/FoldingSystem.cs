@@ -760,7 +760,6 @@ namespace Clover
             shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
             shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
-
             controller.Table.DeleteFace( face );
             controller.Table.AddFace( f1 );
             controller.Table.AddFace( f2 );
