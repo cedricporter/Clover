@@ -65,10 +65,10 @@
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
-            <Grid x:Name="ToolBox" Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
-                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+            <Grid x:Name="ToolBox" Width="120" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4" d:IsLocked="True"/>
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3" d:IsLocked="True">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
@@ -76,10 +76,12 @@
                         Tool Box
                     </TextBlock>
                 </Grid>
-                <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
-                <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                <Button Content="Paper" Height="40" Width="40" Template="{StaticResource RectangleButtonTemplate1}" Margin="0,0,0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                <RadioButton x:Name="ToolFodeButton" Checked="ToolFodeButton_Checked" Unchecked="ToolFodeButton_Unchecked" Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="16,50,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="True"/>
+                <RadioButton x:Name="ToolTuckButton" Checked="ToolTuckButton_Checked" Unchecked="ToolTuckButton_Unchecked"  Content="Tuck" Height="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="16,98,63,0" VerticalAlignment="Top" d:LayoutOverrides="Height" Width="40" HorizontalAlignment="Left"/>
+                <RadioButton x:Name="ToolBlendButton" Checked="ToolBlendButton_Checked" Unchecked="ToolBlendButton_Unchecked" Content="Blend" Height="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="64,50,0,0" VerticalAlignment="Top" d:LayoutOverrides="Height" HorizontalAlignment="Left" Width="40"/>
+                <CheckBox x:Name="BeginMacroButton" Checked="BeginMacroButton_Checked" Unchecked="BeginMacroButton_Unchecked"  Content="Begin Macro" Width="90" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="16,146,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40"/>
+                <CheckBox x:Name="MagnetismButton" Checked="MagnetismButton_Checked" Unchecked="MagnetismButton_Unchecked"  Content="Magnetism" Width="90" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="16,194,0,0" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" IsChecked="True"/>
+                <Button x:Name="ChangePaperButton" Click="ChangePaperButton_Click" Content="Change Paper" Height="40" Width="90" Template="{StaticResource RectangleButtonTemplate1}" Margin="16,242,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Grid>
             <!-- 命令行窗口 -->
             <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
@@ -117,6 +119,7 @@
                     <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
                 </Grid>
             </Grid>
+            <!-- 选择纸张纹理窗口 -->
             <Grid x:Name="PaperSelect" Margin="80,0,0,151" VerticalAlignment="Bottom" HorizontalAlignment="Left" MinWidth="120" MinHeight="120" MaxWidth="360" MaxHeight="360" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="3" d:IsLocked="True"/>
@@ -125,7 +128,7 @@
                 <!--</ScrollViewer>-->
             </Grid>
 		</Grid>
-        
+        <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
             <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="4,0"/>
             <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>

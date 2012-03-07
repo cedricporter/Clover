@@ -407,6 +407,68 @@ namespace Clover
 
         #endregion
 
+        #region 工具栏按钮
+
+        private void ToolFodeButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolFodeButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolTuckButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolTuckButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolBlendButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolBlendButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BeginMacroButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BeginMacroButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MagnetismButton_Checked(object sender, RoutedEventArgs e)
+        {
+            AbstractLayer.Magnet.IsMagnetismEnable = true;
+        }
+
+        private void MagnetismButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AbstractLayer.Magnet.IsMagnetismEnable = false;
+        }
+
+        private void ChangePaperButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (PaperSelect.Visibility == Visibility.Hidden)
+                PaperSelect.Visibility = Visibility.Visible;
+            else
+                PaperSelect.Visibility = Visibility.Hidden;
+        }
+
+        #endregion
+
 
     }
 }

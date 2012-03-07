@@ -122,8 +122,6 @@ namespace Clover
                 hl.Height = hl.Width = 100;
                 hl.Visibility = Visibility.Hidden;
                 box.Children.Add(hl);
-                
-                
 
                 // 将信息装入列表
                 PaperTextureInfo info = new PaperTextureInfo();
