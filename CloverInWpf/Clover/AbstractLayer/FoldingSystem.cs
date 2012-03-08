@@ -611,10 +611,10 @@ namespace Clover
                             System.Windows.MessageBox.Show("fuck2");
                         }
 
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex2);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex2);
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex2.GetPoint3D(), 0.001))
@@ -675,10 +675,10 @@ namespace Clover
                             System.Windows.MessageBox.Show("fuck");
                         }
 
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex2);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex2);
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D(), 0.001))
@@ -701,17 +701,18 @@ namespace Clover
 
             Edge newEdge = new Edge(newVertex1, newVertex2);
 
+            // 是否是新的顶点
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
                 render.AddVisualInfoToVertex(newVertex1);
-                ignoreAddHistoryVertexList.Add(newVertex1);
+                //ignoreAddHistoryVertexList.Add(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
                 render.AddVisualInfoToVertex(newVertex2);
-                ignoreAddHistoryVertexList.Add(newVertex2);
+                //ignoreAddHistoryVertexList.Add(newVertex2);
             }
 
 
@@ -719,60 +720,77 @@ namespace Clover
             newEdge.Face1 = f1;
             newEdge.Face2 = f2;
 
+            rangeA.Add(newEdge);
+            rangeB.Add(newEdge);
+
             foreach (Edge e in rangeA)
             {
                 f1.AddEdge(e);
-                foreach (Vertex v in ignoreAddHistoryVertexList)
-                {
-                    if (e.Vertex1.Index == v.Index)
-                        e.Vertex1 = v;
-                    if (e.Vertex2.Index == v.Index)
-                        e.Vertex2 = v;
-                }
             }
             foreach (Edge e in rangeB)
             {
                 f2.AddEdge(e);
-                foreach (Vertex v in ignoreAddHistoryVertexList)
-                {
-                    if (e.Vertex1.Index == v.Index)
-                        e.Vertex1 = v;
-                    if (e.Vertex2.Index == v.Index)
-                        e.Vertex2 = v;
-                }
             }
-
-            f1.AddEdge(newEdge);
-            f2.AddEdge(newEdge);
 
             f1.UpdateVertices();
             f2.UpdateVertices();
 
-            // 找到所有需要保存到VertexLayer历史的顶点
-            List<Vertex> oldVertexList = UnionVertex(f1, f2);
-            //oldVertexList = oldVertexList.Except(ignoreAddHistoryVertexList).ToList();
-            foreach (Vertex v in ignoreAddHistoryVertexList)
-            {
-                oldVertexList.Remove(v);
-            }
+            #region history
+            //foreach (Edge e in rangeA)
+            //{
+            //    f1.AddEdge(e);
+            //    foreach (Vertex v in ignoreAddHistoryVertexList)
+            //    {
+            //        if (e.Vertex1.Index == v.Index)
+            //            e.Vertex1 = v;
+            //        if (e.Vertex2.Index == v.Index)
+            //            e.Vertex2 = v;
+            //    }
+            //}
+            //foreach (Edge e in rangeB)
+            //{
+            //    f2.AddEdge(e);
+            //    foreach (Vertex v in ignoreAddHistoryVertexList)
+            //    {
+            //        if (e.Vertex1.Index == v.Index)
+            //            e.Vertex1 = v;
+            //        if (e.Vertex2.Index == v.Index)
+            //            e.Vertex2 = v;
+            //    }
+            //}
 
-            // 为所有的顶点生成一个副本插到历史中。
-            shadowSystem.SaveVertices(oldVertexList);
+            //f1.AddEdge(newEdge);
+            //f2.AddEdge(newEdge);
 
-            // 更新新的面的顶点到最新版
-            UpdateFaceVerticesToLastedVersion(f1);
-            UpdateFaceVerticesToLastedVersion(f2);
+            //f1.UpdateVertices();
+            //f2.UpdateVertices();
 
-            controller.Table.DeleteFace( face );
-            controller.Table.AddFace( f1 );
-            controller.Table.AddFace( f2 );
+            //// 找到所有需要保存到VertexLayer历史的顶点
+            //List<Vertex> oldVertexList = UnionVertex(f1, f2);
+            ////oldVertexList = oldVertexList.Except(ignoreAddHistoryVertexList).ToList();
+            //foreach (Vertex v in ignoreAddHistoryVertexList)
+            //{
+            //    oldVertexList.Remove(v);
+            //}
+
+            ////// 为所有的顶点生成一个副本插到历史中。
+            ////shadowSystem.SaveVertices(oldVertexList);
+
+            ////// 更新新的面的顶点到最新版
+            ////UpdateFaceVerticesToLastedVersion(f1);
+            ////UpdateFaceVerticesToLastedVersion(f2);
+
+            //controller.Table.DeleteFace(face);
+            //controller.Table.AddFace(f1);
+            //controller.Table.AddFace(f2);
+            #endregion
 
             // 更新渲染层的部分
             render.Delete(face);
             render.New(f1);
-            render.New( f2 );
+            render.New(f2);
 
-            render.AntiOverlap();
+            //render.AntiOverlap();
 
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
@@ -797,10 +815,36 @@ namespace Clover
         }
         #endregion
 
+        //int counterFUcker = 1;
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             shadowSystem.Snapshot();
+        
+            //// testing
+            //if (faceList.Count >= 2)
+            //{
+            //    if (counterFUcker == 1)
+            //    {
+            //        counterFUcker++;
+            //        if (faceList[0].Edges.Count > faceList[1].Edges.Count)
+            //        {
+            //            var t = faceList[0];
+            //            faceList.RemoveAt(0);
+            //            faceList.Add(t);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (faceList[0].Edges.Count <= faceList[1].Edges.Count)
+            //        {
+            //            var t = faceList[0];
+            //            faceList.RemoveAt(0);
+            //            faceList.Add(t);
+            //        }
+
+            //    }
+            //}
 
             foreach (Face face in faceList)
             {
