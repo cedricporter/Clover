@@ -843,7 +843,7 @@ namespace Clover
         /// <param name="pickedFace"></param>
         /// <param name="pickedVertex"></param>
         /// <param name="projectionPoint"></param>
-        public Edge FoldingUpToPoint(List<Face> rotateFaces, Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
+        public Edge FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             shadowSystem.SaveOriginState();
@@ -858,7 +858,7 @@ namespace Clover
                 return null;
             }
             // 查找所有需要移动的面
-            AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
+            List<Face> rotateFaces = AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
 
             // 计算所需旋转角度
             Point3D crossPoint = new Point3D();
@@ -888,7 +888,7 @@ namespace Clover
         /// <param name="pickedFace">选中的面</param>
         /// <param name="pickedVertex">选中的点</param>
         /// <returns></returns>
-        bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
+        public bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
         {
             // 选定的面一定是移动面
             if (face == pickedFace)
@@ -959,6 +959,12 @@ namespace Clover
             }
 
             CutFaces(faceWithFoldingLine, foldingLine);
+
+            foreach (Face face in faceWithFoldingLine)
+            {
+                faceWithoutFoldingLine.Add(face.LeftChild);
+                faceWithoutFoldingLine.Add(face.RightChild);
+            }
 
             faceWithoutFoldingLine = CloverTreeHelper.FindFacesFromVertex(faceWithoutFoldingLine, pickedVertex);
             return faceWithoutFoldingLine;

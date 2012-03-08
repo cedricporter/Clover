@@ -518,6 +518,13 @@ namespace Clover
             return foldingLine;
         }
 
+        bool first = true;
+        public Edge FoldingUpToAPoint(Face pickedFace, Vertex originVertex, Point3D projectionPoint)
+        {
+            Edge e = foldingSystem.FoldingUpToPoint(pickedFace, originVertex, projectionPoint);
+            Revert();
+            return e;
+        }
         #endregion
 
         #region 更新
@@ -538,135 +545,92 @@ namespace Clover
 
 
         
-        /// <summary>
-        /// 创建初始的折线顶点·
-        /// </summary>
-        /// <param name="xRel"></param>
-        /// <param name="yRel"></param>
-        Edge CalculateFoldingLine(Vertex pickedVertex)
-        {
-            // 找到所有包含此点的面
-            foreach(Face f in faceLayer.Leaves)
-            {
-                Point3D vertex1 = new Point3D();
-                Point3D vertex2 = new Point3D();
+        ///// <summary>
+        ///// 创建初始的折线顶点·
+        ///// </summary>
+        ///// <param name="xRel"></param>
+        ///// <param name="yRel"></param>
+        //Edge CalculateFoldingLine(Vertex pickedVertex)
+        //{
+        //    // 找到所有包含此点的面
+        //    foreach(Face f in faceLayer.Leaves)
+        //    {
+        //        Point3D vertex1 = new Point3D();
+        //        Point3D vertex2 = new Point3D();
 
-                bool findFirstVertex = false;
-                bool CalculateFinished = false;
-                foreach (Edge e in f.Edges)
-                {
-                    // 边的第一个顶点是否是选中点
-                    if (e.Vertex1 == pickedVertex)
-                    {
+        //        bool findFirstVertex = false;
+        //        bool CalculateFinished = false;
+        //        foreach (Edge e in f.Edges)
+        //        {
+        //            // 边的第一个顶点是否是选中点
+        //            if (e.Vertex1 == pickedVertex)
+        //            {
 
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex2.X - e.Vertex1.X;
-                        v.Y = e.Vertex2.Y - e.Vertex1.Y;
-                        v.Z = e.Vertex2.Z - e.Vertex1.Z;
+        //                Vector3D v = new Vector3D();
+        //                v.X = e.Vertex2.X - e.Vertex1.X;
+        //                v.Y = e.Vertex2.Y - e.Vertex1.Y;
+        //                v.Z = e.Vertex2.Z - e.Vertex1.Z;
 
-                        v.Normalize();
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex1.X + v.X;
-                            vertex1.Y = e.Vertex1.Y + v.Y;
-                            vertex1.Z = e.Vertex1.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex1.X + v.X;
-                            vertex2.Y = e.Vertex1.Y + v.Y;
-                            vertex2.Z = e.Vertex1.Z + v.Z;
-                            CalculateFinished = true;
-                        }
-                    }
+        //                v.Normalize();
+        //                if (!findFirstVertex)
+        //                {
+        //                    vertex1.X = e.Vertex1.X + v.X;
+        //                    vertex1.Y = e.Vertex1.Y + v.Y;
+        //                    vertex1.Z = e.Vertex1.Z + v.Z;
+        //                    findFirstVertex = true;
+        //                }
+        //                else
+        //                {
+        //                    vertex2.X = e.Vertex1.X + v.X;
+        //                    vertex2.Y = e.Vertex1.Y + v.Y;
+        //                    vertex2.Z = e.Vertex1.Z + v.Z;
+        //                    CalculateFinished = true;
+        //                }
+        //            }
                     
-                    // 边的第二个顶点是否是选中点
-                    if (e.Vertex2 == pickedVertex)
-                    {
+        //            // 边的第二个顶点是否是选中点
+        //            if (e.Vertex2 == pickedVertex)
+        //            {
 
-                        Vector3D v = new Vector3D();
-                        v.X = e.Vertex1.X - e.Vertex2.X;
-                        v.Y = e.Vertex1.Y - e.Vertex2.Y;
-                        v.Z = e.Vertex1.Z - e.Vertex2.Z;
+        //                Vector3D v = new Vector3D();
+        //                v.X = e.Vertex1.X - e.Vertex2.X;
+        //                v.Y = e.Vertex1.Y - e.Vertex2.Y;
+        //                v.Z = e.Vertex1.Z - e.Vertex2.Z;
 
-                        v.Normalize();
+        //                v.Normalize();
 
-                        if (!findFirstVertex)
-                        {
-                            vertex1.X = e.Vertex2.X + v.X;
-                            vertex1.Y = e.Vertex2.Y + v.Y;
-                            vertex1.Z = e.Vertex2.Z + v.Z;
-                            findFirstVertex = true;
-                        }
-                        else
-                        {
-                            vertex2.X = e.Vertex2.X + v.X;
-                            vertex2.Y = e.Vertex2.Y + v.Y;
-                            vertex2.Z = e.Vertex2.Z + v.Z;
-                            CalculateFinished = true;
-                        }
+        //                if (!findFirstVertex)
+        //                {
+        //                    vertex1.X = e.Vertex2.X + v.X;
+        //                    vertex1.Y = e.Vertex2.Y + v.Y;
+        //                    vertex1.Z = e.Vertex2.Z + v.Z;
+        //                    findFirstVertex = true;
+        //                }
+        //                else
+        //                {
+        //                    vertex2.X = e.Vertex2.X + v.X;
+        //                    vertex2.Y = e.Vertex2.Y + v.Y;
+        //                    vertex2.Z = e.Vertex2.Z + v.Z;
+        //                    CalculateFinished = true;
+        //                }
 
 
                         
-                    }
-                    if (CalculateFinished)
-                    {
-                        Vertex cVertex1 = new Vertex(vertex1);
-                        Vertex cVertex2 = new Vertex(vertex2);
+        //            }
+        //            if (CalculateFinished)
+        //            {
+        //                Vertex cVertex1 = new Vertex(vertex1);
+        //                Vertex cVertex2 = new Vertex(vertex2);
 
-                        Edge edge = new Edge(cVertex1, cVertex2);
-                        return edge;
-                    }
-                }
-            }
+        //                Edge edge = new Edge(cVertex1, cVertex2);
+        //                return edge;
+        //            }
+        //        }
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
-        /// <summary>
-        /// 判断当前面是否是个需要移动的面
-        /// </summary>
-
-        bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
-        {
-            // 选定的面一定是移动面
-            if (face == pickedFace)
-                return true;
-
-            // 所有和移动面有共同边的面都是移动面,即拥有选择点的面
-            foreach (Edge e in face.Edges)
-            {
-                if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
-                {
-                    return true; 
-                }
-            }
-
-            // 若有面覆盖在该面上，也为移动面
-            // 需要面分组中的层次信息
-            // bla bla bla.
-
-            return false;
-        }
-
-        /// <summary>
-        /// 判断折线是否通过该平面
-        /// </summary>
-        /// <param name="face">当前判定平面</param>
-        /// <param name="currentFoldingLine">折线亮点坐标</param>
-        /// <returns></returns>
-        public bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
-        {
-            int crossCount = 0;
-            foreach (Edge e in face.Edges)
-            { 
-                Point3D crossPoint = new Point3D();
-                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
-                    crossCount++;
-            }
-            return crossCount >= 2;
-        }
         
         /// <summary>
         /// 通过点找面
@@ -857,9 +821,9 @@ namespace Clover
             // 根据面组遍历所有面，判定是否属于移动面并分组插入
             foreach (Face face in faceLayer.Leaves)
             {
-                if (TestMovedFace(face, pickedFace, pickedVertex))
+                if ( foldingSystem.TestMovedFace(face, pickedFace, pickedVertex))
                 {
-                    if (TestFoldingLineCrossed(face, currentFoldingLine))
+                    if ( foldingSystem.TestFoldingLineCrossed(face, currentFoldingLine))
                     {
                         faceWithFoldingLine.Add(face);
                     }
