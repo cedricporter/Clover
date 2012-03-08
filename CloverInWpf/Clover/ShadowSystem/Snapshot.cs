@@ -21,7 +21,8 @@ namespace Clover
     {
         SnapshotNode type;
         List<Face> faceLeaves = new List<Face>();
-
+        List<Edge> newEdges = null;
+        
         #region get/set
         public Clover.SnapshotNode Type
         {
@@ -32,6 +33,11 @@ namespace Clover
         {
             get { return faceLeaves; }
             set { faceLeaves = value; }
+        }
+        public List<Edge> NewEdges
+        {
+            get { return newEdges; }
+            set { newEdges = value; }
         }
         #endregion
 

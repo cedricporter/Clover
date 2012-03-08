@@ -13,20 +13,41 @@ namespace Clover
     public class ShadowSystem
     {
 
-        #region 私有成员变量
+        #region 只读属性
+
         int operationLevel = -1;                                            /// 当前level
+        public int OperationLevel
+        {
+            get { return operationLevel; }
+        }
+
         List<SnapshotNode> snapshotList = new List<SnapshotNode>();         /// 用以保存Snapshot
+        public List<SnapshotNode> SnapshotList
+        {
+            get { return snapshotList; }
+        }
+
         #endregion
 
         /// <summary>
         /// 拍快照
         /// </summary>
-        public void Snapshot(List<Face> leaves)
+        public void Snapshot(List<Face> leaves, List<Edge> newEdges)
         {
             SnapshotNode snapshot = new SnapshotNode(leaves);
+            if (newEdges != null)
+                snapshot.NewEdges = newEdges;
             snapshotList.Add(snapshot);
             // 当前操作的层数
             operationLevel++;
+        }
+        public void Snapshot(List<Face> leaves)
+        {
+            Snapshot(leaves, null);
+        }
+        public void Snapshot(List<Edge> newEdges)
+        {
+            Snapshot(CloverController.GetInstance().FaceLeaves, newEdges);
         }
         public void Snapshot()
         {
@@ -54,7 +75,7 @@ namespace Clover
             {
                 controller.RenderController.New(f);
             }
-            
+            controller.RenderController.UndrawFoldLine();
         }
 
         /// <summary>
@@ -78,6 +99,7 @@ namespace Clover
             {
                 controller.RenderController.New(f);
             }
+            controller.RenderController.RedrawFoldLine();
         }
 
 
