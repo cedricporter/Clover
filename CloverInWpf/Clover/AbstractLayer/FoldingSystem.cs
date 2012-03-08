@@ -513,7 +513,7 @@ namespace Clover
         /// <param name="leftChild"></param>
         /// <param name="rightChild"></param>
         /// <param name="edge"></param>
-        public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
+        public Edge CutAFaceWithAddedTwoVertices(Face face, Edge edge)
         {
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
@@ -544,7 +544,7 @@ namespace Clover
                 vertexList.RemoveAt(0);
 
                 if (count-- == 0)
-                    return;
+                    return null;
             }
             vertexList.Add(vertexList[0]);
 
@@ -797,6 +797,8 @@ namespace Clover
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
+
+            return newEdge;
         }
 
         #region 辅助函数
@@ -852,8 +854,11 @@ namespace Clover
 
                 Debug.Assert(edge != null);
 
-                CutAFaceWithAddedTwoVertices(face, edge);
+                newEdges.Add(CutAFaceWithAddedTwoVertices(face, edge));
             }
+            // 拍快照
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            shadowSystem.Snapshot(newEdges);
         }
 
         #endregion

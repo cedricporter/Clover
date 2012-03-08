@@ -311,6 +311,22 @@ namespace Clover
         }
 
         /// <summary>
+        /// 撤销一步生成的折线
+        /// </summary>
+        public void UndrawFoldLine()
+        {
+            materialController.RebuildFoldLinesToPrev();
+        }
+
+        /// <summary>
+        /// 根据ShadowSystem当前的堆栈重绘所有折线至下个版本
+        /// </summary>
+        public void RedrawFoldLine()
+        {
+            materialController.RebuildFoldLinesToNext();
+        }
+
+        /// <summary>
         /// 为一个顶点添加提示信息
         /// </summary>
         /// <param name="v"></param>

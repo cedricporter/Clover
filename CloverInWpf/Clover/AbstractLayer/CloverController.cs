@@ -215,6 +215,9 @@ namespace Clover
             faceLayer.UpdateLeaves();
 
             table = new LookupTable(face);
+
+            // 此处也应该拍一张快照
+            shadowSystem.Snapshot();
         }
 
         /// <summary>
