@@ -32,29 +32,16 @@ namespace Clover.Visual
         /// <summary>
         /// 容器 
         /// </summary>
-        public Grid box = new Grid();
+        public Canvas box = new Canvas();
 
         /// <summary>
         /// 变换
         /// </summary>
-        Transform transformGroup = new TransformGroup();
+        Transform transformGroup;
         public System.Windows.Media.Transform TransformGroup
         {
             get { return transformGroup; }
             set { transformGroup = value; }
-        }
-
-        public VisualElementFactory()
-        {
-            box.Name = "grid";
-            box.HorizontalAlignment = HorizontalAlignment.Left;
-            box.VerticalAlignment = VerticalAlignment.Top;
-            //Border bg = new Border();
-            //bg.Background = new SolidColorBrush(Color.FromArgb(120,0,0,0));
-            //bg.BorderBrush = new SolidColorBrush(Color.FromRgb(51,51,51));
-            //bg.BorderThickness = new Thickness(1);
-            //grid.Children.Add(bg);
-            //grid.Opacity = 0;
         }
 
         /// <summary>
@@ -71,6 +58,7 @@ namespace Clover.Visual
         /// </summary>
         public void Start()
         {
+            box.RenderTransform = transformGroup;
             state = VisualElementFactory.State.FadeIn;
         }
 
@@ -80,14 +68,6 @@ namespace Clover.Visual
         public void End()
         {
             state = VisualElementFactory.State.FadeOut;
-        }
-
-        /// <summary>
-        /// 更新视觉元素的位置
-        /// </summary>
-        public void UpdatePosition()
-        {
-            box.RenderTransform = transformGroup;
         }
 
         public abstract void FadeIn();

@@ -23,7 +23,12 @@ namespace Clover.Visual
     class VertexHeightLightVisual : VisualElementFactory
     {
         Ellipse mark;
-
+        TranslateTransform translateTransform;
+        public System.Windows.Media.TranslateTransform TranslateTransform
+        {
+            get { return translateTransform; }
+            set { translateTransform = value; }
+        }
         public VertexHeightLightVisual(Brush brush, Double posX, Double posY)
         {
             mark = new Ellipse();
@@ -32,7 +37,8 @@ namespace Clover.Visual
             mark.Fill = brush;
             box.Children.Add(mark);
             box.Opacity = 0;
-            TransformGroup = new TranslateTransform(posX, posY);
+            translateTransform = new TranslateTransform(posX, posY);
+            TransformGroup = translateTransform;
             //mark.Opacity = 0;
         }
 

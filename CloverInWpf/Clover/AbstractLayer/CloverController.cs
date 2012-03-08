@@ -1004,14 +1004,11 @@ namespace Clover
 
             renderController.DeleteAll();
 
-            MaterialGroup mgf = new MaterialGroup();
             ImageBrush imb = new ImageBrush();
             //imb.ViewportUnits = BrushMappingMode.Absolute;
             imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
-            mgf.Children.Add(new DiffuseMaterial(imb));
-
-            MaterialGroup mgb = new MaterialGroup();
-            mgb.Children.Add(new DiffuseMaterial(new SolidColorBrush(Colors.OldLace)));
+            DiffuseMaterial mgf = new DiffuseMaterial(imb);
+            DiffuseMaterial mgb = new DiffuseMaterial(new SolidColorBrush(Colors.OldLace));
             renderController.FrontMaterial = mgf;
             renderController.BackMaterial = mgb;
 
@@ -1038,6 +1035,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
+            Edge e = foldingSystem.GetFoldingLineOnAFace(FaceLayer.Leaves[0], new Edge(new Vertex(100, 100, 0), new Vertex(-100, -100, 0)));
             return;
         }
         #endregion

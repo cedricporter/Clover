@@ -96,6 +96,8 @@ namespace Clover
             {
                 // 计算Cube的旋转
                 Point currMousePos = e.GetPosition(mainWindow);
+                if (currMousePos.Equals(lastMousePos))
+                    return;
                 Vector offsetVec = currMousePos - lastMousePos;
                 Double rotDeg = offsetVec.Length;
                 System.Windows.Media.Media3D.Vector3D mouseDir = new System.Windows.Media.Media3D.Vector3D(offsetVec.X, -offsetVec.Y, 0);
@@ -111,7 +113,6 @@ namespace Clover
                 // 让CloverRoot模仿cube的动作
                 RenderController.GetInstance().SrcQuaternion = quar;
                 RenderController.GetInstance().RotateTransform = rotts;
-                //RenderController.GetInstance().UpdatePosition();
 
                 lastQuat = quar;
                 lastMousePos = currMousePos;

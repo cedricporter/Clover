@@ -21,7 +21,11 @@ namespace Clover.AbstractLayer
     public class Magnet
     {
         static Boolean isMagnetismEnable = true;
-
+        public static System.Boolean IsMagnetismEnable
+        {
+            get { return isMagnetismEnable; }
+            set { isMagnetismEnable = value; }
+        }
         static Double vertexMagnetismVal = 5;
         static Double edgeMagnetismVal = 5;
 

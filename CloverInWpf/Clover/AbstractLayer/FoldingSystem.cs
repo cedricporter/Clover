@@ -780,7 +780,6 @@ namespace Clover
 
             controller.FaceLayer.UpdateLeaves();
         }
-        #endregion
 
         #region 辅助函数
         /// <summary>
@@ -813,6 +812,9 @@ namespace Clover
             }
         }
 
+        #endregion
+
+        #region 有关折线的函数
         /// <summary>
         /// 找到折线穿过面的那条线段
         /// </summary>
@@ -836,7 +838,7 @@ namespace Clover
                         vertex1.SetPoint3D(crossPoint);
                         findFirst = true;
                     }
-                    else
+                    else if ( crossPoint != vertex1.GetPoint3D())
                     {
                         vertex2.SetPoint3D(crossPoint);
                         Edge foldingLine = new Edge(vertex1, vertex2);
@@ -846,5 +848,212 @@ namespace Clover
             }
             return null;
         }
+
+        #endregion
+
+        #region 有关折叠的函数
+
+        /// <summary>
+        /// 直接折叠到投影点上
+        /// </summary>
+        /// <param name="pickedFace"></param>
+        /// <param name="pickedVertex"></param>
+        /// <param name="projectionPoint"></param>
+        public Edge FoldingUpToPoint(List<Face> rotateFaces, Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
+        {
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            shadowSystem.SaveOriginState();
+
+            // 根据顶点生成折线
+            Edge currentFoldingLine;
+            currentFoldingLine = CloverMath.GetPerpendicularBisector3D(pickedFace, pickedVertex.GetPoint3D(), projectionPoint);
+
+            if (currentFoldingLine == null)
+            {
+                System.Windows.MessageBox.Show("Fuck 木有折线");
+                return null;
+            }
+            // 查找所有需要移动的面
+            AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
+
+            // 计算所需旋转角度
+            Point3D crossPoint = new Point3D();
+            Edge segmentFromOriginToPro = new Edge(pickedVertex, new Vertex(projectionPoint));
+
+            if (1 != CloverMath.GetIntersectionOfTwoSegments(currentFoldingLine, segmentFromOriginToPro, ref crossPoint))
+            {
+                System.Windows.MessageBox.Show("Fuck 木有交点");
+                return null;
+            }
+
+            Vector3D v1 = pickedVertex.GetPoint3D() - crossPoint;
+            Vector3D v2 = projectionPoint - crossPoint;
+
+            double angle = Vector3D.AngleBetween(v1, v2);
+
+            // 根据旋转角度对所有移动面进行旋转
+            RotateFaces(rotateFaces, currentFoldingLine, angle);
+
+            return currentFoldingLine;
+        }
+
+        /// <summary>
+        /// 测试要移动的面
+        /// </summary>
+        /// <param name="face">待测试的面</param>
+        /// <param name="pickedFace">选中的面</param>
+        /// <param name="pickedVertex">选中的点</param>
+        /// <returns></returns>
+        bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
+        {
+            // 选定的面一定是移动面
+            if (face == pickedFace)
+                return true;
+
+            // 所有和移动面有共同边的面都是移动面,即拥有选择点的面
+            foreach (Edge e in face.Edges)
+            {
+                if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+                {
+                    return true; 
+                }
+            }
+
+            // 若有面覆盖在该面上，也为移动面
+            // 需要面分组中的层次信息
+            // bla bla bla.
+
+            return false;
+        }
+        
+        /// <summary>
+        /// 判断折线是否通过该平面
+        /// </summary>
+        /// <param name="face">当前判定平面</param>
+        /// <param name="currentFoldingLine">折线亮点坐标</param>
+        /// <returns></returns>
+        public bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
+        {
+            int crossCount = 0;
+            foreach (Edge e in face.Edges)
+            { 
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
+                    crossCount++;
+            }
+            return crossCount >= 2;
+        }
+
+        /// <summary>
+        /// 判定移动的面
+        /// </summary>
+        /// <param name="pickedFace"></param>
+        /// <param name="foldingLine"></param>
+        public List<Face> AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
+        {
+            FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
+            LookupTable table = CloverController.GetInstance().Table;
+            table.UpdateLookupTable();
+
+            List<Face> faceWithFoldingLine = new List<Face>();
+            List<Face> faceWithoutFoldingLine = new List<Face>();
+
+            // 根据面组遍历所有面，判定是否属于移动面并分组插入
+            foreach (Face face in faceLayer.Leaves)
+            {
+                if (TestMovedFace(face, pickedFace, pickedVertex))
+                {
+                    if (TestFoldingLineCrossed(face, foldingLine))
+                    {
+                        faceWithFoldingLine.Add(face);
+                    }
+                    else
+                    {
+                        faceWithoutFoldingLine.Add(face);
+                    }
+                }
+            }
+
+            CutFaces(faceWithFoldingLine, foldingLine);
+
+            faceWithoutFoldingLine = CloverTreeHelper.FindFacesFromVertex(faceWithoutFoldingLine, pickedVertex);
+            return faceWithoutFoldingLine;
+        }
+        #endregion
+
+        #region 有关旋转的函数
+        /// <summary>
+        /// 旋转一个面表中除去折痕的所有点 
+        /// </summary>
+        /// <param name="beRotatedFaceList">待旋转的面表</param>
+        /// <param name="foldingLine">折线</param>
+        /// <param name="angle">角度</param>
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
+            RenderController render = CloverController.GetInstance().RenderController;
+            LookupTable table = CloverController.GetInstance().Table;
+            
+            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                        axis.Normalize();
+
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
+                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+                        e.Vertex1.Moved = true;
+                    }
+
+                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                    {
+                        Vector3D axis = new Vector3D();
+                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                        axis.Normalize();
+
+                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
+                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
+                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
+
+                        //e.Vertex2.SetPoint3D(translateToOrigin.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+                        //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
+                        e.Vertex2.Moved = true;
+                    }
+                }
+            }
+
+
+            // 修正所有点的移动属性
+            foreach (Vertex v in vertexLayer.Vertices)
+            {
+                v.Moved = false; 
+            }
+
+            // 必须先更新group后更新render
+            table.UpdateLookupTable();
+            render.UpdateAll();
+        }
+
+        #endregion
     }
 }
