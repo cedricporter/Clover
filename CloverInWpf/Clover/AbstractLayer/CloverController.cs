@@ -298,62 +298,62 @@ namespace Clover
         /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
         void CutAFace(Face face, Edge edge)
         {
-            Edge e1 = null, e2 = null;
-            foreach (Edge e in face.Edges)
-            {
-                if (e.IsVerticeIn(edge.Vertex1))
-                    e1 = e;
-                if (e.IsVerticeIn(edge.Vertex2))
-                    e2 = e;
-            }
+            //Edge e1 = null, e2 = null;
+            //foreach (Edge e in face.Edges)
+            //{
+            //    if (e.IsVerticeIn(edge.Vertex1))
+            //        e1 = e;
+            //    if (e.IsVerticeIn(edge.Vertex2))
+            //        e2 = e;
+            //}
 
-            int type = 0;
-            bool isVertex1Cut = false;
-            bool isVertex2Cut = false;
+            //int type = 0;
+            //bool isVertex1Cut = false;
+            //bool isVertex2Cut = false;
 
-            if (!CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex1.GetPoint3D(), 0.0001) &&
-                 !CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D(), 0.0001))
-            {
-                type++;
-                isVertex1Cut = true;
-            }
+            //if (!CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex1.GetPoint3D(), 0.0001) &&
+            //     !CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D(), 0.0001))
+            //{
+            //    type++;
+            //    isVertex1Cut = true;
+            //}
 
-            if (!CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D(), 0.0001) &&
-                !CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D(), 0.0001))
-            {
-                type++;
-                isVertex2Cut = true;
-            }
+            //if (!CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D(), 0.0001) &&
+            //    !CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D(), 0.0001))
+            //{
+            //    type++;
+            //    isVertex2Cut = true;
+            //}
 
-            // type 0:没有增加顶点， type 1：增加了一个顶点 type 2：增加了两个顶点
-            switch (type)
-            { 
-                case 0:
-                    // 种类1 不新增加顶点。只创建一条边并加入边层
-                    CutAFaceWithoutVertex(face, edge);
-                    break;
-                case 1:
-                    // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
-                    edgeLayer.AddTree(new EdgeTree(edge));
+            //// type 0:没有增加顶点， type 1：增加了一个顶点 type 2：增加了两个顶点
+            //switch (type)
+            //{ 
+            //    case 0:
+            //        // 种类1 不新增加顶点。只创建一条边并加入边层
+            //        CutAFaceWithoutVertex(face, edge);
+            //        break;
+            //    case 1:
+            //        // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
+            //        edgeLayer.AddTree(new EdgeTree(edge));
                     
-                    // 取其中一个进行面分割的边.
-                    if (isVertex1Cut)
-                    {
-                        CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
-                    }
+            //        // 取其中一个进行面分割的边.
+            //        if (isVertex1Cut)
+            //        {
+            //            CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
+            //        }
 
-                    if (isVertex2Cut)
-                    {
-                        CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
-                    }
-                    break; 
-                case 2:
-                    CutAFaceWithAddedTwoVertices(face, edge);
-                    // 种类3
-                    break;
-                default:
-                    break;
-            }
+            //        if (isVertex2Cut)
+            //        {
+            //            CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
+            //        }
+            //        break; 
+            //    case 2:
+            //        CutAFaceWithAddedTwoVertices(face, edge);
+            //        // 种类3
+            //        break;
+            //    default:
+            //        break;
+            //}
 
         }
 
@@ -397,6 +397,16 @@ namespace Clover
             shadowSystem.Revert();
         }
 
+        public void Undo()
+        {
+            shadowSystem.Undo();
+        }
+
+        public void Redo()
+        {
+            shadowSystem.Redo();
+        }
+
         /// <summary>
         /// 开始折叠模式
         /// </summary>
@@ -408,66 +418,66 @@ namespace Clover
         /// </remarks>
         public void StartFoldingModel(List<Face> faces)
         {
-            faces = faceLayer.Leaves;
+            //faces = faceLayer.Leaves;
 
-            shadowSystem.SaveOriginState();
+            //shadowSystem.SaveOriginState();
 
-            // 假定只有一个face现在
-            Face face = faces[0];
+            //// 假定只有一个face现在
+            //Face face = faces[0];
 
-            shadowSystem.UpdateFaceVerticesToLastedVersion(face);
+            //shadowSystem.UpdateFaceVerticesToLastedVersion(face);
 
-            Face f1 = new Face(face.Layer);
-            Face f2 = new Face(face.Layer);
+            //Face f1 = new Face(face.Layer);
+            //Face f2 = new Face(face.Layer);
             
-            face.LeftChild = f1;
-            face.RightChild = f2;
+            //face.LeftChild = f1;
+            //face.RightChild = f2;
 
-            Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
-            //vertexLayer.UpdateVertex(newV1, newV1.Index);
-            Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
-            //vertexLayer.UpdateVertex(newV2, newV2.Index);
+            //Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
+            ////vertexLayer.UpdateVertex(newV1, newV1.Index);
+            //Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
+            ////vertexLayer.UpdateVertex(newV2, newV2.Index);
 
-            Edge newEdge = new Edge(newV1, newV2);
-            edgeLayer.AddTree(new EdgeTree(newEdge));
+            //Edge newEdge = new Edge(newV1, newV2);
+            //edgeLayer.AddTree(new EdgeTree(newEdge));
 
-            f1.AddEdge(face.Edges[0]);
-            f1.AddEdge(face.Edges[1]);
-            f1.AddEdge(newEdge);
+            //f1.AddEdge(face.Edges[0]);
+            //f1.AddEdge(face.Edges[1]);
+            //f1.AddEdge(newEdge);
 
-            f2.AddEdge(face.Edges[2]);
-            f2.AddEdge(face.Edges[3]);
-            f2.AddEdge(newEdge);
+            //f2.AddEdge(face.Edges[2]);
+            //f2.AddEdge(face.Edges[3]);
+            //f2.AddEdge(newEdge);
 
-            // for testing
-            currentFoldingLine = newEdge;
+            //// for testing
+            //currentFoldingLine = newEdge;
 
-            f1.UpdateVertices();
-            f2.UpdateVertices();
+            //f1.UpdateVertices();
+            //f2.UpdateVertices();
 
             
-            table.DeleteFace( face );
-            table.AddFace( f1 );
-            table.AddFace( f2 );
+            //table.DeleteFace( face );
+            //table.AddFace( f1 );
+            //table.AddFace( f2 );
 
-            // 保存新的面的所有顶点的历史
-            List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
-            shadowSystem.SaveVertices(totalVertices);
+            //// 保存新的面的所有顶点的历史
+            //List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
+            //shadowSystem.SaveVertices(totalVertices);
 
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
+            //shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
+            //shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
-            //vertexLayer.GetVertex(3).Z = 50;
+            ////vertexLayer.GetVertex(3).Z = 50;
 
-            renderController.Delete(face);
-            renderController.New(f1);
-            renderController.New(f2);
+            //renderController.Delete(face);
+            //renderController.New(f1);
+            //renderController.New(f2);
 
-            // new a transparent face
-            Face tranFace = f2.Clone() as Face;
-            shadowSystem.CreateTransparentFace(tranFace);
+            //// new a transparent face
+            //Face tranFace = f2.Clone() as Face;
+            //shadowSystem.CreateTransparentFace(tranFace);
 
-            faceLayer.UpdateLeaves(face);
+            //faceLayer.UpdateLeaves(face);
         }
 
         /// <summary>

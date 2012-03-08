@@ -296,8 +296,8 @@ namespace Clover
             shadowSystem.SaveVertices(oldVertexList);
 
             // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+            UpdateFaceVerticesToLastedVersion(newFace1);
+            UpdateFaceVerticesToLastedVersion(newFace2);
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -492,8 +492,8 @@ namespace Clover
             shadowSystem.SaveVertices(oldVertexList);
 
             // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+            UpdateFaceVerticesToLastedVersion(newFace1);
+            UpdateFaceVerticesToLastedVersion(newFace2);
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -760,8 +760,8 @@ namespace Clover
             shadowSystem.SaveVertices(oldVertexList);
 
             // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
+            UpdateFaceVerticesToLastedVersion(f1);
+            UpdateFaceVerticesToLastedVersion(f2);
 
             controller.Table.DeleteFace( face );
             controller.Table.AddFace( f1 );
@@ -779,6 +779,22 @@ namespace Clover
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
+        }
+        #endregion
+
+        #region 辅助函数
+        /// <summary>
+        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
+        /// </summary>
+        public void UpdateFaceVerticesToLastedVersion(Face face)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
+            foreach (Edge e in face.Edges)
+            {
+                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+            }
+            face.UpdateVertices();
         }
         #endregion
 

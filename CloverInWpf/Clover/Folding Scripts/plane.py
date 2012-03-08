@@ -25,6 +25,6 @@ for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 11, -1)]:
     faces = FindFacesByVertex(v3)
     RotateFaces(faces, edge, sign * 90)
 
-# 对折
-faces = FindFacesByVertex(9)
-RotateFaces(faces, edgeMiddle, 180)
+## 对折
+#faces = FindFacesByVertex(9)
+#RotateFaces(faces, edgeMiddle, 180)
