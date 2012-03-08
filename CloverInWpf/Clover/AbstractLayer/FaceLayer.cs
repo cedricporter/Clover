@@ -118,7 +118,7 @@ namespace Clover
 
 
     /// <summary>
-    /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
+    /// group查询表，可以得到所有的group。
     /// </summary>
     public class LookupTable
     {
@@ -149,7 +149,7 @@ namespace Clover
         {
             foreach (FaceGroup fg in tables)
             {
-                foreach (Face face in fg.GetGroup())
+                foreach (Face face in fg.GetFaceList())
                 {
                     if (face == f)
                     {
@@ -213,11 +213,11 @@ namespace Clover
 
             for ( int i = 0; i < tables.Count; i++ )
             {
-                for ( int j = 0; j < tables[ i ].GetGroup().Count; j++ )
+                for ( int j = 0; j < tables[ i ].GetFaceList().Count; j++ )
                 {
-                    if ( !tables[ i ].IsMatch( tables[ i ].GetGroup()[j] ) )
+                    if ( !tables[ i ].IsMatch( tables[ i ].GetFaceList()[ j ] ) )
                     {
-                        Face f = tables[ i ].GetGroup()[ j ];
+                        Face f = tables[ i ].GetFaceList()[ j ];
                         tables[ i ].DeleteFace( f );
                         AddFace( f );
                     }
@@ -232,7 +232,7 @@ namespace Clover
             newtables.tables.Clear();
             foreach ( FaceGroup fg in tables )
             {
-                foreach (Face f in fg.GetGroup())
+                foreach ( Face f in fg.GetFaceList() )
                 {
                     newtables.AddFace( f );
                 }
@@ -250,7 +250,7 @@ namespace Clover
         {
             for ( int i = 0; i < tables.Count; i++ )
             {
-                if ( tables[i].GetGroup().Count == 0 )
+                if ( tables[ i ].GetFaceList().Count == 0 )
                 {
                     tables.Remove( tables[ i ] );
                 }
@@ -284,7 +284,7 @@ namespace Clover
                 {
                     if ( fgfix != fgmove )
                     {
-                        double ang = CloverMath.CalculatePlaneAngle( fgfix.GetGroup()[0], fgmove.GetGroup()[0] );
+                        double ang = CloverMath.CalculatePlaneAngle( fgfix.GetFaceList()[ 0 ], fgmove.GetFaceList()[ 0 ] );
                         if ( ang  < threshold )
                         {
                             bool IsContain = false;
@@ -308,7 +308,7 @@ namespace Clover
                             foldupinfo.fgMov = fgmove;
                             foldupinfo.angle = ang;
 
-                            foreach ( Vertex ver in fgfix.GetGroup()[0].Vertices )
+                            foreach ( Vertex ver in fgfix.GetFaceList()[ 0 ].Vertices )
                             {
                                 if ((ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D) > 0)
                                 {
@@ -348,27 +348,27 @@ namespace Clover
             if ( foldupinfo.IsOver )
             {
                 int layer = 0;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
                     layer++;
                 }
                 // 根据是否覆盖来调整layer的值
-                for ( int i = foldupinfo.fgFix.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgFix.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ foldupinfo.fgMov.GetGroup().Count - 1 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ foldupinfo.fgMov.GetFaceList().Count - 1 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
                     {
                         layer--;
                     }
                 }
 
-                for ( int i = foldupinfo.fgMov.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgMov.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
                     layer++;
-                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
                 }
                 UpdateTable();
                         
@@ -376,25 +376,25 @@ namespace Clover
             else
             {
                 int layer = 0;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
                     layer++;
                 }
                 layer = foldupinfo.fgFix.GetBottomLayer();
                 layer--;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ 0 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ 0 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
                     {
                         layer++;
                     }
                 }
 
-                for ( int i = 0; i < foldupinfo.fgMov.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgMov.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
-                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
+                    foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
                     layer--;
                 }
                 UpdateTable();

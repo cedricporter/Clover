@@ -25,7 +25,6 @@ namespace Clover.AbstractLayer
                 return 0;
             else
                 return -1;
-          
         }
 
     }
@@ -121,7 +120,7 @@ namespace Clover.AbstractLayer
         /// 得到面组
         /// </summary>
         /// <returns></returns>
-        public List<Face> GetGroup()
+        public List<Face> GetFaceList()
         {
             return GroupList;
         }
@@ -208,7 +207,6 @@ namespace Clover.AbstractLayer
         public int GetBottomLayer()
         {
             return GroupList[ GroupList.Count- 1 ].Layer;
-
         }
 
 
