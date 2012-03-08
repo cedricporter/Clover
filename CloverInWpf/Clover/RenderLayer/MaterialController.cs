@@ -35,6 +35,7 @@ namespace Clover
         DiffuseMaterial backEdgeLayer = null;
         DiffuseMaterial frontFoldLineLayer = null;
         DiffuseMaterial backFoldLineLayer = null;
+        DiffuseMaterial frontAnimationLayer = null;
 
         public MaterialController()
         {
@@ -48,15 +49,6 @@ namespace Clover
         public MaterialGroup GetFrontShadow()
         {
             transparentFrontMaterial = frontMaterial.Clone();
-            //foreach (Material m in transparentFrontMaterial.Children)
-            //{
-            //    DiffuseMaterial dm = (DiffuseMaterial)m;
-            //    if (dm != null)
-            //    {
-            //        if (dm != edgeLayer)
-            //            dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
-            //    }
-            //}
             for (int i=0; i<transparentFrontMaterial.Children.Count; i++)
             {
                 // 第二层为边
@@ -65,8 +57,6 @@ namespace Clover
                 DiffuseMaterial dm = (transparentFrontMaterial.Children[i] as DiffuseMaterial);
                 dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
             }
-            //DiffuseMaterial dm = (transparentFrontMaterial.Children[0] as DiffuseMaterial);
-            //dm.Color = dm.AmbientColor = Color.FromArgb(100, 255, 255, 255);
             return transparentFrontMaterial;
         }
 
@@ -98,7 +88,10 @@ namespace Clover
             if (frontMaterial.Children.Count == 0)
                 frontMaterial.Children.Add(mat);
             else
+            {
+                BeginPaperChange((DiffuseMaterial)frontMaterial.Children[0]);
                 frontMaterial.Children[0] = mat;
+            }
             ImageBrush imgb = (mat.Brush as ImageBrush);
             imgb.ViewportUnits = BrushMappingMode.Absolute;
             ImageSource img = imgb.ImageSource;
@@ -263,7 +256,32 @@ namespace Clover
             backMaterial.Children.Add(backEdgeLayer);
         }
 
+        #region 切换纹理时候的动画
 
+        int paperChangeCount = -1;
+        void BeginPaperChange(DiffuseMaterial oldMat)
+        {
+            paperChangeCount = 0;
+            frontAnimationLayer = oldMat;
+            frontMaterial.Children.Add(frontAnimationLayer);
+        }
+
+        public void PaperChange()
+        {
+            if (paperChangeCount == -1)
+                return;
+
+            int alpha = 255 - 5 * paperChangeCount;
+            frontAnimationLayer.AmbientColor = frontAnimationLayer.Color = Color.FromArgb((Byte)alpha, 255, 255, 255);
+
+            if (paperChangeCount++ > 50)
+            {
+                paperChangeCount = -1;
+                frontMaterial.Children.Remove(frontAnimationLayer);
+                frontAnimationLayer = null;
+            }
+        }
+        #endregion
 
     }
 }

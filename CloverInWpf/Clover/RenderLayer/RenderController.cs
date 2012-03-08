@@ -333,7 +333,7 @@ namespace Clover
         public void RenderAnimations()
         {
             RotationSlerp();
-
+            materialController.PaperChange();
             //AntiOverlap();
         }
 
