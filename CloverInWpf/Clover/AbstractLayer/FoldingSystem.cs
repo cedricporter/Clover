@@ -579,6 +579,7 @@ namespace Clover
                     // 两个孩子为空，新建两条边
                     if (beCutEdge1.LeftChild == null && beCutEdge1.RightChild == null)
                     {
+                        Debug.Assert(newVertex1 != null);
                         // 分割一条边生成两条新的边
                         cutEdge1 = new Edge(vertexList[i], newVertex1);
                         cutEdge2 = new Edge(newVertex1, vertexList[i + 1]);
@@ -642,6 +643,7 @@ namespace Clover
                     // 两个孩子为空，新建两条边
                     if (beCutEdge2.LeftChild == null && beCutEdge2.RightChild == null)
                     {
+                        Debug.Assert(newVertex2 != null);
                         // 分割一条边生成两条新的边
                         Edge cutEdge1 = new Edge(vertexList[i], newVertex2);
                         Edge cutEdge2 = new Edge(newVertex2, vertexList[i + 1]);

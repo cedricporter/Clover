@@ -375,6 +375,8 @@ namespace Clover
             List<Edge> ignoreList = new List<Edge>();
             ignoreList.Add(edges[0]);
 
+            int counter = vertices.Count + 1;
+
             while (ignoreList.Count < edges.Count - 1)
             {
 
@@ -396,6 +398,9 @@ namespace Clover
                         }
                     }
                 }
+
+                if (counter-- == 0)
+                    return;
             }
 
             Edge e2 = null;

@@ -32,6 +32,8 @@ namespace Clover
                 List<Vertex> list = new List<Vertex>();
                 foreach (List<Vertex> l in vertexCellTable)
                 {
+                    if (l.Count < 1)
+                        continue;
                     list.Add(l[l.Count - 1]);
                 }
                 return list;
@@ -132,7 +134,7 @@ namespace Clover
 
         public void DeleteLastVersion(int index)
         {
-            if (vertexCellTable[index].Count > 0)
+            if (index < vertexCellTable.Count && vertexCellTable[index].Count > 0)
                 vertexCellTable[index].RemoveAt(vertexCellTable[index].Count - 1);
         }
 

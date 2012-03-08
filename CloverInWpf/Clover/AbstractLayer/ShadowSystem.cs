@@ -175,7 +175,13 @@ namespace Clover
 
             foreach (Edge edge in beDeletedEdges)
             {
-                edge.Parent = null;
+                if (edge.Parent == null)
+                    continue;
+
+                if (edge.Parent.LeftChild == edge)
+                    edge.Parent.LeftChild = null;
+                if (edge.Parent.RightChild == edge)
+                    edge.Parent.RightChild = null;
             }
 
             controller.EdgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, controller.EdgeLayer.EdgeTreeList.Count - originEdgeListCount);
@@ -196,14 +202,15 @@ namespace Clover
                 face.LeftChild = face.RightChild = null;
             }
 
+          
             // 还原点表
             foreach (Vertex v in beDeletedVertexVersionList)
             {
                 controller.VertexLayer.DeleteLastVersion(v.Index);
             }
-            for (int i = originVertexListCount; i < controller.VertexLayer.Vertices.Count; i++)
+            for (int i = originVertexListCount; i < controller.VertexLayer.VertexCellTable.Count + 1; i++)
             {
-                controller.VertexLayer.DeleteVertex(i);
+                controller.VertexLayer.DeleteVertex(originVertexListCount);
             }
 
             //renderController.UpdateAll();
