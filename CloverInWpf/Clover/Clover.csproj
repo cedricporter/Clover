@@ -69,7 +69,9 @@
     <Compile Include="AbstractLayer\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
-    <Compile Include="AbstractLayer\ShadowSystem.cs" />
+    <Compile Include="ShadowSystem\ShadowSystem.cs" />
+    <Compile Include="ShadowSystem\Snapshot.cs" />
+    <Compile Include="PaperSelector.cs" />
     <Compile Include="RenderLayer\MaterialController.cs" />
     <Compile Include="RenderLayer\RenderController.cs" />
     <Compile Include="Tool\FoldTool.cs" />

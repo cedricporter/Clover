@@ -120,7 +120,7 @@ namespace Clover
     /// <summary>
     /// group查询表，可以得到所有的group。
     /// </summary>
-    public class LookupTable
+    public class LookupTable : ICloneable
     {
         List<FaceGroup> tables = new List<FaceGroup>();
         
@@ -169,7 +169,6 @@ namespace Clover
         /// <param name="f"></param>
         public void AddFace(Face f)
         {
-
             foreach (FaceGroup fg in tables)
             {
                 if ( fg.IsMatch(f) )
@@ -238,7 +237,6 @@ namespace Clover
                 }
             }
             return newtables;
-
         }
 
 

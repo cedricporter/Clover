@@ -39,7 +39,7 @@ namespace Clover
 
         public MaterialController()
         {
-            
+
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Clover
         public MaterialGroup GetFrontShadow()
         {
             transparentFrontMaterial = frontMaterial.Clone();
-            for (int i=0; i<transparentFrontMaterial.Children.Count; i++)
+            for (int i = 0; i < transparentFrontMaterial.Children.Count; i++)
             {
                 // 第二层为边
                 if (i == 1)
@@ -121,6 +121,141 @@ namespace Clover
             return backMaterial;
         }
 
+        /// <summary>
+        /// 根据ShadowSystem当前的堆栈重绘所有折线至上个版本
+        /// </summary>
+        public void RebuildFoldLinesToPrev()
+        {
+            ShadowSystem shadow = CloverController.GetInstance().ShadowSystem;
+            DrawingVisual dv1, dv2;
+            DrawingContext dc1, dc2;
+            Pen pen1, pen2;
+            RenderTargetBitmap bmp1, bmp2;
+            ImageBrush imgb1, imgb2;
+            // 重绘正反两面
+            dv1 = new DrawingVisual();
+            dv2 = new DrawingVisual();
+            pen1 = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
+            pen2 = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
+            pen1.DashStyle = DashStyles.Dash;
+            pen2.DashStyle = DashStyles.DashDot;
+
+            dc1 = dv1.RenderOpen();
+            dc2 = dv2.RenderOpen();
+
+            for (int i = 0; i <= shadow.OperationLevel; i++)
+            {
+                if (shadow.SnapshotList[i].NewEdges == null)
+                    continue;
+
+                foreach (Edge edge in shadow.SnapshotList[i].NewEdges)
+                {
+                    Point p0 = new Point(edge.Vertex1.u * width, edge.Vertex1.v * height);
+                    Point p1 = new Point(edge.Vertex2.u * width, edge.Vertex2.v * height);
+                    dc1.DrawLine(pen1, p0, p1);
+                    dc2.DrawLine(pen2, p0, p1);
+                }
+            }
+
+            dc1.Close();
+            dc2.Close();
+
+            bmp1 = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp2 = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp1.Render(dv1);
+            bmp2.Render(dv2);
+            imgb1 = new ImageBrush(bmp1);
+            imgb2 = new ImageBrush(bmp2);
+            imgb1.ViewportUnits = BrushMappingMode.Absolute;
+            imgb2.ViewportUnits = BrushMappingMode.Absolute;
+
+            if (frontFoldLineLayer != null)
+                frontMaterial.Children.Remove(frontFoldLineLayer);
+            frontFoldLineLayer = new DiffuseMaterial(imgb1);
+            frontMaterial.Children.Add(frontFoldLineLayer);
+
+            if (backFoldLineLayer != null)
+                backMaterial.Children.Remove(backFoldLineLayer);
+            backFoldLineLayer = new DiffuseMaterial(imgb2);
+            backMaterial.Children.Add(backFoldLineLayer);
+        }
+
+        /// <summary>
+        /// 根据ShadowSystem当前的堆栈重绘所有折线至下个版本
+        /// </summary>
+        public void RebuildFoldLinesToNext()
+        {
+            ShadowSystem shadow = CloverController.GetInstance().ShadowSystem;
+            if (shadow.SnapshotList[shadow.OperationLevel].NewEdges == null)
+                return;
+
+            DrawingVisual dv1, dv2;
+            DrawingContext dc1, dc2;
+            Pen pen1, pen2;
+            RenderTargetBitmap bmp1, bmp2;
+            ImageBrush imgb1, imgb2;
+            // 保存以前的折线
+            ImageSource oldBmp1 = null;
+            if (frontFoldLineLayer != null)
+            {
+                oldBmp1 = (frontFoldLineLayer.Brush as ImageBrush).ImageSource;
+            }
+            ImageSource oldBmp2 = null;
+            if (backFoldLineLayer != null)
+            {
+                oldBmp2 = (backFoldLineLayer.Brush as ImageBrush).ImageSource;
+            }
+
+            // 重绘正反两面
+            dv1 = new DrawingVisual();
+            dv2 = new DrawingVisual();
+            pen1 = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
+            pen2 = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
+            pen1.DashStyle = DashStyles.Dash;
+            pen2.DashStyle = DashStyles.DashDot;
+
+            dc1 = dv1.RenderOpen();
+            dc2 = dv2.RenderOpen();
+            if (frontFoldLineLayer != null)
+            {
+                dc1.DrawImage(oldBmp1, new Rect(new Size(width, height)));
+            }
+            if (backFoldLineLayer != null)
+            {
+                dc2.DrawImage(oldBmp2, new Rect(new Size(width, height)));
+            }
+
+            foreach (Edge edge in shadow.SnapshotList[shadow.OperationLevel].NewEdges)
+            {
+                Point p0 = new Point(edge.Vertex1.u * width, edge.Vertex1.v * height);
+                Point p1 = new Point(edge.Vertex2.u * width, edge.Vertex2.v * height);
+                dc1.DrawLine(pen1, p0, p1);
+                dc2.DrawLine(pen2, p0, p1);
+            }
+
+            dc1.Close();
+            dc2.Close();
+
+            bmp1 = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp2 = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp1.Render(dv1);
+            bmp2.Render(dv2);
+            imgb1 = new ImageBrush(bmp1);
+            imgb2 = new ImageBrush(bmp2);
+            imgb1.ViewportUnits = BrushMappingMode.Absolute;
+            imgb2.ViewportUnits = BrushMappingMode.Absolute;
+
+            if (frontFoldLineLayer != null)
+                frontMaterial.Children.Remove(frontFoldLineLayer);
+            frontFoldLineLayer = new DiffuseMaterial(imgb1);
+            frontMaterial.Children.Add(frontFoldLineLayer);
+
+            if (backFoldLineLayer != null)
+                backMaterial.Children.Remove(backFoldLineLayer);
+            backFoldLineLayer = new DiffuseMaterial(imgb2);
+            backMaterial.Children.Add(backFoldLineLayer);
+        }
+
         #region 添加折线
 
         /// <summary>
@@ -154,7 +289,7 @@ namespace Clover
 
             DrawingVisual dv = new DrawingVisual();
             DrawingContext dc = dv.RenderOpen();
-            Pen pen = new Pen(new SolidColorBrush(Colors.Black), thickness*0.5);
+            Pen pen = new Pen(new SolidColorBrush(Colors.Black), thickness * 0.5);
             pen.DashStyle = DashStyles.Dash;
             if (frontFoldLineLayer != null)
             {
