@@ -289,13 +289,11 @@ namespace Clover
             RenderController renCtrl = RenderController.GetInstance();
             if (e.Delta > 0)
             {
-                renCtrl.Distance += 20;
-                //renCtrl.UpdatePosition();
+                renCtrl.TranslateTransform.OffsetZ -= 20;
             }
             else
             {
-                renCtrl.Distance -= 20;
-                //renCtrl.UpdatePosition();
+                renCtrl.TranslateTransform.OffsetZ += 20;
             }
         }
 
