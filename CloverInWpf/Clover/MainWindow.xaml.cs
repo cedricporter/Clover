@@ -316,13 +316,24 @@ namespace Clover
             switch (e.Key)
             {
                 case Key.F2:
-                    cloverController.Revert();
+                    cloverController.ShadowSystem.Undo();
                     break;
                 case Key.F1:
-                    cloverController.StartFoldingModel(null);
+                    string code = @"
+vertex = GetVertex(0)
+face = FindFacesByVertex(0)
+edge = GetFoldingLine(face[0], vertex, Vertex(0, 0))
+
+CutFaces(face, edge)
+
+faces = FindFacesByVertex(0)
+RotateFaces(faces, edge, 90)
+                    ";
+                    string msg = cloverInterpreter.ExecuteOneLine(code);
+                    histroyTextBox.Text += msg;
                     break;
                 case Key.F3:
-                    cloverController.NeilTest();
+                    cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
                     cloverController.CutAFaceWithAddedTwoVertices(cloverController.FaceLayer.Leaves[0], new Edge(new Vertex(-50, 0, 0), new Vertex(50, 0, 0)));
@@ -352,19 +363,17 @@ namespace Clover
 
         private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {
-            //ToolBox.Visibility = Visibility.Visible;
             ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
         {
-            //ToolBox.Visibility = Visibility.Hidden;
             ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 
         private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
         {
-            //CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
@@ -376,7 +385,7 @@ namespace Clover
 
         private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
         {
-            //Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)

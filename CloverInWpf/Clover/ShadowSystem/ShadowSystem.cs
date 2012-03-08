@@ -6,58 +6,82 @@ using System.Diagnostics;
 
 namespace Clover
 {
-    /// <summary>
-    /// 快照节点的类型
-    /// </summary>
-    public enum ShapshotNodeKind
-    {
-        RotateKind,
-        CutKind
-    }
     
-    /// <summary>
-    /// 快照节点
-    /// </summary>
-    public class SnapshotNode
-    {
-        SnapshotNode type;
-        List<Face> faceLeaves = new List<Face>();
-
-        #region get/set
-        public Clover.SnapshotNode Type
-        {
-            get { return type; }
-            set { type = value; }
-        }
-        public List<Face> FaceLeaves
-        {
-            get { return faceLeaves; }
-            set { faceLeaves = value; }
-        }
-        #endregion
-
-        #region API
-        public SnapshotNode(List<Face> leaves)
-        {
-            foreach (Face f in leaves)
-            {
-                faceLeaves.Add(f);
-            }
-        }
-
-        public void Add(Face face)
-        {
-            faceLeaves.Add(face);
-        }
-        #endregion
-
-    }
-
     /// <summary>
     /// 影子，用于恢复折纸数据结构
     /// </summary>
     public class ShadowSystem
     {
+
+        #region 私有成员变量
+        int operationLevel = -1;                                            /// 当前level
+        List<SnapshotNode> snapshotList = new List<SnapshotNode>();         /// 用以保存Snapshot
+        #endregion
+
+        /// <summary>
+        /// 拍快照
+        /// </summary>
+        public void Snapshot(List<Face> leaves)
+        {
+            SnapshotNode snapshot = new SnapshotNode(leaves);
+            snapshotList.Add(snapshot);
+            // 当前操作的层数
+            operationLevel++;
+        }
+        public void Snapshot()
+        {
+            Snapshot(CloverController.GetInstance().FaceLeaves);
+        }
+
+        /// <summary>
+        /// 撤销
+        /// </summary>
+        public void Undo()
+        {
+            // 没有历史记录了
+            if (operationLevel == 0)
+                return;
+
+            CloverController controller = CloverController.GetInstance();
+            // 修改操作层数
+            operationLevel--;
+            // 将当前状态置为Undoing
+            controller.FaceLayer.CurrentLeaves = snapshotList[operationLevel].FaceLeaves;
+            controller.FaceLayer.State = FacecellTreeState.Undoing;
+            // 更新渲染层
+            controller.RenderController.DeleteAll();
+            foreach (Face f in controller.FaceLayer.CurrentLeaves)
+            {
+                controller.RenderController.New(f);
+            }
+            
+        }
+
+        /// <summary>
+        /// 重做
+        /// </summary>
+        public void Redo()
+        {
+            // 已经没得Redo了
+            if (operationLevel == snapshotList.Count - 1)
+                return;
+            // 修改操作层数
+            operationLevel++;
+            // 获取该层叶子
+            CloverController controller = CloverController.GetInstance();
+            controller.FaceLayer.CurrentLeaves = snapshotList[operationLevel].FaceLeaves;
+            if (operationLevel == snapshotList.Count - 1)
+                controller.FaceLayer.State = FacecellTreeState.Normal;
+            // 更新渲染层
+            controller.RenderController.DeleteAll();
+            foreach (Face f in controller.FaceLayer.CurrentLeaves)
+            {
+                controller.RenderController.New(f);
+            }
+        }
+
+
+
         #region 成员变量
         int originEdgeListCount = -1;
         int originVertexListCount = -1;
@@ -74,68 +98,6 @@ namespace Clover
             get { return originFaceList; }
         }
         #endregion
-
-        /// <summary>
-        /// 拍快照
-        /// </summary>
-        public void Snapshot(List<Face> leaves)
-        {
-            SnapshotNode snapshot = new SnapshotNode(leaves);
-
-            AddSnapshot(snapshot);
-
-            // 当前操作的层数
-            operationLevel++;
-        }
-        public void Snapshot()
-        {
-            Snapshot(CloverController.GetInstance().FaceLeaves);
-        }
-
-        List<SnapshotNode> snapshotList = new List<SnapshotNode>();
-        private void AddSnapshot(SnapshotNode snapshot)
-        {
-            snapshotList.Add(snapshot);
-        }
-
-        int operationLevel = -1;    /// 当前level
-
-        /// <summary>
-        /// 撤销
-        /// </summary>
-        public void Undo()
-        {
-            CloverController controller = CloverController.GetInstance();
-
-            // 没有历史记录了
-            if (operationLevel <= -1)
-                return;
-
-            controller.FaceLayer.CurrentLeaves = snapshotList[operationLevel].FaceLeaves;
-            controller.FaceLayer.State = FacecellTreeState.Undoing;
-
-
-            controller.RenderController.DeleteAll();
-            foreach (Face f in controller.FaceLayer.CurrentLeaves)
-            {
-                controller.RenderController.New(f);
-            }
-
-            controller.RenderController.UpdateAll();
-
-            // 修改操作层数
-            operationLevel--;
-        }
-
-        /// <summary>
-        /// 重做
-        /// </summary>
-        public void Redo()
-        {
-            //throw NotImplementedException;
-            System.Windows.MessageBox.Show("Redo is nto implementedException");
-        }
-
 
         #region 保存现场
 

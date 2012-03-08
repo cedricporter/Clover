@@ -783,9 +783,6 @@ namespace Clover
 
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            shadowSystem.Snapshot();
-
             foreach (Face face in faceList)
             {
                 Edge edge = GetFoldingLineOnAFace(face, foldingLine);
@@ -794,6 +791,9 @@ namespace Clover
 
                 CutAFaceWithAddedTwoVertices(face, edge);
             }
+            // 拍快照
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            shadowSystem.Snapshot();
         }
 
         #endregion
