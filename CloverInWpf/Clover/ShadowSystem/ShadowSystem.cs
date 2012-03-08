@@ -32,27 +32,34 @@ namespace Clover
         /// <summary>
         /// 拍快照
         /// </summary>
-        public void Snapshot(List<Face> leaves, List<Edge> newEdges)
+        public void Snapshot(SnapshotNode node)
         {
-            SnapshotNode snapshot = new SnapshotNode(leaves);
-            if (newEdges != null)
-                snapshot.NewEdges = newEdges;
-            snapshotList.Add(snapshot);
-            // 当前操作的层数
+            CheckUndoTree();
+
+            snapshotList.Add(node);
             operationLevel++;
         }
-        public void Snapshot(List<Face> leaves)
-        {
-            Snapshot(leaves, null);
-        }
-        public void Snapshot(List<Edge> newEdges)
-        {
-            Snapshot(CloverController.GetInstance().FaceLeaves, newEdges);
-        }
-        public void Snapshot()
-        {
-            Snapshot(CloverController.GetInstance().FaceLeaves);
-        }
+        //public void Snapshot(List<Face> leaves, List<Edge> newEdges)
+        //{
+        //    SnapshotNode snapshot = new SnapshotNode(leaves);
+        //    if (newEdges != null)
+        //        snapshot.NewEdges = newEdges;
+        //    snapshotList.Add(snapshot);
+        //    // 当前操作的层数
+        //    operationLevel++;
+        //}
+        //public void Snapshot(List<Face> leaves)
+        //{
+        //    Snapshot(leaves, null);
+        //}
+        //public void Snapshot(List<Edge> newEdges)
+        //{
+        //    Snapshot(CloverController.GetInstance().FaceLeaves, newEdges);
+        //}
+        //public void Snapshot()
+        //{
+        //    Snapshot(CloverController.GetInstance().FaceLeaves);
+        //}
 
         /// <summary>
         /// 撤销
@@ -253,23 +260,6 @@ namespace Clover
         #endregion
 
         #region 还原
-        /// <summary>
-        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
-        /// </summary>
-        public void UpdateFaceVerticesToLastedVersion(Face face)
-        {
-            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
-            foreach (Edge e in face.Edges)
-            {
-                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
-                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
-            }
-            face.UpdateVertices();
-        }
-
-
-
-
 
         /// <summary>
         /// 检查Undo完了有没有新的snapshot，
@@ -288,6 +278,23 @@ namespace Clover
             {
                 controller.FaceLayer.State = FacecellTreeState.Normal;
             }
+
+            SnapshotNode node = snapshotList[operationLevel];
+
+            switch (node.Type)
+            {
+                case SnapshotNodeKind.CutKind:
+                    break;
+                case SnapshotNodeKind.RotateKind:
+                    break;
+            }
+
+            snapshotList.RemoveRange(operationLevel, snapshotList.Count - operationLevel + 1);
+        }
+         
+        void RevertCut()
+        {
+            CloverController controller = CloverController.GetInstance();
 
             foreach (Face face in snapshotList[operationLevel].FaceLeaves)
             {
@@ -320,7 +327,10 @@ namespace Clover
 
             foreach (Edge edge in beDeletedEdges)
             {
-                edge.Parent = null;
+                if (edge.Parent.LeftChild == edge)
+                    edge.Parent.LeftChild = null;
+                if (edge.Parent.RightChild == edge)
+                    edge.Parent.RightChild = null;
             }
 
             controller.EdgeLayer.EdgeTreeList.RemoveRange(originEdgeListCount, controller.EdgeLayer.EdgeTreeList.Count - originEdgeListCount);
@@ -344,17 +354,14 @@ namespace Clover
             // 还原点表
             foreach (Vertex v in beDeletedVertexVersionList)
             {
-                controller.VertexLayer.DeleteLastVersion(v.Index);
+                controller.VertexLayer.DeleteThisVersionToEnd(v);
             }
-            for (int i = originVertexListCount; i < controller.VertexLayer.Vertices.Count; i++)
+            for (int i = originVertexListCount; i < controller.VertexLayer.VertexCellTable.Count; i++)
             {
                 controller.VertexLayer.DeleteVertex(i);
             }
 
-            snapshotList.RemoveRange(operationLevel, snapshotList.Count - operationLevel + 1);
-
         }
-
 
  
 

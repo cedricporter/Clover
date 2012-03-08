@@ -820,33 +820,7 @@ namespace Clover
         //int counterFUcker = 1;
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            shadowSystem.Snapshot();
-        
-            //// testing
-            //if (faceList.Count >= 2)
-            //{
-            //    if (counterFUcker == 1)
-            //    {
-            //        counterFUcker++;
-            //        if (faceList[0].Edges.Count > faceList[1].Edges.Count)
-            //        {
-            //            var t = faceList[0];
-            //            faceList.RemoveAt(0);
-            //            faceList.Add(t);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        if (faceList[0].Edges.Count <= faceList[1].Edges.Count)
-            //        {
-            //            var t = faceList[0];
-            //            faceList.RemoveAt(0);
-            //            faceList.Add(t);
-            //        }
-
-            //    }
-            //}
+            List<Edge> newEdges = new List<Edge>();
 
             foreach (Face face in faceList)
             {
@@ -856,9 +830,14 @@ namespace Clover
 
                 newEdges.Add(CutAFaceWithAddedTwoVertices(face, edge));
             }
+
             // 拍快照
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            shadowSystem.Snapshot(newEdges);
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.NewEdges = newEdges;
+            node.Type = SnapshotNodeKind.CutKind;
+
+            shadowSystem.Snapshot(node);
         }
 
         #endregion
@@ -1055,7 +1034,7 @@ namespace Clover
             LookupTable table = CloverController.GetInstance().Table;
 
             List<Vertex> movedVertexList = new List<Vertex>();
-            
+
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
             {
@@ -1065,6 +1044,7 @@ namespace Clover
                         && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
                     {
                         CloneAndUpdateVertex(e.Vertex1);
+                        e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
 
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
@@ -1086,6 +1066,7 @@ namespace Clover
                         && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
                     {
                         CloneAndUpdateVertex(e.Vertex2);
+                        e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
 
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
@@ -1109,11 +1090,10 @@ namespace Clover
                 }
             }
 
-            foreach (Vertex v in movedVertexList)
+            foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
             {
-                vertexLayer.UpdateVertex
+                CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
             }
-
 
             // 修正所有点的移动属性
             foreach (Vertex v in vertexLayer.Vertices)
@@ -1124,6 +1104,11 @@ namespace Clover
             // 必须先更新group后更新render
             table.UpdateLookupTable();
             render.UpdateAll();
+
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.Type = SnapshotNodeKind.CutKind;
+            shadowSystem.Snapshot(node);
         }
 
         #endregion
