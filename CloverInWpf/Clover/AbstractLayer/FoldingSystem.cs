@@ -1026,6 +1026,17 @@ namespace Clover
         #endregion
 
         #region 有关旋转的函数
+
+        /// <summary>
+        /// 克隆和更新一个新的顶点到VertexLayer
+        /// </summary>
+        /// <param name="v"></param>
+        void CloneAndUpdateVertex(Vertex v)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
+            vertexLayer.UpdateVertex(v.Clone() as Vertex, v.Index);
+        }
+
         /// <summary>
         /// 旋转一个面表中除去折痕的所有点 
         /// </summary>
@@ -1037,6 +1048,8 @@ namespace Clover
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
             LookupTable table = CloverController.GetInstance().Table;
+
+            List<Vertex> movedVertexList = new List<Vertex>();
             
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
@@ -1046,6 +1059,8 @@ namespace Clover
                     if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
                         && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
                     {
+                        CloneAndUpdateVertex(e.Vertex1);
+
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
@@ -1059,11 +1074,14 @@ namespace Clover
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
                         e.Vertex1.Moved = true;
+                        movedVertexList.Add(e.Vertex1);
                     }
 
                     if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
                         && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
                     {
+                        CloneAndUpdateVertex(e.Vertex2);
+
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
@@ -1084,6 +1102,11 @@ namespace Clover
                         e.Vertex2.Moved = true;
                     }
                 }
+            }
+
+            foreach (Vertex v in movedVertexList)
+            {
+                vertexLayer.UpdateVertex
             }
 
 
