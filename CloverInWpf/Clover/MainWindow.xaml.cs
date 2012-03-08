@@ -12,6 +12,7 @@ using System.Windows.Media.Media3D;
 using _3DTools;
 using System.Diagnostics;
 using CloverPython;
+using System.Windows.Media.Animation;
 
 
 namespace Clover
@@ -217,14 +218,11 @@ namespace Clover
         }
         private void Grid_SizeOrPositionChange(Vector translateOffset, Vector scaleOffset)
         {
-            Double lastX = capturedGrid.RenderTransform.Value.OffsetX;
-            Double lastY = capturedGrid.RenderTransform.Value.OffsetY;
-            //Double scaleX = capturedGrid.RenderTransform.Value.M11;
-            //Double scaleY = capturedGrid.RenderTransform.Value.M22;
-            TransformGroup tsg = new TransformGroup();
-            //tsg.Children.Add(new ScaleTransform(scaleOffset.X + scaleX, scaleOffset.Y + scaleY));
-            tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
-            capturedGrid.RenderTransform = tsg;   
+            //TransformGroup tsg = new TransformGroup();
+            //tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
+            TranslateTransform ts = ((capturedGrid.RenderTransform as TransformGroup).Children[1] as TranslateTransform);
+            ts.X += translateOffset.X;
+            ts.Y += translateOffset.Y;
         }
 
         #endregion
@@ -251,9 +249,6 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
-
-            
-
         }
 
         /// <summary>
@@ -352,53 +347,41 @@ namespace Clover
         }
 
         #endregion
-        
-
-        void FuckingKey(Object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.F5)
-            {
-                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
-                histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
-                //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
-                commandLineTextBox.Text = "";
-                histroyTextBox.ScrollToEnd();
-            }
-            //e.Handled = true;
-        }
 
         #region 窗口开启关闭选项
 
         private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {
-            ToolBox.Visibility = Visibility.Visible;
+            //ToolBox.Visibility = Visibility.Visible;
+            ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
         {
-            ToolBox.Visibility = Visibility.Hidden;
+            //ToolBox.Visibility = Visibility.Hidden;
+            ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 
         private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
         {
-            //CommandLine.Visibility = Visibility.Visible;
+            //CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
         {
-            CommandLine.Visibility = Visibility.Hidden;
+            CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
             if (CommandLineMenuItem.IsChecked == true)
                 CommandLineMenuItem.IsChecked = false;
         }
 
         private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
         {
-            //Output.Visibility = Visibility.Visible;
+            //Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
         }
 
         private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
         {
-            Output.Visibility = Visibility.Hidden;
+            Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
             if (OutputMenuItem.IsChecked == true)
                 OutputMenuItem.IsChecked = false;
         }
@@ -467,6 +450,18 @@ namespace Clover
 
         #endregion
 
+        void FuckingKey(Object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F5)
+            {
+                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
+                histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
+                //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
+                commandLineTextBox.Text = "";
+                histroyTextBox.ScrollToEnd();
+            }
+            //e.Handled = true;
+        }
 
     }
 }

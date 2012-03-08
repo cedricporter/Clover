@@ -6,10 +6,8 @@
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged"  
         MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
+
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
-
-
-        
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
             <Viewport3D x:Name="foldingPaperViewport" IsHitTestVisible="False" d:IsLocked="True">
@@ -66,6 +64,12 @@
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
             <Grid x:Name="ToolBox" Width="120" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+                <Grid.RenderTransform>
+                	<TransformGroup>
+                		<ScaleTransform/>
+                		<TranslateTransform/>
+                	</TransformGroup>
+                </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4" d:IsLocked="True"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3" d:IsLocked="True">
@@ -85,6 +89,12 @@
             </Grid>
             <!-- 命令行窗口 -->
             <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -103,6 +113,12 @@
             </Grid>
             <!-- 输出窗口 -->
             <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
