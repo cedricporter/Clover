@@ -27,7 +27,8 @@ namespace Clover.Visual
         TextBlock textBolck = new TextBlock();
         Line line1 = new Line();
         Line line2 = new Line();
-        Point p1, p2, p3, p4;
+        Point p1, p2, p3, p4, pmid;
+        TranslateTransform ts = null;
 
         #region get/set
 
@@ -57,7 +58,7 @@ namespace Clover.Visual
             Vector dir = v;
             if (dir.X != 0 || dir.Y != 0)
                 dir.Normalize();
-            Point pmid = point1 + v * offset;
+            pmid = point1 + v * offset;
             p1 = point1;
             p2 = pmid - dir * 20;
             if ((p2 - p1) * dir < 0)
@@ -78,7 +79,13 @@ namespace Clover.Visual
 
             textBolck.Text = "0";
             textBolck.Text += offset.ToString("#.00");
-            textBolck.RenderTransform = new TranslateTransform(pmid.X - 20, pmid.Y - 10);
+            if (ts == null)
+                textBolck.RenderTransform = new TranslateTransform(pmid.X - 20, pmid.Y - 10);
+            else
+            {
+                ts.X = pmid.X - 20;
+                ts.Y = pmid.Y - 10;
+            }
         }
 
         public FoldLinePercentageVisual(Point pos1, Point pos2, Double offset)

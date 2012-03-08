@@ -4,26 +4,22 @@
 
 # 先在中间画条折线
 edgeMiddle = Edge(Vertex(-50, 0, 0), Vertex(50, 0,0))
-face = FindFacesByVertex(0)[0]
-CutFace2(face, edgeMiddle)
+faces = FindFacesByVertex(0)
+CutFaces(faces, edgeMiddle)
 
-for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 12, -1)]:
+for v1, v2, v3, sign in [(3, 0, 7, 1), (2, 1, 11, -1)]:
     # 左上角往回折
     edge = Edge(Vertex(50, sign * 10, 0), Vertex(10, sign * 50,0))
-    face = FindFacesByVertex(v1)[0]
-    CutFace2(face, edge)
+    faces = FindFacesByVertex(v1)
+    CutFaces(faces, edge)
 
     faces = FindFacesByVertex(v1)
     RotateFaces(faces, edge, 180)
 
     # 上面1/4反折
     edge = Edge(Vertex(-50, sign * 30, 0), Vertex(30, sign * 30,0))
-    face = FindFacesByVertex(v2)[0]
-    CutFace2(face, edge)
-
-    edge = Edge(Vertex(10, sign * 30, 0), Vertex(30, sign * 30,0))
-    face = FindFacesByVertex(v1)[0]
-    CutFace2(face, edge)
+    face = FindFacesByVertex(v3)
+    CutFaces(face, edge)
 
     # 翅膀往回折
     faces = FindFacesByVertex(v3)

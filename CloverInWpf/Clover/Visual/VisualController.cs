@@ -62,7 +62,6 @@ namespace Clover.Visual
             // 遍历视觉表并依次执行
             foreach (VisualElementFactory vi in visualList)
             {
-                vi.UpdatePosition();
                 switch (vi.GetState())
                 {
                     case VisualElementFactory.State.FadeIn:

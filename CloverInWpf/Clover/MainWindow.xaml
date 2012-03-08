@@ -6,13 +6,11 @@
         Title="MainWindow" Height="600" Width="800" WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown"
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged"  
         MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
+
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
-
-
-        
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
-            <Viewport3D x:Name="foldingPaperViewport" d:IsLocked="True">
+            <Viewport3D x:Name="foldingPaperViewport" IsHitTestVisible="False" d:IsLocked="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name="fuckcam"  LookDirection="0,0,-1" UpDirection="0,1,0" FieldOfView="45"/>
                 </Viewport3D.Camera>
@@ -65,10 +63,16 @@
 	        <!-- 背景图片 -->
 	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
-            <Grid x:Name="ToolBox" Width="80" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
-                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+            <Grid x:Name="ToolBox" Width="120" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
+                <Grid.RenderTransform>
+                	<TransformGroup>
+                		<ScaleTransform/>
+                		<TranslateTransform/>
+                	</TransformGroup>
+                </Grid.RenderTransform>
+                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
+                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4" d:IsLocked="True"/>
+                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3" d:IsLocked="True">
                     <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
                     <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
                     <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
@@ -76,13 +80,21 @@
                         Tool Box
                     </TextBlock>
                 </Grid>
-                <CheckBox Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,53,0,0" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                <CheckBox Content="Tuck" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,112,0,148" HorizontalAlignment="Center"/>
-                <CheckBox Content="Macro" Height="40" Width="40" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="0,0,0,89" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-                <Button Content="Paper" Height="40" Width="40" Template="{StaticResource RectangleButtonTemplate1}" Margin="0,0,0,30" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                <RadioButton x:Name="ToolFodeButton" Checked="ToolFodeButton_Checked" Unchecked="ToolFodeButton_Unchecked" Content="Fold" Height="40" Width="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="16,50,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" IsChecked="True"/>
+                <RadioButton x:Name="ToolTuckButton" Checked="ToolTuckButton_Checked" Unchecked="ToolTuckButton_Unchecked"  Content="Tuck" Height="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="16,98,63,0" VerticalAlignment="Top" d:LayoutOverrides="Height" Width="40" HorizontalAlignment="Left"/>
+                <RadioButton x:Name="ToolBlendButton" Checked="ToolBlendButton_Checked" Unchecked="ToolBlendButton_Unchecked" Content="Blend" Height="40" Template="{StaticResource RectangleRadioButtonTemplate1}" Margin="64,50,0,0" VerticalAlignment="Top" d:LayoutOverrides="Height" HorizontalAlignment="Left" Width="40"/>
+                <CheckBox x:Name="BeginMacroButton" Checked="BeginMacroButton_Checked" Unchecked="BeginMacroButton_Unchecked"  Content="Begin Macro" Width="90" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="16,146,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Height="40"/>
+                <CheckBox x:Name="MagnetismButton" Checked="MagnetismButton_Checked" Unchecked="MagnetismButton_Unchecked"  Content="Magnetism" Width="90" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="16,194,0,0" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" IsChecked="True"/>
+                <Button x:Name="ChangePaperButton" Click="ChangePaperButton_Click" Content="Change Paper" Height="40" Width="90" Template="{StaticResource RectangleButtonTemplate1}" Margin="16,242,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Grid>
             <!-- 命令行窗口 -->
             <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -101,6 +113,12 @@
             </Grid>
             <!-- 输出窗口 -->
             <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
                 <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
@@ -117,28 +135,27 @@
                     <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
                 </Grid>
             </Grid>
-            <Grid x:Name="PaperSelect" Margin="80,0,0,105" HorizontalAlignment="Left" Height="166" VerticalAlignment="Bottom" Width="283" Visibility="Hidden">
+            <!-- 选择纸张纹理窗口 -->
+            <Grid x:Name="PaperSelect" Margin="80,0,0,151" VerticalAlignment="Bottom" HorizontalAlignment="Left" MinWidth="120" MinHeight="120" MaxWidth="360" MaxHeight="360" Visibility="Hidden">
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="3" d:IsLocked="True"/>
-                <Grid Margin="4">
-                    
-                </Grid>
+                <!--<ScrollViewer>-->
+                    <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
+                <!--</ScrollViewer>-->
             </Grid>
 		</Grid>
-        
+        <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
-        	<Grid x:Name="MenuBarBackground" Margin="0">
-                <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
-                <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
-            </Grid>
+            <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="4,0"/>
+            <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+            <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
             	<MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="New">
                     </MenuItem>
                     <MenuItem Header="Open"/>
 					<MenuItem Header="Save"/>
-                    <Separator BorderThickness="10" Style="{DynamicResource SeparatorStyle1}"></Separator>
+                    <Separator BorderThickness="10" Style="{StaticResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
                         <MenuItem Header="3D Model"/>
                         <MenuItem Header="Annotated Paper"/>

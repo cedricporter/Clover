@@ -43,44 +43,34 @@ namespace Clover
             set { srcQuaternion = value; }
         }
 
-        TranslateTransform3D translateTransform = new TranslateTransform3D();
         public System.Windows.Media.Media3D.TranslateTransform3D TranslateTransform
         {
-            get { return translateTransform; }
-            set 
+            get 
             {
-                if (value.OffsetZ < 40 || value.OffsetZ > 1000)
-                    return;
-                translateTransform = value; 
-            }
-        }
-
-        RotateTransform3D rotateTransform = new RotateTransform3D();
-        public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
-        {
-            get { return rotateTransform; }
-            set 
-            { 
-                rotateTransform = value;
-                UpdatePosition();
+                Utility.GetInstance().UpdateWorlCameMat();
                 // 让VertexInfoVisual更新
                 foreach (Edge edge in CloverController.GetInstance().Edges)
                 {
                     edge.Vertex1.Update(edge.Vertex1, null);
                     edge.Vertex2.Update(edge.Vertex2, null);
                 }
+                return (TranslateTransform3D)transformGroup.Children[1];
+            }
+            set 
+            {
+                transformGroup.Children[1] = value;
+                Utility.GetInstance().UpdateWorlCameMat();
             }
         }
-        
-        Double distance = 300;
-        public System.Double Distance
+
+        public System.Windows.Media.Media3D.RotateTransform3D RotateTransform
         {
-            get { return distance; }
+            get
+            { return (RotateTransform3D)transformGroup.Children[0]; }
             set 
             { 
-                if (value > 40 && value < 1000)
-                    distance = value;
-                UpdatePosition();
+                transformGroup.Children[0] = value;
+                Utility.GetInstance().UpdateWorlCameMat();
                 // 让VertexInfoVisual更新
                 foreach (Edge edge in CloverController.GetInstance().Edges)
                 {
@@ -91,29 +81,29 @@ namespace Clover
         }
 
         MaterialGroup frontMaterial;
-	    public System.Windows.Media.Media3D.MaterialGroup FrontMaterial
+	    public System.Windows.Media.Media3D.DiffuseMaterial FrontMaterial
 	    {
-            get { return frontMaterial; }
+            get { return (DiffuseMaterial)frontMaterial.Children[0]; }
             set
             {
                 frontMaterial = materialController.UpdateFrontMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
-                    pair.Value.Material = value;
+                    pair.Value.Material = frontMaterial;
                 }
             }
         }
 
         MaterialGroup backMaterial;
-        public System.Windows.Media.Media3D.MaterialGroup BackMaterial
+        public System.Windows.Media.Media3D.DiffuseMaterial BackMaterial
         {
-            get { return backMaterial; }
+            get { return (DiffuseMaterial)backMaterial.Children[0]; }
             set 
             { 
                 backMaterial = materialController.UpdateBackMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
-                    pair.Value.BackMaterial = value;
+                    pair.Value.BackMaterial = backMaterial;
                 }
             }
         }
@@ -128,16 +118,12 @@ namespace Clover
         Model3DGroup modelGroup = new Model3DGroup();
 
         Dictionary<Face, GeometryModel3D> faceMeshMap = new Dictionary<Face, GeometryModel3D>();
-        //public Dictionary<Face, GeometryModel3D> FaceMeshMap
-        //{
-        //    get { return faceMeshMap; }
-        //    //set { faceMeshMap = value; }
-        //}
 
         #endregion
         
         #region 私有成员变量
         MaterialController materialController = new MaterialController();
+        Transform3DGroup transformGroup = new Transform3DGroup();
         #endregion
 
         #region 单例
@@ -154,26 +140,13 @@ namespace Clover
         RenderController()
         {
             entity.Content = modelGroup;
-            UpdatePosition();
+            TranslateTransform3D translateTransform = new TranslateTransform3D(0, 0, -300);
+            transformGroup.Children.Add(new RotateTransform3D());
+            transformGroup.Children.Add(translateTransform);
+            entity.Transform = transformGroup;
         }
 
         #endregion
-
-        /// <summary>
-        /// 更新折纸位置
-        /// </summary>
-        void UpdatePosition()
-        {
-            Transform3DGroup tg = new Transform3DGroup();
-            TranslateTransform3D ts = new TranslateTransform3D(0, 0, -distance);
-            tg.Children.Add(rotateTransform);
-            tg.Children.Add(ts);
-            entity.Transform = tg;
-
-            if (instance != null) // 这个判断避免了Utility类和RenderController类无限递归调用
-                Utility.GetInstance().UpdateWorlCameMat();
-            
-        }
 
         #region 改变材质特性
 
@@ -350,10 +323,6 @@ namespace Clover
             vi.Start();
         }
 
-
-        
-
-
         #region 动画
 
         
@@ -364,7 +333,7 @@ namespace Clover
         public void RenderAnimations()
         {
             RotationSlerp();
-
+            materialController.PaperChange();
             //AntiOverlap();
         }
 
@@ -392,7 +361,7 @@ namespace Clover
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
             CubeNavigator cubeNav = CubeNavigator.GetInstance();
-            cubeNav.CubeNavModel.Transform = rotateTransform;
+            cubeNav.CubeNavModel.Transform = (RotateTransform3D)transformGroup.Children[0];
             cubeNav.LastQuat = srcQuaternion;
         }
 
