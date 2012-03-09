@@ -24,8 +24,20 @@ namespace Clover
         List<Face> faceLeaves = new List<Face>();
         List<Edge> newEdges = null;
         List<Vertex> movedVertexList = new List<Vertex>();
+        int originVertexListCount = -1;
+        int originEdgeListCount = -1;
         
         #region get/set
+        public int OriginEdgeListCount
+        {
+            get { return originEdgeListCount; }
+            set { originEdgeListCount = value; }
+        }
+        public int OriginVertexListCount
+        {
+            get { return originVertexListCount; }
+            set { originVertexListCount = value; }
+        }
         public List<Vertex> MovedVertexList
         {
             get { return movedVertexList; }

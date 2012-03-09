@@ -716,13 +716,13 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                render.AddVisualInfoToVertex(newVertex1);
+                //render.AddVisualInfoToVertex(newVertex1);
                 //ignoreAddHistoryVertexList.Add(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                render.AddVisualInfoToVertex(newVertex2);
+                //render.AddVisualInfoToVertex(newVertex2);
                 //ignoreAddHistoryVertexList.Add(newVertex2);
             }
 
@@ -803,8 +803,8 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            newVertex1.Update(newVertex1, null);
-            newVertex2.Update(newVertex2, null);
+            //newVertex1.Update(newVertex1, null);
+            //newVertex2.Update(newVertex2, null);
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
@@ -832,9 +832,14 @@ namespace Clover
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
             // 拍快照
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            CloverController controller = CloverController.GetInstance();
+            ShadowSystem shadowSystem = controller.ShadowSystem;
+            shadowSystem.CheckUndoTree();
+
+            SnapshotNode node = new SnapshotNode(controller.FaceLayer.Leaves);
             node.Type = SnapshotNodeKind.CutKind;
+            node.OriginVertexListCount = controller.VertexLayer.VertexCellTable.Count;
+            node.OriginEdgeListCount = controller.EdgeLayer.Count;
             List<Edge> newEdges = new List<Edge>();
 
             foreach (Face face in faceList)
@@ -1049,11 +1054,13 @@ namespace Clover
         /// <param name="angle">角度</param>
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
             LookupTable table = CloverController.GetInstance().Table;
-
             List<Vertex> movedVertexList = new List<Vertex>();
+
+            shadowSystem.CheckUndoTree();
 
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
@@ -1125,9 +1132,10 @@ namespace Clover
             table.UpdateLookupTable();
             render.UpdateAll();
 
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
             node.MovedVertexList = movedVertexList;
+            node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
+            node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
             node.Type = SnapshotNodeKind.RotateKind;
             shadowSystem.Snapshot(node);
         }

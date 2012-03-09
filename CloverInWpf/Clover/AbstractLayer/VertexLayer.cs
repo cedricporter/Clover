@@ -133,12 +133,27 @@ namespace Clover
         }
 
         /// <summary>
-        /// 将顶点删除到当前节点的版本
+        /// 将当前节点之后的版本删掉
+        /// </summary>
+        /// <param name="vertex"></param>
+        public void DeleteNextVersionToEnd(Vertex vertex)
+        {
+            int index = VertexCellTable[vertex.Index].IndexOf(vertex) + 1;
+            if (index != -1 && index < VertexCellTable[vertex.Index].Count)
+            {
+                VertexCellTable[vertex.Index].RemoveRange(index, VertexCellTable[vertex.Index].Count - index);
+            }
+        }
+
+        /// <summary>
+        /// 把当前节点和之后的节点都删除
         /// </summary>
         /// <param name="vertex"></param>
         public void DeleteThisVersionToEnd(Vertex vertex)
         {
             int index = VertexCellTable[vertex.Index].IndexOf(vertex);
+            if (index == -1)
+                return;
             VertexCellTable[vertex.Index].RemoveRange(index, VertexCellTable[vertex.Index].Count - index);
         }
 
