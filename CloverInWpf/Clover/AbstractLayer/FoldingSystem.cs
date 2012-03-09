@@ -707,13 +707,13 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                //render.AddVisualInfoToVertex(newVertex1);
+                render.AddVisualInfoToVertex(newVertex1);
                 //ignoreAddHistoryVertexList.Add(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                //render.AddVisualInfoToVertex(newVertex2);
+                render.AddVisualInfoToVertex(newVertex2);
                 //ignoreAddHistoryVertexList.Add(newVertex2);
             }
 
@@ -794,9 +794,9 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            //newVertex1.Update(newVertex1, null);
-            //newVertex2.Update(newVertex2, null);
-            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            newVertex1.Update(newVertex1, null);
+            newVertex2.Update(newVertex2, null);
+            render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
 
@@ -822,6 +822,10 @@ namespace Clover
         //int counterFUcker = 1;
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
+            // 拍快照
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.Type = SnapshotNodeKind.CutKind;
             List<Edge> newEdges = new List<Edge>();
 
             foreach (Face face in faceList)
@@ -833,11 +837,7 @@ namespace Clover
                 newEdges.Add(CutAFaceWithAddedTwoVertices(face, edge));
             }
 
-            // 拍快照
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
             node.NewEdges = newEdges;
-            node.Type = SnapshotNodeKind.CutKind;
 
             shadowSystem.Snapshot(node);
         }
