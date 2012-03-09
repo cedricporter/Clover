@@ -69,6 +69,8 @@
     <Compile Include="AbstractLayer\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
+    <Compile Include="IO\CloverFile.cs" />
+    <Compile Include="IO\IOController.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />
     <Compile Include="ShadowSystem\Snapshot.cs" />
     <Compile Include="PaperSelector.cs" />

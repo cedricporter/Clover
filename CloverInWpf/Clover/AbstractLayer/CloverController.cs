@@ -219,11 +219,11 @@ namespace Clover
 
             table = new LookupTable(face);
 
-            // 此处也应该拍一张快照
-            SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
-            // 为了方便revert设计，详情联系 ET
-            node.Type = SnapshotNodeKind.CutKind;
-            shadowSystem.Snapshot(node);
+            //// 此处也应该拍一张快照
+            //SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
+            //// 为了方便revert设计，详情联系 ET
+            //node.Type = SnapshotNodeKind.CutKind;
+            //shadowSystem.Snapshot(node);
         }
 
         /// <summary>
