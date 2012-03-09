@@ -132,6 +132,20 @@ namespace Clover
             vertexCellTable.RemoveAt(index);
         }
 
+        /// <summary>
+        /// 将顶点删除到当前节点的版本
+        /// </summary>
+        /// <param name="vertex"></param>
+        public void DeleteThisVersionToEnd(Vertex vertex)
+        {
+            int index = VertexCellTable[vertex.Index].IndexOf(vertex);
+            VertexCellTable[vertex.Index].RemoveRange(index, VertexCellTable[vertex.Index].Count - index);
+        }
+
+        /// <summary>
+        /// 删除最新版的节点
+        /// </summary>
+        /// <param name="index"></param>
         public void DeleteLastVersion(int index)
         {
             if (index < vertexCellTable.Count && vertexCellTable[index].Count > 0)

@@ -304,11 +304,26 @@ namespace Clover
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
+
+        /// <summary>
+        /// 两者决定这个面的法向量
+        /// </summary>
+        Vertex startVertex1;
+        Vertex startVertex2;
         
         #endregion
 
         #region get/set
- 
+        public Clover.Vertex StartVertex1
+        {
+            get { return startVertex1; }
+            set { startVertex1 = value; }
+        }
+        public Clover.Vertex StartVertex2
+        {
+            get { return startVertex2; }
+            set { startVertex2 = value; }
+        }
         public List<Edge> Edges
         {
             get { return edges; }
@@ -367,30 +382,43 @@ namespace Clover
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();
 
+            //vertices.Add(startVertex1);
+            //vertices.Add(startVertex2);
+
             vertices.Add(edges[0].Vertex1);
             vertices.Add(edges[0].Vertex2);
 
+            //Vertex currentVertex = startVertex2;
             Vertex currentVertex = edges[0].Vertex2;
 
             List<Edge> ignoreList = new List<Edge>();
             ignoreList.Add(edges[0]);
+            //foreach (Edge edge in edges)
+            //{
+            //    if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
+            //    {
+            //        ignoreList.Add(edge);
+            //        break;
+            //    }
+            //}
 
             int counter = vertices.Count + 1;
 
             while (ignoreList.Count < edges.Count - 1)
             {
-
                 foreach (Edge e in edges)
                 {
                     if (!ignoreList.Contains(e))
                     {
-                        if (CloverMath.IsTwoPointsEqual(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
+                        //if (CloverMath.IsTwoPointsEqual(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
+                        if (e.Vertex1 == currentVertex)
                         {
                             ignoreList.Add(e);
                             if (!vertices.Contains(e.Vertex2))
                                 vertices.Add(currentVertex = e.Vertex2);
                         }
-                        else if (CloverMath.IsTwoPointsEqual(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
+                        //else if (CloverMath.IsTwoPointsEqual(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
+                        else if (e.Vertex2 == currentVertex)
                         {
                             ignoreList.Add(e);
                             if (!vertices.Contains(e.Vertex1))
@@ -447,6 +475,13 @@ namespace Clover
         #region 对边的操作
         public void AddEdge(Edge edge)
         {
+            // 初始化，用第一条边
+            if (edges.Count == 0)
+            {
+                startVertex1 = edge.Vertex1;
+                startVertex2 = edge.Vertex2;
+            }
+            
             edges.Add(edge);
             // UpdateVertices();
         }

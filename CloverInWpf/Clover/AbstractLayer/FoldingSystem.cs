@@ -296,8 +296,8 @@ namespace Clover
             shadowSystem.SaveVertices(oldVertexList);
 
             // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+            UpdateFaceVerticesToLastedVersion(newFace1);
+            UpdateFaceVerticesToLastedVersion(newFace2);
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -492,8 +492,8 @@ namespace Clover
             shadowSystem.SaveVertices(oldVertexList);
 
             // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(newFace2);
+            UpdateFaceVerticesToLastedVersion(newFace1);
+            UpdateFaceVerticesToLastedVersion(newFace2);
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -513,7 +513,7 @@ namespace Clover
         /// <param name="leftChild"></param>
         /// <param name="rightChild"></param>
         /// <param name="edge"></param>
-        public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
+        public Edge CutAFaceWithAddedTwoVertices(Face face, Edge edge)
         {
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
@@ -544,7 +544,7 @@ namespace Clover
                 vertexList.RemoveAt(0);
 
                 if (count-- == 0)
-                    return;
+                    return null;
             }
             vertexList.Add(vertexList[0]);
 
@@ -612,10 +612,10 @@ namespace Clover
                             System.Windows.MessageBox.Show("fuck2");
                         }
 
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex2);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.LeftChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge1.RightChild.Vertex2);
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex2.GetPoint3D(), 0.001))
@@ -677,10 +677,10 @@ namespace Clover
                             System.Windows.MessageBox.Show("fuck");
                         }
 
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex2);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex1);
-                        ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.LeftChild.Vertex2);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex1);
+                        //ignoreAddHistoryVertexList.Add(beCutEdge2.RightChild.Vertex2);
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)
                             || CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex2.GetPoint3D(), 0.001))
@@ -703,17 +703,18 @@ namespace Clover
 
             Edge newEdge = new Edge(newVertex1, newVertex2);
 
+            // 是否是新的顶点
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
                 //render.AddVisualInfoToVertex(newVertex1);
-                ignoreAddHistoryVertexList.Add(newVertex1);
+                //ignoreAddHistoryVertexList.Add(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
                 //render.AddVisualInfoToVertex(newVertex2);
-                ignoreAddHistoryVertexList.Add(newVertex2);
+                //ignoreAddHistoryVertexList.Add(newVertex2);
             }
 
 
@@ -721,72 +722,107 @@ namespace Clover
             newEdge.Face1 = f1;
             newEdge.Face2 = f2;
 
+            rangeA.Add(newEdge);
+            rangeB.Add(newEdge);
+
             foreach (Edge e in rangeA)
             {
                 f1.AddEdge(e);
-                foreach (Vertex v in ignoreAddHistoryVertexList)
-                {
-                    if (e.Vertex1.Index == v.Index)
-                        e.Vertex1 = v;
-                    if (e.Vertex2.Index == v.Index)
-                        e.Vertex2 = v;
-                }
             }
             foreach (Edge e in rangeB)
             {
                 f2.AddEdge(e);
-                foreach (Vertex v in ignoreAddHistoryVertexList)
-                {
-                    if (e.Vertex1.Index == v.Index)
-                        e.Vertex1 = v;
-                    if (e.Vertex2.Index == v.Index)
-                        e.Vertex2 = v;
-                }
             }
-
-            f1.AddEdge(newEdge);
-            f2.AddEdge(newEdge);
 
             f1.UpdateVertices();
             f2.UpdateVertices();
 
-            // 找到所有需要保存到VertexLayer历史的顶点
-            List<Vertex> oldVertexList = UnionVertex(f1, f2);
-            //oldVertexList = oldVertexList.Except(ignoreAddHistoryVertexList).ToList();
-            foreach (Vertex v in ignoreAddHistoryVertexList)
-            {
-                oldVertexList.Remove(v);
-            }
+            #region history
+            //foreach (Edge e in rangeA)
+            //{
+            //    f1.AddEdge(e);
+            //    foreach (Vertex v in ignoreAddHistoryVertexList)
+            //    {
+            //        if (e.Vertex1.Index == v.Index)
+            //            e.Vertex1 = v;
+            //        if (e.Vertex2.Index == v.Index)
+            //            e.Vertex2 = v;
+            //    }
+            //}
+            //foreach (Edge e in rangeB)
+            //{
+            //    f2.AddEdge(e);
+            //    foreach (Vertex v in ignoreAddHistoryVertexList)
+            //    {
+            //        if (e.Vertex1.Index == v.Index)
+            //            e.Vertex1 = v;
+            //        if (e.Vertex2.Index == v.Index)
+            //            e.Vertex2 = v;
+            //    }
+            //}
 
-            // 为所有的顶点生成一个副本插到历史中。
-            shadowSystem.SaveVertices(oldVertexList);
+            //f1.AddEdge(newEdge);
+            //f2.AddEdge(newEdge);
 
-            // 更新新的面的顶点到最新版
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
-            shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
+            //f1.UpdateVertices();
+            //f2.UpdateVertices();
 
-            controller.Table.DeleteFace( face );
-            controller.Table.AddFace( f1 );
-            controller.Table.AddFace( f2 );
+            //// 找到所有需要保存到VertexLayer历史的顶点
+            //List<Vertex> oldVertexList = UnionVertex(f1, f2);
+            ////oldVertexList = oldVertexList.Except(ignoreAddHistoryVertexList).ToList();
+            //foreach (Vertex v in ignoreAddHistoryVertexList)
+            //{
+            //    oldVertexList.Remove(v);
+            //}
+
+            ////// 为所有的顶点生成一个副本插到历史中。
+            ////shadowSystem.SaveVertices(oldVertexList);
+
+            ////// 更新新的面的顶点到最新版
+            ////UpdateFaceVerticesToLastedVersion(f1);
+            ////UpdateFaceVerticesToLastedVersion(f2);
+
+            //controller.Table.DeleteFace(face);
+            //controller.Table.AddFace(f1);
+            //controller.Table.AddFace(f2);
+            #endregion
 
             // 更新渲染层的部分
             render.Delete(face);
             render.New(f1);
-            render.New( f2 );
+            render.New(f2);
 
-            render.AntiOverlap();
+            //render.AntiOverlap();
 
             //newVertex1.Update(newVertex1, null);
             //newVertex2.Update(newVertex2, null);
             //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
+
+            return newEdge;
         }
 
+        #region 辅助函数
+        /// <summary>
+        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
+        /// </summary>
+        public void UpdateFaceVerticesToLastedVersion(Face face)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
+            foreach (Edge e in face.Edges)
+            {
+                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+            }
+            face.UpdateVertices();
+        }
+        #endregion
+
+        //int counterFUcker = 1;
         public void CutFaces(List<Face> faceList, Edge foldingLine)
         {
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            shadowSystem.Snapshot();
+            List<Edge> newEdges = new List<Edge>();
 
             foreach (Face face in faceList)
             {
@@ -794,8 +830,16 @@ namespace Clover
 
                 Debug.Assert(edge != null);
 
-                CutAFaceWithAddedTwoVertices(face, edge);
+                newEdges.Add(CutAFaceWithAddedTwoVertices(face, edge));
             }
+
+            // 拍快照
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.NewEdges = newEdges;
+            node.Type = SnapshotNodeKind.CutKind;
+
+            shadowSystem.Snapshot(node);
         }
 
         #endregion
@@ -977,6 +1021,17 @@ namespace Clover
         #endregion
 
         #region 有关旋转的函数
+
+        /// <summary>
+        /// 克隆和更新一个新的顶点到VertexLayer
+        /// </summary>
+        /// <param name="v"></param>
+        void CloneAndUpdateVertex(Vertex v)
+        {
+            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
+            vertexLayer.UpdateVertex(v.Clone() as Vertex, v.Index);
+        }
+
         /// <summary>
         /// 旋转一个面表中除去折痕的所有点 
         /// </summary>
@@ -988,7 +1043,9 @@ namespace Clover
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
             LookupTable table = CloverController.GetInstance().Table;
-            
+
+            List<Vertex> movedVertexList = new List<Vertex>();
+
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
             {
@@ -997,6 +1054,9 @@ namespace Clover
                     if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
                         && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
                     {
+                        CloneAndUpdateVertex(e.Vertex1);
+                        e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
@@ -1010,11 +1070,15 @@ namespace Clover
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
                         e.Vertex1.Moved = true;
+                        movedVertexList.Add(e.Vertex1);
                     }
 
                     if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
                         && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
                     {
+                        CloneAndUpdateVertex(e.Vertex2);
+                        e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+
                         Vector3D axis = new Vector3D();
                         axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
                         axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
@@ -1037,6 +1101,10 @@ namespace Clover
                 }
             }
 
+            foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
+            {
+                CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
+            }
 
             // 修正所有点的移动属性
             foreach (Vertex v in vertexLayer.Vertices)
@@ -1047,6 +1115,12 @@ namespace Clover
             // 必须先更新group后更新render
             table.UpdateLookupTable();
             render.UpdateAll();
+
+            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.MovedVertexList = movedVertexList;
+            node.Type = SnapshotNodeKind.RotateKind;
+            shadowSystem.Snapshot(node);
         }
 
         #endregion

@@ -54,8 +54,6 @@ namespace Clover.Visual
 
         public DashLineVisual(Point start, Point end, Brush color)
         {
-            //Path line = new Path();
-
             linePath = new Path();
             linePath.Stroke = color;
             linePath.StrokeDashArray.Add(4);

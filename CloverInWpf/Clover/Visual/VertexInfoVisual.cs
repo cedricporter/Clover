@@ -23,6 +23,7 @@ namespace Clover.Visual
     class VertexInfoVisual : VisualElementFactory
     {
         TextBlock infotext = new TextBlock();
+        TranslateTransform ts;
 
         Vertex vertex;
 
@@ -33,6 +34,8 @@ namespace Clover.Visual
             infotext.Background = new SolidColorBrush(Colors.White);
             infotext.Opacity = 0.5;
             box.Children.Add(infotext);
+            ts = new TranslateTransform();
+            TransformGroup = ts;
             UpdateInfoCallBack(v, null);
         }
 
@@ -50,7 +53,8 @@ namespace Clover.Visual
             // 更新位置
             Point3D pos = v.GetPoint3D();
             pos *= Utility.GetInstance().To2DMat;
-            TransformGroup = new TranslateTransform(pos.X + 10, pos.Y + 10);
+            ts.X = pos.X + 10;
+            ts.Y = pos.Y + 10;
         }
         
         public override void FadeIn()

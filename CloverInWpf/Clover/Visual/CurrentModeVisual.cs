@@ -25,21 +25,25 @@ namespace Clover.Visual
     {
 
         int posY = 60;
+        TranslateTransform ts;
 
         public CurrentModeVisual(String text)
         {
+            Grid innerBox = new Grid();
+            box.Children.Add(innerBox);
             Rectangle bg = new Rectangle();
             bg.RadiusX = bg.RadiusY = 15;
             bg.Fill = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0));
-            box.Children.Add(bg);
+            innerBox.Children.Add(bg);
             TextBlock textblock = new TextBlock();
             textblock.Margin = new Thickness(24, 12, 24, 12);
             textblock.Text = text;
             textblock.FontSize = 14;
             textblock.Foreground = new SolidColorBrush(Colors.White);
-            box.Children.Add(textblock);
+            innerBox.Children.Add(textblock);
             box.Opacity = 0;
-            TransformGroup = new TranslateTransform(10, posY);
+            ts = new TranslateTransform(10, posY);
+            TransformGroup = ts;
         }
 
         public override void FadeIn()
@@ -47,7 +51,8 @@ namespace Clover.Visual
             if (box.Opacity < 1)
             {
                 box.Opacity += 0.1;
-                TransformGroup = new TranslateTransform(10, posY);
+                ts.Y = posY;
+                //TransformGroup = new TranslateTransform(10, posY);
                 posY -= 1;
             }
             else
@@ -64,7 +69,8 @@ namespace Clover.Visual
             if (box.Opacity > 0)
             {
                 box.Opacity -= 0.1;
-                TransformGroup = new TranslateTransform(10, posY);
+                //TransformGroup = new TranslateTransform(10, posY);
+                ts.Y = posY;
                 posY += 1;
             }
             else

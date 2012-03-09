@@ -35,6 +35,8 @@ FindFacesByVertex = clover.FindFacesByVertex
 GetFoldingLine = clover.GetFoldingLine
 GetVertex = clover.GetVertex
 CutFaces = clover.CutFaces
+Undo = clover.Undo
+Redo = clover.Redo
 ";
 
             pythonEngine.Execute(initialString, pythonScope);

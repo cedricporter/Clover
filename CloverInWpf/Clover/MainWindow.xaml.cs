@@ -12,6 +12,7 @@ using System.Windows.Media.Media3D;
 using _3DTools;
 using System.Diagnostics;
 using CloverPython;
+using System.Windows.Media.Animation;
 
 
 namespace Clover
@@ -23,6 +24,7 @@ namespace Clover
     {
 
         CubeNavigator cubeNav;
+        PaperSelector paperSelector;
         List<ToolFactory> tools = new List<ToolFactory>();
         Utility utility;
         VisualController visualController;
@@ -50,7 +52,11 @@ namespace Clover
 
             // 导航立方
             CubeNavigator.InitializeInstance(this);
-            cubeNav = CubeNavigator.GetInstance();    
+            cubeNav = CubeNavigator.GetInstance();
+            // 纸张纹理选择器
+            PaperSelector.InitializeInstance(this);
+            paperSelector = PaperSelector.GetInstance();
+            paperSelector.LoadPaperTextures("media/paper");
 
             // 创建工具
             ToolFactory tool = new TestTool(this);
@@ -212,14 +218,11 @@ namespace Clover
         }
         private void Grid_SizeOrPositionChange(Vector translateOffset, Vector scaleOffset)
         {
-            Double lastX = capturedGrid.RenderTransform.Value.OffsetX;
-            Double lastY = capturedGrid.RenderTransform.Value.OffsetY;
-            //Double scaleX = capturedGrid.RenderTransform.Value.M11;
-            //Double scaleY = capturedGrid.RenderTransform.Value.M22;
-            TransformGroup tsg = new TransformGroup();
-            //tsg.Children.Add(new ScaleTransform(scaleOffset.X + scaleX, scaleOffset.Y + scaleY));
-            tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
-            capturedGrid.RenderTransform = tsg;   
+            //TransformGroup tsg = new TransformGroup();
+            //tsg.Children.Add(new TranslateTransform(translateOffset.X + lastX, translateOffset.Y + lastY));
+            TranslateTransform ts = ((capturedGrid.RenderTransform as TransformGroup).Children[1] as TranslateTransform);
+            ts.X += translateOffset.X;
+            ts.Y += translateOffset.Y;
         }
 
         #endregion
@@ -246,9 +249,6 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
-
-            
-
         }
 
         /// <summary>
@@ -284,13 +284,11 @@ namespace Clover
             RenderController renCtrl = RenderController.GetInstance();
             if (e.Delta > 0)
             {
-                renCtrl.Distance += 20;
-                //renCtrl.UpdatePosition();
+                renCtrl.TranslateTransform.OffsetZ -= 20;
             }
             else
             {
-                renCtrl.Distance -= 20;
-                //renCtrl.UpdatePosition();
+                renCtrl.TranslateTransform.OffsetZ += 20;
             }
         }
 
@@ -318,13 +316,24 @@ namespace Clover
             switch (e.Key)
             {
                 case Key.F2:
-                    cloverController.Revert();
+                    cloverController.ShadowSystem.Undo();
                     break;
                 case Key.F1:
-                    cloverController.StartFoldingModel(null);
+                    string code = @"
+vertex = GetVertex(0)
+face = FindFacesByVertex(0)
+edge = GetFoldingLine(face[0], vertex, Vertex(0, 0))
+
+CutFaces(face, edge)
+
+faces = FindFacesByVertex(0)
+RotateFaces(faces, edge, 90)
+                    ";
+                    string msg = cloverInterpreter.ExecuteOneLine(code);
+                    histroyTextBox.Text += msg;
                     break;
                 case Key.F3:
-                    cloverController.NeilTest();
+                    cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
                     cloverController.CutAFaceWithAddedTwoVertices(cloverController.FaceLayer.Leaves[0], new Edge(new Vertex(-50, 0, 0), new Vertex(50, 0, 0)));
@@ -340,8 +349,9 @@ namespace Clover
                 case Key.Left:
                     //cloverController.UpdateVertexPosition(null, -10, 0);
                     break;
-                case Key.Right:
+                case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
+                    var a = cloverController.FaceLayer;
                     break;
             }
 
@@ -349,7 +359,106 @@ namespace Clover
         }
 
         #endregion
-        
+
+        #region 窗口开启关闭选项
+
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
+        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ToolBox.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
+        private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
+        {
+            CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+            if (CommandLineMenuItem.IsChecked == true)
+                CommandLineMenuItem.IsChecked = false;
+        }
+
+        private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
+        {
+            Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
+        private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
+        {
+            Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+            if (OutputMenuItem.IsChecked == true)
+                OutputMenuItem.IsChecked = false;
+        }
+
+        #endregion
+
+        #region 工具栏按钮
+
+        private void ToolFodeButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolFodeButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolTuckButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolTuckButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolBlendButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToolBlendButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BeginMacroButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BeginMacroButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MagnetismButton_Checked(object sender, RoutedEventArgs e)
+        {
+            AbstractLayer.Magnet.IsMagnetismEnable = true;
+        }
+
+        private void MagnetismButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            AbstractLayer.Magnet.IsMagnetismEnable = false;
+        }
+
+        private void ChangePaperButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (PaperSelect.Visibility == Visibility.Hidden)
+                PaperSelect.Visibility = Visibility.Visible;
+            else
+                PaperSelect.Visibility = Visibility.Hidden;
+        }
+
+        #endregion
 
         void FuckingKey(Object sender, KeyEventArgs e)
         {
@@ -363,45 +472,6 @@ namespace Clover
             }
             //e.Handled = true;
         }
-
-        #region 窗口开启关闭选项
-
-        private void MenuItem_Checked(object sender, RoutedEventArgs e)
-        {
-            ToolBox.Visibility = Visibility.Visible;
-        }
-
-        private void MenuItem_Unchecked(object sender, RoutedEventArgs e)
-        {
-            ToolBox.Visibility = Visibility.Hidden;
-        }
-
-        private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
-        {
-            CommandLine.Visibility = Visibility.Visible;
-        }
-
-        private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
-        {
-            CommandLine.Visibility = Visibility.Hidden;
-            if (CommandLineMenuItem.IsChecked == true)
-                CommandLineMenuItem.IsChecked = false;
-        }
-
-        private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
-        {
-            Output.Visibility = Visibility.Visible;
-        }
-
-        private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
-        {
-            Output.Visibility = Visibility.Hidden;
-            if (OutputMenuItem.IsChecked == true)
-                OutputMenuItem.IsChecked = false;
-        }
-
-        #endregion
-
 
     }
 }
