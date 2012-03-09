@@ -34,7 +34,7 @@ namespace Clover
         /// </summary>
         public void Snapshot(SnapshotNode node)
         {
-            CheckUndoTree();
+            //CheckUndoTree();
 
             snapshotList.Add(node);
             operationLevel++;
@@ -67,22 +67,45 @@ namespace Clover
         public void Undo()
         {
             // 没有历史记录了
-            if (operationLevel == 0)
+            if (operationLevel == -1)
                 return;
 
             CloverController controller = CloverController.GetInstance();
-            // 修改操作层数
-            operationLevel--;
+
             // 将当前状态置为Undoing
             controller.FaceLayer.CurrentLeaves = snapshotList[operationLevel].FaceLeaves;
             controller.FaceLayer.State = FacecellTreeState.Undoing;
-            // 更新渲染层
-            controller.RenderController.DeleteAll();
-            foreach (Face f in controller.FaceLayer.CurrentLeaves)
+
+            SnapshotNode node = snapshotList[operationLevel];
+            switch (node.Type)
             {
-                controller.RenderController.New(f);
+                case SnapshotNodeKind.CutKind:
+                    // 更新渲染层
+                    controller.RenderController.DeleteAll();
+                    foreach (Face f in controller.FaceLayer.CurrentLeaves)
+                    {
+                        controller.RenderController.New(f);
+                    }
+                    controller.RenderController.UndrawFoldLine();
+                    break;
+                case SnapshotNodeKind.RotateKind:
+                    foreach (Vertex v in node.MovedVertexList)
+                    {
+                        controller.VertexLayer.DeleteThisVersionToEnd(v);
+                    }
+
+                    foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
+                    {
+                        CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
+                        controller.RenderController.Update(f);
+                    }
+
+                    
+                    break;
             }
-            controller.RenderController.UndrawFoldLine();
+
+            // 修改操作层数
+            operationLevel--;
         }
 
         /// <summary>

@@ -137,7 +137,7 @@ namespace Clover
         public void DeleteThisVersionToEnd(Vertex vertex)
         {
             int index = VertexCellTable[vertex.Index].IndexOf(vertex);
-            VertexCellTable.RemoveRange(index, VertexCellTable[vertex.Index].Count - index);
+            VertexCellTable[vertex.Index].RemoveRange(index, VertexCellTable[vertex.Index].Count - index);
         }
 
         /// <summary>

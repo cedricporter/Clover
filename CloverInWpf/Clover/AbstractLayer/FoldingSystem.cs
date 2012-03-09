@@ -1107,7 +1107,8 @@ namespace Clover
 
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
-            node.Type = SnapshotNodeKind.CutKind;
+            node.MovedVertexList = movedVertexList;
+            node.Type = SnapshotNodeKind.RotateKind;
             shadowSystem.Snapshot(node);
         }
 
