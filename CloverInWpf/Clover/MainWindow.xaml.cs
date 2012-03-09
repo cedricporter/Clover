@@ -339,8 +339,9 @@ RotateFaces(faces, edge, 90)
                 case Key.Left:
                     //cloverController.UpdateVertexPosition(null, -10, 0);
                     break;
-                case Key.Right:
+                case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
+                    var a = cloverController.FaceLayer;
                     break;
             }
 

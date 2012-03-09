@@ -8,8 +8,9 @@ namespace Clover
     /// <summary>
     /// 快照节点的类型
     /// </summary>
-    public enum ShapshotNodeKind
+    public enum SnapshotNodeKind
     {
+        Invalid,
         RotateKind,
         CutKind
     }
@@ -19,12 +20,18 @@ namespace Clover
     /// </summary>
     public class SnapshotNode
     {
-        SnapshotNode type;
+        SnapshotNodeKind type;
         List<Face> faceLeaves = new List<Face>();
         List<Edge> newEdges = null;
+        List<Vertex> movedVertexList = new List<Vertex>();
         
         #region get/set
-        public Clover.SnapshotNode Type
+        public List<Vertex> MovedVertexList
+        {
+            get { return movedVertexList; }
+            set { movedVertexList = value; }
+        }
+        public Clover.SnapshotNodeKind Type
         {
             get { return type; }
             set { type = value; }
@@ -42,12 +49,17 @@ namespace Clover
         #endregion
 
         #region API
+        public SnapshotNode()
+        {
+            type = SnapshotNodeKind.Invalid;
+        }
         public SnapshotNode(List<Face> leaves)
         {
             foreach (Face f in leaves)
             {
                 faceLeaves.Add(f);
             }
+            type = SnapshotNodeKind.Invalid;
         }
 
         public void Add(Face face)
