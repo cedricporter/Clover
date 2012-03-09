@@ -1000,7 +1000,7 @@ namespace Clover
         {
             FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
             LookupTable table = CloverController.GetInstance().Table;
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
 
             List<Face> faceWithFoldingLine = new List<Face>();
             List<Face> faceWithoutFoldingLine = new List<Face>();
@@ -1129,7 +1129,7 @@ namespace Clover
             }
 
             // 必须先更新group后更新render
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             render.UpdateAll();
 
             SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);

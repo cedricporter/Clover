@@ -480,28 +480,30 @@ namespace Clover
             if (foldingLine == null || segmentFromOriginToProjection == null)
                 return false;
 
-            //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetGroup()).ToList();
-            foreach (Face face in facesInDifferentGroup)
-            { 
-                // 求线段和面的交点 
-                Point3D crossPoint = new Point3D();
-                if (CloverMath.IntersectionOfLineAndFace(segmentFromOriginToProjection.Vertex1.GetPoint3D(), 
-                            segmentFromOriginToProjection.Vertex2.GetPoint3D(), face, ref crossPoint))
-                {
-                    if (CloverMath.IsPointInTwoPoints( crossPoint, segmentFromOriginToProjection.Vertex1.GetPoint3D(),
-                                                        segmentFromOriginToProjection.Vertex2.GetPoint3D(), 0.0001)) 
-                        return false;
-                }
+            System.Windows.MessageBox.Show("杨旭瑜改了group没法编译，只能把下面的代码注释了");
 
-                if (CloverMath.IntersectionOfLineAndFace(foldingLine.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D(),
-                                                        face, ref crossPoint))
-                {
-                    if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(), 
-                                                        foldingLine.Vertex2.GetPoint3D(), 0.0001))
-                        return false;
-                }
-            }
+            ////找到所有与该面不同组的面
+            //List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetGroup()).ToList();
+            //foreach (Face face in facesInDifferentGroup)
+            //{ 
+            //    // 求线段和面的交点 
+            //    Point3D crossPoint = new Point3D();
+            //    if (CloverMath.IntersectionOfLineAndFace(segmentFromOriginToProjection.Vertex1.GetPoint3D(), 
+            //                segmentFromOriginToProjection.Vertex2.GetPoint3D(), face, ref crossPoint))
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints( crossPoint, segmentFromOriginToProjection.Vertex1.GetPoint3D(),
+            //                                            segmentFromOriginToProjection.Vertex2.GetPoint3D(), 0.0001)) 
+            //            return false;
+            //    }
+
+            //    if (CloverMath.IntersectionOfLineAndFace(foldingLine.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D(),
+            //                                            face, ref crossPoint))
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(), 
+            //                                            foldingLine.Vertex2.GetPoint3D(), 0.0001))
+            //            return false;
+            //    }
+            //}
 
             return true; 
         }
@@ -728,7 +730,7 @@ namespace Clover
 
             renderController.UpdateAll();
 
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
         }
 
         /// <summary>
@@ -739,7 +741,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
