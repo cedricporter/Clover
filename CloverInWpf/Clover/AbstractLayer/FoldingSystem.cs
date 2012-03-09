@@ -568,7 +568,15 @@ namespace Clover
             for (int i = 0; i < vertexList.Count - 1; i++)
             {
                 Edge currentEdge = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
-                if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
+                if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D()))
+                {
+                    currentEdgeList = rangeA;
+                }
+                else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D()))
+                {
+                    currentEdgeList = rangeB;
+                }
+                else if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
                 {
                     currentEdgeList = rangeA;
 
@@ -578,15 +586,7 @@ namespace Clover
 
                     // 两个孩子为空，新建两条边
 
-                    if (false)
-                    {
-
-                    }
-                    else if (false)
-                    {
-
-                    }
-                    else if (beCutEdge1.LeftChild == null && beCutEdge1.RightChild == null)
+                    if (beCutEdge1.LeftChild == null && beCutEdge1.RightChild == null)
                     {
                         Debug.Assert(newVertex1 != null);
                         // 分割一条边生成两条新的边
