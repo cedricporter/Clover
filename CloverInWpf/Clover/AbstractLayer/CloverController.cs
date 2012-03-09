@@ -10,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using Clover.Visual;
+using Clover.AbstractLayer;
 
 namespace Clover
 {
@@ -25,13 +26,15 @@ namespace Clover
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
         LookupTable table;
-        public Clover.LookupTable Table
-        {
-            get { return table; }
-        }
         #endregion
 
         #region get/set
+
+        public Clover.LookupTable Table
+        {
+            get { return table; }
+            set { table = value; }
+        }
         public Clover.FoldingSystem FoldingSystem
         {
             get { return foldingSystem; }
@@ -518,15 +521,78 @@ namespace Clover
             return foldingLine;
         }
 
-        bool first = true;
-        public Edge FoldingUpToAPoint(Face pickedFace, Vertex originVertex, Point3D projectionPoint)
-        {
-            Edge e = foldingSystem.FoldingUpToPoint(pickedFace, originVertex, projectionPoint);
-            Revert();
-            return e;
-        }
         #endregion
 
+        #region 与FoldingUp相关
+        public bool DetermineFoldingUpConditionEstablished(Face pickedFace, Vertex originVertex, Point3D projectionPoint, ref Edge foldingLine)
+        {
+            // 不成立条件一：投影点和原始点是同一个点
+            if (originVertex.GetPoint3D() == projectionPoint)
+                return false;
+
+            // 不成立条件二：投隐点和原始点的连线以及折线有穿过与该面不同组的面
+            Edge segmentFromOriginToProjection = new Edge(originVertex, new Vertex(projectionPoint));
+            foldingLine = foldingSystem.GetFoldingLine(pickedFace, originVertex.GetPoint3D(), projectionPoint);
+
+            if (foldingLine == null || segmentFromOriginToProjection == null)
+                return false;
+
+            //找到所有与该面不同组的面
+            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetGroup()).ToList();
+            foreach (Face face in facesInDifferentGroup)
+            { 
+                // 求线段和面的交点 
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.IntersectionOfLineAndFace(segmentFromOriginToProjection.Vertex1.GetPoint3D(), 
+                            segmentFromOriginToProjection.Vertex2.GetPoint3D(), face, ref crossPoint))
+                {
+                    if (CloverMath.IsPointInTwoPoints( crossPoint, segmentFromOriginToProjection.Vertex1.GetPoint3D(),
+                                                        segmentFromOriginToProjection.Vertex2.GetPoint3D(), 0.0001)) 
+                        return false;
+                }
+
+                if (CloverMath.IntersectionOfLineAndFace(foldingLine.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D(),
+                                                        face, ref crossPoint))
+                {
+                    if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(), 
+                                                        foldingLine.Vertex2.GetPoint3D(), 0.0001))
+                        return false;
+                }
+            }
+
+            return true; 
+        }
+
+        // 一些需要用到的属性
+        bool first = true;
+        Vertex lastVertex = null;
+        /// <summary>
+        /// FoldingUp到一个投影点上
+        /// </summary>
+        /// <param name="pickedFace">选中的面</param>
+        /// <param name="originVertex">选中的点</param>
+        /// <param name="projectionPoint">投影点</param>
+        /// <returns>折线边</returns>
+        public Edge FoldingUpToAPoint(Face pickedFace, Vertex originVertex, Point3D projectionPoint)
+        {
+            // 判断逻辑
+            if (lastVertex == originVertex)
+                Revert();
+            else
+                lastVertex = originVertex;
+            
+            // 判定FoldingUp的成立条件，若成立则进行FoldingUp，若不成立返回null；
+            Edge foldingLine = null;
+            if (!DetermineFoldingUpConditionEstablished(pickedFace, originVertex, projectionPoint, ref foldingLine))
+                return null;
+
+            if (!foldingSystem.FoldingUpToPoint(pickedFace, originVertex, projectionPoint, foldingLine))
+                return null;
+
+            first = false;
+            return foldingLine;
+        }
+        #endregion
         #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
@@ -992,7 +1058,7 @@ namespace Clover
         #region Neil测试
         public void NeilTest()
         {
-            Edge e = foldingSystem.GetFoldingLineOnAFace(FaceLayer.Leaves[0], new Edge(new Vertex(100, 100, 0), new Vertex(-100, -100, 0)));
+            //Edge e = foldingSystem.GetFoldingLineOnAFace(FaceLayer.Leaves[0], new Edge(new Vertex(100, 100, 0), new Vertex(-100, -100, 0)));
             return;
         }
         #endregion

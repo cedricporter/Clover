@@ -706,13 +706,13 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                render.AddVisualInfoToVertex(newVertex1);
+                //render.AddVisualInfoToVertex(newVertex1);
                 ignoreAddHistoryVertexList.Add(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                render.AddVisualInfoToVertex(newVertex2);
+                //render.AddVisualInfoToVertex(newVertex2);
                 ignoreAddHistoryVertexList.Add(newVertex2);
             }
 
@@ -776,9 +776,9 @@ namespace Clover
 
             render.AntiOverlap();
 
-            newVertex1.Update(newVertex1, null);
-            newVertex2.Update(newVertex2, null);
-            render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            //newVertex1.Update(newVertex1, null);
+            //newVertex2.Update(newVertex2, null);
+            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             controller.FaceLayer.UpdateLeaves();
         }
@@ -801,6 +801,18 @@ namespace Clover
         #endregion
 
         #region 有关折线的函数
+
+        /// <summary>
+        /// 获取折线
+        /// </summary>
+        /// <param name="pickedFace">选中的面</param>
+        /// <param name="pickedPoint">选中的点</param>
+        /// <param name="projectionPoint">投影点</param>
+        /// <returns></returns>
+        public Edge GetFoldingLine(Face pickedFace, Point3D pickedPoint, Point3D projectionPoint)
+        {
+            return CloverMath.GetPerpendicularBisector3D(pickedFace, pickedPoint, projectionPoint);
+        }
         /// <summary>
         /// 找到折线穿过面的那条线段
         /// </summary>
@@ -845,20 +857,11 @@ namespace Clover
         /// <param name="pickedFace"></param>
         /// <param name="pickedVertex"></param>
         /// <param name="projectionPoint"></param>
-        public Edge FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint)
+        public bool FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint, Edge currentFoldingLine)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             shadowSystem.SaveOriginState();
 
-            // 根据顶点生成折线
-            Edge currentFoldingLine;
-            currentFoldingLine = CloverMath.GetPerpendicularBisector3D(pickedFace, pickedVertex.GetPoint3D(), projectionPoint);
-
-            if (currentFoldingLine == null)
-            {
-                System.Windows.MessageBox.Show("Fuck 木有折线");
-                return null;
-            }
             // 查找所有需要移动的面
             List<Face> rotateFaces = AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
 
@@ -868,8 +871,8 @@ namespace Clover
 
             if (1 != CloverMath.GetIntersectionOfTwoSegments(currentFoldingLine, segmentFromOriginToPro, ref crossPoint))
             {
-                System.Windows.MessageBox.Show("Fuck 木有交点");
-                return null;
+                // System.Windows.MessageBox.Show("Fuck 木有交点");
+                return false;
             }
 
             Vector3D v1 = pickedVertex.GetPoint3D() - crossPoint;
@@ -880,7 +883,7 @@ namespace Clover
             // 根据旋转角度对所有移动面进行旋转
             RotateFaces(rotateFaces, currentFoldingLine, angle);
 
-            return currentFoldingLine;
+            return true;
         }
 
         /// <summary>

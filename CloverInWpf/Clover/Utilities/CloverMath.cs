@@ -528,7 +528,7 @@ namespace Clover
             Point3D middlePoint = new Point3D();
             middlePoint.X = (p1.X + p2.X) / 2;
             middlePoint.Y = (p1.Y + p2.Y) / 2;
-            middlePoint.Z = (p1.X + p2.Z) / 2;
+            middlePoint.Z = (p1.Z + p2.Z) / 2;
 
             // 取中截面法向量
             Vector3D normal = new Vector3D();

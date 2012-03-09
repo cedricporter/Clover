@@ -61,6 +61,7 @@ namespace Clover
         #region 成员变量
         int originEdgeListCount = -1;
         int originVertexListCount = -1;
+        LookupTable originGroup;
 
         /// <summary>
         /// 进入折叠模式前的叶子节点表，用于恢复
@@ -124,6 +125,7 @@ namespace Clover
 
             originEdgeListCount = controller.EdgeLayer.Count;
             originVertexListCount = controller.VertexLayer.Vertices.Count;
+            originGroup = controller.Table.Clone() as LookupTable;
         }
 
         #endregion
@@ -213,6 +215,8 @@ namespace Clover
                 controller.VertexLayer.DeleteVertex(originVertexListCount);
             }
 
+            // 还原组
+            controller.Table = originGroup;
             //renderController.UpdateAll();
 
             controller.FaceLayer.UpdateLeaves();
