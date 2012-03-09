@@ -34,7 +34,7 @@ namespace Clover
         /// </summary>
         public void Snapshot(SnapshotNode node)
         {
-            //CheckUndoTree();
+            CheckUndoTree();
 
             snapshotList.Add(node);
             operationLevel++;
