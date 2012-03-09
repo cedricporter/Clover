@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Folding Scripts\plane.py" />
+    <Content Include="Folding Scripts\test cut 1.py" />
     <Content Include="Folding Scripts\Test.py" />
     <Content Include="Folding Scripts\test2.py" />
     <Content Include="Folding Scripts\副本 plane.py" />
