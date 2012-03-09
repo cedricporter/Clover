@@ -609,6 +609,7 @@ namespace Clover
             return foldingLine;
         }
         #endregion
+
         #region 更新
         public void InitializeBeforeFolding(Vertex vertex)
         {
