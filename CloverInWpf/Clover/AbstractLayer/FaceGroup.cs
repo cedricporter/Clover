@@ -126,9 +126,25 @@ namespace Clover.AbstractLayer
         }
 
         /// <summary>
+        /// 检测某个face是存在group中
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool HasFace(Face f)
+        {
+            foreach (Face fin in GroupList)
+            {
+                if (fin == f)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
         /// 对面组中的面进行排序
         /// </summary>
-        void SortFace()
+        public void SortFace()
         {
 
             FaceSort fc = new FaceSort();

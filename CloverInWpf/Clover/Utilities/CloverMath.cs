@@ -475,12 +475,13 @@ namespace Clover
 
 
         /// <summary>
-        /// 判断两个向量方向是否相同或相反
+        /// 判断两个向量的方向
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
+        /// <param name="rigorous">是否严格判断，这时仅当两向量同向时才返回true，反向以及其他情况都是返回false</param>
         /// <returns></returns>
-        public static bool IsTwoVectorTheSameDir(Vector3D v1, Vector3D v2)
+        public static bool IsTwoVectorTheSameDir( Vector3D v1, Vector3D v2, bool rigorous = false)
         {
             double threshold = 0.000001;
             v1.Normalize();
@@ -493,12 +494,15 @@ namespace Clover
             {
                 return true;
             }
-
-            Vector3D t = v1 + v2;
-            if (Math.Abs(t.X) < threshold && Math.Abs(t.Y) < threshold && Math.Abs(t.Z) < threshold)
+            if (!rigorous)
             {
-                return true;
+                Vector3D t = v1 + v2;
+                if ( Math.Abs( t.X ) < threshold && Math.Abs( t.Y ) < threshold && Math.Abs( t.Z ) < threshold )
+                {
+                    return true;
+                }
             }
+
             return false;
         }
 
@@ -510,9 +514,15 @@ namespace Clover
         /// <returns></returns>
         public static bool IsIntersectionOfTwoFace(Face f1, Face f2)
         {
-            foreach (Vertex v in f1.Vertices)
+            foreach (Vertex v1 in f1.Vertices)
             {
-                if (IsPointInArea(v.GetPoint3D(), f2))
+                if (IsPointInArea(v1.GetPoint3D(), f2) )
+                    return true;
+            }
+
+            foreach ( Vertex v2 in f2.Vertices )
+            {
+                if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
                     return true;
             }
             return false;
@@ -610,6 +620,44 @@ namespace Clover
                 else
                     return p2;
             }
+        }
+
+        /// <summary>
+        /// 判断两个面是否相连,即有无公共边
+        /// </summary>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
+        /// <returns></returns>
+        public static bool IsTwoFaceConected(Face f1, Face f2)
+        {
+            foreach (Edge e1 in f1.Edges)
+            {
+                foreach (Edge e2 in f2.Edges)
+                {
+                    if ( IsTwoEdgeEqual( e1, e2 ) )
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 判断两条线段是否相等，即是否完全重合
+        /// </summary>
+        /// <param name="e1"></param>
+        /// <param name="e2"></param>
+        /// <returns></returns>
+        public static bool IsTwoEdgeEqual(Edge e1, Edge e2)
+        {
+            if ( CloverMath.IsTwoPointsEqual( e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D() ) &&
+                 CloverMath.IsTwoPointsEqual( e1.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D() ) ||
+                 CloverMath.IsTwoPointsEqual( e1.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) &&
+                 CloverMath.IsTwoPointsEqual( e1.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D() ) 
+                )
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

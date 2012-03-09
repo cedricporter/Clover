@@ -763,9 +763,9 @@ namespace Clover
             shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
             shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
 
-            controller.Table.DeleteFace( face );
-            controller.Table.AddFace( f1 );
-            controller.Table.AddFace( f2 );
+            ///controller.Table.DeleteFace( face );
+           // controller.Table.AddFace( f1 );
+        //    controller.Table.AddFace( f2 );
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -940,7 +940,7 @@ namespace Clover
         {
             FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
             LookupTable table = CloverController.GetInstance().Table;
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
 
             List<Face> faceWithFoldingLine = new List<Face>();
             List<Face> faceWithoutFoldingLine = new List<Face>();
@@ -1037,7 +1037,7 @@ namespace Clover
             }
 
             // 必须先更新group后更新render
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             render.UpdateAll();
         }
 

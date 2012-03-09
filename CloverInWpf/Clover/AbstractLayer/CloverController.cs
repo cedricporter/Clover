@@ -449,9 +449,9 @@ namespace Clover
             f2.UpdateVertices();
 
             
-            table.DeleteFace( face );
-            table.AddFace( f1 );
-            table.AddFace( f2 );
+            //table.DeleteFace( face );
+            //table.AddFace( f1 );
+            //table.AddFace( f2 );
 
             // 保存新的面的所有顶点的历史
             List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
@@ -761,7 +761,7 @@ namespace Clover
             }
 
             // 必须先更新group后更新render
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             renderController.UpdateAll();
         }
 
@@ -829,7 +829,7 @@ namespace Clover
 
             renderController.UpdateAll();
 
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
         }
 
         /// <summary>
@@ -840,7 +840,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
