@@ -20,8 +20,8 @@
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
-            
-	        <!-- 正方体导航
+
+            <!-- 正方体导航
 	                  4 ______7
 	                  /|      /
 	               0 /_|___3 /|
@@ -29,46 +29,46 @@
 	                 | /5   | /6
 	                1|/____2|/ 
 	        -->
-	        <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True" Panel.ZIndex="30">
-	            <Viewport3D.Camera>
-	                <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
-	            </Viewport3D.Camera>
-	            <ModelVisual3D>
-	                <ModelVisual3D.Content>
-	                    <Model3DGroup x:Name="CubeNavModel">
-	                        <GeometryModel3D>
-	                            <GeometryModel3D.Geometry>
-	                                <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,10,10 10,10,10 -10,-10,10 10,-10,10 10,10,-10 10,-10,-10 -10,10,-10 -10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10
+            <Viewport3D x:Name="CubeNavViewport" Width="200" Height="200" HorizontalAlignment="Right" VerticalAlignment="Bottom" d:IsLocked="True" Panel.ZIndex="30">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
+                </Viewport3D.Camera>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup x:Name="CubeNavModel">
+                            <GeometryModel3D>
+                                <GeometryModel3D.Geometry>
+                                    <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,10,10 10,10,10 -10,-10,10 10,-10,10 10,10,-10 10,-10,-10 -10,10,-10 -10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10
 -10,-10,-10 -10,10,10 -10,10,10 -10,-10,-10 -10,-10,10 10,10,10 10,-10,10 10,10,-10 10,10,-10 10,-10,10 10,-10,-10 -10,10,-10 -10,10,10
 10,10,-10 10,10,-10 -10,10,10 10,10,10 -10,-10,10 -10,-10,-10 10,-10,10 10,-10,10 -10,-10,-10 10,-10,-10"
 	                                                TriangleIndices="0 1 2 3 4 5 6 7 8 9 10 11                                                  12 13 14 15 16 17 18 19 20 21 22 23                                                 24 25 26 27 28 29 30 31 32 33 34 35"
 	                                                TextureCoordinates="0.6667,0 0.6667,1 0.8333,0 0.8333,0 0.6667,1 0.8333,1 0.8333,0 0.8333,1 1,0 1,0 0.8333,1 1,1 0.3333,0 0.3333,1 0.5,0 0.5,0 0.3333,1 0.5,1 0.5,0 0.5,1 0.6667,0 0.6667,0 0.5,1
 0.6667,1 0,0 0,1 0.1667,0 0.1667,0 0,1 0.1667,1 0.1667,0 0.1667,1 0.3333,0 0.3333,0 0.1667,1 0.3333,1"/>
-	                            </GeometryModel3D.Geometry>
-	                            <GeometryModel3D.Material>
-	                                <MaterialGroup>
-	                                    <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
-	                                </MaterialGroup>
-	                            </GeometryModel3D.Material>
-	                        </GeometryModel3D>
-	                    </Model3DGroup>
-	                </ModelVisual3D.Content>
-	            </ModelVisual3D>
-	            <ModelVisual3D>
-	                <ModelVisual3D.Content>
-	                    <AmbientLight Color="White"/>
-	                </ModelVisual3D.Content>
-	            </ModelVisual3D>
-	        </Viewport3D>	        
-	        <!-- 背景图片 -->
-	        <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
+                                </GeometryModel3D.Geometry>
+                                <GeometryModel3D.Material>
+                                    <MaterialGroup>
+                                        <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
+                                    </MaterialGroup>
+                                </GeometryModel3D.Material>
+                            </GeometryModel3D>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <AmbientLight Color="White"/>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+            </Viewport3D>
+            <!-- 背景图片 -->
+            <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
             <Grid x:Name="ToolBox" Width="120" Height="300" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0, 60">
                 <Grid.RenderTransform>
-                	<TransformGroup>
-                		<ScaleTransform/>
-                		<TranslateTransform/>
-                	</TransformGroup>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
                 </Grid.RenderTransform>
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4" d:IsLocked="True"/>
@@ -140,28 +140,77 @@
                 <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3" d:IsLocked="True"/>
                 <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="3" d:IsLocked="True"/>
                 <!--<ScrollViewer>-->
-                    <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
+                <WrapPanel x:Name="PaperPreviewPanel" Margin="8"/>
                 <!--</ScrollViewer>-->
             </Grid>
-		</Grid>
+            <!-- 导出折纸纹理窗口 -->
+            <Grid x:Name="ExportTexture" Visibility="Hidden" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.01" ScaleY="0.01"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Rectangle Grid.RowSpan="4" Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                <Rectangle Grid.RowSpan="4" Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                <Grid Grid.Row="0"  Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                        Export Paper Texture
+                    </TextBlock>
+                    <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
+                            Click="ExportTexture_Hide">X</Button>
+                </Grid>
+                <Grid Grid.Row="1" Margin="5,0,5,5">
+                    <Image x:Name="ExportFrontPreviewImg" Height="200" Width="200" HorizontalAlignment="Left" Margin="10"/>
+                    <Image x:Name="ExportBackPreviewImg" Height="200" Width="200" HorizontalAlignment="Left" Margin="215,10,10,10"/>
+                </Grid>
+                <Grid Grid.Row="2" Margin="5">
+                    <Border HorizontalAlignment="Stretch" Margin="10,0,85,0" BorderBrush="{StaticResource BackgroundStrokeBlack}" Background="{StaticResource BackgroundFillBlack}" BorderThickness="1"/>
+                    <TextBlock x:Name="TextureExportPath" Text="D:\" HorizontalAlignment="Stretch" Height="20" Margin="18,0,85,0" Foreground="White" FontSize="14"/>
+                    <Button Click="ExportTexture_Button_Click" Height="30" Width="60" Template="{StaticResource RectangleButtonTemplate1}" HorizontalAlignment="Right" Margin="10,0">
+                        Browse
+                    </Button>
+                </Grid>
+                <Grid Grid.Row="3" Margin="5,5,5,15">
+                    <Button Click="ExportTexture_Export" HorizontalAlignment="Right" Height="30" Width="60" Template="{StaticResource RectangleButtonTemplate1}" Margin="85,0">
+                        Export
+                    </Button>
+                    <Button Click="ExportTexture_Cancle" HorizontalAlignment="Right" Height="30" Width="60" Template="{StaticResource RectangleButtonTemplate1}" Margin="10,0">
+                        Cancle
+                    </Button>
+                    <TextBlock x:Name="ExportTexture_Text"  Foreground="White" HorizontalAlignment="Left" Margin="15,4" Visibility="Hidden">
+                        Exporting texture files...
+                    </TextBlock>
+                </Grid>
+            </Grid>
+        </Grid>
         <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
             <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="4,0"/>
             <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
             <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
             <Menu Template="{StaticResource MenuTemplate1}" HorizontalAlignment="Left" Margin="30,0,0,0">
-            	<MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
+                <MenuItem Header="_File" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header="New">
                     </MenuItem>
                     <MenuItem Header="Open"/>
-					<MenuItem Header="Save"/>
+                    <MenuItem Header="Save"/>
                     <Separator BorderThickness="10" Style="{StaticResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
                         <MenuItem Header="3D Model"/>
-                        <MenuItem Header="Annotated Paper"/>
+                        <MenuItem Header="Annotated Paper" Click="ExportTexture_Show"/>
                         <MenuItem Header="Folding Script"/>
                     </MenuItem>
-				</MenuItem>
+                </MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem x:Name="ToolBoxMenuItem"  Header="ToolBox" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked"/>
                     <MenuItem x:Name="CommandLineMenuItem" Header="Command Line" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked_1" Unchecked="MenuItem_Unchecked_1"/>
@@ -170,11 +219,11 @@
                 <MenuItem Header="_Setting" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header=""/>
                 </MenuItem>
-			</Menu>
+            </Menu>
             <Button x:Name="WinMin" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,68,7" d:LayoutOverrides="Width" Content="--" Template="{StaticResource RectangleButtonTemplate1}"/>
             <Button x:Name="WinMax" Width="20" Height="20" Margin="0,7,40,7" HorizontalAlignment="Right" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}" Content="口"/>
             <Button x:Name="WinClose" Width="20" Height="20" HorizontalAlignment="Right" Margin="0,7,12,7" d:LayoutOverrides="Width" Template="{StaticResource RectangleButtonTemplate1}">X</Button>
         </Grid>
-        
+
     </Grid>
 </Window>
