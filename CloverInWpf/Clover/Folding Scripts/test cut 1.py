@@ -4,4 +4,5 @@ faces = FindFacesByVertex(0)
 CutFaces(faces, edge)
 
 faces = FindFacesByVertex(1)
-RotateFaces(faces, edge, 90)
+RotateFaces(faces, edge, 30)
+RotateFaces(faces, edge, 30)
