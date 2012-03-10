@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using Clover.Visual;
 using System.Windows;
 using System.Windows.Input;
+using Clover.AbstractLayer;
 
 /**
 @date		:	2012/03/03
@@ -19,7 +20,7 @@ using System.Windows.Input;
 			| |/ /| |/ _  |
 			|   < | |||_| |
 			|_|\_\|_|\____|
-@note		:	折叠工具
+@note		:	Folding工具
 **/
 
 
@@ -30,6 +31,9 @@ namespace Clover.Tool
     {
         Face nearestFace = null;
         Vertex pickedVertex = null;
+        FaceGroup currGroup = null;
+        List<Vertex> canSelectedVertices = new List<Vertex>();
+        List<Face> canSelectedFaces = new List<Face>();
         Point Origin2Dpos = new Point();
         Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
@@ -37,9 +41,10 @@ namespace Clover.Tool
         DashLineVisual foldLineVi = null;
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
+        FaceLayerStackVisual stackVi = null;
         enum FoldingMode
         {
-            DoingNothing, FoldingUp, Blending
+            DoingNothing, FoldingUp//, Blending
         }
         FoldingMode mode = FoldingMode.DoingNothing;
 
@@ -75,22 +80,37 @@ namespace Clover.Tool
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
+                // 找到当前Face所在的组
+                currGroup = CloverController.GetInstance().Table.GetGroup(nearestFace);
+                // 找到所有拥有和selectedVertex重叠的Vertex的Face
+                foreach (Face f in currGroup.GetFaceList())
+                {
+                    foreach (Vertex v in f.Vertices)
+                    {
+                        if (pickedVertex == v)
+                        {
+                            canSelectedVertices.Add(v);
+                            canSelectedFaces.Add(f);
+                            break;
+                        }
+                    }
+                }
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
 
-                if (Mouse.LeftButton == MouseButtonState.Pressed)
-                {
-                    // 进入Folding模式
-                    EnterFoldingUp();
-                }
-                else if (Mouse.RightButton == MouseButtonState.Pressed)
-                {
-                    // 进入Blending模式
-                    EnterBlending();
-                }
+                //if (Mouse.LeftButton == MouseButtonState.Pressed)
+                //{
+                // 进入Folding模式
+                EnterFoldingUp();
+                //}
+                //else if (Mouse.RightButton == MouseButtonState.Pressed)
+                //{
+                //    // 进入Blending模式
+                //    EnterBlending();
+                //}
 
             }
             #endregion
@@ -104,16 +124,19 @@ namespace Clover.Tool
             if (mode == FoldingMode.DoingNothing)
                 return;
 
-            if (mode == FoldingMode.FoldingUp && Mouse.RightButton == MouseButtonState.Pressed)
-            {
-                ExitFoldingUp();
-                EnterBlending();
-            }
-            else if (mode == FoldingMode.Blending && Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                ExitBlending();
-                EnterFoldingUp();
-            }
+            if (Mouse.RightButton == MouseButtonState.Pressed)
+                exit();
+
+            //if (mode == FoldingMode.FoldingUp && Mouse.RightButton == MouseButtonState.Pressed)
+            //{
+            //    ExitFoldingUp();
+            //    EnterBlending();
+            //}
+            //else if (mode == FoldingMode.Blending && Mouse.LeftButton == MouseButtonState.Pressed)
+            //{
+            //    ExitBlending();
+            //    EnterFoldingUp();
+            //}
         }
 
         protected override void onUnselectElement(Object element)
@@ -149,21 +172,22 @@ namespace Clover.Tool
                     (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
                     (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
-                    
+
                     // 传给下一层处理
                     List<Face> foldingFaces = new List<Face>();
                     foldingFaces.Add(nearestFace);
                     Edge edge = CloverController.GetInstance().FoldingUpToAPoint(foldingFaces, pickedVertex, projectionPoint);
-                   
-                    // 更新折线显示
+
+
+                    //// 更新折线显示
                     UpdateFoldLine(edge);
-                    // 更新提示信息
+                    //// 更新提示信息
                     UpdateFoldLineInfo(edge);
                 }
-                else if (mode == FoldingMode.Blending)
-                {
+                //else if (mode == FoldingMode.Blending)
+                //{
 
-                }
+                //}
 
             }
 
@@ -249,41 +273,6 @@ namespace Clover.Tool
         }
 
         /// <summary>
-        /// 计算旋转量
-        /// </summary>
-        /// <returns></returns>
-        Quaternion CalculateBlendingRotation()
-        {
-            Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
-
-            // 判断该面是正面朝向用户还是背面朝向用户
-            Vector3D vector1 = nearestFace.Normal * mat;
-            Vector3D vector2 = new Vector3D(0, 0, 1);
-            Vector3D vector3 = projectionPoint - pickedVertex.GetPoint3D();
-            if (Vector3D.DotProduct(vector1, vector2) < 0)
-                vector1 = nearestFace.Normal * -1;
-            else
-                vector1 = nearestFace.Normal;
-            // 计算旋转
-            Quaternion quat;
-            if (vector1 == new Vector3D(0, 0, 1))
-            {
-                quat = new Quaternion(new Vector3D(1, 0, 0), -70);
-            }
-            else if (vector1 == new Vector3D(0, 0, -1))
-                quat = new Quaternion(new Vector3D(1, 0, 0), 110);
-            else
-            {
-                Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
-                axis.Normalize();
-                Double deg = Vector3D.AngleBetween(vector1, vector2);
-                quat = new Quaternion(axis, deg);
-                quat = new Quaternion(new Vector3D(1, 0, 0), -70) * quat;
-            }
-            return quat;
-        }
-
-        /// <summary>
         /// 锁定或解锁视角
         /// </summary>
         /// <param name="islock"></param>
@@ -349,14 +338,16 @@ namespace Clover.Tool
 
             if (mode == FoldingMode.FoldingUp)
                 ExitFoldingUp();
-            else if (mode == FoldingMode.Blending)
-                ExitBlending();
+            //else if (mode == FoldingMode.Blending)
+            //    ExitBlending();
 
             currSelectedElementVi.End();
             currSelectedElementVi = null;
             currOveredElementVi.End();
             currOveredElementVi = null;
             currSelectedElement = currOveredElement = null;
+            canSelectedVertices.Clear();
+            canSelectedFaces.Clear();
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
@@ -392,6 +383,16 @@ namespace Clover.Tool
             VisualController.GetSingleton().AddVisual(foldLineInfoVi2);
             foldLineInfoVi1.Start();
             foldLineInfoVi2.Start();
+            // 显示纸张的层次栈
+            //if (canSelectedFaces.Count > 1)
+            //{
+            //    stackVi = new FaceLayerStackVisual(canSelectedFaces, new Point(currMousePos.X + 30, currMousePos.Y));
+            //    VisualController.GetSingleton().AddVisual(stackVi);
+            //    stackVi.Start();
+            //}
+            stackVi = new FaceLayerStackVisual(canSelectedFaces, new Point(currMousePos.X + 30, currMousePos.Y));
+            VisualController.GetSingleton().AddVisual(stackVi);
+            stackVi.Start();
         }
 
         /// <summary>
@@ -409,31 +410,13 @@ namespace Clover.Tool
             foldLineInfoVi1 = null;
             foldLineInfoVi2.End();
             foldLineInfoVi2 = null;
-        }
-
-        /// <summary>
-        /// 进入Blending模式
-        /// </summary>
-        void EnterBlending()
-        {
-            mode = FoldingMode.Blending;
-            // 计算旋转
-            Quaternion quat = CalculateBlendingRotation();
-            // 应用旋转
-            RenderController.GetInstance().BeginRotationSlerp(quat);
-            // 显示模式
-            currentModeVi = new CurrentModeVisual("Blending Mode");
-            VisualController.GetSingleton().AddVisual(currentModeVi);
-            currentModeVi.Start();
-        }
-
-        /// <summary>
-        /// 退出Blending模式
-        /// </summary>
-        void ExitBlending()
-        {
-            currentModeVi.End();
-            currentModeVi = null;
+            //if (canSelectedFaces.Count > 1)
+            //{
+            //    stackVi.End();
+            //    stackVi = null;
+            //}
+            stackVi.End();
+            stackVi = null;
         }
 
         /// <summary>
@@ -477,8 +460,104 @@ namespace Clover.Tool
             foldLineInfoVi2.Point2 = new Point(p4.X, p4.Y);
             foldLineInfoVi1.Offset = offset1;
             foldLineInfoVi2.Offset = offset2;
+        }
+
+        /// <summary>
+        /// 如果有多层存在，将纸张散开以供用户选择
+        /// </summary>
+        void SpreadOut()
+        {
+            if (canSelectedFaces.Count < 2)
+                return;
+            //计算散开的方向
+            Vector3D dir, v1, v2;
+            Point3D p0, p1, p2;
+            p0 = p1 = p2 = new Point3D();
+            int count = nearestFace.Vertices.Count;
+            for (int i = 0; i < count; i++)
+            {
+                if (pickedVertex.GetPoint3D() == nearestFace.Vertices[i].GetPoint3D())
+                {
+                    p0 = pickedVertex.GetPoint3D();
+                    p1 = nearestFace.Vertices[(i + count - 1) % count].GetPoint3D();
+                    p2 = nearestFace.Vertices[(i + 1) % count].GetPoint3D();
+                    break;
+                }
+            }
+            v1 = p1 - p0;
+            v1.Normalize();
+            v2 = p2 - p0;
+            v2.Normalize();
+            dir = v1 + v2;
+            dir.Normalize();
+            // 计算散开的位移
 
         }
 
+        #region Blending
+
+        ///// <summary>
+        ///// 计算旋转量
+        ///// </summary>
+        ///// <returns></returns>
+        //Quaternion CalculateBlendingRotation()
+        //{
+        //    Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
+
+        //    // 判断该面是正面朝向用户还是背面朝向用户
+        //    Vector3D vector1 = nearestFace.Normal * mat;
+        //    Vector3D vector2 = new Vector3D(0, 0, 1);
+        //    Vector3D vector3 = projectionPoint - pickedVertex.GetPoint3D();
+        //    if (Vector3D.DotProduct(vector1, vector2) < 0)
+        //        vector1 = nearestFace.Normal * -1;
+        //    else
+        //        vector1 = nearestFace.Normal;
+        //    // 计算旋转
+        //    Quaternion quat;
+        //    if (vector1 == new Vector3D(0, 0, 1))
+        //    {
+        //        quat = new Quaternion(new Vector3D(1, 0, 0), -70);
+        //    }
+        //    else if (vector1 == new Vector3D(0, 0, -1))
+        //        quat = new Quaternion(new Vector3D(1, 0, 0), 110);
+        //    else
+        //    {
+        //        Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
+        //        axis.Normalize();
+        //        Double deg = Vector3D.AngleBetween(vector1, vector2);
+        //        quat = new Quaternion(axis, deg);
+        //        quat = new Quaternion(new Vector3D(1, 0, 0), -70) * quat;
+        //    }
+        //    return quat;
+        //}
+
+        ///// <summary>
+        ///// 进入Blending模式
+        ///// </summary>
+        //void EnterBlending()
+        //{
+        //    mode = FoldingMode.Blending;
+        //    // 计算旋转
+        //    Quaternion quat = CalculateBlendingRotation();
+        //    // 应用旋转
+        //    RenderController.GetInstance().BeginRotationSlerp(quat);
+        //    // 显示模式
+        //    currentModeVi = new CurrentModeVisual("Blending Mode");
+        //    VisualController.GetSingleton().AddVisual(currentModeVi);
+        //    currentModeVi.Start();
+        //}
+
+        ///// <summary>
+        ///// 退出Blending模式
+        ///// </summary>
+        //void ExitBlending()
+        //{
+        //    currentModeVi.End();
+        //    currentModeVi = null;
+        //}
+
+        #endregion
+
     }
+
 }

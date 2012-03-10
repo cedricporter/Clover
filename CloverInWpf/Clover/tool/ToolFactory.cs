@@ -76,8 +76,8 @@ namespace Clover.Tool
         {
             foreach (Edge edge in mainWindow.cloverController.Edges)
             {
-                Point3D p1 = edge.Vertex1.GetPoint3D();
-                Point3D p2 = edge.Vertex2.GetPoint3D();
+                Point3D p1 = edge.Vertex1.RenderPoint;
+                Point3D p2 = edge.Vertex2.RenderPoint;
                 p1 *= Utility.GetInstance().To2DMat;
                 p2 *= Utility.GetInstance().To2DMat;
                 Point p12d = new Point(p1.X, p1.Y);
@@ -226,7 +226,7 @@ namespace Clover.Tool
                             // 当前拾取到的是点
                             if (currOveredElement.GetType().ToString() == "Clover.Vertex")
                             {
-                                Point3D p = ((Clover.Vertex)currSelectedElement).GetPoint3D();
+                                Point3D p = ((Clover.Vertex)currSelectedElement).RenderPoint;
                                 p *= Utility.GetInstance().To2DMat;
                                 currSelectedElementVi = new VertexHeightLightVisual((SolidColorBrush)App.Current.FindResource("VisualElementRedBrush"),
                                     p.X, p.Y);

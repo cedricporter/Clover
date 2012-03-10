@@ -48,6 +48,7 @@
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -59,6 +60,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -79,6 +81,7 @@
     <Compile Include="PaperSelector.cs" />
     <Compile Include="RenderLayer\MaterialController.cs" />
     <Compile Include="RenderLayer\RenderController.cs" />
+    <Compile Include="Tool\BlendTool.cs" />
     <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\TestTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
@@ -89,6 +92,7 @@
     <Compile Include="Visual\CurrentModeVisual.cs" />
     <Compile Include="Visual\DashLineVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />
+    <Compile Include="Visual\FaceLayerStackVisual.cs" />
     <Compile Include="Visual\FoldLinePercentageVisual.cs" />
     <Compile Include="Visual\VertexHeightLightVisual.cs" />
     <Compile Include="Visual\VertexInfoVisual.cs" />

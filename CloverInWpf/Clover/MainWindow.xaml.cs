@@ -13,6 +13,7 @@ using _3DTools;
 using System.Diagnostics;
 using CloverPython;
 using System.Windows.Media.Animation;
+using Clover.IO;
 
 
 namespace Clover
@@ -28,8 +29,9 @@ namespace Clover
         List<ToolFactory> tools = new List<ToolFactory>();
         Utility utility;
         VisualController visualController;
+        IOController ioController;
         CloverInterpreter cloverInterpreter = new CloverInterpreter();
-        
+
         #region 折纸部分
 
         // 抽象数据结构控制器
@@ -42,7 +44,7 @@ namespace Clover
         public MainWindow()
         {
             InitializeComponent();
-            
+
             // 测试Visual
             VisualController.Initialize(this);
             visualController = VisualController.GetSingleton();
@@ -57,6 +59,9 @@ namespace Clover
             PaperSelector.InitializeInstance(this);
             paperSelector = PaperSelector.GetInstance();
             paperSelector.LoadPaperTextures("media/paper");
+            // IO控制器
+            IOController.InitializeInstance(this);
+            ioController = IOController.GetInstance();
 
             // 创建工具
             ToolFactory tool = new TestTool(this);
@@ -101,7 +106,7 @@ namespace Clover
 
             // 更新矩阵
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
- 
+
             // 初始化纸张
             CloverController.InitializeInstance(this);
             cloverController = CloverController.GetInstance();
@@ -188,7 +193,7 @@ namespace Clover
         }
 
         #region 处理子窗口的移动，缩放，关闭等
-        
+
         Point lastMousePos1 = new Point(-100, -100);
         Grid capturedGrid = null;
         private void Grid_Capture(Object sender, MouseButtonEventArgs e)
@@ -261,7 +266,7 @@ namespace Clover
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
 
-            cloverController.Table.UpdateTableAfterFoldUp( true );
+            cloverController.Table.UpdateTableAfterFoldUp(true);
         }
 
         /// <summary>
@@ -391,6 +396,37 @@ RotateFaces(faces, edge, 90)
                 OutputMenuItem.IsChecked = false;
         }
 
+        private void ExportTexture_Show(object sender, RoutedEventArgs e)
+        {
+            ExportFrontPreviewImg.Source = cloverController.RenderController.GetFrontTexture();
+            ExportBackPreviewImg.Source = cloverController.RenderController.GetBackTexture();
+            ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
+        private void ExportTexture_Hide(object sender, RoutedEventArgs e)
+        {
+            ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void ExportTexture_Button_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            folderDialog.ShowDialog();
+            TextureExportPath.Text = folderDialog.SelectedPath;
+        }
+
+        private void ExportTexture_Export(object sender, RoutedEventArgs e)
+        {
+            //ExportTexture_Text.Visibility = Visibility.Visible;
+            ioController.ExportTexture(TextureExportPath.Text);
+            ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void ExportTexture_Cancle(object sender, RoutedEventArgs e)
+        {
+            ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
         #endregion
 
         #region 工具栏按钮
@@ -467,6 +503,8 @@ RotateFaces(faces, edge, 90)
             }
             //e.Handled = true;
         }
+
+
 
     }
 }

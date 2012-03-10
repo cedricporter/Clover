@@ -45,7 +45,7 @@ namespace Clover
 
         public System.Windows.Media.Media3D.TranslateTransform3D TranslateTransform
         {
-            get 
+            get
             {
                 Utility.GetInstance().UpdateWorlCameMat();
                 // 让VertexInfoVisual更新
@@ -59,7 +59,7 @@ namespace Clover
                 }
                 return (TranslateTransform3D)transformGroup.Children[1];
             }
-            set 
+            set
             {
                 transformGroup.Children[1] = value;
                 Utility.GetInstance().UpdateWorlCameMat();
@@ -70,8 +70,8 @@ namespace Clover
         {
             get
             { return (RotateTransform3D)transformGroup.Children[0]; }
-            set 
-            { 
+            set
+            {
                 transformGroup.Children[0] = value;
                 Utility.GetInstance().UpdateWorlCameMat();
                 // 让VertexInfoVisual更新
@@ -86,8 +86,8 @@ namespace Clover
         }
 
         MaterialGroup frontMaterial;
-	    public System.Windows.Media.Media3D.DiffuseMaterial FrontMaterial
-	    {
+        public System.Windows.Media.Media3D.DiffuseMaterial FrontMaterial
+        {
             get { return (DiffuseMaterial)frontMaterial.Children[0]; }
             set
             {
@@ -103,8 +103,8 @@ namespace Clover
         public System.Windows.Media.Media3D.DiffuseMaterial BackMaterial
         {
             get { return (DiffuseMaterial)backMaterial.Children[0]; }
-            set 
-            { 
+            set
+            {
                 backMaterial = materialController.UpdateBackMaterial(value);
                 foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
                 {
@@ -125,14 +125,14 @@ namespace Clover
         Dictionary<Face, GeometryModel3D> faceMeshMap = new Dictionary<Face, GeometryModel3D>();
 
         #endregion
-        
+
         #region 私有成员变量
         MaterialController materialController = new MaterialController();
         Transform3DGroup transformGroup = new Transform3DGroup();
         #endregion
 
         #region 单例
-        
+
         static RenderController instance = null;
         public static RenderController GetInstance()
         {
@@ -263,8 +263,10 @@ namespace Clover
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
+                Point3D rp;
+                rp = UpdateRenderPoint(v);
                 // 更新3d坐标
-                mesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+                mesh.Positions.Add(new Point3D(rp.X, rp.Y, rp.Z));
                 // 更新纹理坐标
                 mesh.TextureCoordinates.Add(new Point(v.u, v.v));
             }
@@ -279,6 +281,16 @@ namespace Clover
             return mesh;
         }
 
+        Point3D UpdateRenderPoint(Vertex v)
+        {
+            Point3D rp = new Point3D();
+            rp.X = v.X;
+            rp.Y = v.Y;
+            rp.Z = v.Z;
+            v.RenderPoint = rp;
+            return rp;
+        }
+
         /// <summary>
         /// 反重叠，让纸张散开
         /// </summary>
@@ -291,7 +303,7 @@ namespace Clover
             //{
             //    float baseval = 0;
             //    float step = 0.01f;
-            //    foreach (Face f in g.GetFaceList())
+            //    foreach (Face f in g.GetGroup())
             //    {
             //        Vector3D offset = g.Normal * baseval;
             //        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
@@ -332,6 +344,24 @@ namespace Clover
         }
 
         /// <summary>
+        /// 获取正面纹理
+        /// </summary>
+        /// <returns></returns>
+        public ImageSource GetFrontTexture()
+        {
+            return materialController.MergeFrontTexture();
+        }
+
+        /// <summary>
+        /// 获取背面纹理
+        /// </summary>
+        /// <returns></returns>
+        public ImageSource GetBackTexture()
+        {
+            return materialController.MergeBackTexture();
+        }
+
+        /// <summary>
         /// 为一个顶点添加提示信息
         /// </summary>
         /// <param name="v"></param>
@@ -346,7 +376,7 @@ namespace Clover
 
         #region 动画
 
-        
+
 
         /// <summary>
         /// 一些无法通过故事板实现，只能基于帧的动画
