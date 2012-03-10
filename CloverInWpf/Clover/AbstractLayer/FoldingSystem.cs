@@ -9,6 +9,17 @@ namespace Clover
 {
     public class FoldingSystem
     {
+        #region 属性
+        List<Face> lastTimeMovedFaces;
+
+        #region get/set
+        public List<Face> GetLastTimeMovedFace()
+        {
+            return lastTimeMovedFaces;
+        }
+        #endregion
+
+        #endregion
         #region 一些辅助计算的函数
         /// <summary>
         /// 将一堆面的周围的顶点找出并返回一个list
@@ -908,6 +919,7 @@ namespace Clover
 
             // 查找所有需要移动的面
             List<Face> rotateFaces = AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
+            lastTimeMovedFaces = rotateFaces;
 
             // 计算所需旋转角度
             Point3D crossPoint = new Point3D();

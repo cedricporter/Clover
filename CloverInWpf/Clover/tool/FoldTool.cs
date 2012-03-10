@@ -151,7 +151,9 @@ namespace Clover.Tool
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                     
                     // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().FoldingUpToAPoint(nearestFace, pickedVertex, projectionPoint);
+                    List<Face> foldingFaces = new List<Face>();
+                    foldingFaces.Add(nearestFace);
+                    Edge edge = CloverController.GetInstance().FoldingUpToAPoint(foldingFaces, pickedVertex, projectionPoint);
                    
                     // 更新折线显示
                     UpdateFoldLine(edge);

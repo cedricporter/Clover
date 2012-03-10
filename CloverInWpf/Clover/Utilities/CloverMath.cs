@@ -611,5 +611,11 @@ namespace Clover
                     return p2;
             }
         }
+
+        public static bool AreTwoPointsSameWithDeviation(Point3D p1, Point3D p2)
+        {
+            Vector3D v = p1 - p2;
+            return v.Length > 0.001 ? false : true ; 
+        }
     }
 }
