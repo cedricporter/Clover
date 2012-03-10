@@ -165,6 +165,9 @@ namespace Clover.IO
 
             face.LeftChild = FaceTree();
             face.RightChild = FaceTree();
+
+            face.UpdateVertices();
+
             return face;
         }
         #endregion

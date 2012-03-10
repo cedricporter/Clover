@@ -355,6 +355,8 @@ namespace Clover
 
             Edge newEdge = new Edge(newVertex1, newVertex2);
 
+            controller.EdgeLayer.AddTree(new EdgeTree(newEdge));
+
             // 是否是新的顶点
             if (newVertex1 == newVertexOld1)
             {
