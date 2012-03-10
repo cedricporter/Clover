@@ -359,12 +359,12 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                //render.AddVisualInfoToVertex(newVertex1);
+                render.AddVisualInfoToVertex(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                //render.AddVisualInfoToVertex(newVertex2);
+                render.AddVisualInfoToVertex(newVertex2);
             }
 
 
@@ -403,8 +403,8 @@ namespace Clover
 
             render.AntiOverlap();
 
-            //newVertex1.Update(newVertex1, null);
-            //newVertex2.Update(newVertex2, null);
+            newVertex1.Update(newVertex1, null);
+            newVertex2.Update(newVertex2, null);
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             // 
@@ -665,14 +665,19 @@ namespace Clover
             List<Vertex> movedVertexList = new List<Vertex>();
             shadowSystem.CheckUndoTree();
 
+            Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
+            foreach (Face f in beRotatedFaceList)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    foreach (Vertex v in f.Vertices)
+                        movedVertexDict[v.Index] = false;
+                }
+            }
 
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
             {
-                Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
-                foreach (Vertex v in f.Vertices)
-                    movedVertexDict[v.Index] = false;   
-
                 foreach (Edge e in f.Edges)
                 {
                     if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 

@@ -45,45 +45,61 @@ namespace Clover.IO
             bf.Serialize(fs, vertexLayer);
         }
 
-        int edgeCounter = 0;
+        //int edgeCounter = 0;
 
-        void TravelFace(Face root)
+        //void TravelFace(Face root)
+        //{
+        //    if (root == null)
+        //    {
+        //        writer.Write(-1);
+        //        return;
+        //    }
+
+        //    writer.Write(root.ID);
+
+        //    writer.Write(root.Edges.Count);
+
+        //    foreach (Edge edge in root.Edges)
+        //    {
+        //        writer.Write(edge.ID);
+        //    }
+
+        //    TravelFace(root.LeftChild);
+        //    TravelFace(root.RightChild);
+        //}
+
+        void SaveFace(Face face)
         {
-            if (root == null)
-            {
-                writer.Write(-1);
-                return;
-            }
+            writer.Write(face.ID);
 
-            writer.Write(root.ID);
+            writer.Write(face.Edges.Count);
 
-            writer.Write(root.Edges.Count);
-
-            foreach (Edge edge in root.Edges)
+            foreach (Edge edge in face.Edges)
             {
                 writer.Write(edge.ID);
             }
-
-            TravelFace(root.LeftChild);
-            TravelFace(root.RightChild);
         }
 
-        void TravelEdge(Edge root)
+        void SaveEdge(Edge edge)
         {
-            if (root == null)
-            {
-                writer.Write(-1);
-                return;
-            }
-
-            writer.Write(root.ID);
-
-            writer.Write(root.Vertex1.ID);
-            writer.Write(root.Vertex2.ID);
-
-            TravelEdge(root.LeftChild);
-            TravelEdge(root.RightChild);
+            writer.Write(edge.ID);
+            writer.Write(edge.Vertex1.ID);
+            writer.Write(edge.Vertex2.ID);
         }
+
+        //void TravelEdge(Edge root, List<Edge> table)
+        //{
+        //    if (root == null)
+        //    {
+        //        writer.Write(-1);
+        //        return;
+        //    }
+
+        //    SaveEdge(root);
+
+        //    TravelEdge(root.LeftChild, table);
+        //    TravelEdge(root.RightChild, table);
+        //}
 
         public void SaveEdgeLayer(FileStream fs, EdgeLayer edgeLayer)
         {
@@ -93,7 +109,29 @@ namespace Clover.IO
 
             foreach (EdgeTree tree in edgeLayer.EdgeTreeList)
             {
-                TravelEdge(tree.Root);
+                List<Edge> list = new List<Edge>();
+                //TravelEdge(tree.Root, list);
+
+                list.Add(tree.Root);
+
+                while (list.Count != 0)
+                {
+                    Edge edge = list[0];
+                    list.RemoveAt(0);
+
+                    SaveEdge(edge);
+                    
+                    if (edge.LeftChild != null && edge.RightChild != null)
+                    {
+                        list.Add(edge.LeftChild);
+                        list.Add(edge.RightChild);
+                    }
+                    else
+                    {
+                        writer.Write(-1);
+                        writer.Write(-1);
+                    }
+                }
             }
         }
 
@@ -101,7 +139,28 @@ namespace Clover.IO
         {
             writer.Write("Face Layer");
 
-            TravelFace(faceLayer.Root);
+            //TravelFace(faceLayer.Root);
+            List<Face> list = new List<Face>();
+            list.Add(faceLayer.Root);
+
+            while (list.Count != 0)
+            {
+                Face face = list[0];
+                list.RemoveAt(0);
+
+                SaveFace(face);
+
+                if (face.LeftChild != null && face.RightChild != null)
+                {
+                    list.Add(face.LeftChild);
+                    list.Add(face.RightChild);
+                }
+                else
+                {
+                    writer.Write(-1);
+                    writer.Write(-1);
+                }
+            }
         }
 
     }

@@ -113,6 +113,13 @@ namespace Clover
             faceLayer = fileLoader.FaceLayer;
             edgeLayer = fileLoader.EdgeLayer;
             vertexLayer = fileLoader.VertexLayer;
+
+            renderController.DeleteAll();
+            //renderController.RedrawFoldLine();
+            foreach (Face face in faceLayer.Leaves)
+            {
+                renderController.New(face);
+            }
         }
         #endregion
 
