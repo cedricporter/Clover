@@ -361,6 +361,7 @@ namespace Clover
             newEdge.Face1 = f1;
             newEdge.Face2 = f2;
 
+            // 给两个新面加新的边
             rangeA.Add(newEdge);
             rangeB.Add(newEdge);
 
@@ -373,6 +374,14 @@ namespace Clover
                 f2.AddEdge(e);
             }
 
+            // 更新两个新面的法向量标杆
+            f1.StartVertex1 = newVertex2;
+            f1.StartVertex2 = newVertex1;
+
+            f2.StartVertex1 = newVertex1;
+            f2.StartVertex2 = newVertex2;
+
+            // 更新面的都为顶点的顺序
             f1.UpdateVertices();
             f2.UpdateVertices();
 
@@ -387,6 +396,7 @@ namespace Clover
             //newVertex2.Update(newVertex2, null);
             render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
+            // 
             controller.FaceLayer.UpdateLeaves();
 
             return newEdge;

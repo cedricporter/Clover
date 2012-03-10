@@ -21,9 +21,10 @@ namespace Clover
     /// </summary>
     public class Vertex : ICloneable
     {
+        #region 成员变量
         Point3D point = new Point3D();          /// 逻辑层的坐标
         Point3D renderPoint = new Point3D();    /// 渲染层的坐标
-                                                /// 
+        /// 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
         double _u = 0;
@@ -37,8 +38,23 @@ namespace Clover
 
         static int vertex_count = 0;
         int id;
+        #endregion
 
         #region get/set
+        public Point3D GetPoint3D()
+        {
+            return point;
+        }
+
+        public void SetPoint3D(Point3D vertex)
+        {
+            point.X = vertex.X;
+            point.Y = vertex.Y;
+            point.Z = vertex.Z;
+
+            if (Update != null)
+                Update(this, null);
+        }
         public System.Windows.Media.Media3D.Point3D RenderPoint
         {
             get { return renderPoint; }
@@ -76,6 +92,7 @@ namespace Clover
         }
         #endregion
 
+        #region 构造函数
         public object Clone()
         {
             Vertex v = this.MemberwiseClone() as Vertex;
@@ -87,21 +104,6 @@ namespace Clover
             v.Version = this.Version + 1;
 
             return v;
-        }
-
-        public Point3D GetPoint3D()
-        {
-            return point;
-        }
-
-        public void SetPoint3D(Point3D vertex)
-        {
-            point.X = vertex.X;
-            point.Y = vertex.Y;
-            point.Z = vertex.Z;
-
-            if (Update != null)
-                Update(this, null);
         }
 
         public Vertex(Point3D vertex)
@@ -133,6 +135,7 @@ namespace Clover
 
             id = vertex_count++;
         }
+        #endregion
 
         #region 重载==运算符
         //public override bool Equals(System.Object v)
@@ -237,10 +240,12 @@ namespace Clover
         }
         #endregion
 
+        #region 成员变量
         Edge parent;
         Face face1, face2;
         Vertex vertex1, vertex2;
         Edge leftChild, rightChild;
+        #endregion
 
         public Edge(Vertex v1, Vertex v2)
         {
@@ -248,6 +253,7 @@ namespace Clover
             vertex2 = v2;
         }
 
+        #region 辅助函数
         public bool IsVerticeIn(Vertex v)
         {
             return IsVerticeIn(v.GetPoint3D());
@@ -255,20 +261,8 @@ namespace Clover
         public bool IsVerticeIn(Point3D p)
         {
             return CloverMath.IsPointInTwoPoints(p, vertex1.GetPoint3D(), vertex2.GetPoint3D(), 0.001);
-
-            //double pointThreadhold = 0.001;
-            //// 判断线
-            //Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
-            //Vector3D V2 = p - vertex1.GetPoint3D();
-            //Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
-            //Point3D p3 = vertex1.GetPoint3D() + t * V1;
-            //if ((p - p3).Length < pointThreadhold)
-            //{
-            //    return true;
-            //}
-
-            //return false;
         }
+        #endregion
 
     }
 
@@ -277,8 +271,19 @@ namespace Clover
     /// </summary>
     public class Face : ICloneable
     {
+        /// <summary>
+        /// 将一个面反过来
+        /// </summary>
+        public void Flip()
+        {
+            Vertex temp = StartVertex1;
+            StartVertex1 = startVertex2;
+            startVertex2 = temp;
+            UpdateVertices();
+        }
 
-        public Face( int layer )
+        #region 构造
+        public Face(int layer)
         {
             this.layer = layer;
         }
@@ -305,6 +310,7 @@ namespace Clover
 
             return newFace;
         }
+        #endregion
 
         #region 成员变量
         List<Vertex> vertices = new List<Vertex>();
