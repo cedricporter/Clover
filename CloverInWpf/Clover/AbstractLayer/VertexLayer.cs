@@ -8,6 +8,7 @@ namespace Clover
     /// <summary>
     /// Basic vertex structure.
     /// </summary>
+    [Serializable]
     public class VertexLayer
     {
         #region Attributes
@@ -21,7 +22,6 @@ namespace Clover
 
         // Vertexcell lookup table.
         List<List<Vertex>> vertexCellTable = new List<List<Vertex>>();
-        CloverController controller;
 
         #endregion
 
@@ -43,9 +43,8 @@ namespace Clover
         #region Public Interfaces.
 
         // Constructor and Destroyer.
-        public VertexLayer(CloverController ctrl)
+        public VertexLayer()
         {
-            controller = ctrl;
         }
 
         public bool IsVertexExist(int index)

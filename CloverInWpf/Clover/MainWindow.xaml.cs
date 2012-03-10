@@ -331,6 +331,9 @@ RotateFaces(faces, edge, 90)
                     cloverController.Update(0, 10, null, null);
                     //cloverController.UpdateVertexPosition(null, 0, 10);
                     break;
+                case Key.F9:
+                    cloverController.SaveFile("haha.txt");
+                    break;
                 case Key.Down:
                     cloverController.Update(0, -10, null, null);
                     //cloverController.UpdateVertexPosition(null, 0, -10);

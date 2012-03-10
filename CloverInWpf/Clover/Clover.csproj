@@ -70,6 +70,9 @@
     <Compile Include="AbstractLayer\Magnet.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="IO\CloverFile.cs" />
+    <Compile Include="IO\CloverFileLoader.cs" />
+    <Compile Include="IO\CloverFileWriter.cs" />
+    <Compile Include="IO\FileParser.cs" />
     <Compile Include="IO\IOController.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />
     <Compile Include="ShadowSystem\Snapshot.cs" />

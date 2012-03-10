@@ -670,6 +670,11 @@ namespace Clover
     public class FaceLayer
     {
         #region get/set
+        public Clover.Face Root
+        {
+            get { return root; }
+            set { root = value; }
+        }
         public Clover.FacecellTree FacecellTree
         {
             get { return facecellTree; }
@@ -700,18 +705,20 @@ namespace Clover
         FacecellTree facecellTree;
         LookupTable lookupTable;
         CloverController controller;
+        Face root;
 
-        public FaceLayer(CloverController controller)
+        public FaceLayer()
         {
-            this.controller = controller;
         }
 
         public void Initliaze(Face root)
         {
+            this.root = root;
             root.UpdateVertices();
             
             facecellTree = new FacecellTree(root);
             lookupTable = new LookupTable(root);
+            this.controller = CloverController.GetInstance();
         }
 
         /// <summary>

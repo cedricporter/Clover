@@ -11,12 +11,12 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using Clover.Visual;
 using Clover.AbstractLayer;
+using Clover.IO;
 
 namespace Clover
 {
     public class CloverController
     {
-        
         #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
@@ -26,6 +26,8 @@ namespace Clover
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
         LookupTable table;
+        CloverFileWriter fileWriter = new CloverFileWriter();
+        CloverFileLoader fileLoader = new CloverFileLoader();
         #endregion
 
         #region get/set
@@ -96,6 +98,13 @@ namespace Clover
 
             return instance;
 
+        }
+        #endregion
+
+        #region 文件操作
+        public void SaveFile(string filename)
+        {
+            fileWriter.SaveFile(filename, faceLayer, edgeLayer, vertexLayer);
         }
         #endregion
 
@@ -253,9 +262,9 @@ namespace Clover
 
         private CloverController(MainWindow mainWindow)
         {
-            faceLayer = new FaceLayer(this);
-            edgeLayer = new EdgeLayer(this);
-            vertexLayer = new VertexLayer(this);
+            faceLayer = new FaceLayer();
+            edgeLayer = new EdgeLayer();
+            vertexLayer = new VertexLayer();
             this.mainWindow = mainWindow;
             renderController = RenderController.GetInstance();
             //paper = new Paper("paper");

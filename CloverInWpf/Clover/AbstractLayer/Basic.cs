@@ -19,6 +19,7 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
+    [Serializable]
     public class Vertex : ICloneable
     {
         #region 成员变量
@@ -34,6 +35,7 @@ namespace Clover
 
         public int Version = 1;
 
+        [NonSerialized]
         public Update Update;
 
         static int vertex_count = 0;
@@ -41,6 +43,10 @@ namespace Clover
         #endregion
 
         #region get/set
+        public int ID
+        {
+            get { return id; }
+        }
         public Point3D GetPoint3D()
         {
             return point;
@@ -184,6 +190,10 @@ namespace Clover
     public class Edge
     {
         #region get/set
+        public int ID
+        {
+            get { return id; }
+        }
         /// <summary>
         /// 设置父亲时不做任何事情
         /// </summary>
@@ -245,12 +255,15 @@ namespace Clover
         Face face1, face2;
         Vertex vertex1, vertex2;
         Edge leftChild, rightChild;
+        int id = -1;
+        static int edge_count = 0;
         #endregion
 
         public Edge(Vertex v1, Vertex v2)
         {
             vertex1 = v1;
             vertex2 = v2;
+            id = edge_count++;
         }
 
         #region 辅助函数
@@ -286,6 +299,7 @@ namespace Clover
         public Face(int layer)
         {
             this.layer = layer;
+            id = face_count++;
         }
 
         /// <summary>
@@ -320,7 +334,8 @@ namespace Clover
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
-
+        static int face_count = 0;
+        int id = -1;
         /// <summary>
         /// 两者决定这个面的法向量
         /// </summary>
@@ -330,6 +345,10 @@ namespace Clover
         #endregion
 
         #region get/set
+        public int ID
+        {
+            get { return id; }
+        }
         public Clover.Vertex StartVertex1
         {
             get { return startVertex1; }
