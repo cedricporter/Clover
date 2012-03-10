@@ -82,6 +82,8 @@ namespace Clover
             v.id = vertex_count++;
 
             v.point = new Point3D(point.X, point.Y, point.Z);
+            v.renderPoint = new Point3D(renderPoint.X, renderPoint.Y, renderPoint.Z);
+
             v.Version = this.Version + 1;
 
             return v;
@@ -112,6 +114,7 @@ namespace Clover
         public Vertex(Vertex vertex)
         {
             point = new Point3D(vertex.X, vertex.Y, vertex.Z);
+            renderPoint = new Point3D(vertex.renderPoint.X, vertex.renderPoint.Y, vertex.renderPoint.Z);
 
             Index = vertex.Index;
             _u = vertex._u;
