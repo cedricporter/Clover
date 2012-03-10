@@ -451,6 +451,22 @@ RotateFaces(faces, edge, 90)
             cloverController.SaveFile(dialog.FileName);
         }
 
+        private void NewPaper_New(object sender, RoutedEventArgs e)
+        {
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void NewPaper_Canle(object sender, RoutedEventArgs e)
+        {
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void NewPaper_Show(object sender, RoutedEventArgs e)
+        {
+            NewPaperTexturePreview.Source = paperSelector.InfoList[0].bmp;
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
         #endregion
 
         #region 工具栏按钮
