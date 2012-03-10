@@ -1086,6 +1086,7 @@ namespace Clover
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
                         e.Vertex1.Moved = true;
+
                         movedVertexList.Add(e.Vertex1);
                     }
 
@@ -1113,6 +1114,8 @@ namespace Clover
                         e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
                         //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.Moved = true;
+
+                        movedVertexList.Add(e.Vertex2);
                     }
                 }
             }
