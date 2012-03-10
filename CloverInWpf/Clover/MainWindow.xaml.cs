@@ -336,12 +336,6 @@ RotateFaces(faces, edge, 90)
                     cloverController.Update(0, 10, null, null);
                     //cloverController.UpdateVertexPosition(null, 0, 10);
                     break;
-                case Key.F9:
-                    cloverController.SaveFile("haha.txt");
-                    break;
-                case Key.F6:
-                    cloverController.LoadFile("haha.txt");
-                    break;
                 case Key.Down:
                     cloverController.Update(0, -10, null, null);
                     //cloverController.UpdateVertexPosition(null, 0, -10);
@@ -427,6 +421,36 @@ RotateFaces(faces, edge, 90)
             ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 
+        /// <summary>
+        /// 打开Clover文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "Clover File|*.clr";
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            cloverController.LoadFile(dialog.FileName);
+        }
+
+        /// <summary>
+        /// 保存Clover文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "Clover File|*.clr";
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            cloverController.SaveFile(dialog.FileName);
+        }
+
         #endregion
 
         #region 工具栏按钮
@@ -503,8 +527,6 @@ RotateFaces(faces, edge, 90)
             }
             //e.Handled = true;
         }
-
-
 
     }
 }
