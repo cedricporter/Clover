@@ -10,10 +10,20 @@ namespace Clover.IO
     /// </summary>
     class CloverFileLoader
     {
-        FaceLayer faceLayer = new FaceLayer();
-        EdgeLayer edgeLayer = new EdgeLayer();
-        VertexLayer vertexLayer = new VertexLayer();
-
+        #region get/set
+        public Clover.FaceLayer FaceLayer
+        {
+            get { return parser.FaceLayer; }
+        }
+        public Clover.EdgeLayer EdgeLayer
+        {
+            get { return parser.EdgeLayer; }
+        }
+        public Clover.VertexLayer VertexLayer
+        {
+            get { return parser.VertexLayer; }
+        }
+        #endregion
 
         FileParser parser = new FileParser();
 

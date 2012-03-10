@@ -109,6 +109,10 @@ namespace Clover
         public void LoadFile(string filename)
         {
             fileLoader.LoadFromFile(filename);
+
+            faceLayer = fileLoader.FaceLayer;
+            edgeLayer = fileLoader.EdgeLayer;
+            vertexLayer = fileLoader.VertexLayer;
         }
         #endregion
 

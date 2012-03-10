@@ -7,7 +7,6 @@ using System.Text;
 using Clover;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
-using Clover;
 
 namespace Clover.IO
 {
@@ -19,9 +18,29 @@ namespace Clover.IO
     {
         BinaryReader reader;
         FileStream fs;
+
         VertexLayer vertexLayer;
         EdgeLayer edgeLayer;
         FaceLayer faceLayer;
+
+        #region get/set
+        public Clover.VertexLayer VertexLayer
+        {
+            get { return vertexLayer; }
+            set { vertexLayer = value; }
+        }
+        public Clover.EdgeLayer EdgeLayer
+        {
+            get { return edgeLayer; }
+            set { edgeLayer = value; }
+        }
+        public Clover.FaceLayer FaceLayer
+        {
+            get { return faceLayer; }
+            set { faceLayer = value; }
+        }
+        #endregion
+
         Dictionary<int, Vertex> vertexIDDict;
         Dictionary<int, Edge> edgeIDDict;
         Dictionary<int, Face> faceIDDict;
@@ -44,18 +63,19 @@ namespace Clover.IO
 
             Clover();
 
-            //faceLayer.UpdateLeaves();
+            faceLayer.UpdateLeaves();
 
             fs.Close();
         }
 
+        #region 分析
         void Clover()
         {
-            VertexLayer();
+            _VertexLayer();
 
-            EdgeLayer();
+            _EdgeLayer();
 
-            FaceLayer();
+            _FaceLayer();
         }
 
         bool ReadHeader(string headerName)
@@ -75,17 +95,17 @@ namespace Clover.IO
             int vid1 = reader.ReadInt32();
             int vid2 = reader.ReadInt32();
 
-            Edge root = new Edge(vertexIDDict[vid1], vertexIDDict[vid2]);
-            root.ID = edgeID;
-            edgeIDDict[root.ID] = root;
+            Edge edge = new Edge(vertexIDDict[vid1], vertexIDDict[vid2]);
+            edge.ID = edgeID;
+            edgeIDDict[edge.ID] = edge;
 
-            root.LeftChild = EdgeTree();
-            root.RightChild = EdgeTree();
+            edge.LeftChild = EdgeTree();
+            edge.RightChild = EdgeTree();
 
-            return root;
+            return edge;
         }
 
-        void VertexLayer()
+        void _VertexLayer()
         {
             if (!ReadHeader("Vertex Layer"))
                 return;
@@ -105,7 +125,7 @@ namespace Clover.IO
             }
         }
 
-        void EdgeLayer()
+        void _EdgeLayer()
         {
             if (!ReadHeader("Edge Layer"))
                 return;
@@ -115,10 +135,11 @@ namespace Clover.IO
             for (int i = 0; i < number; i++)
             {
                 EdgeTree tree = new EdgeTree(EdgeTree());
+                edgeLayer.AddTree(tree);
             }
         }
 
-        void FaceLayer()
+        void _FaceLayer()
         {
             if (!ReadHeader("Face Layer"))
                 return;
@@ -144,8 +165,9 @@ namespace Clover.IO
 
             face.LeftChild = FaceTree();
             face.RightChild = FaceTree();
-            return null;
+            return face;
         }
+        #endregion
 
 
     }
