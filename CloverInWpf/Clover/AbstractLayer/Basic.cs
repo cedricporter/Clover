@@ -21,7 +21,9 @@ namespace Clover
     /// </summary>
     public class Vertex : ICloneable
     {
-        Point3D point = new Point3D(); 
+        Point3D point = new Point3D();          /// 逻辑层的坐标
+        Point3D renderPoint = new Point3D();    /// 渲染层的坐标
+                                                /// 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
         double _u = 0;
@@ -37,6 +39,11 @@ namespace Clover
         int id;
 
         #region get/set
+        public System.Windows.Media.Media3D.Point3D RenderPoint
+        {
+            get { return renderPoint; }
+            set { renderPoint = value; }
+        }
         public double u
         {
             get { return _u; }
