@@ -329,6 +329,11 @@ namespace Clover
             }
 
             controller.FaceLayer.UpdateLeaves();
+
+            foreach (Face f in controller.FaceLayer.Leaves)
+            {
+                CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
+            }
         }
 
         void RevertFaceAndEdge()
