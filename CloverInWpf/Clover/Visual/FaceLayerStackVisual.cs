@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Input;
 
 
 /**
@@ -24,9 +25,15 @@ namespace Clover.Visual
 {
     class FaceLayerStackVisual : VisualElementFactory
     {
-        Dictionary<Border, Face> itemFaceMap = new Dictionary<Border, Face>();
+        Dictionary<int, Border> itemLayerMap = new Dictionary<int, Border>();
         StackPanel panel = new StackPanel();
         TranslateTransform translate = new TranslateTransform();
+        int selectCount = 1;
+        public int SelectCount
+        {
+            get { return selectCount; }
+            set { selectCount = value; }
+        }
         public System.Windows.Media.TranslateTransform Translate
         {
             get { return translate; }
@@ -58,22 +65,36 @@ namespace Clover.Visual
                 stackItem.Height = 20;
                 stackItem.Background = new SolidColorBrush(Colors.Transparent);
                 stackItem.MouseEnter += OnStackItemMouseEnter;
-                stackItem.MouseLeave += OnStackItemMouseLeave;
-                itemFaceMap[stackItem] = f;
+                //stackItem.MouseLeave += OnStackItemMouseLeave;
+                itemLayerMap[layer] = stackItem;
                 text = new TextBlock();
                 stackItem.Child = text;
                 text.VerticalAlignment = VerticalAlignment.Center;
                 text.HorizontalAlignment = HorizontalAlignment.Center;
                 text.Foreground = new SolidColorBrush(Colors.White);
                 text.Text = layer.ToString();
-                
                 layer++;
             }
         }
 
         void OnStackItemMouseEnter(Object sender, EventArgs e)
         {
-            (sender as Border).Background = (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush");
+            Border item = sender as Border;
+            Boolean gard = false;
+            foreach (KeyValuePair<int, Border> pair in itemLayerMap)
+            {
+                if (!gard)
+                    pair.Value.Background = (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush");
+                else
+                    pair.Value.Background = new SolidColorBrush(Colors.Transparent);
+                if (!gard && pair.Value == item)
+                {
+                    gard = true;
+                    selectCount = pair.Key;
+                }
+            }
+            //(sender as Border).Background = (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush");
+            
         }
 
         void OnStackItemMouseLeave(Object sender, EventArgs e)
@@ -98,7 +119,18 @@ namespace Clover.Visual
 
         public override void Display()
         {
-
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                panel.IsHitTestVisible = false;
+                box.Opacity = 0.2;
+                translate.X = Mouse.GetPosition(null).X + 30;
+                translate.Y = Mouse.GetPosition(null).Y;
+            }
+            else
+            {
+                panel.IsHitTestVisible = true;
+                box.Opacity = 1;
+            }
         }
 
         public override void FadeOut()
