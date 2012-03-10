@@ -106,6 +106,10 @@ namespace Clover
         {
             fileWriter.SaveFile(filename, faceLayer, edgeLayer, vertexLayer);
         }
+        public void LoadFile(string filename)
+        {
+            fileLoader.LoadFromFile(filename);
+        }
         #endregion
 
         public Vertex GetPrevVersion(Vertex vertex)

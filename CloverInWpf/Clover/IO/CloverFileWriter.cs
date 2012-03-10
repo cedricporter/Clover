@@ -26,6 +26,8 @@ namespace Clover.IO
 
             SaveFaceLayer(fs, faceLayer);
 
+            fs.Close();
+
             return 0;
         }
 

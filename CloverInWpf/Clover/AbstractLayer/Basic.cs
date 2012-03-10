@@ -193,6 +193,7 @@ namespace Clover
         public int ID
         {
             get { return id; }
+            set { id = value; }
         }
         /// <summary>
         /// 设置父亲时不做任何事情
@@ -348,6 +349,7 @@ namespace Clover
         public int ID
         {
             get { return id; }
+            set { id = value; }
         }
         public Clover.Vertex StartVertex1
         {

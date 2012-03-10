@@ -19,6 +19,7 @@ namespace Clover.IO
 
         public void LoadFromFile(string filename)
         {
+            parser.LoadFile(filename);
 
         }
     }
