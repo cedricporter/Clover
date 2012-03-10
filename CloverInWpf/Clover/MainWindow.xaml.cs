@@ -260,18 +260,8 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
-           
-            //List<FoldUpInfo> l = new List<FoldUpInfo>();
-            //if( cloverController.Table.CheckForAutoFoldUp( ref l ) )
-            //{
-            //    //MessageBox.Show( "3" );
 
-
-
-            //    //cloverController.RotateFaces()
-            //    //cloverController.Table.FoldUp( l[ 0 ] );
-            //    //cloverController.Table.UpdateLookupTable();
-            //}
+            cloverController.Table.UpdateTableAfterFoldUp( true );
         }
 
         /// <summary>
@@ -336,7 +326,6 @@ RotateFaces(faces, edge, 90)
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
-                    cloverController.CutAFaceWithAddedTwoVertices(cloverController.FaceLayer.Leaves[0], new Edge(new Vertex(-50, 0, 0), new Vertex(50, 0, 0)));
                     break;
                 case Key.Up:
                     cloverController.Update(0, 10, null, null);

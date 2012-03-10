@@ -34,6 +34,7 @@ namespace Clover.IO
         /// </summary>
         public void ReadCloverFile(String Path)
         {
+
             //switch (state)
             //{
             //    case Ini:

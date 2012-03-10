@@ -25,7 +25,6 @@ namespace Clover.AbstractLayer
                 return 0;
             else
                 return -1;
-          
         }
 
     }
@@ -67,6 +66,7 @@ namespace Clover.AbstractLayer
             get { return d; }
             set { d = value; }
         }
+
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
         /// </summary>
@@ -120,15 +120,31 @@ namespace Clover.AbstractLayer
         /// 得到面组
         /// </summary>
         /// <returns></returns>
-        public List<Face> GetGroup()
+        public List<Face> GetFaceList()
         {
             return GroupList;
         }
 
         /// <summary>
+        /// 检测某个face是存在group中
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public bool HasFace(Face f)
+        {
+            foreach (Face fin in GroupList)
+            {
+                if (fin == f)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
         /// 对面组中的面进行排序
         /// </summary>
-        void SortFace()
+        public void SortFace()
         {
 
             FaceSort fc = new FaceSort();
@@ -207,7 +223,6 @@ namespace Clover.AbstractLayer
         public int GetBottomLayer()
         {
             return GroupList[ GroupList.Count- 1 ].Layer;
-
         }
 
 

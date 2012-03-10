@@ -223,6 +223,8 @@ namespace Clover
             SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
             // 为了方便revert设计，详情联系 ET
             node.Type = SnapshotNodeKind.CutKind;
+            node.OriginVertexListCount = vertexLayer.VertexCellTable.Count;
+            node.OriginEdgeListCount = edgeLayer.Count;
             shadowSystem.Snapshot(node);
         }
 
@@ -270,102 +272,12 @@ namespace Clover
         /// <param name="leftChild"></param>
         /// <param name="rightChild"></param>
         /// <param name="edge"></param>
-        public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
+        public void CutFace(Face face, Edge edge)
         {
-            foldingSystem.CutAFaceWithAddedTwoVertices(face, edge);
+            foldingSystem.CutFace(face, edge);
         }
 
        
-        /// <summary>
-        /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
-        /// </summary>
-        /// <param name="face"></param>
-        /// <param name="edge"></param>
-        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge, Vertex cutVertex)
-        {
-            foldingSystem.CutAFaceWithAddedOneVertex(face, edge, cuttedEdge, cutVertex);
-        }
-
-
-        /// <summary>
-        /// 当割点不在边上时，切割一个面为两个面
-        /// </summary>
-        /// <param name="oldFace"></param>
-        /// <param name="leftChild"></param>
-        /// <param name="rightChild"></param>
-        /// <param name="edge"></param>
-        public void CutAFaceWithoutVertex(Face face, Edge edge)
-        {
-            foldingSystem.CutAFaceWithoutAddedVertex(face, edge);
-        }
-
-        /// <summary>
-        /// 切割一个面为两个面
-        /// </summary>
-        /// <param name="face">需要切割的面。</param>
-        /// <param name="edge">割线，割线的两个端点必须在面的边上</param>
-        /// <remarks>新产生的两个面会自动作为原来的面的孩子，所以就已经在面树里面了。</remarks>
-        void CutAFace(Face face, Edge edge)
-        {
-            //Edge e1 = null, e2 = null;
-            //foreach (Edge e in face.Edges)
-            //{
-            //    if (e.IsVerticeIn(edge.Vertex1))
-            //        e1 = e;
-            //    if (e.IsVerticeIn(edge.Vertex2))
-            //        e2 = e;
-            //}
-
-            //int type = 0;
-            //bool isVertex1Cut = false;
-            //bool isVertex2Cut = false;
-
-            //if (!CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex1.GetPoint3D(), 0.0001) &&
-            //     !CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D(), 0.0001))
-            //{
-            //    type++;
-            //    isVertex1Cut = true;
-            //}
-
-            //if (!CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D(), 0.0001) &&
-            //    !CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D(), 0.0001))
-            //{
-            //    type++;
-            //    isVertex2Cut = true;
-            //}
-
-            //// type 0:没有增加顶点， type 1：增加了一个顶点 type 2：增加了两个顶点
-            //switch (type)
-            //{ 
-            //    case 0:
-            //        // 种类1 不新增加顶点。只创建一条边并加入边层
-            //        CutAFaceWithoutVertex(face, edge);
-            //        break;
-            //    case 1:
-            //        // 种类2 新增加一个顶点，即只为一条边做切割，并更新面节点
-            //        edgeLayer.AddTree(new EdgeTree(edge));
-                    
-            //        // 取其中一个进行面分割的边.
-            //        if (isVertex1Cut)
-            //        {
-            //            CutAFaceWithAddedOneVertex(face, edge, e1, edge.Vertex1);
-            //        }
-
-            //        if (isVertex2Cut)
-            //        {
-            //            CutAFaceWithAddedOneVertex(face, edge, e2, edge.Vertex2);
-            //        }
-            //        break; 
-            //    case 2:
-            //        CutAFaceWithAddedTwoVertices(face, edge);
-            //        // 种类3
-            //        break;
-            //    default:
-            //        break;
-            //}
-
-        }
-
         public void CutFaces(List<Face> faces,  Edge edge)
         {
             foldingSystem.CutFaces(faces, edge);
@@ -377,19 +289,12 @@ namespace Clover
         /// </summary>
         List<Face> affectedFaceList = new List<Face>();
 
-
-
         Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
 
     	public Edge CurrentFoldingLine
     	{
     		get { return currentFoldingLine; }
     	}
-
-        void UpdateAffectedFaceList()
-        {
-
-        }
 
         public void UpdateVertexPosition(Vertex vertex, double xOffset, double yOffset)
         {
@@ -398,7 +303,6 @@ namespace Clover
             vertex.Y += yOffset;
 
             renderController.Update(faceLayer.Leaves[1]);
-
         }
 
         public void Revert()
@@ -570,24 +474,26 @@ namespace Clover
             if (foldingLine == null || segmentFromOriginToProjection == null)
                 return false;
 
+            //System.Windows.MessageBox.Show("杨旭瑜改了group没法编译，只能把下面的代码注释了");
+
             //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetGroup()).ToList();
+            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetFaceList()).ToList();
             foreach (Face face in facesInDifferentGroup)
-            { 
+            {
                 // 求线段和面的交点 
                 Point3D crossPoint = new Point3D();
-                if (CloverMath.IntersectionOfLineAndFace(segmentFromOriginToProjection.Vertex1.GetPoint3D(), 
+                if (CloverMath.IntersectionOfLineAndFace(segmentFromOriginToProjection.Vertex1.GetPoint3D(),
                             segmentFromOriginToProjection.Vertex2.GetPoint3D(), face, ref crossPoint))
                 {
-                    if (CloverMath.IsPointInTwoPoints( crossPoint, segmentFromOriginToProjection.Vertex1.GetPoint3D(),
-                                                        segmentFromOriginToProjection.Vertex2.GetPoint3D(), 0.0001)) 
+                    if (CloverMath.IsPointInTwoPoints(crossPoint, segmentFromOriginToProjection.Vertex1.GetPoint3D(),
+                                                        segmentFromOriginToProjection.Vertex2.GetPoint3D(), 0.0001))
                         return false;
                 }
 
                 if (CloverMath.IntersectionOfLineAndFace(foldingLine.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D(),
                                                         face, ref crossPoint))
                 {
-                    if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(), 
+                    if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(),
                                                         foldingLine.Vertex2.GetPoint3D(), 0.0001))
                         return false;
                 }
@@ -613,7 +519,7 @@ namespace Clover
                     currentLayer = face.Layer;
             }
 
-            List<Face> group = table.GetGroup(pickedFace).GetGroup();
+            List<Face> group = table.GetGroup(pickedFace).GetFaceList();
             List<Face> upperFaces = new List<Face>();
             foreach (Face face in group)
             {
@@ -912,7 +818,7 @@ namespace Clover
 
             renderController.UpdateAll();
 
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
         }
 
         /// <summary>
@@ -923,7 +829,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
-            table.UpdateLookupTable();
+            //table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
@@ -959,7 +865,7 @@ namespace Clover
             // 对于所有有折线经过的面，对面进行切割
             foreach (Face face in faceWithFoldingLine)
             {
-                CutAFace(face, currentFoldingLine); 
+                //CutAFace(face, currentFoldingLine); 
                 // 选取有拾取点的那个面为移动面，加入到没有折线面分组
 
                 bool findMovedFace = false;

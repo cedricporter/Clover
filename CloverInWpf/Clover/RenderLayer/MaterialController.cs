@@ -143,7 +143,7 @@ namespace Clover
             dc1 = dv1.RenderOpen();
             dc2 = dv2.RenderOpen();
 
-            for (int i = 0; i <= shadow.OperationLevel; i++)
+            for (int i = 0; i < shadow.OperationLevel; i++)
             {
                 if (shadow.SnapshotList[i].NewEdges == null)
                     continue;
@@ -186,7 +186,7 @@ namespace Clover
         public void RebuildFoldLinesToNext()
         {
             ShadowSystem shadow = CloverController.GetInstance().ShadowSystem;
-            if (shadow.SnapshotList[shadow.OperationLevel].NewEdges == null)
+            if (shadow.SnapshotList[shadow.OperationLevel+1].NewEdges == null)
                 return;
 
             DrawingVisual dv1, dv2;
@@ -225,7 +225,7 @@ namespace Clover
                 dc2.DrawImage(oldBmp2, new Rect(new Size(width, height)));
             }
 
-            foreach (Edge edge in shadow.SnapshotList[shadow.OperationLevel].NewEdges)
+            foreach (Edge edge in shadow.SnapshotList[shadow.OperationLevel+1].NewEdges)
             {
                 Point p0 = new Point(edge.Vertex1.u * width, edge.Vertex1.v * height);
                 Point p1 = new Point(edge.Vertex2.u * width, edge.Vertex2.v * height);

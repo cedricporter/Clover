@@ -118,7 +118,7 @@ namespace Clover
 
 
     /// <summary>
-    /// 面查询表，将一个平面上的面放在一个group里面，方便多面折叠
+    /// group查询表，可以得到所有的group。
     /// </summary>
     public class LookupTable : ICloneable
     {
@@ -149,7 +149,7 @@ namespace Clover
         {
             foreach (FaceGroup fg in tables)
             {
-                foreach (Face face in fg.GetGroup())
+                foreach (Face face in fg.GetFaceList())
                 {
                     if (face == f)
                     {
@@ -167,10 +167,14 @@ namespace Clover
         /// 否则强制新建一个group
         /// </summary>
         /// <param name="f"></param>
-        public void AddFace(Face f)
+        void AddFace(Face f)
         {
             foreach (FaceGroup fg in tables)
             {
+                if (fg.HasFace(f))
+                {
+                    return;
+                }
                 if ( fg.IsMatch(f) )
                 {
                     fg.AddFace( f );
@@ -188,7 +192,7 @@ namespace Clover
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public bool DeleteFace(Face f)
+        bool DeleteFace(Face f)
         {
 
             for ( int i = 0; i < tables.Count; i++ )
@@ -212,11 +216,11 @@ namespace Clover
 
             for ( int i = 0; i < tables.Count; i++ )
             {
-                for ( int j = 0; j < tables[ i ].GetGroup().Count; j++ )
+                for ( int j = 0; j < tables[ i ].GetFaceList().Count; j++ )
                 {
-                    if ( !tables[ i ].IsMatch( tables[ i ].GetGroup()[j] ) )
+                    if ( !tables[ i ].IsMatch( tables[ i ].GetFaceList()[ j ] ) )
                     {
-                        Face f = tables[ i ].GetGroup()[ j ];
+                        Face f = tables[ i ].GetFaceList()[ j ];
                         tables[ i ].DeleteFace( f );
                         AddFace( f );
                     }
@@ -231,7 +235,7 @@ namespace Clover
             newtables.tables.Clear();
             foreach ( FaceGroup fg in tables )
             {
-                foreach (Face f in fg.GetGroup())
+                foreach ( Face f in fg.GetFaceList() )
                 {
                     newtables.AddFace( f );
                 }
@@ -248,7 +252,7 @@ namespace Clover
         {
             for ( int i = 0; i < tables.Count; i++ )
             {
-                if ( tables[i].GetGroup().Count == 0 )
+                if ( tables[ i ].GetFaceList().Count == 0 )
                 {
                     tables.Remove( tables[ i ] );
                 }
@@ -259,7 +263,7 @@ namespace Clover
         /// <summary>
         /// 更新lookuptable
         /// </summary>
-        public void UpdateLookupTable()
+        void UpdateLookupTable()
         {
             UpdateGroup();
             UpdateTable();
@@ -282,7 +286,7 @@ namespace Clover
                 {
                     if ( fgfix != fgmove )
                     {
-                        double ang = CloverMath.CalculatePlaneAngle( fgfix.GetGroup()[0], fgmove.GetGroup()[0] );
+                        double ang = CloverMath.CalculatePlaneAngle( fgfix.GetFaceList()[ 0 ], fgmove.GetFaceList()[ 0 ] );
                         if ( ang  < threshold )
                         {
                             bool IsContain = false;
@@ -306,7 +310,7 @@ namespace Clover
                             foldupinfo.fgMov = fgmove;
                             foldupinfo.angle = ang;
 
-                            foreach ( Vertex ver in fgfix.GetGroup()[0].Vertices )
+                            foreach ( Vertex ver in fgfix.GetFaceList()[ 0 ].Vertices )
                             {
                                 if ((ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D) > 0)
                                 {
@@ -346,27 +350,27 @@ namespace Clover
             if ( foldupinfo.IsOver )
             {
                 int layer = 0;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
                     layer++;
                 }
                 // 根据是否覆盖来调整layer的值
-                for ( int i = foldupinfo.fgFix.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgFix.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ foldupinfo.fgMov.GetGroup().Count - 1 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ foldupinfo.fgMov.GetFaceList().Count - 1 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
                     {
                         layer--;
                     }
                 }
 
-                for ( int i = foldupinfo.fgMov.GetGroup().Count - 1; i >= 0; i-- )
+                for ( int i = foldupinfo.fgMov.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
                     layer++;
-                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
                 }
                 UpdateTable();
                         
@@ -374,30 +378,288 @@ namespace Clover
             else
             {
                 int layer = 0;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgFix.GetGroup()[ i ].Layer = layer;
+                    foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
                     layer++;
                 }
                 layer = foldupinfo.fgFix.GetBottomLayer();
                 layer--;
-                for ( int i = 0; i < foldupinfo.fgFix.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
                 {
-                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetGroup()[ 0 ], foldupinfo.fgFix.GetGroup()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ 0 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
                     {
                         layer++;
                     }
                 }
 
-                for ( int i = 0; i < foldupinfo.fgMov.GetGroup().Count; i++ )
+                for ( int i = 0; i < foldupinfo.fgMov.GetFaceList().Count; i++ )
                 {
-                    foldupinfo.fgMov.GetGroup()[ i ].Layer = layer;
-                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetGroup()[ i ] );
+                    foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
+                    foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
                     layer--;
                 }
                 UpdateTable();
             }
         }
+
+
+        bool DeleteGroup(FaceGroup fg)
+        {
+            foreach (FaceGroup fgin in tables)
+            {
+                if (fgin == fg)
+                {
+                    tables.Remove( fgin );
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool AddGroup(FaceGroup fg)
+        {
+            foreach (FaceGroup fgin in tables)
+            {
+                if (CloverMath.IsTwoVectorTheSameDir(fg.Normal, fgin.Normal))
+                {
+                    return false;
+                }
+            }
+            tables.Add( fg );
+            return true;
+        }
+        /// <summary>
+        /// foldup后对lookuptable进行更新和排序
+        /// </summary>
+        /// <param name="IsDefaultDir"></param>
+        /// <returns></returns>
+        public bool UpdateTableAfterFoldUp(bool IsDefaultDir)
+        {
+            // 找cutface
+            List<Face> cutedFace = new List<Face>(); // 记录被cut的faces
+            FaceGroup fixedFaceGroup = null; // 用于记录旋转前后位置不变的faces
+            FaceGroup movedFaceGroup = null;// 用于记录旋转前后位置变化的faces
+            List<Face> listNewFacesList = new List<Face>(); // 用于记录cut后新生的新faces
+
+            FaceGroup participatedGroup = null;// 记录参与折叠的group
+            
+            // 检测操作了哪个group
+            foreach (FaceGroup fg in tables)
+            {
+                foreach (Face f in fg.GetFaceList())
+                {
+                    if (f.LeftChild != null && f.RightChild != null)
+                    {
+                        cutedFace.Add( f );
+                        
+                        if ( participatedGroup == null)
+                        {
+                            participatedGroup = fg;
+                        }
+                        
+                        if (participatedGroup != fg)
+                        {
+                            // 一次foldup只能对一个group中的面进行操作
+                            return false;
+                            
+                        }
+                        
+                    }
+                }
+            }
+
+            //  没有发现折叠的face
+            if ( cutedFace.Count == 0)
+            {
+                return true;
+            }
+
+            // 查找fixed face和moved face：
+
+            // 抽取直接有关联的fixed和moved的faces
+            for ( int i = 0; i < cutedFace.Count; i++ )
+            {
+                Face fleftchild = cutedFace[i].LeftChild;
+                Face frightchild = cutedFace[i].RightChild;
+
+                if ( CloverMath.IsTwoVectorTheSameDir( fleftchild.Normal, cutedFace[i].Normal, true ) )
+                {
+                    if ( fixedFaceGroup == null)
+                    {
+                        fixedFaceGroup = new FaceGroup( fleftchild );
+                    }
+                    else
+                        fixedFaceGroup.AddFace( fleftchild );
+                }
+                else
+                {
+                    if ( movedFaceGroup == null )
+                    {
+                        movedFaceGroup = new FaceGroup( fleftchild );
+                    }
+                    else
+                        movedFaceGroup.AddFace( fleftchild );
+                }
+
+                if ( CloverMath.IsTwoVectorTheSameDir( frightchild.Normal, cutedFace[ i ].Normal, true ) )
+                {
+                    if ( fixedFaceGroup == null )
+                    {
+                        fixedFaceGroup = new FaceGroup( frightchild );
+                    }
+                    else
+                        fixedFaceGroup.AddFace( frightchild );
+                }
+                else
+                {
+                    if ( movedFaceGroup == null )
+                    {
+                        movedFaceGroup = new FaceGroup( frightchild );
+                    }
+                    else
+                        movedFaceGroup.AddFace( frightchild );
+                }
+
+               
+                listNewFacesList.Add( fleftchild );
+                listNewFacesList.Add( frightchild );
+            }
+
+            foreach (Face f in participatedGroup.GetFaceList() )
+            {
+                if (f.LeftChild == null && f.RightChild == null)
+                {
+                    listNewFacesList.Add(f);
+                }
+
+            }
+            // 只是旋转
+            if ( movedFaceGroup == null)
+            {
+                return false;
+            }
+            // 发现不是foldup操作，直接返回，并且对group进行更新
+            if (!CloverMath.IsTwoVectorTheSameDir(movedFaceGroup.Normal, fixedFaceGroup.Normal))
+            {
+
+                foreach ( Face f in listNewFacesList )
+                {
+                    if (f.Parent != null)
+                    {
+                        DeleteFace( f.Parent );
+                    }
+                    AddFace( f );
+                }
+                return false;
+            }
+
+
+            // 暴力找所有需要移动的face
+            bool changed = false;
+            while(true)
+            {
+                foreach ( Face fp in listNewFacesList )
+                {
+                    for ( int i = 0; i < movedFaceGroup.GetFaceList().Count; i++ )
+                    {
+                        Face fm = movedFaceGroup.GetFaceList()[ i ];
+                        if ( fp != fm && CloverMath.IsTwoFaceConected( fp, fm ) && !fixedFaceGroup.HasFace( fp ) )
+                        {
+                            if ( !movedFaceGroup.HasFace( fp ) )
+                            {
+                                movedFaceGroup.AddFace( fp );
+                                changed = true;
+                            }
+                        }
+                    }
+
+                }
+                if (!changed)
+                {
+                    break;
+                }
+                changed = false;
+            }
+
+
+            // 参与的group中剩下的group是fixed face,至此完成了movedface和fixedface的寻找
+            foreach ( Face fpar in listNewFacesList )
+            {
+                if (!movedFaceGroup.HasFace(fpar) && !fixedFaceGroup.HasFace(fpar))
+                {
+                    fixedFaceGroup.AddFace( fpar );
+                }
+            }
+
+            // 删除老的组
+            DeleteGroup( participatedGroup );
+
+            fixedFaceGroup.SortFace();
+            movedFaceGroup.SortFace();
+            // 准备工作做好了，可以排序了：
+
+            if ( IsDefaultDir )
+            {
+                int layer = 0;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    layer++;
+                }
+                // 根据是否覆盖来调整layer的值
+                for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                {
+
+                    if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    {
+                        layer--;
+                    }
+                }
+
+                for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                {
+
+                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    layer++;
+                    fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
+                }
+                UpdateTable();
+
+            }
+            else
+            {
+                int layer = 0;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    layer++;
+                }
+                layer = fixedFaceGroup.GetBottomLayer();
+                layer--;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    {
+                        layer++;
+                    }
+                }
+
+                for ( int i = 0; i < movedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
+                    layer--;
+                }
+                UpdateTable();
+            }
+
+
+            AddGroup( fixedFaceGroup );
+            
+            return true;
+        }
+
     }
 
 

@@ -69,6 +69,8 @@
     <Compile Include="AbstractLayer\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
+    <Compile Include="IO\CloverFile.cs" />
+    <Compile Include="IO\IOController.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />
     <Compile Include="ShadowSystem\Snapshot.cs" />
     <Compile Include="PaperSelector.cs" />
@@ -136,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Folding Scripts\plane.py" />
+    <Content Include="Folding Scripts\test cut 1.py" />
     <Content Include="Folding Scripts\Test.py" />
     <Content Include="Folding Scripts\test2.py" />
     <Content Include="Folding Scripts\副本 plane.py" />
