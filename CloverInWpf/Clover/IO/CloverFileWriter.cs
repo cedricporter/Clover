@@ -45,29 +45,6 @@ namespace Clover.IO
             bf.Serialize(fs, vertexLayer);
         }
 
-        //int edgeCounter = 0;
-
-        //void TravelFace(Face root)
-        //{
-        //    if (root == null)
-        //    {
-        //        writer.Write(-1);
-        //        return;
-        //    }
-
-        //    writer.Write(root.ID);
-
-        //    writer.Write(root.Edges.Count);
-
-        //    foreach (Edge edge in root.Edges)
-        //    {
-        //        writer.Write(edge.ID);
-        //    }
-
-        //    TravelFace(root.LeftChild);
-        //    TravelFace(root.RightChild);
-        //}
-
         void SaveFace(Face face)
         {
             writer.Write(face.ID);
@@ -86,20 +63,6 @@ namespace Clover.IO
             writer.Write(edge.Vertex1.ID);
             writer.Write(edge.Vertex2.ID);
         }
-
-        //void TravelEdge(Edge root, List<Edge> table)
-        //{
-        //    if (root == null)
-        //    {
-        //        writer.Write(-1);
-        //        return;
-        //    }
-
-        //    SaveEdge(root);
-
-        //    TravelEdge(root.LeftChild, table);
-        //    TravelEdge(root.RightChild, table);
-        //}
 
         public void SaveEdgeLayer(FileStream fs, EdgeLayer edgeLayer)
         {
