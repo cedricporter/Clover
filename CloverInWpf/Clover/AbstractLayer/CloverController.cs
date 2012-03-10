@@ -614,6 +614,7 @@ namespace Clover
                             if (CloverMath.IsPointInTwoPoints(v.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.0001))
                             {
                                 foldingSystem.CalculateTexcoord(v, e);
+                                break;
                             }
                         }
                     }
@@ -626,6 +627,7 @@ namespace Clover
                             if (CloverMath.IsPointInTwoPoints(v.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.0001))
                             {
                                 foldingSystem.CalculateTexcoord(v, e);
+                                break;
                             }
                         }
                     }
