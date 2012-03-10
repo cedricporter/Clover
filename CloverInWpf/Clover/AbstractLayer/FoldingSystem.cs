@@ -401,7 +401,7 @@ namespace Clover
             render.New(f1);
             render.New(f2);
 
-            //render.AntiOverlap();
+            render.AntiOverlap();
 
             //newVertex1.Update(newVertex1, null);
             //newVertex2.Update(newVertex2, null);
@@ -409,6 +409,8 @@ namespace Clover
 
             // 
             controller.FaceLayer.UpdateLeaves();
+
+            //controller.Table.UpdateTableAfterFoldUp(true);
 
             return newEdge;
         }

@@ -291,7 +291,7 @@ namespace Clover
             //{
             //    float baseval = 0;
             //    float step = 0.01f;
-            //    foreach (Face f in g.GetGroup())
+            //    foreach (Face f in g.GetFaceList())
             //    {
             //        Vector3D offset = g.Normal * baseval;
             //        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
