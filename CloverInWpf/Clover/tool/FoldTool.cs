@@ -180,9 +180,9 @@ namespace Clover.Tool
 
 
                     //// 更新折线显示
-                    //UpdateFoldLine(edge);
+                    UpdateFoldLine(edge);
                     //// 更新提示信息
-                    //UpdateFoldLineInfo(edge);
+                    UpdateFoldLineInfo(edge);
                 }
                 //else if (mode == FoldingMode.Blending)
                 //{
