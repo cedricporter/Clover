@@ -263,8 +263,10 @@ namespace Clover
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
+                Point3D rp;
+                rp = UpdateRenderPoint(v);
                 // 更新3d坐标
-                mesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
+                mesh.Positions.Add(new Point3D(rp.X, rp.Y, rp.Z));
                 // 更新纹理坐标
                 mesh.TextureCoordinates.Add(new Point(v.u, v.v));
             }
@@ -277,6 +279,16 @@ namespace Clover
                 //Debug.WriteLine(face.Vertices[i].point);
             }
             return mesh;
+        }
+
+        Point3D UpdateRenderPoint(Vertex v)
+        {
+            Point3D rp = new Point3D();
+            rp.X = v.X;
+            rp.Y = v.Y;
+            rp.Z = v.Z;
+            v.RenderPoint = rp;
+            return rp;
         }
 
         /// <summary>
