@@ -186,7 +186,7 @@ namespace Clover
         public void RebuildFoldLinesToNext()
         {
             ShadowSystem shadow = CloverController.GetInstance().ShadowSystem;
-            if (shadow.SnapshotList[shadow.OperationLevel+1].NewEdges == null)
+            if (shadow.SnapshotList[shadow.OperationLevel + 1].NewEdges == null)
                 return;
 
             DrawingVisual dv1, dv2;
@@ -225,7 +225,7 @@ namespace Clover
                 dc2.DrawImage(oldBmp2, new Rect(new Size(width, height)));
             }
 
-            foreach (Edge edge in shadow.SnapshotList[shadow.OperationLevel+1].NewEdges)
+            foreach (Edge edge in shadow.SnapshotList[shadow.OperationLevel + 1].NewEdges)
             {
                 Point p0 = new Point(edge.Vertex1.u * width, edge.Vertex1.v * height);
                 Point p1 = new Point(edge.Vertex2.u * width, edge.Vertex2.v * height);
@@ -254,6 +254,45 @@ namespace Clover
                 backMaterial.Children.Remove(backFoldLineLayer);
             backFoldLineLayer = new DiffuseMaterial(imgb2);
             backMaterial.Children.Add(backFoldLineLayer);
+        }
+
+        /// <summary>
+        /// 返回合并过后的正面纹理
+        /// </summary>
+        /// <returns></returns>
+        public ImageSource MergeFrontTexture()
+        {
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            Rect rect = new Rect(new Size(width, height));
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            foreach (DiffuseMaterial mat in frontMaterial.Children)
+            {
+                dc.DrawImage((mat.Brush as ImageBrush).ImageSource, rect);
+            }
+            dc.Close();
+            bmp.Render(dv);
+            return bmp;
+        }
+
+        /// <summary>
+        /// 返回合并过后的背面纹理
+        /// </summary>
+        /// <returns></returns>
+        public ImageSource MergeBackTexture()
+        {
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            Rect rect = new Rect(new Size(width, height));
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            dc.DrawRectangle(((backMaterial.Children[0] as DiffuseMaterial).Brush as SolidColorBrush), (Pen)null, rect);
+            if (backEdgeLayer != null)
+                dc.DrawImage((backEdgeLayer.Brush as ImageBrush).ImageSource, rect);
+            if (backFoldLineLayer != null)
+                dc.DrawImage((backFoldLineLayer.Brush as ImageBrush).ImageSource, rect);
+            dc.Close();
+            bmp.Render(dv);
+            return bmp;
         }
 
         #region 添加折线
