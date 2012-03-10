@@ -23,6 +23,10 @@ namespace Clover
                 e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
                 e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
             }
+
+            face.StartVertex1 = vertexLayer.GetVertex(face.StartVertex1.Index);
+            face.StartVertex2 = vertexLayer.GetVertex(face.StartVertex2.Index);
+
             face.UpdateVertices();
         }
 

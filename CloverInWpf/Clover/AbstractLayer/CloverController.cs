@@ -272,35 +272,12 @@ namespace Clover
         /// <param name="leftChild"></param>
         /// <param name="rightChild"></param>
         /// <param name="edge"></param>
-        public void CutAFaceWithAddedTwoVertices(Face face, Edge edge)
+        public void CutFace(Face face, Edge edge)
         {
-            foldingSystem.CutAFaceWithAddedTwoVertices(face, edge);
+            foldingSystem.CutFace(face, edge);
         }
 
        
-        /// <summary>
-        /// 当割点在一条边上时，另一割点为原来顶点时，切割一个面为两个面
-        /// </summary>
-        /// <param name="face"></param>
-        /// <param name="edge"></param>
-        public void CutAFaceWithAddedOneVertex(Face face, Edge edge, Edge cuttedEdge, Vertex cutVertex)
-        {
-            foldingSystem.CutAFaceWithAddedOneVertex(face, edge, cuttedEdge, cutVertex);
-        }
-
-
-        /// <summary>
-        /// 当割点不在边上时，切割一个面为两个面
-        /// </summary>
-        /// <param name="oldFace"></param>
-        /// <param name="leftChild"></param>
-        /// <param name="rightChild"></param>
-        /// <param name="edge"></param>
-        public void CutAFaceWithoutVertex(Face face, Edge edge)
-        {
-            foldingSystem.CutAFaceWithoutAddedVertex(face, edge);
-        }
-
         public void CutFaces(List<Face> faces,  Edge edge)
         {
             foldingSystem.CutFaces(faces, edge);

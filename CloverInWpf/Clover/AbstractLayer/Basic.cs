@@ -392,25 +392,25 @@ namespace Clover
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();
 
-            //vertices.Add(startVertex1);
-            //vertices.Add(startVertex2);
+            vertices.Add(startVertex1);
+            vertices.Add(startVertex2);
 
-            vertices.Add(edges[0].Vertex1);
-            vertices.Add(edges[0].Vertex2);
+            //vertices.Add(edges[0].Vertex1);
+            //vertices.Add(edges[0].Vertex2);
 
-            //Vertex currentVertex = startVertex2;
-            Vertex currentVertex = edges[0].Vertex2;
+            Vertex currentVertex = startVertex2;
+            //Vertex currentVertex = edges[0].Vertex2;
 
             List<Edge> ignoreList = new List<Edge>();
-            ignoreList.Add(edges[0]);
-            //foreach (Edge edge in edges)
-            //{
-            //    if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
-            //    {
-            //        ignoreList.Add(edge);
-            //        break;
-            //    }
-            //}
+            //ignoreList.Add(edges[0]);
+            foreach (Edge edge in edges)
+            {
+                if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
+                {
+                    ignoreList.Add(edge);
+                    break;
+                }
+            }
 
             int counter = vertices.Count + 1;
 
@@ -494,30 +494,6 @@ namespace Clover
             
             edges.Add(edge);
             // UpdateVertices();
-        }
-
-        public void SortEdge()
-        {
-            // 对边进行排序
-            Edge currentedge = edges[0];
-            edges.RemoveAt(0);
-            int edgecount = edges.Count;
-            List<Edge> orderelist = new List<Edge>();
-            orderelist.Add(currentedge);
-            for (int i = 0; i < edgecount - 1; i++)
-            {
-                foreach (Edge e in edges)
-                {
-                    if (currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
-                    {
-                        orderelist.Add(e);
-                        edges.Remove(e);
-                        break;
-                    }
-                }
-            }
-            edges = orderelist;
-            UpdateVertices();
         }
 
         public bool RemoveEdge(Edge edge)
