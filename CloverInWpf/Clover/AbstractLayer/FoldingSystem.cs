@@ -519,7 +519,6 @@ namespace Clover
         public bool FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint, Edge currentFoldingLine)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-            shadowSystem.SaveOriginState();
 
             // 查找所有需要移动的面
             List<Face> rotateFaces = AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
@@ -660,19 +659,25 @@ namespace Clover
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
             LookupTable table = CloverController.GetInstance().Table;
-            List<Vertex> movedVertexList = new List<Vertex>();
 
+            List<Vertex> movedVertexList = new List<Vertex>();
             shadowSystem.CheckUndoTree();
+
 
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
             foreach (Face f in beRotatedFaceList)
             {
+                Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
+                foreach (Vertex v in f.Vertices)
+                    movedVertexDict[v.Index] = false;   
+
                 foreach (Edge e in f.Edges)
                 {
                     if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex1.Index] )
                     {
                         CloneAndUpdateVertex(e.Vertex1);
+
                         e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
 
                         Vector3D axis = new Vector3D();
@@ -687,15 +692,17 @@ namespace Clover
                         rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-                        e.Vertex1.Moved = true;
+                        //e.Vertex1.Moved = true;
+                        movedVertexDict[e.Vertex1.Index] = true;
 
                         movedVertexList.Add(e.Vertex1);
                     }
 
                     if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex2.Index])
                     {
                         CloneAndUpdateVertex(e.Vertex2);
+
                         e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
 
                         Vector3D axis = new Vector3D();
@@ -715,7 +722,8 @@ namespace Clover
                         //e.Vertex2.SetPoint3D(translateToOrigin.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
                         //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
-                        e.Vertex2.Moved = true;
+                        //e.Vertex2.Moved = true;
+                        movedVertexDict[e.Vertex2.Index] = true;
 
                         movedVertexList.Add(e.Vertex2);
                     }
