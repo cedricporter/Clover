@@ -10,9 +10,23 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Clover.IO
 {
+    // 文法
+    //Clover           –> VertexLayer EdgeLayer FaceLayer
+    //VertexLayer      -> TrunkName VertexTable
+    //EdgeLayer        -> TrunkName num EdgeTree+
+    //EdgeTree         –> Edge+
+    //FaceLayer        –> TrunkName FaceTree
+    //FaceTree         –> Face+
+    //Edge             –> edge_id vertex1_id vertex2_id
+    //                    | –1
+    //Face             –> face_id start_vertex1 start_vertex2 num edge_id+
+    //                    | –1
+    //face_id          -> positive_number
+    //edge_id          -> positive_number
 
     /// <summary>
     /// Clover文件分析器，分析方式和编译器中的语法分析过程类似
+    /// 采用自顶向下的分析方法。
     /// </summary>
     class FileParser
     {
@@ -154,6 +168,9 @@ namespace Clover.IO
             if (faceID == -1)
                 return null;
 
+            int startVertex1ID = reader.ReadInt32();
+            int startVertex2ID = reader.ReadInt32();
+
             int edgeCount = reader.ReadInt32();
 
             Face face = new Face(0);
@@ -162,6 +179,9 @@ namespace Clover.IO
                 int edgeID = reader.ReadInt32();
                 face.AddEdge(edgeIDDict[edgeID]);
             }
+
+            face.StartVertex1 = vertexIDDict[startVertex1ID];
+            face.StartVertex2 = vertexIDDict[startVertex2ID];
 
             face.LeftChild = FaceTree();
             face.RightChild = FaceTree();

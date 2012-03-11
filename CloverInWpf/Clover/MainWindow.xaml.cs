@@ -266,7 +266,7 @@ namespace Clover
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
 
-            cloverController.Table.UpdateTableAfterFoldUp(true);
+            //cloverController.Table.UpdateTableAfterFoldUp(true);
         }
 
         /// <summary>

@@ -403,11 +403,11 @@ namespace Clover
             render.New(f1);
             render.New(f2);
 
-            render.AntiOverlap();
+            //render.AntiOverlap();
 
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
-            render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             // 
             controller.FaceLayer.UpdateLeaves();
@@ -604,7 +604,7 @@ namespace Clover
         public List<Face> AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
         {
             FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
-            LookupTable table = CloverController.GetInstance().Table;
+            FaceGroupLookupTable table = CloverController.GetInstance().Table;
             //table.UpdateLookupTable();
 
             List<Face> faceWithFoldingLine = new List<Face>();
@@ -662,7 +662,7 @@ namespace Clover
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
-            LookupTable table = CloverController.GetInstance().Table;
+            FaceGroupLookupTable table = CloverController.GetInstance().Table;
 
             List<Vertex> movedVertexList = new List<Vertex>();
             shadowSystem.CheckUndoTree();

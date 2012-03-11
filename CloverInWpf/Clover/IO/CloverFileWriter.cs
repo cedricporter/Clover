@@ -49,6 +49,9 @@ namespace Clover.IO
         {
             writer.Write(face.ID);
 
+            writer.Write(face.StartVertex1.ID);
+            writer.Write(face.StartVertex2.ID);
+
             writer.Write(face.Edges.Count);
 
             foreach (Edge edge in face.Edges)
@@ -77,6 +80,7 @@ namespace Clover.IO
 
                 list.Add(tree.Root);
 
+                // 宽度搜索
                 while (list.Count != 0)
                 {
                     Edge edge = list[0];
@@ -106,6 +110,7 @@ namespace Clover.IO
             List<Face> list = new List<Face>();
             list.Add(faceLayer.Root);
 
+            // 宽度搜索
             while (list.Count != 0)
             {
                 Face face = list[0];

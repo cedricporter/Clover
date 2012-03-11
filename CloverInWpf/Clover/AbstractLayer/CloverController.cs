@@ -25,14 +25,14 @@ namespace Clover
         RenderController renderController;///渲染层
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
-        LookupTable table;
+        FaceGroupLookupTable table;
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         #endregion
 
         #region get/set
 
-        public Clover.LookupTable Table
+        public Clover.FaceGroupLookupTable Table
         {
             get { return table; }
             set { table = value; }
@@ -122,6 +122,12 @@ namespace Clover
             }
         }
         #endregion
+
+        public void FlipFace(Face face)
+        {
+            face.Flip();
+            renderController.Update(face);
+        }
 
         public Vertex GetPrevVersion(Vertex vertex)
         {
@@ -241,7 +247,7 @@ namespace Clover
             face.UpdateVertices();
             faceLayer.UpdateLeaves();
 
-            table = new LookupTable(face);
+            table = new FaceGroupLookupTable(face);
 
             // 此处也应该拍一张快照
             SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
@@ -759,95 +765,6 @@ namespace Clover
 
 
 
-
-        
-        ///// <summary>
-        ///// 创建初始的折线顶点·
-        ///// </summary>
-        ///// <param name="xRel"></param>
-        ///// <param name="yRel"></param>
-        //Edge CalculateFoldingLine(Vertex pickedVertex)
-        //{
-        //    // 找到所有包含此点的面
-        //    foreach(Face f in faceLayer.Leaves)
-        //    {
-        //        Point3D vertex1 = new Point3D();
-        //        Point3D vertex2 = new Point3D();
-
-        //        bool findFirstVertex = false;
-        //        bool CalculateFinished = false;
-        //        foreach (Edge e in f.Edges)
-        //        {
-        //            // 边的第一个顶点是否是选中点
-        //            if (e.Vertex1 == pickedVertex)
-        //            {
-
-        //                Vector3D v = new Vector3D();
-        //                v.X = e.Vertex2.X - e.Vertex1.X;
-        //                v.Y = e.Vertex2.Y - e.Vertex1.Y;
-        //                v.Z = e.Vertex2.Z - e.Vertex1.Z;
-
-        //                v.Normalize();
-        //                if (!findFirstVertex)
-        //                {
-        //                    vertex1.X = e.Vertex1.X + v.X;
-        //                    vertex1.Y = e.Vertex1.Y + v.Y;
-        //                    vertex1.Z = e.Vertex1.Z + v.Z;
-        //                    findFirstVertex = true;
-        //                }
-        //                else
-        //                {
-        //                    vertex2.X = e.Vertex1.X + v.X;
-        //                    vertex2.Y = e.Vertex1.Y + v.Y;
-        //                    vertex2.Z = e.Vertex1.Z + v.Z;
-        //                    CalculateFinished = true;
-        //                }
-        //            }
-                    
-        //            // 边的第二个顶点是否是选中点
-        //            if (e.Vertex2 == pickedVertex)
-        //            {
-
-        //                Vector3D v = new Vector3D();
-        //                v.X = e.Vertex1.X - e.Vertex2.X;
-        //                v.Y = e.Vertex1.Y - e.Vertex2.Y;
-        //                v.Z = e.Vertex1.Z - e.Vertex2.Z;
-
-        //                v.Normalize();
-
-        //                if (!findFirstVertex)
-        //                {
-        //                    vertex1.X = e.Vertex2.X + v.X;
-        //                    vertex1.Y = e.Vertex2.Y + v.Y;
-        //                    vertex1.Z = e.Vertex2.Z + v.Z;
-        //                    findFirstVertex = true;
-        //                }
-        //                else
-        //                {
-        //                    vertex2.X = e.Vertex2.X + v.X;
-        //                    vertex2.Y = e.Vertex2.Y + v.Y;
-        //                    vertex2.Z = e.Vertex2.Z + v.Z;
-        //                    CalculateFinished = true;
-        //                }
-
-
-                        
-        //            }
-        //            if (CalculateFinished)
-        //            {
-        //                Vertex cVertex1 = new Vertex(vertex1);
-        //                Vertex cVertex2 = new Vertex(vertex2);
-
-        //                Edge edge = new Edge(cVertex1, cVertex2);
-        //                return edge;
-        //            }
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
-        
         /// <summary>
         /// 通过点找面
         /// </summary>
@@ -868,73 +785,6 @@ namespace Clover
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
             foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
-        }
-
-        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, float xRel, float yRel)
-        {
-            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
-            foreach (Face f in beRotatedFaceList)
-            {
-                foreach (Edge e in f.Edges)
-                {
-                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
-                    {
-                        Vector3D axis = new Vector3D();
-                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
-                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
-                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
-                        axis.Normalize();
-
-                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
-                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.01 * xRel);
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
-                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
-                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
-                        //e.Vertex1.SetPoint3D(translateToOrigin.Transform(e.Vertex1.GetPoint3D()));
-                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-                        //e.Vertex1.SetPoint3D(translateBack.Transform(e.Vertex1.GetPoint3D()));
-                    }
-
-                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
-                    {
-                        Vector3D axis = new Vector3D();
-                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
-                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
-                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
-                        axis.Normalize();
-
-                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
-                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.01 * xRel);
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
-                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
-                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
-
-                        //e.Vertex2.SetPoint3D(translateToOrigin.Transform(e.Vertex2.GetPoint3D()));
-                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
-                        //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
-                        e.Vertex2.Moved = true;
-                    }
-                }
-            }
-
-            // 判断是否贴合，若有贴合更新组
-
-
-            // 修正所有点的移动属性
-            foreach (Vertex v in vertexLayer.Vertices)
-            {
-                v.Moved = false; 
-            }
-
-            renderController.UpdateAll();
-
-            //table.UpdateLookupTable();
         }
 
         /// <summary>
