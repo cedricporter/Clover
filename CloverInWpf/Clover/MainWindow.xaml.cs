@@ -266,7 +266,7 @@ namespace Clover
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onDoubleClick();
 
-            cloverController.Table.UpdateTableAfterFoldUp(true);
+            //cloverController.Table.UpdateTableAfterFoldUp(true);
         }
 
         /// <summary>
@@ -421,6 +421,52 @@ RotateFaces(faces, edge, 90)
             ExportTexture.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 
+        /// <summary>
+        /// 打开Clover文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "Clover File|*.clr";
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            cloverController.LoadFile(dialog.FileName);
+        }
+
+        /// <summary>
+        /// 保存Clover文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "Clover File|*.clr";
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            cloverController.SaveFile(dialog.FileName);
+        }
+
+        private void NewPaper_New(object sender, RoutedEventArgs e)
+        {
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void NewPaper_Canle(object sender, RoutedEventArgs e)
+        {
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
+        }
+
+        private void NewPaper_Show(object sender, RoutedEventArgs e)
+        {
+            NewPaperTexturePreview.Source = paperSelector.InfoList[0].bmp;
+            NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+
         #endregion
 
         #region 工具栏按钮
@@ -497,8 +543,6 @@ RotateFaces(faces, edge, 90)
             }
             //e.Handled = true;
         }
-
-
 
     }
 }

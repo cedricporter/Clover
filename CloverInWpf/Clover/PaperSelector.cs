@@ -59,10 +59,14 @@ namespace Clover
         {
             public Canvas box;
             public String path;
+            public ImageSource bmp;
         }
 
         List<PaperTextureInfo> infoList = new List<PaperTextureInfo>();
-
+        public List<PaperTextureInfo> InfoList
+        {
+            get { return infoList; }
+        }
         /// <summary>
         /// 从指定路径扫描纹理文件
         /// </summary>
@@ -127,6 +131,7 @@ namespace Clover
                 PaperTextureInfo info = new PaperTextureInfo();
                 info.path = file;
                 info.box = box;
+                info.bmp = bmp;
                 infoList.Add(info);
             }
         }

@@ -89,6 +89,11 @@ namespace Clover
                 frontMaterial.Children.Add(mat);
             else
             {
+                if (frontAnimationLayer != null)
+                {
+                    frontMaterial.Children.Remove(frontAnimationLayer);
+                    frontAnimationLayer = null;
+                }
                 BeginPaperChange((DiffuseMaterial)frontMaterial.Children[0]);
                 frontMaterial.Children[0] = mat;
             }

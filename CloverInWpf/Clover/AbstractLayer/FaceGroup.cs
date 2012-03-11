@@ -35,37 +35,23 @@ namespace Clover.AbstractLayer
     /// </summary>
     public class FaceGroup
     {
-        List<Face> GroupList;
+        List<Face> faceList;
         Vector3D normal = new Vector3D(); // 组的法向量
         public System.Windows.Media.Media3D.Vector3D Normal
         {
             get { return normal; }
             set { normal = value; }
         }
+        public int Count
+        {
+            get { return faceList.Count; }
+        }
         double a;
-        public double A
-        {
-            get { return a; }
-            set { a = value; }
-        }
         double b;
-        public double B
-        {
-            get { return b; }
-            set { b = value; }
-        }
         double c;
-        public double C
-        {
-            get { return c; }
-            set { c = value; }
-        }
         double d;
-        public double D
-        {
-            get { return d; }
-            set { d = value; }
-        }
+
+        Point4D plainFormula = new Point4D();
 
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
@@ -75,14 +61,14 @@ namespace Clover.AbstractLayer
         {
             if (f != null)
             {
-                GroupList = new List<Face>();
+                faceList = new List<Face>();
                 normal = f.Normal;
-                normal.Normalize();
-                GroupList.Add( f );
+               // normal.Normalize();
+                faceList.Add(f);
                 a = normal.X;
                 b = normal.Y;
                 c = normal.Z;
-                d = -( f.Vertices[ 0 ].X * a + f.Vertices[ 0 ].Y * b + f.Vertices[ 0 ].Z * c );
+                d = -(f.Vertices[0].X * a + f.Vertices[0].Y * b + f.Vertices[0].Z * c);
             }
         }
 
@@ -94,13 +80,13 @@ namespace Clover.AbstractLayer
         /// <returns></returns>
         public bool AddFace(Face f)
         {
-            if( IsMatch(f) )
-            {
-                GroupList.Add( f );
+            //if (IsMatch(f))
+            //{
+                faceList.Add(f);
                 SortFace();
                 return true;
-            }
-            return false;
+            //}
+            //return false;
 
         }
 
@@ -109,11 +95,9 @@ namespace Clover.AbstractLayer
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public bool DeleteFace( Face f )
+        public bool RemoveFace( Face f )
         {
-            if ( GroupList.Remove( f ) )
-                return true;
-            return false;
+            return faceList.Remove(f);
         }
 
         /// <summary>
@@ -122,7 +106,7 @@ namespace Clover.AbstractLayer
         /// <returns></returns>
         public List<Face> GetFaceList()
         {
-            return GroupList;
+            return faceList;
         }
 
         /// <summary>
@@ -132,24 +116,16 @@ namespace Clover.AbstractLayer
         /// <returns></returns>
         public bool HasFace(Face f)
         {
-            foreach (Face fin in GroupList)
-            {
-                if (fin == f)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return faceList.Contains(f);
         }
+
         /// <summary>
         /// 对面组中的面进行排序
         /// </summary>
         public void SortFace()
-        {
-
+        { 
             FaceSort fc = new FaceSort();
-            GroupList.Sort( fc );
-            
+            faceList.Sort( fc ); 
         }
 
 
@@ -204,9 +180,9 @@ namespace Clover.AbstractLayer
             D1 = -( f.Vertices[ 0 ].X * A1 + f.Vertices[ 0 ].Y * B1 + f.Vertices[ 0 ].Z * C1 );
 
             if (
-                ( Math.Abs( A1 * B - A * B1 ) < ErrorMargin )  &&
-                ( Math.Abs( B1 * C - B * C1 ) < ErrorMargin )  &&
-                ( Math.Abs( C1 * D - C * D1 ) < ErrorMargin )
+                ( Math.Abs( A1 * b - a * B1 ) < ErrorMargin )  &&
+                ( Math.Abs( B1 * c - b * C1 ) < ErrorMargin )  &&
+                ( Math.Abs( C1 * d - c * D1 ) < ErrorMargin )
                )
             {
                 return true;
@@ -217,12 +193,12 @@ namespace Clover.AbstractLayer
 
         public int GetTopLayer()
         {
-            return GroupList[ 0 ].Layer;
+            return faceList[0].Layer;
         }
 
         public int GetBottomLayer()
         {
-            return GroupList[ GroupList.Count- 1 ].Layer;
+            return faceList[faceList.Count - 1].Layer;
         }
 
 

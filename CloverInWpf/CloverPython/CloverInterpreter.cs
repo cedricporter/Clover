@@ -36,6 +36,7 @@ GetVertex = clover.GetVertex
 CutFaces = clover.CutFaces
 Undo = clover.Undo
 Redo = clover.Redo
+FlipFace = clover.FlipFace
 ";
 
             pythonEngine.Execute(initialString, pythonScope);
