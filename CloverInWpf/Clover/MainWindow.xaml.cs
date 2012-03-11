@@ -263,8 +263,8 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (ToolFactory.currentTool != null)
-                ToolFactory.currentTool.onDoubleClick();
+            //if (ToolFactory.currentTool != null)
+            //    ToolFactory.currentTool.onDoubleClick();
 
             //cloverController.Table.UpdateTableAfterFoldUp(true);
         }

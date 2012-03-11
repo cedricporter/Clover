@@ -17,11 +17,11 @@ namespace Clover.AbstractLayer
         /// <param name="f1"></param>
         /// <param name="f2"></param>
         /// <returns></returns>
-        int IComparer<Face>.Compare( Face f1, Face f2 )
+        int IComparer<Face>.Compare(Face f1, Face f2)
         {
-            if ( f1.Layer > f2.Layer )
+            if (f1.Layer > f2.Layer)
                 return 1;
-            else if ( f1.Layer == f2.Layer )
+            else if (f1.Layer == f2.Layer)
                 return 0;
             else
                 return -1;
@@ -63,7 +63,7 @@ namespace Clover.AbstractLayer
             {
                 faceList = new List<Face>();
                 normal = f.Normal;
-               // normal.Normalize();
+                // normal.Normalize();
                 faceList.Add(f);
                 a = normal.X;
                 b = normal.Y;
@@ -82,9 +82,9 @@ namespace Clover.AbstractLayer
         {
             //if (IsMatch(f))
             //{
-                faceList.Add(f);
-                SortFace();
-                return true;
+            faceList.Add(f);
+            SortFace();
+            return true;
             //}
             //return false;
 
@@ -95,7 +95,7 @@ namespace Clover.AbstractLayer
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public bool RemoveFace( Face f )
+        public bool RemoveFace(Face f)
         {
             return faceList.Remove(f);
         }
@@ -123,9 +123,9 @@ namespace Clover.AbstractLayer
         /// 对面组中的面进行排序
         /// </summary>
         public void SortFace()
-        { 
+        {
             FaceSort fc = new FaceSort();
-            faceList.Sort( fc ); 
+            faceList.Sort(fc);
         }
 
 
@@ -135,7 +135,7 @@ namespace Clover.AbstractLayer
         /// <param name="f1"></param>
         /// <param name="f2"></param>
         /// <returns></returns>
-        bool IsInSameGroup( Face f1, Face f2, double ErrorMargin = 0.00001 )
+        bool IsInSameGroup(Face f1, Face f2, double ErrorMargin = 0.00001)
         {
             double A1, B1, C1, D1;
             double A2, B2, C2, D2;
@@ -150,12 +150,12 @@ namespace Clover.AbstractLayer
             C1 = f1.Normal.Z;
             C2 = f2.Normal.Z;
 
-            D1 = -( f1.Vertices[ 0 ].X * A1 + f1.Vertices[ 0 ].Y * B1 + f1.Vertices[ 0 ].Z * C1 );
-            D2 = -( f1.Vertices[ 0 ].X * A2 + f1.Vertices[ 0 ].Y * B2 + f1.Vertices[ 0 ].Z * C2 );
+            D1 = -(f1.Vertices[0].X * A1 + f1.Vertices[0].Y * B1 + f1.Vertices[0].Z * C1);
+            D2 = -(f1.Vertices[0].X * A2 + f1.Vertices[0].Y * B2 + f1.Vertices[0].Z * C2);
             if (
-                ( Math.Abs( A1 * B2 - A2 * B1 ) < ErrorMargin )  &&
-                ( Math.Abs( B1 * C2 - B2 * C1 ) < ErrorMargin )  &&
-                ( Math.Abs( C1 * D2 - C2 * D1 ) < ErrorMargin )  
+                (Math.Abs(A1 * B2 - A2 * B1) < ErrorMargin)  &&
+                (Math.Abs(B1 * C2 - B2 * C1) < ErrorMargin)  &&
+                (Math.Abs(C1 * D2 - C2 * D1) < ErrorMargin)
                )
             {
                 return true;
@@ -170,19 +170,19 @@ namespace Clover.AbstractLayer
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public bool IsMatch( Face f, double ErrorMargin = 0.00001 )
+        public bool IsMatch(Face f, double ErrorMargin = 0.00001)
         {
             f.UpdateVertices();
             double A1, B1, C1, D1;
             A1 = f.Normal.X;
             B1 = f.Normal.Y;
             C1 = f.Normal.Z;
-            D1 = -( f.Vertices[ 0 ].X * A1 + f.Vertices[ 0 ].Y * B1 + f.Vertices[ 0 ].Z * C1 );
+            D1 = -(f.Vertices[0].X * A1 + f.Vertices[0].Y * B1 + f.Vertices[0].Z * C1);
 
             if (
-                ( Math.Abs( A1 * b - a * B1 ) < ErrorMargin )  &&
-                ( Math.Abs( B1 * c - b * C1 ) < ErrorMargin )  &&
-                ( Math.Abs( C1 * d - c * D1 ) < ErrorMargin )
+                (Math.Abs(A1 * b - a * B1) < ErrorMargin)  &&
+                (Math.Abs(B1 * c - b * C1) < ErrorMargin)  &&
+                (Math.Abs(C1 * d - c * D1) < ErrorMargin)
                )
             {
                 return true;
@@ -202,7 +202,7 @@ namespace Clover.AbstractLayer
         }
 
 
-        
+
     }
 }
 

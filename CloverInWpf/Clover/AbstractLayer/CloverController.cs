@@ -770,8 +770,33 @@ namespace Clover
                         }
                     }
                 }
-
             }
+
+
+            //List<Face> movedFaceList = foldingSystem.GetLastTimeMovedFace();
+
+            //foreach (Face face in foldingFaces)
+            //{
+            //    faceGroupLookupTable.AddFace(face.LeftChild);
+            //    faceGroupLookupTable.AddFace(face.RightChild);
+
+            //    faceGroupLookupTable.RemoveFace(face);
+            //}
+
+            //// 根据layer排序
+            //movedFaceList.Sort(new FaceSort());
+            //int maxLayer = movedFaceList[movedFaceList.Count - 1].Layer;
+
+            //for (int i = 0; i < movedFaceList.Count / 2; i++)
+            //{
+            //    int tempLayer = movedFaceList[i].Layer;
+            //    movedFaceList[i].Layer = movedFaceList[movedFaceList.Count - i].Layer;
+            //    movedFaceList[movedFaceList.Count - i].Layer = tempLayer;
+            //}
+
+
+            //faceGroupLookupTable.
+
             
             // 更新重绘
             foreach (Face f in faceLayer.Leaves)
@@ -786,6 +811,14 @@ namespace Clover
         #endregion
 
         #region 更新
+        /// <summary>
+        /// 
+        /// </summary>
+        public void UpdateFaceGroupTable()
+        {
+            faceGroupLookupTable.UpdateTableAfterFoldUp();
+        }
+
         public void InitializeBeforeFolding(Vertex vertex)
         {
             // 计算和创建一条新的折线
