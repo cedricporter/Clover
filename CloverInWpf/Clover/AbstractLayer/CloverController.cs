@@ -637,7 +637,8 @@ namespace Clover
 
             foreach (Face face in foldingSystem.GetLastTimeMovedFace())
             {
-                normal = face.Normal; 
+                normal = new Vector3D(face.Normal.X, face.Normal.Y, face.Normal.Z); 
+
                 // 移动折线到新的位置
                 foreach (Vertex v in face.Vertices)
                 {
@@ -682,6 +683,10 @@ namespace Clover
                 rotateTransform.CenterX = projectionPoint.X;
                 rotateTransform.CenterY = projectionPoint.Y;
                 rotateTransform.CenterZ = projectionPoint.Z;
+
+                // debug
+                Debug.WriteLine(normal.ToString());
+
 
                 // 创建平移矩阵
                 Vector3D vectorFromProjToOrigin = projectionPoint - currentVertex.GetPoint3D();
