@@ -65,6 +65,8 @@ namespace Clover.IO
             BinaryFormatter bf = new BinaryFormatter();
 
             bf.Serialize(fs, vertexLayer);
+
+            writer.Write(Vertex.Vertex_count);
         }
 
         void SaveFace(Face face)

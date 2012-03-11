@@ -130,6 +130,9 @@ namespace Clover.IO
 
             Debug.Assert(vertexLayer != null);
 
+            int vertex_count = reader.ReadInt32();
+            Vertex.Vertex_count = vertex_count;
+
             foreach (List<Vertex> vList in vertexLayer.VertexCellTable)
             {
                 foreach (Vertex v in vList)

@@ -531,7 +531,7 @@ RotateFaces(faces, edge, 90)
 
         #endregion
 
-        void FuckingKey(Object sender, KeyEventArgs e)
+        void commandKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F5)
             {

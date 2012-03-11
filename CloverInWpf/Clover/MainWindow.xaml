@@ -254,7 +254,7 @@
                             Click="MenuItem_Unchecked_1">X</Button>
                 </Grid>
                 <Grid Margin="10, 40, 10, 10">
-                    <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" TextWrapping="Wrap" Background="Black" Foreground="#33FF33" KeyDown="FuckingKey"/>
+                    <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" TextWrapping="Wrap" Background="Black" Foreground="#33FF33" KeyDown="commandKeyDown"/>
                 </Grid>
             </Grid>
             <!-- 输出窗口 -->
