@@ -35,6 +35,9 @@ namespace Clover
 
     public class CubeNavigator
     {
+
+        #region get/set
+        
         static MainWindow mainWindow;
         Viewport3D cubeNavViewport;
         public System.Windows.Controls.Viewport3D CubeNavViewport
@@ -62,6 +65,16 @@ namespace Clover
             }
         }
 
+        #endregion
+
+        #region 私有成员
+
+        Boolean isDraging = false;
+
+        #endregion
+
+        #region 单例
+
         static CubeNavigator instance = null;
         public static CubeNavigator GetInstance()
         {
@@ -81,17 +94,29 @@ namespace Clover
         {
             cubeNavViewport = mainWindow.CubeNavViewport;
             cubeNavModel = mainWindow.CubeNavModel;
-            cubeNavViewport.MouseLeftButtonDown += cubeNavViewport_MouseLeftButtonDown;
-            cubeNavViewport.MouseMove += cubeNavViewport_MouseMove;
+            cubeNavViewport.MouseDown += cubeNavViewport_ButtonDown;
+            mainWindow.MouseMove += cubeNavViewport_MouseMove;
+            mainWindow.MouseUp += cubeNavViewport_ButtonUp;
         }
 
-        public void cubeNavViewport_MouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
+        #endregion
+
+        public void cubeNavViewport_ButtonDown(Object sender, MouseButtonEventArgs e)
         {
             lastMousePos = e.GetPosition(mainWindow);
+            isDraging = true;
+        }
+
+        public void cubeNavViewport_ButtonUp(Object sender, MouseButtonEventArgs e)
+        {
+            isDraging = false;
         }
 
         public void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
         {
+            if (!isDraging)
+                return;
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 // 计算Cube的旋转
@@ -115,6 +140,19 @@ namespace Clover
                 RenderController.GetInstance().RotateTransform = rotts;
 
                 lastQuat = quar;
+                lastMousePos = currMousePos;
+            }
+            else if (e.RightButton == MouseButtonState.Pressed)
+            {
+                 // 计算纸张的平移量
+                Point currMousePos = e.GetPosition(mainWindow);
+                if (currMousePos.Equals(lastMousePos))
+                    return;
+                Vector offsetVec = currMousePos - lastMousePos;
+
+                RenderController.GetInstance().TranslateTransform.OffsetX += offsetVec.X;
+                RenderController.GetInstance().TranslateTransform.OffsetY -= offsetVec.Y;
+
                 lastMousePos = currMousePos;
             }
 

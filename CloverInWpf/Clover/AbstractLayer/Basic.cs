@@ -19,9 +19,13 @@ namespace Clover
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>
+    [Serializable]
     public class Vertex : ICloneable
     {
-        Point3D point = new Point3D(); 
+        #region 成员变量
+        Point3D point = new Point3D();          /// 逻辑层的坐标
+        Point3D renderPoint = new Point3D();    /// 渲染层的坐标
+        /// 
         public int Index = -1;      /// 在VertexLayer里面的索引，所有的孩子都有相同的index
 
         double _u = 0;
@@ -31,12 +35,37 @@ namespace Clover
 
         public int Version = 1;
 
+        [NonSerialized]
         public Update Update;
 
         static int vertex_count = 0;
         int id;
+        #endregion
 
         #region get/set
+        public int ID
+        {
+            get { return id; }
+        }
+        public Point3D GetPoint3D()
+        {
+            return point;
+        }
+
+        public void SetPoint3D(Point3D vertex)
+        {
+            point.X = vertex.X;
+            point.Y = vertex.Y;
+            point.Z = vertex.Z;
+
+            if (Update != null)
+                Update(this, null);
+        }
+        public System.Windows.Media.Media3D.Point3D RenderPoint
+        {
+            get { return renderPoint; }
+            set { renderPoint = value; }
+        }
         public double u
         {
             get { return _u; }
@@ -69,30 +98,18 @@ namespace Clover
         }
         #endregion
 
+        #region 构造函数
         public object Clone()
         {
             Vertex v = this.MemberwiseClone() as Vertex;
             v.id = vertex_count++;
 
             v.point = new Point3D(point.X, point.Y, point.Z);
+            v.renderPoint = new Point3D(renderPoint.X, renderPoint.Y, renderPoint.Z);
+
             v.Version = this.Version + 1;
 
             return v;
-        }
-
-        public Point3D GetPoint3D()
-        {
-            return point;
-        }
-
-        public void SetPoint3D(Point3D vertex)
-        {
-            point.X = vertex.X;
-            point.Y = vertex.Y;
-            point.Z = vertex.Z;
-
-            if (Update != null)
-                Update(this, null);
         }
 
         public Vertex(Point3D vertex)
@@ -105,6 +122,7 @@ namespace Clover
         public Vertex(Vertex vertex)
         {
             point = new Point3D(vertex.X, vertex.Y, vertex.Z);
+            renderPoint = new Point3D(vertex.renderPoint.X, vertex.renderPoint.Y, vertex.renderPoint.Z);
 
             Index = vertex.Index;
             _u = vertex._u;
@@ -123,6 +141,7 @@ namespace Clover
 
             id = vertex_count++;
         }
+        #endregion
 
         #region 重载==运算符
         //public override bool Equals(System.Object v)
@@ -171,6 +190,11 @@ namespace Clover
     public class Edge
     {
         #region get/set
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
         /// <summary>
         /// 设置父亲时不做任何事情
         /// </summary>
@@ -227,17 +251,23 @@ namespace Clover
         }
         #endregion
 
+        #region 成员变量
         Edge parent;
         Face face1, face2;
         Vertex vertex1, vertex2;
         Edge leftChild, rightChild;
+        int id = -1;
+        static int edge_count = 0;
+        #endregion
 
         public Edge(Vertex v1, Vertex v2)
         {
             vertex1 = v1;
             vertex2 = v2;
+            id = edge_count++;
         }
 
+        #region 辅助函数
         public bool IsVerticeIn(Vertex v)
         {
             return IsVerticeIn(v.GetPoint3D());
@@ -245,20 +275,8 @@ namespace Clover
         public bool IsVerticeIn(Point3D p)
         {
             return CloverMath.IsPointInTwoPoints(p, vertex1.GetPoint3D(), vertex2.GetPoint3D(), 0.001);
-
-            //double pointThreadhold = 0.001;
-            //// 判断线
-            //Vector3D V1 = vertex1.GetPoint3D() - vertex2.GetPoint3D();
-            //Vector3D V2 = p - vertex1.GetPoint3D();
-            //Double t = Vector3D.DotProduct(V1, V2) / Vector3D.DotProduct(V1, V1);
-            //Point3D p3 = vertex1.GetPoint3D() + t * V1;
-            //if ((p - p3).Length < pointThreadhold)
-            //{
-            //    return true;
-            //}
-
-            //return false;
         }
+        #endregion
 
     }
 
@@ -267,10 +285,22 @@ namespace Clover
     /// </summary>
     public class Face : ICloneable
     {
+        /// <summary>
+        /// 将一个面反过来
+        /// </summary>
+        public void Flip()
+        {
+            Vertex temp = StartVertex1;
+            StartVertex1 = startVertex2;
+            startVertex2 = temp;
+            UpdateVertices();
+        }
 
-        public Face( int layer )
+        #region 构造
+        public Face(int layer)
         {
             this.layer = layer;
+            id = face_count++;
         }
 
         /// <summary>
@@ -295,6 +325,7 @@ namespace Clover
 
             return newFace;
         }
+        #endregion
 
         #region 成员变量
         List<Vertex> vertices = new List<Vertex>();
@@ -304,7 +335,8 @@ namespace Clover
         Face rightChild = null;
         Face parent = null;
         int layer = 0; // 一个组中平面的顺序，越大表示面处于组中的较上方
-
+        static int face_count = 0;
+        int id = -1;
         /// <summary>
         /// 两者决定这个面的法向量
         /// </summary>
@@ -314,6 +346,11 @@ namespace Clover
         #endregion
 
         #region get/set
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
         public Clover.Vertex StartVertex1
         {
             get { return startVertex1; }
@@ -382,25 +419,25 @@ namespace Clover
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             vertices.Clear();
 
-            //vertices.Add(startVertex1);
-            //vertices.Add(startVertex2);
+            vertices.Add(startVertex1);
+            vertices.Add(startVertex2);
 
-            vertices.Add(edges[0].Vertex1);
-            vertices.Add(edges[0].Vertex2);
+            //vertices.Add(edges[0].Vertex1);
+            //vertices.Add(edges[0].Vertex2);
 
-            //Vertex currentVertex = startVertex2;
-            Vertex currentVertex = edges[0].Vertex2;
+            Vertex currentVertex = startVertex2;
+            //Vertex currentVertex = edges[0].Vertex2;
 
             List<Edge> ignoreList = new List<Edge>();
-            ignoreList.Add(edges[0]);
-            //foreach (Edge edge in edges)
-            //{
-            //    if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
-            //    {
-            //        ignoreList.Add(edge);
-            //        break;
-            //    }
-            //}
+            //ignoreList.Add(edges[0]);
+            foreach (Edge edge in edges)
+            {
+                if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
+                {
+                    ignoreList.Add(edge);
+                    break;
+                }
+            }
 
             int counter = vertices.Count + 1;
 
@@ -484,30 +521,6 @@ namespace Clover
             
             edges.Add(edge);
             // UpdateVertices();
-        }
-
-        public void SortEdge()
-        {
-            // 对边进行排序
-            Edge currentedge = edges[0];
-            edges.RemoveAt(0);
-            int edgecount = edges.Count;
-            List<Edge> orderelist = new List<Edge>();
-            orderelist.Add(currentedge);
-            for (int i = 0; i < edgecount - 1; i++)
-            {
-                foreach (Edge e in edges)
-                {
-                    if (currentedge.IsVerticeIn(e.Vertex1.GetPoint3D()) || currentedge.IsVerticeIn(e.Vertex2.GetPoint3D()))
-                    {
-                        orderelist.Add(e);
-                        edges.Remove(e);
-                        break;
-                    }
-                }
-            }
-            edges = orderelist;
-            UpdateVertices();
         }
 
         public bool RemoveEdge(Edge edge)

@@ -8,6 +8,11 @@ namespace Clover
     public class EdgeTree
     {
         Edge root;
+        public Clover.Edge Root
+        {
+            get { return root; }
+            set { root = value; }
+        }
 
         public EdgeTree(Edge r)
         {
@@ -22,15 +27,6 @@ namespace Clover
             travel(root);
             return leaves;
         }
-        // 没必要，因为分割操作在EdgeLayer，直接对树中的节点分割，所以这里应该只是一些基本功能
-        //public bool AddEdge( Edge node )
-        //{
-        //    return true;
-        //}
-        //public bool DeleteEdge( Edge node )
-        //{
-        //    return true;
-        //}
 
         public bool IsEmpty
         { get { return root == null; } }

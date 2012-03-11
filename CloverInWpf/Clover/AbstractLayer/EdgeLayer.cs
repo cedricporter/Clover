@@ -20,11 +20,9 @@ namespace Clover
         #endregion
 
         List<EdgeTree> edgeTreeList = new List<EdgeTree>();
-        CloverController controller;
 
-        public EdgeLayer(CloverController controller)
+        public EdgeLayer()
         {
-            this.controller = controller;
         }
 
         public void AddTree(EdgeTree tree)

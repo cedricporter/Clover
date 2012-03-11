@@ -29,7 +29,6 @@ from Clover import *
 # 获取CloverController的实例
 clover = CloverController.GetInstance();
 # 取出所有的函数指针
-CutFace2 = clover.CutAFaceWithAddedTwoVertices
 RotateFaces = clover.RotateFaces
 FindFacesByVertex = clover.FindFacesByVertex
 GetFoldingLine = clover.GetFoldingLine
@@ -37,6 +36,7 @@ GetVertex = clover.GetVertex
 CutFaces = clover.CutFaces
 Undo = clover.Undo
 Redo = clover.Redo
+FlipFace = clover.FlipFace
 ";
 
             pythonEngine.Execute(initialString, pythonScope);

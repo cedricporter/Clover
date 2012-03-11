@@ -659,5 +659,19 @@ namespace Clover
             }
             return false;
         }
+
+        /// <summary>
+        /// 判断两个点是否是同一个位置
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static bool AreTwoPointsSameWithDeviation(Point3D p1, Point3D p2)
+        {
+            Vector3D v = p1 - p2;
+            return v.Length > 0.001 ? false : true;
+        }
+
     }
 }
+
