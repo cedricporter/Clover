@@ -37,7 +37,39 @@ namespace Clover
     {
 
         #region get/set
-        
+
+        Viewport2DVisual3D cubeFront, cubeBack, cubeUp, cubeDown, cubeLeft, cubeRight;
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeRight
+        {
+            get { return cubeRight; }
+            set { cubeRight = value; }
+        }
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeLeft
+        {
+            get { return cubeLeft; }
+            set { cubeLeft = value; }
+        }
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeDown
+        {
+            get { return cubeDown; }
+            set { cubeDown = value; }
+        }
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeUp
+        {
+            get { return cubeUp; }
+            set { cubeUp = value; }
+        }
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeBack
+        {
+            get { return cubeBack; }
+            set { cubeBack = value; }
+        }
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeFront
+        {
+            get { return cubeFront; }
+            set { cubeFront = value; }
+        }
+
         static MainWindow mainWindow;
         Viewport3D cubeNavViewport;
         public System.Windows.Controls.Viewport3D CubeNavViewport
@@ -45,12 +77,12 @@ namespace Clover
             get { return cubeNavViewport; }
             set { cubeNavViewport = value; }
         }
-        Model3DGroup cubeNavModel;
-        public System.Windows.Media.Media3D.Model3DGroup CubeNavModel
+        Viewport2DVisual3D cubeNavModel;
+        public System.Windows.Media.Media3D.Viewport2DVisual3D CubeNavModel
         {
             get { return cubeNavModel; }
-            set 
-            { 
+            set
+            {
                 cubeNavModel = value;
             }
         }
@@ -59,9 +91,9 @@ namespace Clover
         public System.Windows.Media.Media3D.Quaternion LastQuat
         {
             get { return lastQuat; }
-            set 
-            { 
-                lastQuat = value; 
+            set
+            {
+                lastQuat = value;
             }
         }
 
@@ -93,10 +125,16 @@ namespace Clover
         private CubeNavigator()
         {
             cubeNavViewport = mainWindow.CubeNavViewport;
-            cubeNavModel = mainWindow.CubeNavModel;
-            cubeNavViewport.MouseDown += cubeNavViewport_ButtonDown;
-            mainWindow.MouseMove += cubeNavViewport_MouseMove;
-            mainWindow.MouseUp += cubeNavViewport_ButtonUp;
+            //cubeNavModel = mainWindow.CubeNavModel;
+            cubeFront = mainWindow.CubeFront;
+            cubeBack = mainWindow.CubeBack;
+            cubeLeft = mainWindow.CubeLeft;
+            cubeRight = mainWindow.CubeRight;
+            cubeUp = mainWindow.CubeUp;
+            cubeDown = mainWindow.CubeDown;
+            cubeNavViewport.PreviewMouseDown += cubeNavViewport_ButtonDown;
+            mainWindow.PreviewMouseMove += cubeNavViewport_MouseMove;
+            mainWindow.PreviewMouseUp += cubeNavViewport_ButtonUp;
         }
 
         #endregion
@@ -133,8 +171,10 @@ namespace Clover
                 quar = quar * lastQuat;
                 System.Windows.Media.Media3D.QuaternionRotation3D rot3d = new System.Windows.Media.Media3D.QuaternionRotation3D(quar);
                 System.Windows.Media.Media3D.RotateTransform3D rotts = new System.Windows.Media.Media3D.RotateTransform3D(rot3d);
-                cubeNavModel.Transform = rotts;
-                
+                //cubeNavModel.Transform = rotts;
+                cubeFront.Transform = cubeBack.Transform = cubeUp.Transform =
+                     cubeDown.Transform = cubeLeft.Transform = cubeRight.Transform = rotts;
+
                 // 让CloverRoot模仿cube的动作
                 RenderController.GetInstance().SrcQuaternion = quar;
                 RenderController.GetInstance().RotateTransform = rotts;
@@ -144,7 +184,7 @@ namespace Clover
             }
             else if (e.RightButton == MouseButtonState.Pressed)
             {
-                 // 计算纸张的平移量
+                // 计算纸张的平移量
                 Point currMousePos = e.GetPosition(mainWindow);
                 if (currMousePos.Equals(lastMousePos))
                     return;
@@ -156,6 +196,32 @@ namespace Clover
                 lastMousePos = currMousePos;
             }
 
+        }
+
+        public void RotateTo(String face)
+        {
+            Double val = Math.Sqrt(2) / 2;
+            switch (face)
+            {
+                case "ft":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion());
+                    break;
+                case "bk":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion(0, 1, 0, 0));
+                    break;
+                case "up":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion(val, 0, 0, val));
+                    break;
+                case "dn":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion(val, 0, 0, -val));
+                    break;
+                case "lt":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion(0, val, 0, val));
+                    break;
+                case "rt":
+                    RenderController.GetInstance().BeginRotationSlerp(new Quaternion(0, -val, 0, val));
+                    break;
+            }
         }
 
     }

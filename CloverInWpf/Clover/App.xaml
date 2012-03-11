@@ -8,6 +8,12 @@
         <!-- Brushed -->
         <ImageBrush x:Key="AppBgImgBrush" ImageSource="media/texture/AppBackground.jpg"/>
         <ImageBrush x:Key="CubeNavTexBrush" ImageSource="media/texture/CubeNavTex.png"/>
+        <ImageBrush x:Key="CubeFrontBrush" ImageSource="media/texture/cubefront.png"/>
+        <ImageBrush x:Key="CubeBackBrush" ImageSource="media/texture/cubeback.png"/>
+        <ImageBrush x:Key="CubeUpBrush" ImageSource="media/texture/cubeup.png"/>
+        <ImageBrush x:Key="CubeDownBrush" ImageSource="media/texture/cubedown.png"/>
+        <ImageBrush x:Key="CubeLeftBrush" ImageSource="media/texture/cubeleft.png"/>
+        <ImageBrush x:Key="CubeRightBrush" ImageSource="media/texture/cuberight.png"/>
         <LinearGradientBrush x:Key="ForegroundFillBlack" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#4B5159" Offset="0"/>
             <GradientStop Color="#383D43" Offset="1"/>
@@ -524,7 +530,6 @@
         		</Setter.Value>
         	</Setter>
         </Style>
-
-
+        
     </Application.Resources>
 </Application>
