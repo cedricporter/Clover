@@ -285,13 +285,13 @@ namespace Clover.Tool
             Viewport3D cubeNavViewport = cubeNav.CubeNavViewport;
             if (islock)
             {
-                cubeNavViewport.MouseLeftButtonDown -= cubeNav.cubeNavViewport_MouseLeftButtonDown;
-                cubeNavViewport.MouseMove -= cubeNav.cubeNavViewport_MouseMove;
+                cubeNavViewport.MouseDown -= cubeNav.cubeNavViewport_ButtonDown;
+                //mainWindow.MouseMove -= cubeNav.cubeNavViewport_MouseMove;
             }
             else
             {
-                cubeNavViewport.MouseLeftButtonDown += cubeNav.cubeNavViewport_MouseLeftButtonDown;
-                cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
+                cubeNavViewport.MouseDown += cubeNav.cubeNavViewport_ButtonDown;
+                //cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
             }
 
         }
