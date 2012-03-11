@@ -433,19 +433,19 @@ namespace Clover
         /// foldup后对lookuptable进行更新和排序
         /// </summary>
         /// <param name="IsDefaultDir"></param>
-        /// <returns></returns>
+        /// <returns>请务必在foldup后调用，否则会更新失败return false</returns>
         public bool UpdateTableAfterFoldUp(bool IsDefaultDir)
         {
             // 找cutface
             List<Face> cutedFace = new List<Face>(); // 记录被cut的faces
             FaceGroup fixedFaceGroup = null; // 用于记录旋转前后位置不变的faces
             FaceGroup movedFaceGroup = null;// 用于记录旋转前后位置变化的faces
-            List<Face> listNewFacesList = new List<Face>(); // 用于记录cut后新生的新faces
+            List<Face> listNewFacesList = new List<Face>(); // 用于记录cut后group中的faces
 
             FaceGroup participatedGroup = null;// 记录参与折叠的group
-            
+
             // 检测操作了哪个group
-            foreach (FaceGroup fg in tables)
+            foreach ( FaceGroup fg in tables )
             {
                 foreach (Face f in fg.GetFaceList())
                 {
@@ -469,10 +469,10 @@ namespace Clover
                 }
             }
 
-            //  没有发现折叠的face
+            //  没有发现折叠的face,foldup 一定至少cut一个face
             if ( cutedFace.Count == 0)
             {
-                return true;
+                return false;
             }
 
             // 查找fixed face和moved face：
@@ -526,6 +526,7 @@ namespace Clover
                 listNewFacesList.Add( frightchild );
             }
 
+            // 把没有cut的faces加进来
             foreach (Face f in participatedGroup.GetFaceList() )
             {
                 if (f.LeftChild == null && f.RightChild == null)
@@ -534,11 +535,13 @@ namespace Clover
                 }
 
             }
-            // 只是旋转
+
+            // foldup操作肯定会有moved face
             if ( movedFaceGroup == null)
             {
                 return false;
             }
+
             // 发现不是foldup操作，直接返回，并且对group进行更新
             if (!CloverMath.IsTwoVectorTheSameDir(movedFaceGroup.Normal, fixedFaceGroup.Normal))
             {

@@ -554,7 +554,7 @@ namespace Clover
                 return false;
 
             //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetGroup()).ToList();
+            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetFaceList()).ToList();
             foreach (Face face in facesInDifferentGroup)
             { 
                 // 求线段和面的交点 
@@ -801,7 +801,7 @@ namespace Clover
 
             renderController.UpdateAll();
 
-            table.UpdateLookupTable();
+           // table.UpdateLookupTable();
         }
 
         /// <summary>
@@ -812,7 +812,7 @@ namespace Clover
         /// <param name="faceList">折叠所受影响的面</param>
         public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
         {
-            table.UpdateLookupTable();
+           // table.UpdateLookupTable();
             // testing
             if (faceLayer.Leaves.Count < 2)
                 return;
