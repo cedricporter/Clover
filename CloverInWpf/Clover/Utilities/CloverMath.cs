@@ -653,31 +653,14 @@ namespace Clover
             {
                 foreach (Edge e2 in f2.Edges)
                 {
-                    if ( IsTwoEdgeEqual( e1, e2 ) )
+                    if ( e1 == e2 )
                         return true;
                 }
             }
             return false;
         }
 
-        /// <summary>
-        /// 判断两条线段是否相等，即是否完全重合
-        /// </summary>
-        /// <param name="e1"></param>
-        /// <param name="e2"></param>
-        /// <returns></returns>
-        public static bool IsTwoEdgeEqual(Edge e1, Edge e2)
-        {
-            if ( CloverMath.IsTwoPointsEqual( e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D() ) &&
-                 CloverMath.IsTwoPointsEqual( e1.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D() ) ||
-                 CloverMath.IsTwoPointsEqual( e1.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) &&
-                 CloverMath.IsTwoPointsEqual( e1.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D() ) 
-                )
-            {
-                return true;
-            }
-            return false;
-        }
+
 
         /// <summary>
         /// 判断两个点是否是同一个位置
