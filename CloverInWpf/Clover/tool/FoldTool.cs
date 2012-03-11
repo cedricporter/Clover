@@ -81,20 +81,20 @@ namespace Clover.Tool
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
                 // 找到当前Face所在的组
-                currGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace);
-                // 找到所有拥有和selectedVertex重叠的Vertex的Face
-                foreach (Face f in currGroup.GetFaceList())
-                {
-                    foreach (Vertex v in f.Vertices)
-                    {
-                        if (pickedVertex == v)
-                        {
-                            canSelectedVertices.Add(v);
-                            canSelectedFaces.Add(f);
-                            break;
-                        }
-                    }
-                }
+                //currGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace);
+                //// 找到所有拥有和selectedVertex重叠的Vertex的Face
+                //foreach (Face f in currGroup.GetFaceList())
+                //{
+                //    foreach (Vertex v in f.Vertices)
+                //    {
+                //        if (pickedVertex == v)
+                //        {
+                //            canSelectedVertices.Add(v);
+                //            canSelectedFaces.Add(f);
+                //            break;
+                //        }
+                //    }
+                //}
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
