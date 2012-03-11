@@ -7,6 +7,15 @@
         Loaded="Window_Loaded" Closing="Window_Closing" SizeChanged="Window_SizeChanged"  
         MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
 
+    <Window.Resources>
+        <Storyboard x:Key="LeaveCube">
+            <DoubleAnimation To="0.5" Duration="0:0:0.1" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="EnterCube">
+            <DoubleAnimation To="1" Duration="0:0:0.1" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+    </Window.Resources>
+    
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
@@ -20,7 +29,7 @@
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
-
+            
             <!-- 正方体导航
 	                  4 ______7
 	                  /|      /
@@ -30,6 +39,143 @@
 	                1|/____2|/ 
 	        -->
             <Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,0,0"  HorizontalAlignment="Right" VerticalAlignment="Top" d:IsLocked="True" Panel.ZIndex="30" ClipToBounds="True">
+                <Viewport3D.Camera>
+                    <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
+                </Viewport3D.Camera>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <AmbientLight Color="White"/>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+
+                <Viewport2DVisual3D x:Name="CubeFront">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,-10,10 10,10,10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeFrontBrush}" MouseLeftButtonUp="Cube_Click_Front">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+
+                <Viewport2DVisual3D x:Name="CubeBack">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeBackBrush}" MouseLeftButtonUp="Cube_Click_Back">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+
+                <Viewport2DVisual3D x:Name="CubeUp">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="-10,10,-10 -10,10,10 10,10,10 10,10,-10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeUpBrush}" MouseLeftButtonUp="Cube_Click_Up">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+
+                <Viewport2DVisual3D x:Name="CubeDown">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="-10,-10,10 -10,-10,-10 10,-10,-10 10,-10,10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeDownBrush}" MouseLeftButtonUp="Cube_Click_Down">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+                
+                <Viewport2DVisual3D x:Name="CubeLeft">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="-10,10,-10 -10,-10,-10 -10,-10,10 -10,10,10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeLeftBrush}"  MouseLeftButtonUp="Cube_Click_Left">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+
+                <Viewport2DVisual3D x:Name="CubeRight">
+                    <Viewport2DVisual3D.Geometry>
+                        <MeshGeometry3D Positions="10,10,10 10,-10,10 10,-10,-10 10,10,-10"
+                                    TextureCoordinates="0,0  0,1  1,1  1,0" 
+                                    TriangleIndices="0 1 2  0 2 3"/>
+                    </Viewport2DVisual3D.Geometry>
+                    <Viewport2DVisual3D.Material>
+                        <DiffuseMaterial Viewport2DVisual3D.IsVisualHostMaterial="True" Brush="White"/>
+                    </Viewport2DVisual3D.Material>
+                    <Border Height="100" Width="100" Opacity="0.5" Background="{StaticResource CubeRightBrush}" MouseLeftButtonUp="Cube_Click_Right">
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard Storyboard="{StaticResource EnterCube}"/>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard Storyboard="{StaticResource LeaveCube}"/>
+                            </EventTrigger>
+                        </Border.Triggers>
+                    </Border>
+                </Viewport2DVisual3D>
+                
+            </Viewport3D>
+            <!--<Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,0,0"  HorizontalAlignment="Right" VerticalAlignment="Top" d:IsLocked="True" Panel.ZIndex="30" ClipToBounds="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
                 </Viewport3D.Camera>
@@ -59,7 +205,7 @@
                         <AmbientLight Color="White"/>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-            </Viewport3D>
+            </Viewport3D>-->
             <!-- 背景图片 -->
             <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->

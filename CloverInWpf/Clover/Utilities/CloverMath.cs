@@ -294,6 +294,25 @@ namespace Clover
             Vector3D w = e1.Vertex1.GetPoint3D() - e2.Vertex1.GetPoint3D();
             double D = PerpProduct(u, v);
 
+            // 假如e1是个点
+            if ( Math.Abs(u.X) <= 0.00001 && Math.Abs(u.Y) <= 0.00001 && Math.Abs(u.Z) <= 0.00001)
+            {
+                if (IsPointInTwoPoints(e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                {
+                    intersection = e1.Vertex1.GetPoint3D();
+                    return 1;
+                }
+            }
+
+            // 假如e2是个点
+            if (Math.Abs(v.X) <= 0.00001 && Math.Abs(v.Y) <= 0.00001 && Math.Abs(v.Z) <= 0.00001)
+            {
+                if (IsPointInTwoPoints(e2.Vertex1.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()))
+                {
+                    intersection = e2.Vertex1.GetPoint3D();
+                    return 1;
+                }
+            }
             //判断两线段是否平行
             if (Math.Abs(D) < Double.MinValue)
             {
@@ -562,8 +581,8 @@ namespace Clover
                 double d1 = A * e.Vertex1.X + B * e.Vertex1.Y + C * e.Vertex1.Z + D / Den;
                 double d2 = A * e.Vertex2.X + B * e.Vertex2.Y + C * e.Vertex2.Z + D / Den;
 
-                Point3D proP1 = e.Vertex1.GetPoint3D() + d1 * normal;
-                Point3D proP2 = e.Vertex2.GetPoint3D() + d2 * normal;
+                Point3D proP1 = e.Vertex1.GetPoint3D() - d1 * normal;
+                Point3D proP2 = e.Vertex2.GetPoint3D() - d2 * normal;
 
                 Edge proE = new Edge(new Vertex(proP1), new Vertex(proP2));
                 // 求空间两直线之间的交点
