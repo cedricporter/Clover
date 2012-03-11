@@ -549,6 +549,12 @@ namespace Clover
                 return false;
             }
 
+            // cutface 后没有折
+            if ( CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal, true ) )
+            {
+                return false;
+            }
+
             // 发现不是foldup操作，直接返回，并且对group进行更新
             if ( !CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal ) )
             {
