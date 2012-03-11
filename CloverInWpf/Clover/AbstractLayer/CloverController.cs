@@ -482,6 +482,7 @@ namespace Clover
         List<Face> movingFaces = new List<Face>();
         Edge lastFoldingLine = null;
         List<Edge> lastCuttedEdges = new List<Edge>();
+        List<Face> originFaces = new List<Face>();
 
         // set/get
         public bool FirstCut
@@ -559,29 +560,29 @@ namespace Clover
                     currentLayer = face.Layer;
             }
 
-            //List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
-            //List<Face> upperFaces = new List<Face>();
-            //foreach (Face face in group)
-            //{
-            //    if (face.Layer > currentLayer)
-            //        upperFaces.Add(face);
-            //}
+            List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
+            List<Face> upperFaces = new List<Face>();
+            foreach (Face face in group)
+            {
+                if (face.Layer > currentLayer)
+                    upperFaces.Add(face);
+            }
            
 
             if (foldingLine == null)
                 return false;
 
-            //// 判断是否有切割新的面
-            //foreach (Face face in upperFaces)
-            //{ 
-            //    // 求线段和面的交点 
-            //    Point3D crossPoint = new Point3D();
-            //    foreach (Edge edge in face.Edges)
-            //    {
-            //        if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
-            //            return true;
-            //    }
-            //}
+            // 判断是否有切割新的面
+            foreach (Face face in upperFaces)
+            {
+                // 求线段和面的交点 
+                Point3D crossPoint = new Point3D();
+                foreach (Edge edge in face.Edges)
+                {
+                    if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
+                        return true;
+                }
+            }
 
             return false;  
         }
@@ -714,10 +715,18 @@ namespace Clover
             // 本次的折线
             Edge foldingLine = null;
 
+            // 如果是第一次折叠，记录当前的面表
+            foreach (Face face in foldingFaces)
+            {
+                originFaces.Add(face.Clone() as Face);
+            }
+
+            int index = 0;
             foreach (Face pickedFace in foldingFaces)
             {
+                Face originFace = originFaces[index];
                 // 判定FoldingUp的成立条件，若成立则进行FoldingUp，若不成立返回null
-                if (!DetermineFoldingUpConditionEstablished(pickedFace, originVertex, projectionPoint, ref foldingLine))
+                if (!DetermineFoldingUpConditionEstablished(originFace, originVertex, projectionPoint, ref foldingLine))
                     return null;
                 if (foldingLine == null)
                     return null;
@@ -742,6 +751,7 @@ namespace Clover
                         //撤消之前的折叠
                         shadowSystem.Undo();
                         shadowSystem.Undo();
+                        shadowSystem.CheckUndoTree();
 
                         if (!foldingSystem.FoldingUpToPoint(pickedFace, originVertex, projectionPoint, foldingLine))
                             //折叠没有成功，直接返回
@@ -756,6 +766,7 @@ namespace Clover
                         {
                             shadowSystem.Undo();
                             shadowSystem.Undo();
+                            shadowSystem.CheckUndoTree();
                             if (!foldingSystem.FoldingUpToPoint(pickedFace, originVertex, projectionPoint, foldingLine))
                                 //折叠没有成功，直接返回
                                 return null;
@@ -770,6 +781,7 @@ namespace Clover
                         }
                     }
                 }
+                index++;
             }
 
 

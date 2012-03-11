@@ -540,7 +540,15 @@ namespace Clover
             Point3D crossPoint = new Point3D();
             Edge segmentFromOriginToPro = new Edge(pickedVertex, new Vertex(projectionPoint));
 
-            if (1 != CloverMath.GetIntersectionOfTwoSegments(currentFoldingLine, segmentFromOriginToPro, ref crossPoint))
+            // 此处应该是求折线所在直线与线段的交点
+            // 将当前折线延长
+            Vertex longVertex1 = new Vertex(currentFoldingLine.Vertex1.GetPoint3D());
+            Vertex longVertex2 = new Vertex(currentFoldingLine.Vertex2.GetPoint3D());
+            Vector3D foldingLineVector = longVertex1.GetPoint3D() - longVertex2.GetPoint3D();
+            longVertex1.SetPoint3D(longVertex1.GetPoint3D() + foldingLineVector * 100);
+            longVertex2.SetPoint3D(longVertex2.GetPoint3D() - foldingLineVector * 100);
+            Edge longFoldingLine = new Edge(longVertex1, longVertex2);
+            if (1 != CloverMath.GetIntersectionOfTwoSegments(longFoldingLine, segmentFromOriginToPro, ref crossPoint))
             {
                 // System.Windows.MessageBox.Show("Fuck 木有交点");
                 return false;
