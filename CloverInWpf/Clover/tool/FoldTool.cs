@@ -356,6 +356,8 @@ namespace Clover.Tool
             LockViewport(false);
 
             mode = FoldingMode.DoingNothing;
+
+            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
         /// <summary>
