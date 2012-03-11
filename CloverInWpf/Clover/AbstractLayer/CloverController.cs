@@ -559,29 +559,29 @@ namespace Clover
                     currentLayer = face.Layer;
             }
 
-            //List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
-            //List<Face> upperFaces = new List<Face>();
-            //foreach (Face face in group)
-            //{
-            //    if (face.Layer > currentLayer)
-            //        upperFaces.Add(face);
-            //}
+            List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
+            List<Face> upperFaces = new List<Face>();
+            foreach (Face face in group)
+            {
+                if (face.Layer > currentLayer)
+                    upperFaces.Add(face);
+            }
            
 
             if (foldingLine == null)
                 return false;
 
-            //// 判断是否有切割新的面
-            //foreach (Face face in upperFaces)
-            //{ 
-            //    // 求线段和面的交点 
-            //    Point3D crossPoint = new Point3D();
-            //    foreach (Edge edge in face.Edges)
-            //    {
-            //        if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
-            //            return true;
-            //    }
-            //}
+            // 判断是否有切割新的面
+            foreach (Face face in upperFaces)
+            {
+                // 求线段和面的交点 
+                Point3D crossPoint = new Point3D();
+                foreach (Edge edge in face.Edges)
+                {
+                    if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
+                        return true;
+                }
+            }
 
             return false;  
         }
