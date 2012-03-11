@@ -169,6 +169,10 @@ namespace Clover
         /// <returns>被边引用的割线</returns>
         public Edge CutFace(Face face, Edge edge)
         {
+            Debug.Assert(edge != null);
+            if (edge == null)
+                System.Windows.MessageBox.Show("fuck");
+
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
             VertexLayer vertexLayer = controller.VertexLayer;
@@ -223,13 +227,16 @@ namespace Clover
                 if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D()))
                 {
                     currentEdgeList = rangeA;
+                    newVertex1 = vertexList[i];
                 }
                 else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D()))
                 {
                     currentEdgeList = rangeB;
+                    newVertex2 = vertexList[i];
                 }
                 // 割线过边
-                else if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
+                else if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001)
+                    && !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i + 1].GetPoint3D()))
                 {
                     currentEdgeList = rangeA;
 
@@ -291,7 +298,8 @@ namespace Clover
                     CalculateTexcoord(newVertex1, beCutEdge1);
                     continue;
                 }
-                else if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
+                else if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001)
+                    && !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i + 1].GetPoint3D()))
                 {
                     currentEdgeList = rangeB;
 
@@ -407,7 +415,7 @@ namespace Clover
 
             newVertex1.Update(newVertex1, null);
             newVertex2.Update(newVertex2, null);
-            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
 
             // 
             controller.FaceLayer.UpdateLeaves();

@@ -299,17 +299,18 @@ namespace Clover
             //LookupTable lt = CloverController.GetInstance().Table;
             //if (lt == null || lt.Tables.Count == 0)
             //    return;
-            //foreach (FaceGroup g in lt.Tables)
-            //{
-            //    float baseval = 0;
-            //    float step = 0.01f;
-            //    foreach (Face f in g.GetGroup())
-            //    {
-            //        Vector3D offset = g.Normal * baseval;
-            //        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-            //        baseval += step;
-            //    }
-            //}
+            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
+            {
+                float baseval = 0;
+                float step = 0.01f;
+                foreach (Face f in g.GetFaceList())
+                {
+                    Vector3D offset = g.Normal * baseval;
+                    faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                    baseval += step;
+                }
+            }
         }
 
         #endregion
