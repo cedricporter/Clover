@@ -162,7 +162,7 @@ namespace Clover
         /// 否则强制新建一个group
         /// </summary>
         /// <param name="f"></param>
-        public void AddFace( Face f )
+        void AddFace( Face f )
         {
             foreach ( FaceGroup fg in faceGroupList )
             {
@@ -187,7 +187,7 @@ namespace Clover
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public bool RemoveFace( Face f )
+        bool RemoveFace( Face f )
         {
             foreach ( FaceGroup group in faceGroupList )
             {

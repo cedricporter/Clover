@@ -311,9 +311,8 @@ namespace Clover
        
         public void CutFaces(List<Face> faces,  Edge edge)
         {
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
             foldingSystem.CutFaces(faces, edge);
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
         /// <summary>
@@ -869,9 +868,8 @@ namespace Clover
 
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
             foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
         /// <summary>

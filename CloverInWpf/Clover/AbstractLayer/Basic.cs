@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Clover
 {
@@ -383,7 +384,7 @@ namespace Clover
         }
         public Vector3D Normal
         {
-            get { UpdateNormal(); return normal; }
+            get { UpdateNormal(); Debug.WriteLine(normal.ToString()); return normal; }
             set { normal = value; }
         }
         public Clover.Face LeftChild
