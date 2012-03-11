@@ -39,6 +39,11 @@ namespace Clover
         public Update Update;
 
         static int vertex_count = 0;
+        public static int Vertex_count
+        {
+            get { return vertex_count; }
+            set { vertex_count = value; }
+        }
         int id;
         #endregion
 
@@ -46,6 +51,7 @@ namespace Clover
         public int ID
         {
             get { return id; }
+            set { id = value; }
         }
         public Point3D GetPoint3D()
         {

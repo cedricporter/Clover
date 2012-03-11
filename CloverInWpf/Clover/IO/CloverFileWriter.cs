@@ -12,6 +12,24 @@ namespace Clover.IO
     {
         BinaryWriter writer;
 
+
+        /// <summary>
+        /// 重新分配顶点的id号
+        /// </summary>
+        /// <param name="vertexLayer"></param>
+        void ReAllocateVertexID(VertexLayer vertexLayer)
+        {
+            int vertexID = 0;
+            foreach (List<Vertex> vertexList in vertexLayer.VertexCellTable)
+            {
+                foreach (Vertex v in vertexList)
+                {
+                    v.ID = vertexID++;
+                }
+            }
+            Vertex.Vertex_count = vertexID;
+        }
+
         public int SaveFile(string filename, FaceLayer faceLayer, EdgeLayer edgeLayer, VertexLayer vertexLayer)
         {
             FileStream fs = new FileStream(filename, FileMode.Create);
@@ -20,11 +38,15 @@ namespace Clover.IO
             // 魔数
             writer.Write(201203100);
 
+            ReAllocateVertexID(vertexLayer);
+
             SaveVertexLayer(fs, vertexLayer);
 
             SaveEdgeLayer(fs, edgeLayer);
 
             SaveFaceLayer(fs, faceLayer);
+
+
 
             fs.Close();
 
