@@ -223,10 +223,12 @@ namespace Clover
                 if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D()))
                 {
                     currentEdgeList = rangeA;
+                    newVertex1 = vertexList[i];
                 }
                 else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D()))
                 {
                     currentEdgeList = rangeB;
+                    newVertex2 = vertexList[i];
                 }
                 // 割线过边
                 else if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001))
