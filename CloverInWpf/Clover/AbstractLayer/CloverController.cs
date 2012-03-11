@@ -516,7 +516,8 @@ namespace Clover
             //System.Windows.MessageBox.Show("杨旭瑜改了group没法编译，只能把下面的代码注释了");
 
             //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(faceGroupLookupTable.GetGroup(pickedFace).GetFaceList()).ToList();
+            //List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(faceGroupLookupTable.GetGroup(pickedFace).GetFaceList()).ToList();
+            List<Face> facesInDifferentGroup = new List<Face>();
             foreach (Face face in facesInDifferentGroup)
             {
                 // 求线段和面的交点 
@@ -558,29 +559,29 @@ namespace Clover
                     currentLayer = face.Layer;
             }
 
-            List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
-            List<Face> upperFaces = new List<Face>();
-            foreach (Face face in group)
-            {
-                if (face.Layer > currentLayer)
-                    upperFaces.Add(face);
-            }
+            //List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
+            //List<Face> upperFaces = new List<Face>();
+            //foreach (Face face in group)
+            //{
+            //    if (face.Layer > currentLayer)
+            //        upperFaces.Add(face);
+            //}
            
 
             if (foldingLine == null)
                 return false;
 
-            // 判断是否有切割新的面
-            foreach (Face face in upperFaces)
-            { 
-                // 求线段和面的交点 
-                Point3D crossPoint = new Point3D();
-                foreach (Edge edge in face.Edges)
-                {
-                    if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
-                        return true;
-                }
-            }
+            //// 判断是否有切割新的面
+            //foreach (Face face in upperFaces)
+            //{ 
+            //    // 求线段和面的交点 
+            //    Point3D crossPoint = new Point3D();
+            //    foreach (Edge edge in face.Edges)
+            //    {
+            //        if (1 == CloverMath.GetIntersectionOfTwoSegments(edge, foldingLine, ref crossPoint))
+            //            return true;
+            //    }
+            //}
 
             return false;  
         }
@@ -633,12 +634,9 @@ namespace Clover
             Vertex currentVertex = vertexLayer.GetVertex(originVertex.Index);
             Vector3D vectorFromLastFoldingLineToOrginVertex = new Vector3D();
             Vector3D vectorFromCurrentFoldingLineToProjVertex = new Vector3D();
-            Vector3D normal = new Vector3D();
 
             foreach (Face face in foldingSystem.GetLastTimeMovedFace())
             {
-                normal = new Vector3D(face.Normal.X, face.Normal.Y, face.Normal.Z); 
-
                 // 移动折线到新的位置
                 foreach (Vertex v in face.Vertices)
                 {
@@ -677,16 +675,15 @@ namespace Clover
                 vectorFromCurrentFoldingLineToProjVertex = projectionPoint - foldingLine.Vertex1.GetPoint3D();
 
                 // 求得旋转量,并创建旋转矩阵
+                Vector3D axis = Vector3D.CrossProduct(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOrginVertex);
+                axis.Normalize();
+                axis.Negate();
                 double angle = Vector3D.AngleBetween(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOrginVertex);
-                AxisAngleRotation3D asixRotation = new AxisAngleRotation3D(normal, angle);
+                AxisAngleRotation3D asixRotation = new AxisAngleRotation3D(axis, angle);
                 RotateTransform3D rotateTransform = new RotateTransform3D(asixRotation);
                 rotateTransform.CenterX = projectionPoint.X;
                 rotateTransform.CenterY = projectionPoint.Y;
                 rotateTransform.CenterZ = projectionPoint.Z;
-
-                // debug
-                Debug.WriteLine(normal.ToString());
-
 
                 // 创建平移矩阵
                 Vector3D vectorFromProjToOrigin = projectionPoint - currentVertex.GetPoint3D();
