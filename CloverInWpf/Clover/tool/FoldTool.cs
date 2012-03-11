@@ -285,12 +285,12 @@ namespace Clover.Tool
             Viewport3D cubeNavViewport = cubeNav.CubeNavViewport;
             if (islock)
             {
-                cubeNavViewport.MouseDown -= cubeNav.cubeNavViewport_ButtonDown;
+                cubeNavViewport.PreviewMouseDown -= cubeNav.cubeNavViewport_ButtonDown;
                 //mainWindow.MouseMove -= cubeNav.cubeNavViewport_MouseMove;
             }
             else
             {
-                cubeNavViewport.MouseDown += cubeNav.cubeNavViewport_ButtonDown;
+                cubeNavViewport.PreviewMouseDown += cubeNav.cubeNavViewport_ButtonDown;
                 //cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
             }
 

@@ -544,5 +544,41 @@ RotateFaces(faces, edge, 90)
             //e.Handled = true;
         }
 
+        #region Cube导航相关接口
+
+        private void Cube_Click_Front(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("ft");
+        }
+
+        private void Cube_Click_Back(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("bk");
+        }
+
+        private void Cube_Click_Up(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("up");
+        }
+
+        private void Cube_Click_Down(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("dn");
+        }
+
+        private void Cube_Click_Left(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("lt");
+        }
+
+        private void Cube_Click_Right(object sender, MouseButtonEventArgs e)
+        {
+            cubeNav.RotateTo("rt");
+        }
+
+        #endregion
+
+        
+
     }
 }
