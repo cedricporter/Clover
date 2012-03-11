@@ -308,9 +308,17 @@ namespace Clover
                 float step = 0.01f;
                 foreach (Face f in g.GetFaceList())
                 {
-                    Vector3D offset = g.Normal * baseval;
-                    faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-                    baseval += step;
+                    if (faceMeshMap.ContainsKey(f))
+                    {
+                        Vector3D offset = g.Normal * baseval;
+
+                        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                        baseval += step;
+                    }
+                    else
+                    {
+                        int a =1;
+                    }
                 }
             }
         }
