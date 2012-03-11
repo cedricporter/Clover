@@ -799,8 +799,9 @@ namespace Clover
 
             
             // 更新重绘
-            foreach (Face f in faceLayer.Leaves)
-                renderController.Update(f);
+            //foreach (Face f in faceLayer.Leaves)
+            //    renderController.Update(f);
+            renderController.UpdateAll();
 
             return foldingLine;
         }
