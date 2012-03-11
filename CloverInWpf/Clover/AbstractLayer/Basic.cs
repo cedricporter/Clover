@@ -479,8 +479,6 @@ namespace Clover
             }
 
             
-
-            
         }
 
         /// <summary>
@@ -497,7 +495,7 @@ namespace Clover
             p[2] = vertices[2];
             // 取任意位于面上的向量
 
-            Vector3D v1 = p[2].GetPoint3D() - p[0].GetPoint3D();
+            Vector3D v1 = p[ 2 ].GetPoint3D() - p[ 0 ].GetPoint3D();
             Vector3D v2 = p[ 1 ].GetPoint3D() - p[ 0 ].GetPoint3D();
 
             normal = Vector3D.CrossProduct( v1, v2 );
