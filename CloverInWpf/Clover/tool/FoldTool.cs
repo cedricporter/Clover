@@ -100,6 +100,9 @@ namespace Clover.Tool
                 // 锁定鼠标OnPress和OnMove
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
+                
+                // 设置Clover为第一次折叠
+                CloverController.GetInstance().FirstCut = true;
 
                 //if (Mouse.LeftButton == MouseButtonState.Pressed)
                 //{
@@ -180,9 +183,9 @@ namespace Clover.Tool
 
 
                     //// 更新折线显示
-                    //UpdateFoldLine(edge);
+                    UpdateFoldLine(edge);
                     //// 更新提示信息
-                    //UpdateFoldLineInfo(edge);
+                    UpdateFoldLineInfo(edge);
                 }
                 //else if (mode == FoldingMode.Blending)
                 //{

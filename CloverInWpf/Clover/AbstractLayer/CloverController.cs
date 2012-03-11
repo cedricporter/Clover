@@ -599,9 +599,15 @@ namespace Clover
         /// <param name="foldingLine"></param>
         public void MoveToNewPosition(Vertex originVertex, Point3D projectionPoint, Face pickedFace, Edge foldingLine)
         {
+            // 和折线共边的那个点
+            Vertex currentVertex = vertexLayer.GetVertex(originVertex.Index);
+            Vector3D vectorFromLastFoldingLineToOrginVertex = new Vector3D();
+            Vector3D vectorFromCurrentFoldingLineToProjVertex = new Vector3D();
+            Vector3D normal = new Vector3D();
 
             foreach (Face face in foldingSystem.GetLastTimeMovedFace())
             {
+                normal = face.Normal; 
                 // 移动折线到新的位置
                 foreach (Vertex v in face.Vertices)
                 {
@@ -632,9 +638,35 @@ namespace Clover
                         }
                     }
                 }
-                lastFoldingLine = foldingLine;
-                Vertex currentVertex = vertexLayer.GetVertex(originVertex.Index);
-                currentVertex.SetPoint3D(projectionPoint);
+
+                //renderController.Update(face);
+                // 求旋转和平移
+                // 取得移动点和之前折线点的向量
+                vectorFromLastFoldingLineToOrginVertex = currentVertex.GetPoint3D() - lastFoldingLine.Vertex1.GetPoint3D();
+                vectorFromCurrentFoldingLineToProjVertex = projectionPoint - foldingLine.Vertex1.GetPoint3D();
+
+                // 求得旋转量,并创建旋转矩阵
+                double angle = Vector3D.AngleBetween(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOrginVertex);
+                AxisAngleRotation3D asixRotation = new AxisAngleRotation3D(normal, angle);
+                RotateTransform3D rotateTransform = new RotateTransform3D(asixRotation);
+                rotateTransform.CenterX = projectionPoint.X;
+                rotateTransform.CenterY = projectionPoint.Y;
+                rotateTransform.CenterZ = projectionPoint.Z;
+
+                // 创建平移矩阵
+                Vector3D vectorFromProjToOrigin = projectionPoint - currentVertex.GetPoint3D();
+                TranslateTransform3D translateTransform = new TranslateTransform3D(vectorFromProjToOrigin);
+
+                // 对于选定面除了折线点，其他点做旋转和平移操作
+                foreach (Vertex v in face.Vertices)
+                {
+                    if (!CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), foldingLine.Vertex1.GetPoint3D()) &&
+                        !CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), foldingLine.Vertex2.GetPoint3D()))
+                    {
+                        v.SetPoint3D(translateTransform.Transform(v.GetPoint3D()));
+                        v.SetPoint3D(rotateTransform.Transform(v.GetPoint3D()));
+                    }
+                }
             }
         }
 
