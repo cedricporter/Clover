@@ -494,6 +494,7 @@ namespace Clover
             {
                 return true;
             }
+
             if (!rigorous)
             {
                 Vector3D t = v1 + v2;

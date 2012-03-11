@@ -296,6 +296,7 @@ namespace Clover
 
                     // 计算newVertex1和newVertex2的纹理坐标
                     CalculateTexcoord(newVertex1, beCutEdge1);
+                   
                     continue;
                 }
                 else if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001)
@@ -419,7 +420,7 @@ namespace Clover
 
             // 
             controller.FaceLayer.UpdateLeaves();
-
+           
             //controller.Table.UpdateTableAfterFoldUp(true);
 
             return newEdge;
@@ -462,6 +463,7 @@ namespace Clover
                 Debug.Assert(edge != null);
 
                 newEdges.Add(CutFace(face, edge));
+                
             }
 
             node.NewEdges = newEdges;
@@ -743,8 +745,11 @@ namespace Clover
                         movedVertexDict[e.Vertex2.Index] = true;
 
                         movedVertexList.Add(e.Vertex2);
+                        
                     }
+                   
                 }
+               
             }
 
             foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
