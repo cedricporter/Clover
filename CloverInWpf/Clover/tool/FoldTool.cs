@@ -81,7 +81,7 @@ namespace Clover.Tool
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
                 // 找到当前Face所在的组
-                currGroup = CloverController.GetInstance().Table.GetGroup(nearestFace);
+                currGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace);
                 // 找到所有拥有和selectedVertex重叠的Vertex的Face
                 foreach (Face f in currGroup.GetFaceList())
                 {

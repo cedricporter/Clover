@@ -25,17 +25,17 @@ namespace Clover
         RenderController renderController;///渲染层
         ShadowSystem shadowSystem = new ShadowSystem();/// 影子
         FoldingSystem foldingSystem = new FoldingSystem();///折叠系统
-        FaceGroupLookupTable table;
+        FaceGroupLookupTable faceGroupLookupTable;
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         #endregion
 
         #region get/set
 
-        public Clover.FaceGroupLookupTable Table
+        public Clover.FaceGroupLookupTable FaceGroupLookupTable
         {
-            get { return table; }
-            set { table = value; }
+            get { return faceGroupLookupTable; }
+            set { faceGroupLookupTable = value; }
         }
         public Clover.FoldingSystem FoldingSystem
         {
@@ -247,7 +247,7 @@ namespace Clover
             face.UpdateVertices();
             faceLayer.UpdateLeaves();
 
-            table = new FaceGroupLookupTable(face);
+            faceGroupLookupTable = new FaceGroupLookupTable(face);
 
             // 此处也应该拍一张快照
             SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
@@ -516,7 +516,7 @@ namespace Clover
             //System.Windows.MessageBox.Show("杨旭瑜改了group没法编译，只能把下面的代码注释了");
 
             //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(table.GetGroup(pickedFace).GetFaceList()).ToList();
+            List<Face> facesInDifferentGroup = faceLayer.Leaves.Except(faceGroupLookupTable.GetGroup(pickedFace).GetFaceList()).ToList();
             foreach (Face face in facesInDifferentGroup)
             {
                 // 求线段和面的交点 
@@ -558,7 +558,7 @@ namespace Clover
                     currentLayer = face.Layer;
             }
 
-            List<Face> group = table.GetGroup(pickedFace).GetFaceList();
+            List<Face> group = faceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
             List<Face> upperFaces = new List<Face>();
             foreach (Face face in group)
             {

@@ -604,7 +604,7 @@ namespace Clover
         public List<Face> AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
         {
             FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
-            FaceGroupLookupTable table = CloverController.GetInstance().Table;
+            FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
             //table.UpdateLookupTable();
 
             List<Face> faceWithFoldingLine = new List<Face>();
@@ -662,7 +662,7 @@ namespace Clover
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
             RenderController render = CloverController.GetInstance().RenderController;
-            FaceGroupLookupTable table = CloverController.GetInstance().Table;
+            FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
 
             List<Vertex> movedVertexList = new List<Vertex>();
             shadowSystem.CheckUndoTree();

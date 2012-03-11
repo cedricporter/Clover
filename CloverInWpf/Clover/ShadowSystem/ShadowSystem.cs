@@ -203,7 +203,7 @@ namespace Clover
 
             originEdgeListCount = controller.EdgeLayer.Count;
             originVertexListCount = controller.VertexLayer.Vertices.Count;
-            originGroup = controller.Table.Clone() as FaceGroupLookupTable;
+            originGroup = controller.FaceGroupLookupTable.Clone() as FaceGroupLookupTable;
         }
 
         /// <summary>
@@ -277,7 +277,7 @@ namespace Clover
             }
 
             // 还原组
-            controller.Table = originGroup;
+            controller.FaceGroupLookupTable = originGroup;
             //renderController.UpdateAll();
 
             controller.FaceLayer.UpdateLeaves();
