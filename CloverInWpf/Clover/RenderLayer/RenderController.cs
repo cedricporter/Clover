@@ -299,7 +299,9 @@ namespace Clover
             //LookupTable lt = CloverController.GetInstance().Table;
             //if (lt == null || lt.Tables.Count == 0)
             //    return;
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
+            faceGroupLookupTable.UpdateTableAfterFoldUp();
+
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
                 float baseval = 0;
