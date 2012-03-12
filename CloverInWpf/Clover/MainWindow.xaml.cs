@@ -333,7 +333,7 @@ namespace Clover
             switch (e.Key)
             {
                 case Key.F2:
-                    
+
                     cloverController.ShadowSystem.Undo();
                     break;
                 case Key.F1:
@@ -370,10 +370,11 @@ RotateFaces(faces, edge, 90)
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     var a = cloverController.FaceLayer;
-                   // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+                    // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
                     cloverController.RenderController.UpdateAll();
+                    cloverController.RenderController.AntiOverlap();
                     break;
-                    
+
             }
 
             //cloverController.RenderController.UpdatePosition();
@@ -562,6 +563,7 @@ RotateFaces(faces, edge, 90)
 
         #endregion
 
+        #region 脚本引擎
         class CloverInteruptThreadPackage
         {
             CloverInterpreter interpreter;
@@ -574,7 +576,7 @@ RotateFaces(faces, edge, 90)
                 this.interpreter = interpreter;
                 this.command = command;
             }
-            
+
             public void Run()
             {
                 string output = interpreter.ExecuteOneLine(command);
@@ -606,6 +608,7 @@ RotateFaces(faces, edge, 90)
                 histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
             }
         }
+        #endregion
 
         #region Cube导航相关接口
 
