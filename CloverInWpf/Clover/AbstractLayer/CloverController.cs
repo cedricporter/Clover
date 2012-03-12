@@ -643,6 +643,23 @@ namespace Clover
                 {
                     if (CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D()))
                     {
+                        foreach (Edge e in face.Edges)
+                        {
+                            // 计算原来选中点和折线连线的那条边的向量
+                            if (CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), v.GetPoint3D()) &&
+                                 CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
+                            {
+                                vectorFromLastFoldingLineToOrginVertex = e.Vertex2.GetPoint3D() - e.Vertex1.GetPoint3D();
+                                break;
+                            }
+
+                            if (CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), v.GetPoint3D()) &&
+                                CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
+                            {
+                                vectorFromLastFoldingLineToOrginVertex = e.Vertex1.GetPoint3D() - e.Vertex2.GetPoint3D();
+                                break;
+                            }
+                        }
                         v.SetPoint3D(foldingLine.Vertex1.GetPoint3D());
                         // 重新计算纹理坐标
                         foreach (Edge e in pickedFace.Edges)
@@ -656,6 +673,23 @@ namespace Clover
                     }
                     if (CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D()))
                     {
+                        foreach (Edge e in face.Edges)
+                        {
+                            // 计算原来选中点和折线连线的那条边的向量
+                            if (CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), v.GetPoint3D()) &&
+                                 CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
+                            {
+                                vectorFromLastFoldingLineToOrginVertex = e.Vertex2.GetPoint3D() - e.Vertex1.GetPoint3D();
+                                break;
+                            }
+
+                            if (CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), v.GetPoint3D()) &&
+                                CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
+                            {
+                                vectorFromLastFoldingLineToOrginVertex = e.Vertex1.GetPoint3D() - e.Vertex2.GetPoint3D();
+                                break;
+                            }
+                        }
                         v.SetPoint3D(foldingLine.Vertex2.GetPoint3D());
                         // 重新计算纹理坐标
                         foreach (Edge e in pickedFace.Edges)
@@ -667,13 +701,30 @@ namespace Clover
                             }
                         }
                     }
+
+                }
+                foreach (Edge e in face.Edges)
+                {
+                    if ((CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), foldingLine.Vertex1.GetPoint3D()) ||
+                        CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D())) &&
+                        CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
+                    {
+                        vectorFromCurrentFoldingLineToProjVertex = projectionPoint - e.Vertex1.GetPoint3D();
+                        break;
+                    }
+
+                    if ((CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), foldingLine.Vertex1.GetPoint3D()) ||
+                        CloverMath.AreTwoPointsSameWithDeviation(e.Vertex2.GetPoint3D(), foldingLine.Vertex2.GetPoint3D())) &&
+                        CloverMath.AreTwoPointsSameWithDeviation(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
+                    {
+                        vectorFromCurrentFoldingLineToProjVertex = projectionPoint - e.Vertex2.GetPoint3D();
+                        break;
+                    }
                 }
 
                 //renderController.Update(face);
                 // 求旋转和平移
-                // 取得移动点和之前折线点的向量
-                vectorFromLastFoldingLineToOrginVertex = currentVertex.GetPoint3D() - lastFoldingLine.Vertex1.GetPoint3D();
-                vectorFromCurrentFoldingLineToProjVertex = projectionPoint - foldingLine.Vertex1.GetPoint3D();
+                // 取得移动点和之前折线点的向量,要求折线点一定是和移动点共边的那个点
 
                 // 求得旋转量,并创建旋转矩阵
                 Vector3D axis = Vector3D.CrossProduct(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOrginVertex);
