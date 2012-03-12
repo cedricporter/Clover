@@ -127,7 +127,8 @@ namespace Clover
         #region 动画
         delegate void RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
         delegate void CutFacesHandle(List<Face> list, Edge foldLine);
-
+        System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
+        long animationDuration = 1000;
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
         {
             List<Face> faceList = new List<Face>();
@@ -142,13 +143,31 @@ namespace Clover
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beRotatedFaceList);
 
-            double interval = angle / 1000.0;
-
-            for (int i = 0; i < 1000; i++)
+            animaWatch.Restart();
+            long lastTime = 0;
+            long thisTime = 0;
+            double interval = angle / animationDuration; //0.5秒
+            while (thisTime <= animationDuration)
             {
+                thisTime = animaWatch.ElapsedMilliseconds;
+                double step;
+                if (thisTime <= animationDuration)
+                    step = interval * (thisTime - lastTime);
+                else
+                    step = interval * (animationDuration - lastTime);
                 mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
-                    faceList, foldingLine, interval);
+                     faceList, foldingLine, step);
+                lastTime = thisTime;
             }
+            animaWatch.Stop();
+
+            //double interval = angle / 1000; //0.5秒
+
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
+            //        faceList, foldingLine, interval);
+            //}
         }
         #endregion
 
