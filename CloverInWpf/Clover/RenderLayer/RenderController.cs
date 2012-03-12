@@ -300,7 +300,7 @@ namespace Clover
             //if (lt == null || lt.Tables.Count == 0)
             //    return;
             FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
-            faceGroupLookupTable.UpdateTableAfterFoldUp();
+            //faceGroupLookupTable.UpdateTableAfterFoldUp();
 
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
@@ -423,7 +423,9 @@ namespace Clover
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
             CubeNavigator cubeNav = CubeNavigator.GetInstance();
-            cubeNav.CubeNavModel.Transform = (RotateTransform3D)transformGroup.Children[0];
+            //cubeNav.CubeNavModel.Transform = (RotateTransform3D)transformGroup.Children[0];
+            cubeNav.CubeFront.Transform = cubeNav.CubeBack.Transform = cubeNav.CubeUp.Transform =
+                     cubeNav.CubeDown.Transform = cubeNav.CubeLeft.Transform = cubeNav.CubeRight.Transform = (RotateTransform3D)transformGroup.Children[0];
             cubeNav.LastQuat = srcQuaternion;
         }
 

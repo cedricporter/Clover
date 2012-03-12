@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
 using System.Windows;
+using System.Diagnostics;
 
 namespace Clover
 {
@@ -39,6 +40,11 @@ namespace Clover
         public Update Update;
 
         static int vertex_count = 0;
+        public static int Vertex_count
+        {
+            get { return vertex_count; }
+            set { vertex_count = value; }
+        }
         int id;
         #endregion
 
@@ -46,6 +52,7 @@ namespace Clover
         public int ID
         {
             get { return id; }
+            set { id = value; }
         }
         public Point3D GetPoint3D()
         {
@@ -377,7 +384,7 @@ namespace Clover
         }
         public Vector3D Normal
         {
-            get { UpdateNormal(); return normal; }
+            get { UpdateNormal(); Debug.WriteLine(normal.ToString()); return normal; }
             set { normal = value; }
         }
         public Clover.Face LeftChild

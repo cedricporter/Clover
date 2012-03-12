@@ -37,6 +37,7 @@ CutFaces = clover.CutFaces
 Undo = clover.Undo
 Redo = clover.Redo
 FlipFace = clover.FlipFace
+UpdateFaceGroupTable = clover.UpdateFaceGroupTable
 ";
 
             pythonEngine.Execute(initialString, pythonScope);
