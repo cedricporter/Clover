@@ -201,8 +201,6 @@ namespace Clover.AbstractLayer
             return faceList[faceList.Count - 1].Layer;
         }
 
-
-
     }
 }
 

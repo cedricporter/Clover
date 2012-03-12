@@ -424,6 +424,25 @@ namespace Clover
             return true;
         }
 
+
+        public List<Face> GetFaceExcludeGroupFoundByFace(Face f)
+        {
+            List<Face> result = new List<Face>();
+            FaceGroup excludefg = GetGroup( f );
+            foreach (FaceGroup fg in faceGroupList)
+            {
+                if(fg != excludefg)
+                {
+                    foreach (Face face in fg.GetFaceList())
+                    {
+                        result.Add( f );
+                    }
+                }
+            }
+            return result;
+        }
+
+
         /// <summary>
         /// foldup后对lookuptable进行更新和排序
         /// </summary>
@@ -432,7 +451,6 @@ namespace Clover
         public bool UpdateTableAfterFoldUp( bool IsDefaultDir = true )
         {
 
-            UpdateGroup();
             // 找cutface
             List<Face> cutedFace = new List<Face>(); // 记录被cut的faces
             FaceGroup fixedFaceGroup = null; // 用于记录旋转前后位置不变的faces
@@ -467,11 +485,23 @@ namespace Clover
             }
 
 
-            //  没有发现折叠的face,fold up一定至少cut一个face
+            //  没有发现折叠的face, 一定是只移动了面
             if ( cutedFace.Count == 0 )
             {
-                return false;
+                foreach ( FaceGroup fg in faceGroupList )
+                {
+                    foreach ( Face f in fg.GetFaceList() )
+                    {
+                        if ( f.LeftChild != null && f.RightChild != null )
+                        {
+                            fg.RemoveFace( f );
+                            fg.AddFace( f.LeftChild );
+                            fg.AddFace( f.RightChild );
+                        }
+                    }
+                }
             }
+
 
 
             // 查找fixed face和moved face：
@@ -562,9 +592,6 @@ namespace Clover
                     if ( f.RightChild != null )
                         AddFace( f.RightChild );
                 }
-
-                
-
                 return false;
             }
 
@@ -625,60 +652,6 @@ namespace Clover
 
             AddGroup( fixedFaceGroup );
             UpdateGroup();
-            return true;
-        }
-
-        public bool UpdateTableAfterBending()
-        {
-            // 找cutface
-            List<Face> cutedFace = new List<Face>(); // 记录被cut的faces
-            List<Face> listNewFacesList = new List<Face>(); // 用于记录cut后新生的新faces
-            FaceGroup participatedGroup = null;// 记录参与折叠的group
-
-            // 检测操作了哪个group
-            foreach ( FaceGroup fg in faceGroupList )
-            {
-                foreach ( Face f in fg.GetFaceList() )
-                {
-                    if ( f.LeftChild != null && f.RightChild != null )
-                    {
-                        cutedFace.Add( f );
-
-                        if ( participatedGroup == null )
-                        {
-                            participatedGroup = fg;
-                        }
-
-                        if ( participatedGroup != fg )
-                        {
-                            // 一次foldup只能对一个group中的面进行操作
-                            return false;
-
-                        }
-
-                    }
-                }
-            }
-
-            //  没有发现折叠的face,fold up一定至少cut一个face
-            if ( cutedFace.Count == 0 )
-            {
-                return false;
-            }
-
-            foreach ( Face f in cutedFace )
-            {
-                RemoveFace( f );
-                if ( f.LeftChild != null )
-                        AddFace( f.LeftChild );
-                if ( f.RightChild != null )
-                        AddFace( f.RightChild );
-
-               if ( CloverMath.IsTwoVectorTheSameDir( f.LeftChild.Normal, f.LeftChild.Normal ) )
-                        return false;
-
-            }
-           
             return true;
         }
 
