@@ -183,6 +183,8 @@ namespace Clover
 
         #region 鼠标事件响应函数
 
+        Point lastMousePos2;
+
         /// <summary>
         /// 移动窗体
         /// </summary>
@@ -244,6 +246,22 @@ namespace Clover
                 ToolFactory.currentTool.onMove();
 
             Grid_Move(sender, e);
+
+            // 右键移动纸张
+
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                // 计算纸张的平移量
+                Point currMousePos = e.GetPosition(this);
+                if (currMousePos.Equals(lastMousePos2))
+                    return;
+                Vector offsetVec = currMousePos - lastMousePos2;
+
+                RenderController.GetInstance().TranslateTransform.OffsetX += offsetVec.X;
+                RenderController.GetInstance().TranslateTransform.OffsetY -= offsetVec.Y;
+
+                lastMousePos2 = currMousePos;
+            }
         }
 
         /// <summary>
@@ -255,6 +273,8 @@ namespace Clover
         {
             if (ToolFactory.currentTool != null)
                 ToolFactory.currentTool.onPress();
+
+            lastMousePos2 = e.GetPosition(this);
         }
 
         /// <summary>
@@ -333,6 +353,7 @@ RotateFaces(faces, edge, 90)
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
+                    RenderController.GetInstance().BeginRotatePaperY(true);
                     break;
                 case Key.Up:
                     cloverController.Update(0, 10, null, null);
@@ -569,13 +590,11 @@ RotateFaces(faces, edge, 90)
         {
             if (e.Key == Key.F5)
             {
-                //string output = cloverInterpreter.ExecuteOneLine( commandLineTextBox.Text );
-                CloverInteruptThreadPackage itr = new CloverInteruptThreadPackage( this, cloverInterpreter, commandLineTextBox.Text );
-                Thread thread = new Thread( itr.Run );
+                //RenderController.GetInstance().BeginRotatePaperY(true);
+                CloverInteruptThreadPackage itr = new CloverInteruptThreadPackage(this, cloverInterpreter, commandLineTextBox.Text);
+                Thread thread = new Thread(itr.Run);
                 thread.Start();
-                //SetOutputText( output );
             }
-            //e.Handled = true;
         }
 
         #region Cube导航相关接口
