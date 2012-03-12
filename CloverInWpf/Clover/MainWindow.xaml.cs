@@ -686,6 +686,11 @@ RotateFaces(faces, edge, 90)
 
         #region 快捷键
 
+        /// <summary>
+        /// 打开关闭调试窗口
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SwitchDebugWindows_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             if (CommandLineMenuItem.IsChecked == false || OutputMenuItem.IsChecked == false)
@@ -698,6 +703,47 @@ RotateFaces(faces, edge, 90)
                 MenuItem_Unchecked_1(null, null);
                 MenuItem_Unchecked_2(null, null);
             }
+        }
+
+        /// <summary>
+        /// 保存文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SaveCloverFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MenuItem_Click_1(null, null);
+        }
+
+        /// <summary>
+        /// 打开文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenCloverFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MenuItem_Click(null, null);
+        }
+
+        /// <summary>
+        /// 新建文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NewCloverFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NewPaper_Show(null, null);
+        }
+
+        /// <summary>
+        /// 重置视角
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ResetCamera_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            RenderController.GetInstance().BeginRotationSlerp(new Quaternion());
+            RenderController.GetInstance().BeginTranslateSlerp("rs");  
         }
 
         #endregion
