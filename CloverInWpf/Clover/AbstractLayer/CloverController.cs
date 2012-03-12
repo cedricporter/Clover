@@ -128,38 +128,6 @@ namespace Clover
         delegate void RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
         delegate void CutFacesHandle(List<Face> list, Edge foldLine);
 
-        class RotateAnimationPackage
-        {
-            public void Start()
-            {
-                double interval = angle / 180.0;
-
-                for (double i = 0; i <= angle; i += interval)
-                {
-                    mainWindow.Dispatcher.BeginInvoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces), 
-                        faceList, foldingLine, interval);
-                    //foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, i);
-
-                    Thread.Sleep(100);
-                }
-
-            }
-
-            MainWindow mainWindow;
-
-            List<Face> faceList = new List<Face>();
-            Edge foldingLine;
-            double angle;
-
-            public RotateAnimationPackage(MainWindow window, List<Face> list, Edge foldingLine, double angle)
-            {
-                mainWindow = window;
-                faceList.AddRange(list);
-                this.foldingLine = foldingLine;
-                this.angle = angle;
-            }
-        }
-
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
         {
             List<Face> faceList = new List<Face>();
