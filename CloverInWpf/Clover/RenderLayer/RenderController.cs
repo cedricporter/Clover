@@ -315,10 +315,10 @@ namespace Clover
                         faceMeshMap[f].Transform = new TranslateTransform3D(offset);
                         baseval += step;
                     }
-                    else
-                    {
-                        int a =1;
-                    }
+                    //else
+                    //{
+                    //    int a =1;
+                    //}
                 }
             }
         }

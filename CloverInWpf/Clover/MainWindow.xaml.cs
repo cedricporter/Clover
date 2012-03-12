@@ -400,6 +400,8 @@ RotateFaces(faces, edge, 90)
         private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
         {
             CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            if (CommandLineMenuItem.IsChecked == false)
+                CommandLineMenuItem.IsChecked = true;
         }
 
         private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
@@ -412,6 +414,8 @@ RotateFaces(faces, edge, 90)
         private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
         {
             Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            if (OutputMenuItem.IsChecked == false)
+                OutputMenuItem.IsChecked = true;
         }
 
         private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
@@ -679,6 +683,25 @@ RotateFaces(faces, edge, 90)
         }
 
         #endregion
+
+        #region 快捷键
+
+        private void SwitchDebugWindows_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (CommandLineMenuItem.IsChecked == false || OutputMenuItem.IsChecked == false)
+            {
+                MenuItem_Checked_1(null, null);
+                MenuItem_Checked_2(null, null);
+            }
+            else
+            {
+                MenuItem_Unchecked_1(null, null);
+                MenuItem_Unchecked_2(null, null);
+            }
+        }
+
+        #endregion
+        
 
         
 
