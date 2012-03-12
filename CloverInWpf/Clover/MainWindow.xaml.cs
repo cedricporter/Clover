@@ -256,9 +256,18 @@ namespace Clover
                 if (currMousePos.Equals(lastMousePos2))
                     return;
                 Vector offsetVec = currMousePos - lastMousePos2;
-
+                offsetVec /= 3;
                 RenderController.GetInstance().TranslateTransform.OffsetX += offsetVec.X;
                 RenderController.GetInstance().TranslateTransform.OffsetY -= offsetVec.Y;
+                // 点亮箭头
+                if (offsetVec.X > 0)
+                    (OffsetArrows.Children[3] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                else if (offsetVec.X < 0)
+                    (OffsetArrows.Children[2] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                if (offsetVec.Y > 0)
+                    (OffsetArrows.Children[1] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                else if (offsetVec.Y < 0)
+                    (OffsetArrows.Children[0] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
 
                 lastMousePos2 = currMousePos;
             }
@@ -391,6 +400,8 @@ RotateFaces(faces, edge, 90)
         private void MenuItem_Checked_1(object sender, RoutedEventArgs e)
         {
             CommandLine.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            if (CommandLineMenuItem.IsChecked == false)
+                CommandLineMenuItem.IsChecked = true;
         }
 
         private void MenuItem_Unchecked_1(object sender, RoutedEventArgs e)
@@ -403,6 +414,8 @@ RotateFaces(faces, edge, 90)
         private void MenuItem_Checked_2(object sender, RoutedEventArgs e)
         {
             Output.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+            if (OutputMenuItem.IsChecked == false)
+                OutputMenuItem.IsChecked = true;
         }
 
         private void MenuItem_Unchecked_2(object sender, RoutedEventArgs e)
@@ -626,6 +639,69 @@ RotateFaces(faces, edge, 90)
         }
 
         #endregion
+
+        #region Arrow导航相关接口
+
+        private void Arrow_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as Image).BeginStoryboard((Storyboard)FindResource("EnterArrow"));
+        }
+
+        private void Arrow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as Image).BeginStoryboard((Storyboard)FindResource("LeaveArrow"));
+        }
+
+        private void LeftArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("lt");
+        }
+
+        private void RightArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("rt");
+        }
+
+        private void UpArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("up");
+        }
+
+        private void DownArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("dn");
+        }
+
+        private void ResetArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("rs");
+        }
+
+        private void Arrow_MouseUp(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().EndTranslateSlerp();
+        }
+
+        #endregion
+
+        #region 快捷键
+
+        private void SwitchDebugWindows_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (CommandLineMenuItem.IsChecked == false || OutputMenuItem.IsChecked == false)
+            {
+                MenuItem_Checked_1(null, null);
+                MenuItem_Checked_2(null, null);
+            }
+            else
+            {
+                MenuItem_Unchecked_1(null, null);
+                MenuItem_Unchecked_2(null, null);
+            }
+        }
+
+        #endregion
+        
 
         
 

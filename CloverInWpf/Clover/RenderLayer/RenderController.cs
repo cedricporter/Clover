@@ -400,6 +400,7 @@ namespace Clover
         public void RenderAnimations()
         {
             RotationSlerp();
+            TranslateSlerp();
             materialController.PaperChange();
             RotatePaperY();
             //AntiOverlap();
@@ -421,7 +422,7 @@ namespace Clover
             srcQuaternion = Quaternion.Slerp(srcQuaternion, dstQuaternion, 0.15);
             RotationSlerpCount++;
             // 判断动画中止的条件
-            if (RotationSlerpCount > 60)
+            if (RotationSlerpCount > 40)
             {
                 srcQuaternion = dstQuaternion;
                 RotationSlerpCount = -1;
@@ -452,6 +453,56 @@ namespace Clover
         public void BeginRotatePaperY(Boolean isOn)
         {
             rotatePaperYFlag = isOn;
+        }
+
+        #endregion
+
+        #region 平移动画
+
+        int translateSlerpCount = -1;
+        String translateSlerpDirection = "";
+        void TranslateSlerp()
+        {
+            if (translateSlerpDirection == "")
+                return;
+
+            switch (translateSlerpDirection)
+            {
+                case "up":
+                    TranslateTransform.OffsetY += 1;
+                    break;
+                case "dn":
+                    TranslateTransform.OffsetY -= 1;
+                    break;
+                case "lt":
+                    TranslateTransform.OffsetX -= 1;
+                    break;
+                case "rt":
+                    TranslateTransform.OffsetX += 1;
+                    break;
+                case "rs":
+                    translateSlerpCount--;
+                    TranslateTransform.OffsetX /= 1.2;
+                    TranslateTransform.OffsetY /= 1.2;
+                    if (translateSlerpCount == -1)
+                    {
+                        EndTranslateSlerp();
+                        TranslateTransform.OffsetX = TranslateTransform.OffsetY = 0;
+                    }
+                    break;
+            }
+        }
+
+        public void BeginTranslateSlerp(String direction)
+        {
+            translateSlerpDirection = direction;
+            if (direction == "rs")
+                translateSlerpCount = 40;
+        }
+
+        public void EndTranslateSlerp()
+        {
+            translateSlerpDirection = "";
         }
 
         #endregion

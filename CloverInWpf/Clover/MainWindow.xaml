@@ -8,14 +8,37 @@
         MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseLeftButtonUp="Grid_Lost" MouseWheel="Window_MouseWheel" MouseDoubleClick="Window_MouseDoubleClick">
 
     <Window.Resources>
+        <!-- 故事版 -->
         <Storyboard x:Key="LeaveCube">
             <DoubleAnimation To="0.5" Duration="0:0:0.1" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
         </Storyboard>
         <Storyboard x:Key="EnterCube">
             <DoubleAnimation To="1" Duration="0:0:0.1" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
         </Storyboard>
+        <Storyboard x:Key="LightUpArrow">
+            <DoubleAnimationUsingKeyFrames  Duration="0:0:0.4" Storyboard.TargetProperty="Opacity">
+                <LinearDoubleKeyFrame Value="1" KeyTime="0:0:0.2"/>
+                <LinearDoubleKeyFrame Value="0.5" KeyTime="0:0:0.4"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LeaveArrow">
+            <DoubleAnimation To="0.5" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="EnterArrow">
+            <DoubleAnimation To="1" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+        <!-- RoutedUICommands -->
+        <RoutedUICommand x:Key="SwitchDebugWindows" Text="开启/关闭调试窗口" />
     </Window.Resources>
     
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+D" Command="{StaticResource SwitchDebugWindows}"/>
+    </Window.InputBindings>
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="{StaticResource SwitchDebugWindows}" Executed="SwitchDebugWindows_Executed"/>
+    </Window.CommandBindings>
+
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
         <Grid x:Name="MainContainer" Margin="4,0,4,4" MinWidth="10">
             <!-- 折纸 -->
@@ -30,14 +53,7 @@
                 </ModelVisual3D>
             </Viewport3D>
             
-            <!-- 正方体导航
-	                  4 ______7
-	                  /|      /
-	               0 /_|___3 /|
-	                 | |____|_|
-	                 | /5   | /6
-	                1|/____2|/ 
-	        -->
+            <!-- 正方体导航 -->
             <Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,15,0"  HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="30" ClipToBounds="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
@@ -175,37 +191,6 @@
                 </Viewport2DVisual3D>
                 
             </Viewport3D>
-            <!--<Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,0,0"  HorizontalAlignment="Right" VerticalAlignment="Top" d:IsLocked="True" Panel.ZIndex="30" ClipToBounds="True">
-                <Viewport3D.Camera>
-                    <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
-                </Viewport3D.Camera>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="CubeNavModel">
-                            <GeometryModel3D>
-                                <GeometryModel3D.Geometry>
-                                    <MeshGeometry3D Positions="-10,10,10 -10,-10,10 10,10,10 10,10,10 -10,-10,10 10,-10,10 10,10,-10 10,-10,-10 -10,10,-10 -10,10,-10 10,-10,-10 -10,-10,-10 -10,10,-10
--10,-10,-10 -10,10,10 -10,10,10 -10,-10,-10 -10,-10,10 10,10,10 10,-10,10 10,10,-10 10,10,-10 10,-10,10 10,-10,-10 -10,10,-10 -10,10,10
-10,10,-10 10,10,-10 -10,10,10 10,10,10 -10,-10,10 -10,-10,-10 10,-10,10 10,-10,10 -10,-10,-10 10,-10,-10"
-	                                                TriangleIndices="0 1 2 3 4 5 6 7 8 9 10 11                                                  12 13 14 15 16 17 18 19 20 21 22 23                                                 24 25 26 27 28 29 30 31 32 33 34 35"
-	                                                TextureCoordinates="0.6667,0 0.6667,1 0.8333,0 0.8333,0 0.6667,1 0.8333,1 0.8333,0 0.8333,1 1,0 1,0 0.8333,1 1,1 0.3333,0 0.3333,1 0.5,0 0.5,0 0.3333,1 0.5,1 0.5,0 0.5,1 0.6667,0 0.6667,0 0.5,1
-0.6667,1 0,0 0,1 0.1667,0 0.1667,0 0,1 0.1667,1 0.1667,0 0.1667,1 0.3333,0 0.3333,0 0.1667,1 0.3333,1"/>
-                                </GeometryModel3D.Geometry>
-                                <GeometryModel3D.Material>
-                                    <MaterialGroup>
-                                        <DiffuseMaterial Brush="{StaticResource CubeNavTexBrush}"/>
-                                    </MaterialGroup>
-                                </GeometryModel3D.Material>
-                            </GeometryModel3D>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <AmbientLight Color="White"/>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>-->
             <!-- 背景图片 -->
             <Rectangle x:Name="BackgroundRectangle" Panel.ZIndex="-10" Fill="{StaticResource AppBgImgBrush}" d:IsLocked="True"/>
             <!-- 工具栏 -->
@@ -233,52 +218,59 @@
                 <CheckBox x:Name="MagnetismButton" Checked="MagnetismButton_Checked" Unchecked="MagnetismButton_Unchecked"  Content="Magnetism" Width="90" Template="{StaticResource RectangleCheckButtonTemplate1}" Margin="16,194,0,0" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top" IsChecked="True"/>
                 <Button x:Name="ChangePaperButton" Click="ChangePaperButton_Click" Content="Change Paper" Height="40" Width="90" Template="{StaticResource RectangleButtonTemplate1}" Margin="16,242,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Grid>
-            <!-- 命令行窗口 -->
-            <Grid x:Name="CommandLine" Width="400" Height="160" HorizontalAlignment="Left" VerticalAlignment="Bottom" Visibility="Hidden">
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
-                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
-                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
-                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
-                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
-                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+            <!-- 调试窗口 -->
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="160">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <!-- 命令行窗口 -->
+                <Grid x:Name="CommandLine" Grid.Column="0" Visibility="Hidden">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="0.01" ScaleY="0.01"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                    <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                        <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                        <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                        <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                        <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
                         Command Line
-                    </TextBlock>
-                    <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
+                        </TextBlock>
+                        <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
                             Click="MenuItem_Unchecked_1">X</Button>
+                    </Grid>
+                    <Grid Margin="10, 40, 10, 10">
+                        <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" TextWrapping="Wrap" Background="Black" Foreground="#33FF33" KeyDown="commandKeyDown"/>
+                    </Grid>
                 </Grid>
-                <Grid Margin="10, 40, 10, 10">
-                    <TextBox x:Name="commandLineTextBox" AcceptsReturn="True" TextWrapping="Wrap" Background="Black" Foreground="#33FF33" KeyDown="commandKeyDown"/>
-                </Grid>
-            </Grid>
-            <!-- 输出窗口 -->
-            <Grid x:Name="Output" Width="380" Height="160" HorizontalAlignment="Right" VerticalAlignment="Bottom" Visibility="Hidden">
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
-                <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
-                <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
-                <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
-                    <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
-                    <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
-                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
-                    <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
+                <!-- 输出窗口 -->
+                <Grid x:Name="Output" Grid.Column="1" Visibility="Hidden">
+                    <Grid.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="0.01" ScaleY="0.01"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Grid.RenderTransform>
+                    <Rectangle Fill="Black" Effect="{StaticResource BlurEffect4px}" Margin="3"/>
+                    <Rectangle Fill="{StaticResource ForegroundFillBlack}" Stroke="{StaticResource BackgroundStrokeBlack}" Margin="4"/>
+                    <Grid Height="30" MouseLeftButtonDown="Grid_Capture" VerticalAlignment="Top" Margin="5,3">
+                        <Rectangle Fill="{StaticResource ForegroundStrokeBlack}" Margin="0"/>
+                        <Rectangle Fill="{StaticResource HeightLightBorderTopBlack}" Margin="0,1"/>
+                        <Rectangle Fill="{StaticResource ForegroundFillBlack}" Margin="0,2,0,1"/>
+                        <TextBlock Effect="{StaticResource DropShadowEffect1px}" Foreground="{StaticResource TextWhiteBrush}" Margin="10,0" VerticalAlignment="Center">
                         Output
-                    </TextBlock>
-                    <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
+                        </TextBlock>
+                        <Button Width="20" Height="20" HorizontalAlignment="Right" Margin="12,0" Template="{StaticResource RectangleButtonTemplate1}"
                             Click="MenuItem_Unchecked_2">X</Button>
-                </Grid>
-                <Grid Margin="10, 40, 10, 10">
-                    <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
+                    </Grid>
+                    <Grid Margin="10, 40, 10, 10">
+                        <TextBox x:Name="histroyTextBox" VerticalScrollBarVisibility="Auto" Background="Black" Foreground="#33FF33"/>
+                    </Grid>
                 </Grid>
             </Grid>
             <!-- 选择纸张纹理窗口 -->
@@ -373,6 +365,15 @@
                     Cancle
                 </Button>
             </Grid>
+            <!-- 纸张平移箭头指示 -->
+            <Canvas x:Name="OffsetArrows" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 150, 88, 0">
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="UpArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/uparrow.png" Opacity="0.5" Height="46"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="DownArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/downarrow.png" Opacity="0.5" Height="46" Canvas.Top="60"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="LeftArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/leftarrow.png" Opacity="0.5" Height="46" Canvas.Left="-30" Canvas.Top="30"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="RightArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/rightarrow.png" Opacity="0.5" Height="46" Canvas.Left="30" Canvas.Top="30"/>
+                <Image MouseLeftButtonDown="ResetArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/reset.png" Opacity="0.5" Height="40" Canvas.Left="3"  Canvas.Top="34"/>
+            </Canvas>
+            
         </Grid>
         <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">
@@ -394,8 +395,8 @@
                 </MenuItem>
                 <MenuItem Header="_Window" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem x:Name="ToolBoxMenuItem"  Header="ToolBox" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked" Unchecked="MenuItem_Unchecked"/>
-                    <MenuItem x:Name="CommandLineMenuItem" Header="Command Line" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked_1" Unchecked="MenuItem_Unchecked_1"/>
-                    <MenuItem x:Name="OutputMenuItem" Header="Output" IsCheckable="True" IsChecked="True" Checked="MenuItem_Checked_2" Unchecked="MenuItem_Unchecked_2"/>
+                    <MenuItem x:Name="CommandLineMenuItem" Header="Command Line" IsCheckable="True" Checked="MenuItem_Checked_1" Unchecked="MenuItem_Unchecked_1"/>
+                    <MenuItem x:Name="OutputMenuItem" Header="Output" IsCheckable="True" Checked="MenuItem_Checked_2" Unchecked="MenuItem_Unchecked_2"/>
                 </MenuItem>
                 <MenuItem Header="_Setting" VerticalAlignment="Center" Style="{StaticResource MenuItemStyle1}">
                     <MenuItem Header=""/>
