@@ -312,6 +312,7 @@ namespace Clover
             switch (e.Key)
             {
                 case Key.F2:
+                    
                     cloverController.ShadowSystem.Undo();
                     break;
                 case Key.F1:
@@ -347,7 +348,10 @@ RotateFaces(faces, edge, 90)
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     var a = cloverController.FaceLayer;
+                   // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+                    cloverController.RenderController.UpdateAll();
                     break;
+                    
             }
 
             //cloverController.RenderController.UpdatePosition();
@@ -565,11 +569,11 @@ RotateFaces(faces, edge, 90)
         {
             if (e.Key == Key.F5)
             {
-                //string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
-                CloverInteruptThreadPackage itr = new CloverInteruptThreadPackage(this, cloverInterpreter, commandLineTextBox.Text);
-                Thread thread = new Thread(itr.Run);
+                //string output = cloverInterpreter.ExecuteOneLine( commandLineTextBox.Text );
+                CloverInteruptThreadPackage itr = new CloverInteruptThreadPackage( this, cloverInterpreter, commandLineTextBox.Text );
+                Thread thread = new Thread( itr.Run );
                 thread.Start();
-                //SetOutputText(commandLineTextBox.Text);
+                //SetOutputText( output );
             }
             //e.Handled = true;
         }

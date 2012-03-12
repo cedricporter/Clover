@@ -250,7 +250,7 @@ namespace Clover
             {
                 vertexLayer.InsertVertex(v);
 
-                //renderController.AddVisualInfoToVertex(v);
+                renderController.AddVisualInfoToVertex( v );
             }
 
             // create a face

@@ -20,6 +20,7 @@ namespace Clover
         #endregion
 
         #endregion
+
         #region 一些辅助计算的函数
         /// <summary>
         /// 将一堆面的周围的顶点找出并返回一个list
@@ -190,8 +191,17 @@ namespace Clover
             int count = vertexList.Count + 1;
             while (true)
             {
-                if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
-                    || CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001))
+                if (
+                    (
+                    !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
+                    && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
+                    )
+                    || 
+                    (
+                     !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
+                    && CloverMath.IsPointInTwoPoints( newVertex2.GetPoint3D(), vertexList[ 0 ].GetPoint3D(), vertexList[ 1 ].GetPoint3D(), 0.001 )
+                    )
+                    )
                 {
                     break;
                 }
@@ -370,12 +380,12 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                //render.AddVisualInfoToVertex(newVertex1);
+                render.AddVisualInfoToVertex( newVertex1 );
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                //render.AddVisualInfoToVertex(newVertex2);
+                render.AddVisualInfoToVertex( newVertex2 );
             }
 
 
@@ -414,9 +424,9 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            //newVertex1.Update(newVertex1, null);
-            //newVertex2.Update(newVertex2, null);
-            //render.AddFoldingLine(newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v);
+            newVertex1.Update( newVertex1, null );
+            newVertex2.Update( newVertex2, null );
+            render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
 
             // 
             controller.FaceLayer.UpdateLeaves();
