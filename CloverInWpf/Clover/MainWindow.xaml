@@ -29,14 +29,26 @@
         </Storyboard>
         <!-- RoutedUICommands -->
         <RoutedUICommand x:Key="SwitchDebugWindows" Text="开启/关闭调试窗口" />
+        <RoutedUICommand x:Key="SaveCloverFile" Text="保存" />
+        <RoutedUICommand x:Key="OpenCloverFile" Text="打开" />
+        <RoutedUICommand x:Key="NewCloverFile" Text="新建" />
+        <RoutedUICommand x:Key="ResetCamera" Text="重置视角" />
     </Window.Resources>
     
     <Window.InputBindings>
         <KeyBinding Gesture="Ctrl+D" Command="{StaticResource SwitchDebugWindows}"/>
+        <KeyBinding Gesture="Ctrl+S" Command="{StaticResource SaveCloverFile}"/>
+        <KeyBinding Gesture="Ctrl+O" Command="{StaticResource OpenCloverFile}"/>
+        <KeyBinding Gesture="Ctrl+N" Command="{StaticResource NewCloverFile}"/>
+        <KeyBinding Gesture="Ctrl+R" Command="{StaticResource ResetCamera}"/>
     </Window.InputBindings>
     
     <Window.CommandBindings>
         <CommandBinding Command="{StaticResource SwitchDebugWindows}" Executed="SwitchDebugWindows_Executed"/>
+        <CommandBinding Command="{StaticResource SaveCloverFile}" Executed="SaveCloverFile_Executed"/>
+        <CommandBinding Command="{StaticResource OpenCloverFile}" Executed="OpenCloverFile_Executed"/>
+        <CommandBinding Command="{StaticResource NewCloverFile}" Executed="NewCloverFile_Executed"/>
+        <CommandBinding Command="{StaticResource ResetCamera}" Executed="ResetCamera_Executed"/>
     </Window.CommandBindings>
 
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
