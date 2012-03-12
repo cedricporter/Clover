@@ -325,6 +325,8 @@ namespace Clover
 
         #endregion
 
+        #region 对材质的操作
+
         /// <summary>
         /// 增加新的折线
         /// </summary>
@@ -372,6 +374,8 @@ namespace Clover
             return materialController.MergeBackTexture();
         }
 
+        #endregion
+
         /// <summary>
         /// 为一个顶点添加提示信息
         /// </summary>
@@ -396,6 +400,7 @@ namespace Clover
         {
             RotationSlerp();
             materialController.PaperChange();
+            RotatePaperY();
             //AntiOverlap();
         }
 
@@ -427,6 +432,25 @@ namespace Clover
             cubeNav.CubeFront.Transform = cubeNav.CubeBack.Transform = cubeNav.CubeUp.Transform =
                      cubeNav.CubeDown.Transform = cubeNav.CubeLeft.Transform = cubeNav.CubeRight.Transform = (RotateTransform3D)transformGroup.Children[0];
             cubeNav.LastQuat = srcQuaternion;
+        }
+
+        #endregion
+
+        #region 自动绕Y轴旋转视角的动画
+
+        Boolean rotatePaperYFlag = false;
+        Quaternion rotatePaperYQuat = new Quaternion(new Vector3D(0, 1, 0), 1);
+        void RotatePaperY()
+        {
+            if (!rotatePaperYFlag)
+                return;
+            srcQuaternion = rotatePaperYQuat * srcQuaternion;
+            RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
+        }
+
+        public void BeginRotatePaperY(Boolean isOn)
+        {
+            rotatePaperYFlag = isOn;
         }
 
         #endregion

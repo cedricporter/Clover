@@ -38,7 +38,7 @@
 	                 | /5   | /6
 	                1|/____2|/ 
 	        -->
-            <Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,0,0"  HorizontalAlignment="Right" VerticalAlignment="Top" d:IsLocked="True" Panel.ZIndex="30" ClipToBounds="True">
+            <Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,15,0"  HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="30" ClipToBounds="True">
                 <Viewport3D.Camera>
                     <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
                 </Viewport3D.Camera>
