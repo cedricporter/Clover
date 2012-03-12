@@ -172,7 +172,10 @@ namespace Clover
         {
             Debug.Assert(edge != null);
             if (edge == null)
-                System.Windows.MessageBox.Show("fuck");
+            {
+                System.Windows.MessageBox.Show("There is no edge for CutFace.");
+                return null;
+            }
 
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
