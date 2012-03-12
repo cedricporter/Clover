@@ -14,6 +14,18 @@
         <Storyboard x:Key="EnterCube">
             <DoubleAnimation To="1" Duration="0:0:0.1" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
         </Storyboard>
+        <Storyboard x:Key="LightUpArrow">
+            <DoubleAnimationUsingKeyFrames  Duration="0:0:0.4" Storyboard.TargetProperty="Opacity">
+                <LinearDoubleKeyFrame Value="1" KeyTime="0:0:0.2"/>
+                <LinearDoubleKeyFrame Value="0.5" KeyTime="0:0:0.4"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="LeaveArrow">
+            <DoubleAnimation To="0.5" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+        <Storyboard x:Key="EnterArrow">
+            <DoubleAnimation To="1" Duration="0:0:0.2" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
     </Window.Resources>
     
     <Grid x:Name="WindowRoot" Margin="0" Background="#FF383D43">
@@ -373,6 +385,15 @@
                     Cancle
                 </Button>
             </Grid>
+            <!-- 纸张平移箭头指示 -->
+            <Canvas x:Name="OffsetArrows" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0, 150, 88, 0">
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="UpArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/uparrow.png" Opacity="0.5" Height="46"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="DownArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/downarrow.png" Opacity="0.5" Height="46" Canvas.Top="60"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="LeftArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/leftarrow.png" Opacity="0.5" Height="46" Canvas.Left="-30" Canvas.Top="30"/>
+                <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="RightArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/rightarrow.png" Opacity="0.5" Height="46" Canvas.Left="30" Canvas.Top="30"/>
+                <Image MouseLeftButtonDown="ResetArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/reset.png" Opacity="0.5" Height="40" Canvas.Left="3"  Canvas.Top="34"/>
+            </Canvas>
+            
         </Grid>
         <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">

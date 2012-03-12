@@ -256,9 +256,18 @@ namespace Clover
                 if (currMousePos.Equals(lastMousePos2))
                     return;
                 Vector offsetVec = currMousePos - lastMousePos2;
-
+                offsetVec /= 3;
                 RenderController.GetInstance().TranslateTransform.OffsetX += offsetVec.X;
                 RenderController.GetInstance().TranslateTransform.OffsetY -= offsetVec.Y;
+                // 点亮箭头
+                if (offsetVec.X > 0)
+                    (OffsetArrows.Children[3] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                else if (offsetVec.X < 0)
+                    (OffsetArrows.Children[2] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                if (offsetVec.Y > 0)
+                    (OffsetArrows.Children[1] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
+                else if (offsetVec.Y < 0)
+                    (OffsetArrows.Children[0] as Image).BeginStoryboard((Storyboard)FindResource("LightUpArrow"));
 
                 lastMousePos2 = currMousePos;
             }
@@ -623,6 +632,50 @@ RotateFaces(faces, edge, 90)
         private void Cube_Click_Right(object sender, MouseButtonEventArgs e)
         {
             cubeNav.RotateTo("rt");
+        }
+
+        #endregion
+
+        #region Arrow导航相关接口
+
+        private void Arrow_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as Image).BeginStoryboard((Storyboard)FindResource("EnterArrow"));
+        }
+
+        private void Arrow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as Image).BeginStoryboard((Storyboard)FindResource("LeaveArrow"));
+        }
+
+        private void LeftArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("lt");
+        }
+
+        private void RightArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("rt");
+        }
+
+        private void UpArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("up");
+        }
+
+        private void DownArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("dn");
+        }
+
+        private void ResetArrow_Press(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().BeginTranslateSlerp("rs");
+        }
+
+        private void Arrow_MouseUp(Object sender, MouseButtonEventArgs e)
+        {
+            RenderController.GetInstance().EndTranslateSlerp();
         }
 
         #endregion

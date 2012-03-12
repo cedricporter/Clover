@@ -14,6 +14,7 @@
         <ImageBrush x:Key="CubeDownBrush" ImageSource="media/texture/cubedown.png"/>
         <ImageBrush x:Key="CubeLeftBrush" ImageSource="media/texture/cubeleft.png"/>
         <ImageBrush x:Key="CubeRightBrush" ImageSource="media/texture/cuberight.png"/>
+        <ImageBrush x:Key="UpArrowBrush" ImageSource="media/texture/uparrow.png"/>
         <LinearGradientBrush x:Key="ForegroundFillBlack" StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#4B5159" Offset="0"/>
             <GradientStop Color="#383D43" Offset="1"/>
