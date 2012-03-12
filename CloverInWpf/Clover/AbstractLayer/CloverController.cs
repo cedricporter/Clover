@@ -12,6 +12,7 @@ using System.Windows.Shapes;
 using Clover.Visual;
 using Clover.AbstractLayer;
 using Clover.IO;
+using System.Threading;
 
 namespace Clover
 {
@@ -119,6 +120,66 @@ namespace Clover
             foreach (Face face in faceLayer.Leaves)
             {
                 renderController.New(face);
+            }
+        }
+        #endregion
+
+        #region 动画
+        delegate void RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
+        delegate void CutFacesHandle(List<Face> list, Edge foldLine);
+
+        class RotateAnimationPackage
+        {
+            public void Start()
+            {
+                double interval = angle / 180.0;
+
+                for (double i = 0; i <= angle; i += interval)
+                {
+                    mainWindow.Dispatcher.BeginInvoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces), 
+                        faceList, foldingLine, interval);
+                    //foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, i);
+
+                    Thread.Sleep(100);
+                }
+
+            }
+
+            MainWindow mainWindow;
+
+            List<Face> faceList = new List<Face>();
+            Edge foldingLine;
+            double angle;
+
+            public RotateAnimationPackage(MainWindow window, List<Face> list, Edge foldingLine, double angle)
+            {
+                mainWindow = window;
+                faceList.AddRange(list);
+                this.foldingLine = foldingLine;
+                this.angle = angle;
+            }
+        }
+
+        public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
+        {
+            List<Face> faceList = new List<Face>();
+            faceList.AddRange(beCutFaceList);
+
+            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CloverController.GetInstance().foldingSystem.CutFaces),
+                faceList, edge);
+        }
+
+        public void AnimatedRotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        {
+            List<Face> faceList = new List<Face>();
+            faceList.AddRange(beRotatedFaceList);
+
+            double interval = angle / 1000.0;
+
+            for (int i = 0; i < 1000; i++)
+            {
+                mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
+                    faceList, foldingLine, interval);
             }
         }
         #endregion

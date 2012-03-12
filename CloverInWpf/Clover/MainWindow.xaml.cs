@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Controls;
+using System.Threading;
 
 using Clover.Tool;
 using Clover.Visual;
@@ -531,15 +532,44 @@ RotateFaces(faces, edge, 90)
 
         #endregion
 
+        class CloverInteruptThreadPackage
+        {
+            CloverInterpreter interpreter;
+            string command;
+            MainWindow window;
+
+            public CloverInteruptThreadPackage(MainWindow window, CloverInterpreter interpreter, string command)
+            {
+                this.window = window;
+                this.interpreter = interpreter;
+                this.command = command;
+            }
+            
+            public void Run()
+            {
+                string output = interpreter.ExecuteOneLine(command);
+                //window.Dispatcher.Invoke(new SetOutputText(window.histroyTextBox
+            }
+        }
+
+        void SetOutputText(string text)
+        {
+            histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + text + " ]\n";
+            //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
+            commandLineTextBox.Text = "";
+            histroyTextBox.ScrollToEnd();
+        }
+
+
         void commandKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F5)
             {
-                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
-                histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
-                //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
-                commandLineTextBox.Text = "";
-                histroyTextBox.ScrollToEnd();
+                //string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
+                CloverInteruptThreadPackage itr = new CloverInteruptThreadPackage(this, cloverInterpreter, commandLineTextBox.Text);
+                Thread thread = new Thread(itr.Run);
+                thread.Start();
+                //SetOutputText(commandLineTextBox.Text);
             }
             //e.Handled = true;
         }
