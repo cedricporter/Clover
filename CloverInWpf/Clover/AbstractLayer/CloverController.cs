@@ -29,6 +29,8 @@ namespace Clover
         FaceGroupLookupTable faceGroupLookupTable;
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
+        ModelVisual3D model = null; /// 纸张的模型
+
         #endregion
 
         #region get/set
@@ -60,7 +62,7 @@ namespace Clover
         }
         public List<Edge> Edges
         {
-            get 
+            get
             {
                 faceLayer.UpdateLeaves();
                 List<Edge> list = new List<Edge>();
@@ -77,6 +79,10 @@ namespace Clover
         public Clover.ShadowSystem ShadowSystem
         {
             get { return shadowSystem; }
+        }
+        public System.Windows.Media.Media3D.ModelVisual3D Model
+        {
+            get { return model; }
         }
         #endregion
 
@@ -99,6 +105,16 @@ namespace Clover
 
             return instance;
 
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="mainWindow"></param>
+        private CloverController(MainWindow mainWindow)
+        {
+            this.mainWindow = mainWindow;
+            renderController = RenderController.GetInstance();
         }
         #endregion
 
@@ -192,9 +208,9 @@ namespace Clover
         /// <param name="pickedPoint"></param>
         /// <param name="projectionPoint"></param>
         /// <returns></returns>
- 
+
         public Edge UpdateFoldingLine(Face face, Point3D pickedPoint, Point3D projectionPoint)
-        {   
+        {
             Edge e = UpdateFoldingLine(face, new Vertex(pickedPoint), new Vertex(projectionPoint));
             //currentFoldingLine = e;
             //renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
@@ -212,11 +228,11 @@ namespace Clover
         {
             Vector3D t = new Vector3D();
             Point3D p0 = new Point3D();
-            if( !CloverMath.GetMidperpendicularInFace(f, pOriginal, pDestination, ref t, ref p0) )
+            if (!CloverMath.GetMidperpendicularInFace(f, pOriginal, pDestination, ref t, ref p0))
                 return null;
 
-            Point3D p1 = p0 + t*Double.MaxValue;
-            Point3D p2 = p0 + t*Double.MinValue;
+            Point3D p1 = p0 + t * Double.MaxValue;
+            Point3D p2 = p0 + t * Double.MinValue;
             Vertex v1, v2;
             v1 = new Vertex(p1);
             v2 = new Vertex(p2);
@@ -229,14 +245,14 @@ namespace Clover
                 if (e.IsVerticeIn(pOriginal))
                 {
                     Point3D p = new Point3D();
-                    CloverMath.GetIntersectionOfTwoSegments( newe, e, ref p );
+                    CloverMath.GetIntersectionOfTwoSegments(newe, e, ref p);
                     if (vresult1 == null)
                     {
-                        vresult1 = new Vertex( p );
+                        vresult1 = new Vertex(p);
                     }
                     else
                     {
-                        vresult2 = new Vertex( p );
+                        vresult2 = new Vertex(p);
                     }
                 }
             }
@@ -244,14 +260,22 @@ namespace Clover
             {
                 return null;
             }
-            return new Edge( vresult1, vresult2 );
+            return new Edge(vresult1, vresult2);
         }
 
         #region 初始化
 
-
+        /// <summary>
+        /// 根据给定的长和宽初始化纸张
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public void Initialize(float width, float height)
         {
+            faceLayer = new FaceLayer();
+            edgeLayer = new EdgeLayer();
+            vertexLayer = new VertexLayer();
+
             // Create 4 original vertices
             Vertex[] vertices = new Vertex[4];
             vertices[0] = new Vertex(-width / 2, height / 2, 0);
@@ -269,7 +293,7 @@ namespace Clover
             {
                 vertexLayer.InsertVertex(v);
 
-                renderController.AddVisualInfoToVertex( v );
+                renderController.AddVisualInfoToVertex(v);
             }
 
             // create a face
@@ -304,40 +328,35 @@ namespace Clover
             node.OriginVertexListCount = vertexLayer.VertexCellTable.Count;
             node.OriginEdgeListCount = edgeLayer.Count;
             shadowSystem.Snapshot(node);
+
+            // 调用渲染层，更新纸张
+            CreatePaper(face);
         }
 
         /// <summary>
-        /// 获取所有拥有该顶点的面
+        /// 在渲染层创建纸张的模型
         /// </summary>
-        /// <param name="vertex"></param>
-        /// <returns></returns>
-        public List<Face> GetReferencedFaces(Vertex vertex)
+        /// <param name="face">初始的face</param>
+        public void CreatePaper(Face face)
         {
-            List<Face> faces = new List<Face>();
-
-            foreach (Face f in faceLayer.Leaves)
+            if (model != null)
             {
-                foreach (Edge e in f.Edges)
-                {
-                    if (e.IsVerticeIn(vertex))
-                    {
-                        faces.Add(f);
-                        break;
-                    }
-                }
+                renderController.DeleteAll();
             }
-            return faces;
+
+            // 初始化纹理
+            ImageBrush imb = new ImageBrush();
+            imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
+            DiffuseMaterial mgf = new DiffuseMaterial(imb);
+            DiffuseMaterial mgb = new DiffuseMaterial(new SolidColorBrush(Colors.OldLace));
+            renderController.FrontMaterial = mgf;
+            renderController.BackMaterial = mgb;
+
+            // 初始化模型
+            renderController.New(face);
+            model = renderController.Entity;
         }
 
-        private CloverController(MainWindow mainWindow)
-        {
-            faceLayer = new FaceLayer();
-            edgeLayer = new EdgeLayer();
-            vertexLayer = new VertexLayer();
-            this.mainWindow = mainWindow;
-            renderController = RenderController.GetInstance();
-            //paper = new Paper("paper");
-        }
         #endregion
 
         #region 测试折叠
@@ -353,11 +372,11 @@ namespace Clover
         public void CutFace(Face face, Edge edge)
         {
             foldingSystem.CutFace(face, edge);
-          
+
         }
 
-       
-        public void CutFaces(List<Face> faces,  Edge edge)
+
+        public void CutFaces(List<Face> faces, Edge edge)
         {
             foldingSystem.CutFaces(faces, edge);
             //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
@@ -371,10 +390,10 @@ namespace Clover
 
         Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
 
-    	public Edge CurrentFoldingLine
-    	{
-    		get { return currentFoldingLine; }
-    	}
+        public Edge CurrentFoldingLine
+        {
+            get { return currentFoldingLine; }
+        }
 
         public void UpdateVertexPosition(Vertex vertex, double xOffset, double yOffset)
         {
@@ -422,7 +441,7 @@ namespace Clover
 
             //Face f1 = new Face(face.Layer);
             //Face f2 = new Face(face.Layer);
-            
+
             //face.LeftChild = f1;
             //face.RightChild = f2;
 
@@ -448,7 +467,7 @@ namespace Clover
             //f1.UpdateVertices();
             //f2.UpdateVertices();
 
-            
+
             //table.DeleteFace( face );
             //table.AddFace( f1 );
             //table.AddFace( f2 );
@@ -499,9 +518,9 @@ namespace Clover
         {
             Vertex vertex1 = originVertex.Clone() as Vertex;
             Vertex vertex2 = ProjectionVertex.Clone() as Vertex;
-            
+
             // 求空间折线
-            Edge  foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+            Edge foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
             if (foldingLine == null)
                 return null;
 
@@ -590,7 +609,7 @@ namespace Clover
                 }
             }
 
-            return true; 
+            return true;
         }
 
         /// <summary>
@@ -617,7 +636,7 @@ namespace Clover
                 if (face.Layer > currentLayer)
                     upperFaces.Add(face);
             }
-           
+
 
             if (foldingLine == null)
                 return false;
@@ -634,7 +653,7 @@ namespace Clover
                 }
             }
 
-            return false;  
+            return false;
         }
 
         /// <summary>
@@ -650,7 +669,7 @@ namespace Clover
             foreach (Edge e in lastCuttedEdges)
             {
                 if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
-                    findVertex1 = true; 
+                    findVertex1 = true;
                 if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
                     findVertex2 = true;
             }
@@ -671,7 +690,7 @@ namespace Clover
                 if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
                     lastCuttedEdges.Add(e);
             }
-            return; 
+            return;
         }
 
         /// <summary>
@@ -844,7 +863,7 @@ namespace Clover
                     firstCut = false;
                 }
                 else
-                { 
+                {
                     // 不是第一次折叠
                     // 判断本次是否切割了一个新的面
                     if (JudgeCutAnotherFace(pickedFace, foldingFaces, originVertex, projectionPoint, foldingLine))
@@ -910,10 +929,8 @@ namespace Clover
 
             //faceGroupLookupTable.
 
-            
+
             // 更新重绘
-            //foreach (Face f in faceLayer.Leaves)
-            //    renderController.Update(f);
             renderController.UpdateAll();
 
             return foldingLine;
@@ -977,192 +994,119 @@ namespace Clover
         /// <param name="xRel">鼠标的x位移</param>
         /// <param name="yRel">鼠标的y位移</param>
         /// <param name="faceList">折叠所受影响的面</param>
-        public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
-        {
-            //table.UpdateLookupTable();
-            // testing
-            if (faceLayer.Leaves.Count < 2)
-                return;
+        //public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
+        //{
+        //    //table.UpdateLookupTable();
+        //    // testing
+        //    if (faceLayer.Leaves.Count < 2)
+        //        return;
 
-            // 假设已经选取了左上角的点，主平面
-            pickedVertex = vertexLayer.GetVertex(3);
-            pickedFace = faceLayer.Leaves[1];
-            //pickedFace = faceLayer.FacecellTree.Root;
+        //    // 假设已经选取了左上角的点，主平面
+        //    pickedVertex = vertexLayer.GetVertex(3);
+        //    pickedFace = faceLayer.Leaves[1];
+        //    //pickedFace = faceLayer.FacecellTree.Root;
 
-            // 计算初始折线
-            //currentFoldingLine = CalculateFoldingLine(pickedVertex);
+        //    // 计算初始折线
+        //    //currentFoldingLine = CalculateFoldingLine(pickedVertex);
 
-            // 创建移动面分组
-            List<Face> faceWithFoldingLine = new List<Face>();
-            List<Face> faceWithoutFoldingLine = new List<Face>();
+        //    // 创建移动面分组
+        //    List<Face> faceWithFoldingLine = new List<Face>();
+        //    List<Face> faceWithoutFoldingLine = new List<Face>();
 
-            // 根据面组遍历所有面，判定是否属于移动面并分组插入
-            foreach (Face face in faceLayer.Leaves)
-            {
-                if ( foldingSystem.TestMovedFace(face, pickedFace, pickedVertex))
-                {
-                    if ( foldingSystem.TestFoldingLineCrossed(face, currentFoldingLine))
-                    {
-                        faceWithFoldingLine.Add(face);
-                    }
-                    else
-                    {
-                        faceWithoutFoldingLine.Add(face);
-                    }
-                }
-            }
+        //    // 根据面组遍历所有面，判定是否属于移动面并分组插入
+        //    foreach (Face face in faceLayer.Leaves)
+        //    {
+        //        if ( foldingSystem.TestMovedFace(face, pickedFace, pickedVertex))
+        //        {
+        //            if ( foldingSystem.TestFoldingLineCrossed(face, currentFoldingLine))
+        //            {
+        //                faceWithFoldingLine.Add(face);
+        //            }
+        //            else
+        //            {
+        //                faceWithoutFoldingLine.Add(face);
+        //            }
+        //        }
+        //    }
 
-            // 对于所有有折线经过的面，对面进行切割
-            foreach (Face face in faceWithFoldingLine)
-            {
-                //CutAFace(face, currentFoldingLine); 
-                // 选取有拾取点的那个面为移动面，加入到没有折线面分组
+        //    // 对于所有有折线经过的面，对面进行切割
+        //    foreach (Face face in faceWithFoldingLine)
+        //    {
+        //        //CutAFace(face, currentFoldingLine); 
+        //        // 选取有拾取点的那个面为移动面，加入到没有折线面分组
 
-                bool findMovedFace = false;
-                foreach (Edge e in face.LeftChild.Edges)
-                {
-                    if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
-                    {
-                        faceWithoutFoldingLine.Add(face.LeftChild);
-                        findMovedFace = true;
-                        break;
-                    }
-                }
+        //        bool findMovedFace = false;
+        //        foreach (Edge e in face.LeftChild.Edges)
+        //        {
+        //            if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
+        //            {
+        //                faceWithoutFoldingLine.Add(face.LeftChild);
+        //                findMovedFace = true;
+        //                break;
+        //            }
+        //        }
 
-                if (!findMovedFace)
-                    faceWithoutFoldingLine.Add(face.RightChild);
-            }
+        //        if (!findMovedFace)
+        //            faceWithoutFoldingLine.Add(face.RightChild);
+        //    }
 
-            // Testing
-            faceWithoutFoldingLine.Add(pickedFace);
+        //    // Testing
+        //    faceWithoutFoldingLine.Add(pickedFace);
 
-            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
-            foreach (Face f in faceWithoutFoldingLine)
-            {
-                foreach (Edge e in f.Edges)
-                {
-                    if (e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
-                    {
-                        Vector3D axis = new Vector3D();
-                        axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-                        axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-                        axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+        //    // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+        //    foreach (Face f in faceWithoutFoldingLine)
+        //    {
+        //        foreach (Edge e in f.Edges)
+        //        {
+        //            if (e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+        //                && e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
+        //            {
+        //                Vector3D axis = new Vector3D();
+        //                axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+        //                axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+        //                axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
 
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+        //                AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
 
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+        //                RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
 
-                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-                        e.Vertex1.Moved = true;
-                    }
+        //                e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+        //                e.Vertex1.Moved = true;
+        //            }
 
-                    if (e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
-                    {
-                        Vector3D axis = new Vector3D();
-                        axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-                        axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-                        axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
+        //            if (e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
+        //                && e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
+        //            {
+        //                Vector3D axis = new Vector3D();
+        //                axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
+        //                axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
+        //                axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
 
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
+        //                AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
 
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+        //                RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
 
-                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
-                        e.Vertex2.Moved = true;
-                    }
-                }
-            }
+        //                e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+        //                e.Vertex2.Moved = true;
+        //            }
+        //        }
+        //    }
 
-            // 判断是否贴合，若有贴合更新组
+        //    // 判断是否贴合，若有贴合更新组
 
 
-            // 修正所有点的移动属性
-            foreach (Vertex v in vertexLayer.Vertices)
-            {
-                v.Moved = false; 
-            }
+        //    // 修正所有点的移动属性
+        //    foreach (Vertex v in vertexLayer.Vertices)
+        //    {
+        //        v.Moved = false; 
+        //    }
 
-            renderController.UpdateAll();
-        }
+        //    renderController.UpdateAll();
+        //}
 
-        
+
         #endregion
 
-        #region 更新图形层的模型
-        ModelVisual3D model = new ModelVisual3D();
-        public System.Windows.Media.Media3D.ModelVisual3D Model
-        {
-            get { return model; }
-            set { model = value; }
-        }
-        public ModelVisual3D UpdatePaper()
-        {
-            //faceLayer.UpdateLeaves();
-            ////paper.Begin("BaseWhiteNoLight", Mogre.RenderOperation.OperationTypes.OT_TRIANGLE_FAN);
-
-
-
-            //MeshGeometry3D triangleMesh = new MeshGeometry3D();
-
-            //foreach (Vertex v in vertexLayer.Vertices)
-            //{
-            //    triangleMesh.Positions.Add(new Point3D(v.X, v.Y, v.Z));
-            //}
-
-            //foreach (Face face in faceLayer.Leaves)
-            //{
-            //    face.UpdateVertices();
-            //    for (int i = 1; i < face.Vertices.Count - 1; i++)
-            //    {
-            //        triangleMesh.TriangleIndices.Add(face.Vertices[0].Index);
-            //        triangleMesh.TriangleIndices.Add(face.Vertices[i].Index);
-            //        triangleMesh.TriangleIndices.Add(face.Vertices[i + 1].Index);
-
-            //        Debug.WriteLine(face.Vertices[i].point);
-            //    }
-            //}
-
-            //Material material = new DiffuseMaterial(
-            //    new SolidColorBrush(Colors.DarkKhaki));
-            //GeometryModel3D triangleModel = new GeometryModel3D(
-            //    triangleMesh, material);
-            //triangleModel.BackMaterial = material;
-            //model.Content = triangleModel;
-
-            if (renderController == null)
-                return model;
-
-            renderController.DeleteAll();
-
-            ImageBrush imb = new ImageBrush();
-            //imb.ViewportUnits = BrushMappingMode.Absolute;
-            imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
-            DiffuseMaterial mgf = new DiffuseMaterial(imb);
-            DiffuseMaterial mgb = new DiffuseMaterial(new SolidColorBrush(Colors.OldLace));
-            renderController.FrontMaterial = mgf;
-            renderController.BackMaterial = mgb;
-
-            faceLayer.UpdateLeaves();
-            foreach (Face face in faceLayer.Leaves)
-            {
-                face.UpdateVertices();
-                renderController.New(face);
-            }
-            
-            //test
-            //renderController.AddFoldingLine(0, 0, 1, 1);
-            //renderController.AddFoldingLine(0, 1, 1, 0);
-            //renderController.Testfuck();
-            //renderController.UpdateAll();
-            //renderController.DeleteAll();
-
-            model = renderController.Entity;
-           
-            return model;
-        }
-        #endregion
 
         #region Neil测试
         public void NeilTest()
