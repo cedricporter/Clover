@@ -39,6 +39,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>media\texture\Logo128.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="3DTools">
       <HintPath>.\3DTools.dll</HintPath>
@@ -151,6 +154,7 @@
     <Content Include="Folding Scripts\Test.py" />
     <Content Include="Folding Scripts\test2.py" />
     <Content Include="Folding Scripts\副本 plane.py" />
+    <Resource Include="Logo128.ico" />
     <Content Include="media\paper\paper1.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -187,6 +191,7 @@
     <Content Include="media\texture\leftarrow.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="media\texture\Logo128.ico" />
     <Content Include="media\texture\reset.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
