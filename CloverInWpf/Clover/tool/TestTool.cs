@@ -37,7 +37,7 @@ namespace Clover.Tool
             {
                 
                 Vertex vertex = (Vertex)element;
-                List<Face> faces = CloverController.GetInstance().GetReferencedFaces(vertex);
+                List<Face> faces = CloverTreeHelper.FindFacesFromVertex(CloverController.GetInstance().FaceLeaves, vertex);
 
                 // 首先寻找离我们最近的那个面……
                 Double minVal = Double.MaxValue;

@@ -99,12 +99,6 @@ namespace Clover
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // 各种窗口
-            //toolBox = new ToolBox(this);
-            //toolBox.Left = Left + toolBoxRelLeft;
-            //toolBox.Top = Top + toolBoxRelTop;
-            //toolBox.Show();
-
             // 更新矩阵
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
 
@@ -112,9 +106,7 @@ namespace Clover
             CloverController.InitializeInstance(this);
             cloverController = CloverController.GetInstance();
             cloverController.Initialize(100, 100);
-            cloverController.UpdatePaper();
             foldingPaperViewport.Children.Add(cloverController.Model);
-
             cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();
@@ -341,6 +333,7 @@ namespace Clover
             switch (e.Key)
             {
                 case Key.F2:
+                    
                     cloverController.ShadowSystem.Undo();
                     break;
                 case Key.F1:
@@ -363,21 +356,24 @@ RotateFaces(faces, edge, 90)
                 case Key.F4:
                     RenderController.GetInstance().BeginRotatePaperY(true);
                     break;
-                case Key.Up:
-                    cloverController.Update(0, 10, null, null);
-                    //cloverController.UpdateVertexPosition(null, 0, 10);
-                    break;
-                case Key.Down:
-                    cloverController.Update(0, -10, null, null);
-                    //cloverController.UpdateVertexPosition(null, 0, -10);
-                    break;
+                //case Key.Up:
+                //    cloverController.Update(0, 10, null, null);
+                //    //cloverController.UpdateVertexPosition(null, 0, 10);
+                //    break;
+                //case Key.Down:
+                //    cloverController.Update(0, -10, null, null);
+                //    //cloverController.UpdateVertexPosition(null, 0, -10);
+                //    break;
                 case Key.Left:
                     //cloverController.UpdateVertexPosition(null, -10, 0);
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     var a = cloverController.FaceLayer;
+                   // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+                    cloverController.RenderController.UpdateAll();
                     break;
+                    
             }
 
             //cloverController.RenderController.UpdatePosition();
