@@ -234,6 +234,7 @@ namespace Clover
 
         }
 
+
         public object Clone()
         {
             FaceGroupLookupTable newtables = new FaceGroupLookupTable( null );
@@ -415,6 +416,7 @@ namespace Clover
         {
             foreach ( FaceGroup fgin in faceGroupList )
             {
+                // 判断组里面是否已经有了这样的组
                 if ( CloverMath.IsTwoVectorTheSameDir( fg.Normal, fgin.Normal ) )
                 {
                     return false;
@@ -477,7 +479,6 @@ namespace Clover
                         {
                             // 一次foldup只能对一个group中的面进行操作
                             return false;
-
                         }
 
                     }
@@ -488,20 +489,8 @@ namespace Clover
             //  没有发现折叠的face, 一定是只移动了面
             if ( cutedFace.Count == 0 )
             {
-                foreach ( FaceGroup fg in faceGroupList )
-                {
-                    foreach ( Face f in fg.GetFaceList() )
-                    {
-                        if ( f.LeftChild != null && f.RightChild != null )
-                        {
-                            fg.RemoveFace( f );
-                            fg.AddFace( f.LeftChild );
-                            fg.AddFace( f.RightChild );
-                        }
-                    }
-                }
+                return false;
             }
-
 
 
             // 查找fixed face和moved face：
@@ -567,34 +556,48 @@ namespace Clover
             // fold至少cut一个face，那么一定会有moveface
             if ( movedFaceGroup == null )
             {
-                foreach ( Face f in cutedFace )
-                {
-                    RemoveFace( f );
-                    if ( f.LeftChild != null )
-                        AddFace( f.LeftChild );
-                    if ( f.RightChild != null )
-                        AddFace( f.RightChild );
-
-                }
                 return false;
             }
 
+            bool changed = false;
+            while (true)
+            {
+                for ( int i = 0; i < movedFaceGroup.Count; i++ )
+                {
+                    foreach (Face f in listNewFacesList)
+                    {
+                        if ( !fixedFaceGroup.HasFace(f) && !movedFaceGroup.HasFace(f) && CloverMath.IsTwoFaceConected( f, movedFaceGroup.GetFaceList()[ i ] ) )
+                        {
+                            changed = true;
+                            movedFaceGroup.AddFace( f );
+                            break;
+                        }
+                        
+                    }
+                }
+                if (!changed)
+                {
+                    break;
+                }
+                changed = false;
+            }
+
+            foreach (Face f in listNewFacesList)
+            {
+                if (!movedFaceGroup.HasFace(f) && !fixedFaceGroup.HasFace(f))
+                {
+                    fixedFaceGroup.AddFace( f );
+                }
+            }
 
             // 发现不是foldup操作，直接返回，并且对group进行更新
             if ( !CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal ) )
             {
-
-                foreach ( Face f in cutedFace )
-                {
-                    RemoveFace( f );
-                    if ( f.LeftChild != null )
-                        AddFace( f.LeftChild );
-                    if ( f.RightChild != null )
-                        AddFace( f.RightChild );
-                }
                 return false;
             }
 
+            fixedFaceGroup.SortFace();
+            movedFaceGroup.SortFace();
             if ( IsDefaultDir )
             {
                 int layer = 0;
@@ -650,8 +653,8 @@ namespace Clover
                 RemoveRedundantFaceGroup();
             }
 
+            this.FaceGroupList.Remove( participatedGroup );
             AddGroup( fixedFaceGroup );
-            UpdateGroup();
             return true;
         }
 
