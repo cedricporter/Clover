@@ -318,6 +318,7 @@ namespace Clover
                     else
                     {
                         int a =1;
+                        //System.Windows.MessageBox.Show("你又2B了，faceMeshMap里面没有Group里面的face。");
                     }
                 }
             }

@@ -45,4 +45,4 @@ for v1, v2, v3, sign in [(2, 1, 11, -1)]:
     
 # 对折
 faces = FindFacesByVertex(9)
-RotateFaces(faces, edgeMiddle, 180)
+RotateFaces(faces, edgeMiddle, -180)
