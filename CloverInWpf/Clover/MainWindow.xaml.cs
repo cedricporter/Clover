@@ -608,6 +608,11 @@ RotateFaces(faces, edge, 90)
                 Thread thread = new Thread(itr.Run);
                 thread.Start();
             }
+            else if (e.Key == Key.F6)
+            {
+                string output = cloverInterpreter.ExecuteOneLine(commandLineTextBox.Text);
+                histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + output + " ]\n";
+            }
         }
 
         #region Cube导航相关接口
