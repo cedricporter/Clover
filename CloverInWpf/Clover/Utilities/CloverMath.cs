@@ -289,6 +289,18 @@ namespace Clover
         /// <returns>0:不相交 1:相交且有唯一交点 2:线段覆盖在另一线段上</returns>
         public static int GetIntersectionOfTwoSegments(Edge e1, Edge e2, ref Point3D intersection)
         {
+            // 消除误差 ---- ET
+            Vertex v1 = e1.Vertex1;
+            Vertex v2 = e1.Vertex2;
+            e1 = new Edge(new Vertex(Math.Round(v1.GetPoint3D().X, 5), Math.Round(v1.GetPoint3D().Y, 5), Math.Round(v1.GetPoint3D().Z, 5)),
+               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)) );
+            v1 = e2.Vertex1;
+            v2 = e2.Vertex2;
+            e2 = new Edge(new Vertex(Math.Round(v1.GetPoint3D().X, 5), Math.Round(v1.GetPoint3D().Y, 5), Math.Round(v1.GetPoint3D().Z, 5)),
+               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)) );
+
+            // 计算
+
             Vector3D u = e1.Vertex2.GetPoint3D() - e1.Vertex1.GetPoint3D();
             Vector3D v = e2.Vertex2.GetPoint3D() - e2.Vertex1.GetPoint3D();
             Vector3D w = e1.Vertex1.GetPoint3D() - e2.Vertex1.GetPoint3D();
@@ -370,10 +382,10 @@ namespace Clover
                     return 0;   // 没有重叠 
                 }
 
-                t0 = t0 < 0 ? 0 : t0;
-                t1 = t1 > 1 ? 1 : t1;
+                t0 = t0 < -0.0001 ? 0 : t0;
+                t1 = t1 > 1.00001 ? 1 : t1;
 
-                if (t0 == t1)
+                if (Math.Abs(t0 - t1) < 0.0001)
                 {
                     intersection.X = e2.Vertex1.X + t0 * v.X;
                     intersection.Y = e2.Vertex1.Y + t0 * v.Y;

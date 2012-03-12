@@ -291,6 +291,33 @@ namespace Clover
             return rp;
         }
 
+        public void AntiOverlap()
+        {
+            FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
+
+            foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
+            {
+                float baseval = 0;
+                float step = 0.01f;
+                foreach (Face f in g.GetFaceList())
+                {
+                    if (faceMeshMap.ContainsKey(f))
+                    {
+                        Vector3D offset = g.Normal * baseval;
+
+                        faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                        baseval += step;
+                    }
+                    else
+                    {
+                        int a =1;
+                        //System.Windows.MessageBox.Show("你又2B了，faceMeshMap里面没有Group里面的face。");
+                    }
+                }
+            }
+
+        }
+
         /// <summary>
         /// 反重叠，让纸张散开
         /// </summary>
