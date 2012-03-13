@@ -38,7 +38,6 @@ _RotateFaces = clover.RotateFaces
 RotateFaces = clover.AnimatedRotateFaces
 Undo = clover.Undo
 Redo = clover.Redo
-FlipFace = clover.FlipFace
 UpdateFaceGroupTable = clover.UpdateFaceGroupTable
 ";
 

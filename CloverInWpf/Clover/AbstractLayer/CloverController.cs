@@ -142,9 +142,43 @@ namespace Clover
         }
         #endregion
 
+        #region 折叠
+        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        {
+            List<Vertex> movedVertexList = foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
+
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.MovedVertexList = movedVertexList;
+            node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
+            node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
+            node.Type = SnapshotNodeKind.RotateKind;
+            shadowSystem.Snapshot(node);
+        }
+
+
+        public void CutFaces(List<Face> faces, Edge edge)
+        {
+            // 拍快照
+            CloverController controller = CloverController.GetInstance();
+            ShadowSystem shadowSystem = controller.ShadowSystem;
+            shadowSystem.CheckUndoTree();
+
+            SnapshotNode node = new SnapshotNode(controller.FaceLayer.Leaves);
+            node.Type = SnapshotNodeKind.CutKind;
+            node.OriginVertexListCount = controller.VertexLayer.VertexCellTable.Count;
+            node.OriginEdgeListCount = controller.EdgeLayer.Count;
+
+            // 割面
+            List<Edge> newEdges = foldingSystem.CutFaces(faces, edge);
+
+            node.NewEdges = newEdges;
+            shadowSystem.Snapshot(node);
+        }
+        #endregion
+
         #region 动画
-        delegate void RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
-        delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
+        delegate List<Vertex> RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
+        delegate void CutFacesHandle(List<Face> list, Edge foldLine);
         System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
         long animationDuration = 1000;
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
@@ -152,14 +186,15 @@ namespace Clover
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beCutFaceList);
 
-            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CloverController.GetInstance().foldingSystem.CutFaces),
-                faceList, edge);
+            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge);
         }
 
         public void AnimatedRotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beRotatedFaceList);
+
+            List<Vertex> movedVertexList = null;
 
             animaWatch.Restart();
             long lastTime = 0;
@@ -173,27 +208,28 @@ namespace Clover
                     step = interval * (thisTime - lastTime);
                 else
                     step = interval * (animationDuration - lastTime);
-                mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
-                     faceList, foldingLine, step);
+                List<Vertex> list = mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
+                     faceList, foldingLine, step) as List<Vertex>;
+
+                if (movedVertexList == null)
+                {
+                    movedVertexList = list;
+                }
+
                 lastTime = thisTime;
             }
             animaWatch.Stop();
 
-            //double interval = angle / 1000; //0.5秒
-
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
-            //        faceList, foldingLine, interval);
-            //}
+            // 快照
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            node.MovedVertexList = movedVertexList;
+            node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
+            node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
+            node.Type = SnapshotNodeKind.RotateKind;
+            shadowSystem.Snapshot(node);
         }
         #endregion
 
-        public void FlipFace(Face face)
-        {
-            face.Flip();
-            renderController.Update(face);
-        }
 
         public Vertex GetPrevVersion(Vertex vertex)
         {
@@ -364,38 +400,6 @@ namespace Clover
         #region 测试折叠
 
 
-        /// <summary>
-        /// 当割点在两条边上时，切割一个面为两个面
-        /// </summary>
-        /// <param name="oldFace"></param>
-        /// <param name="leftChild"></param>
-        /// <param name="rightChild"></param>
-        /// <param name="edge"></param>
-        public void CutFace(Face face, Edge edge)
-        {
-            foldingSystem.CutFace(face, edge);
-
-        }
-
-
-        public void CutFaces(List<Face> faces, Edge edge)
-        {
-            foldingSystem.CutFaces(faces, edge);
-            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
-        }
-
-        /// <summary>
-        /// 当前都影响的面，在拖动的过程中需要实时计算，因为随时会有新的受影响
-        /// 的产生或者老的受影响的面被移除。
-        /// </summary>
-        List<Face> affectedFaceList = new List<Face>();
-
-        Edge currentFoldingLine = new Edge(new Vertex(), new Vertex());
-
-        public Edge CurrentFoldingLine
-        {
-            get { return currentFoldingLine; }
-        }
 
         public void UpdateVertexPosition(Vertex vertex, double xOffset, double yOffset)
         {
@@ -405,11 +409,6 @@ namespace Clover
 
             renderController.Update(faceLayer.Leaves[1]);
         }
-
-        //public void Revert()
-        //{
-        //    shadowSystem.Revert();
-        //}
 
         public void Undo()
         {
@@ -421,78 +420,6 @@ namespace Clover
             shadowSystem.Redo();
         }
 
-        /// <summary>
-        /// 开始折叠模式
-        /// </summary>
-        /// <param name="faces">需要折叠的面</param>
-        /// <remarks>
-        /// 首先保存原始面树的叶子。
-        /// 当撤销的时候，只需将originFaceList里面的face的孩子都清空就可以还原面树了。
-        /// 对于边树，我们将在当前叶子节点的面的边而不在originLeaves的边移除。
-        /// </remarks>
-        public void StartFoldingModel(List<Face> faces)
-        {
-            //faces = faceLayer.Leaves;
-
-            //shadowSystem.SaveOriginState();
-
-            //// 假定只有一个face现在
-            //Face face = faces[0];
-
-            //shadowSystem.UpdateFaceVerticesToLastedVersion(face);
-
-            //Face f1 = new Face(face.Layer);
-            //Face f2 = new Face(face.Layer);
-
-            //face.LeftChild = f1;
-            //face.RightChild = f2;
-
-            //Vertex newV1 = vertexLayer.GetVertex(0).Clone() as Vertex;
-            ////vertexLayer.UpdateVertex(newV1, newV1.Index);
-            //Vertex newV2 = vertexLayer.GetVertex(2).Clone() as Vertex;
-            ////vertexLayer.UpdateVertex(newV2, newV2.Index);
-
-            //Edge newEdge = new Edge(newV1, newV2);
-            //edgeLayer.AddTree(new EdgeTree(newEdge));
-
-            //f1.AddEdge(face.Edges[0]);
-            //f1.AddEdge(face.Edges[1]);
-            //f1.AddEdge(newEdge);
-
-            //f2.AddEdge(face.Edges[2]);
-            //f2.AddEdge(face.Edges[3]);
-            //f2.AddEdge(newEdge);
-
-            //// for testing
-            //currentFoldingLine = newEdge;
-
-            //f1.UpdateVertices();
-            //f2.UpdateVertices();
-
-
-            //table.DeleteFace( face );
-            //table.AddFace( f1 );
-            //table.AddFace( f2 );
-
-            //// 保存新的面的所有顶点的历史
-            //List<Vertex> totalVertices = f1.Vertices.Union(f2.Vertices).ToList();
-            //shadowSystem.SaveVertices(totalVertices);
-
-            //shadowSystem.UpdateFaceVerticesToLastedVersion(f1);
-            //shadowSystem.UpdateFaceVerticesToLastedVersion(f2);
-
-            ////vertexLayer.GetVertex(3).Z = 50;
-
-            //renderController.Delete(face);
-            //renderController.New(f1);
-            //renderController.New(f2);
-
-            //// new a transparent face
-            //Face tranFace = f2.Clone() as Face;
-            //shadowSystem.CreateTransparentFace(tranFace);
-
-            //faceLayer.UpdateLeaves(face);
-        }
 
         /// <summary>
         /// 通过索引获取点
@@ -952,21 +879,6 @@ namespace Clover
             faceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
-        public void InitializeBeforeFolding(Vertex vertex)
-        {
-            // 计算和创建一条新的折线
-
-            // 新增数据结构的信息
-            //   1.顶点
-            //   2.边
-            //   3.面
-            //   over...
-
-            // 
-        }
-
-
-
         /// <summary>
         /// 通过点找面
         /// </summary>
@@ -975,137 +887,12 @@ namespace Clover
         public List<Face> FindFacesByVertex(Vertex vertex)
         {
             return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertex);
-            //return CloverTreeHelper.GetReferenceFaces(vertex);
         }
 
         public List<Face> FindFacesByVertex(int index)
         {
             return CloverTreeHelper.FindFacesFromVertex(faceLayer.Leaves, vertexLayer.GetVertex(index));
-            //return CloverTreeHelper.GetReferenceFaces(vertexLayer.GetVertex(index));
         }
-
-        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
-        {
-            foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
-            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
-        }
-
-        /// <summary>
-        /// 根据鼠标位移在每个渲染帧前更新结构
-        /// </summary>
-        /// <param name="xRel">鼠标的x位移</param>
-        /// <param name="yRel">鼠标的y位移</param>
-        /// <param name="faceList">折叠所受影响的面</param>
-        //public void Update(float xRel, float yRel, Vertex pickedVertex, Face pickedFace)
-        //{
-        //    //table.UpdateLookupTable();
-        //    // testing
-        //    if (faceLayer.Leaves.Count < 2)
-        //        return;
-
-        //    // 假设已经选取了左上角的点，主平面
-        //    pickedVertex = vertexLayer.GetVertex(3);
-        //    pickedFace = faceLayer.Leaves[1];
-        //    //pickedFace = faceLayer.FacecellTree.Root;
-
-        //    // 计算初始折线
-        //    //currentFoldingLine = CalculateFoldingLine(pickedVertex);
-
-        //    // 创建移动面分组
-        //    List<Face> faceWithFoldingLine = new List<Face>();
-        //    List<Face> faceWithoutFoldingLine = new List<Face>();
-
-        //    // 根据面组遍历所有面，判定是否属于移动面并分组插入
-        //    foreach (Face face in faceLayer.Leaves)
-        //    {
-        //        if ( foldingSystem.TestMovedFace(face, pickedFace, pickedVertex))
-        //        {
-        //            if ( foldingSystem.TestFoldingLineCrossed(face, currentFoldingLine))
-        //            {
-        //                faceWithFoldingLine.Add(face);
-        //            }
-        //            else
-        //            {
-        //                faceWithoutFoldingLine.Add(face);
-        //            }
-        //        }
-        //    }
-
-        //    // 对于所有有折线经过的面，对面进行切割
-        //    foreach (Face face in faceWithFoldingLine)
-        //    {
-        //        //CutAFace(face, currentFoldingLine); 
-        //        // 选取有拾取点的那个面为移动面，加入到没有折线面分组
-
-        //        bool findMovedFace = false;
-        //        foreach (Edge e in face.LeftChild.Edges)
-        //        {
-        //            if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
-        //            {
-        //                faceWithoutFoldingLine.Add(face.LeftChild);
-        //                findMovedFace = true;
-        //                break;
-        //            }
-        //        }
-
-        //        if (!findMovedFace)
-        //            faceWithoutFoldingLine.Add(face.RightChild);
-        //    }
-
-        //    // Testing
-        //    faceWithoutFoldingLine.Add(pickedFace);
-
-        //    // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
-        //    foreach (Face f in faceWithoutFoldingLine)
-        //    {
-        //        foreach (Edge e in f.Edges)
-        //        {
-        //            if (e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
-        //                && e.Vertex1.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex1.Moved )
-        //            {
-        //                Vector3D axis = new Vector3D();
-        //                axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-        //                axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-        //                axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
-
-        //                AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
-
-        //                RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-
-        //                e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-        //                e.Vertex1.Moved = true;
-        //            }
-
-        //            if (e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex1.GetPoint3D() 
-        //                && e.Vertex2.GetPoint3D() != currentFoldingLine.Vertex2.GetPoint3D() && !e.Vertex2.Moved)
-        //            {
-        //                Vector3D axis = new Vector3D();
-        //                axis.X = currentFoldingLine.Vertex1.X - currentFoldingLine.Vertex2.X;
-        //                axis.Y = currentFoldingLine.Vertex1.Y - currentFoldingLine.Vertex2.Y;
-        //                axis.Z = currentFoldingLine.Vertex1.Z - currentFoldingLine.Vertex2.Z;
-
-        //                AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, 0.1 * yRel);
-
-        //                RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-
-        //                e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
-        //                e.Vertex2.Moved = true;
-        //            }
-        //        }
-        //    }
-
-        //    // 判断是否贴合，若有贴合更新组
-
-
-        //    // 修正所有点的移动属性
-        //    foreach (Vertex v in vertexLayer.Vertices)
-        //    {
-        //        v.Moved = false; 
-        //    }
-
-        //    renderController.UpdateAll();
-        //}
-
 
         #endregion
 

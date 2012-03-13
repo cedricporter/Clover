@@ -292,16 +292,16 @@ namespace Clover
     /// </summary>
     public class Face : ICloneable
     {
-        /// <summary>
-        /// 将一个面反过来
-        /// </summary>
-        public void Flip()
-        {
-            Vertex temp = StartVertex1;
-            StartVertex1 = startVertex2;
-            startVertex2 = temp;
-            UpdateVertices();
-        }
+        ///// <summary>
+        ///// 将一个面反过来
+        ///// </summary>
+        //public void Flip()
+        //{
+        //    Vertex temp = StartVertex1;
+        //    StartVertex1 = startVertex2;
+        //    startVertex2 = temp;
+        //    UpdateVertices();
+        //}
 
         #region 构造
         public Face(int layer)

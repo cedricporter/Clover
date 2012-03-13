@@ -463,16 +463,6 @@ namespace Clover
         /// <returns>在每个面上的折线</returns>
         public List<Edge> CutFaces(List<Face> faceList, Edge foldingLine)
         {
-            // 拍快照
-            CloverController controller = CloverController.GetInstance();
-            ShadowSystem shadowSystem = controller.ShadowSystem;
-            shadowSystem.CheckUndoTree();
-
-            SnapshotNode node = new SnapshotNode(controller.FaceLayer.Leaves);
-            node.Type = SnapshotNodeKind.CutKind;
-            node.OriginVertexListCount = controller.VertexLayer.VertexCellTable.Count;
-            node.OriginEdgeListCount = controller.EdgeLayer.Count;
-
             // 切割面
             List<Edge> newEdges = new List<Edge>();
             foreach (Face face in faceList)
@@ -484,9 +474,6 @@ namespace Clover
                 newEdges.Add(CutFace(face, edge));
                 
             }
-
-            node.NewEdges = newEdges;
-            shadowSystem.Snapshot(node);
 
             return newEdges;
         }
@@ -695,7 +682,7 @@ namespace Clover
         /// <param name="beRotatedFaceList">待旋转的面表</param>
         /// <param name="foldingLine">折线</param>
         /// <param name="angle">角度</param>
-        public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
+        public List<Vertex> RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
             VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
@@ -739,9 +726,8 @@ namespace Clover
                         rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
                         e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-                        //e.Vertex1.Moved = true;
-                        movedVertexDict[e.Vertex1.Index] = true;
 
+                        movedVertexDict[e.Vertex1.Index] = true; 
                         movedVertexList.Add(e.Vertex1);
                     }
 
@@ -758,49 +744,31 @@ namespace Clover
                         axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
                         axis.Normalize();
 
-                        //TranslateTransform3D translateToOrigin = new TranslateTransform3D( -e.Vertex1.X, -e.Vertex1.Y, -e.Vertex1.Z);
-                        //TranslateTransform3D translateBack = new TranslateTransform3D(e.Vertex1.X, e.Vertex1.Y, e.Vertex1.Z);
                         AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
                         RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
                         rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
                         rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
                         rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
 
-                        //e.Vertex2.SetPoint3D(translateToOrigin.Transform(e.Vertex2.GetPoint3D()));
                         e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
-                        //e.Vertex2.SetPoint3D(translateBack.Transform(e.Vertex2.GetPoint3D()));
-                        //e.Vertex2.Moved = true;
-                        movedVertexDict[e.Vertex2.Index] = true;
 
-                        movedVertexList.Add(e.Vertex2);
-                        
-                    }
-                   
+                        movedVertexDict[e.Vertex2.Index] = true; 
+                        movedVertexList.Add(e.Vertex2); 
+                    } 
                 }
-               
             }
 
+            // 因为顶点克隆过了，所以所有的面的边都要更新到引用最新的顶点
             foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
             {
                 CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
-            }
-
-            // 修正所有点的移动属性
-            foreach (Vertex v in vertexLayer.Vertices)
-            {
-                v.Moved = false; 
             }
 
             // 必须先更新group后更新render
             //table.UpdateLookupTable();
             render.UpdateAll();
 
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
-            node.MovedVertexList = movedVertexList;
-            node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
-            node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
-            node.Type = SnapshotNodeKind.RotateKind;
-            shadowSystem.Snapshot(node);
+            return movedVertexList;
         }
 
         #endregion
