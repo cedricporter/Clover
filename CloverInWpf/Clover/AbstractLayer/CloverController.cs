@@ -208,9 +208,11 @@ namespace Clover
                     step = interval * (thisTime - lastTime);
                 else
                     step = interval * (animationDuration - lastTime);
-                List<Vertex> list = mainWindow.Dispatcher.Invoke(new RotateFacesHandle(CloverController.GetInstance().foldingSystem.RotateFaces),
+                List<Vertex> list = mainWindow.Dispatcher.Invoke(
+                    new RotateFacesHandle(foldingSystem.RotateFaces),
                      faceList, foldingLine, step) as List<Vertex>;
 
+                // 取第一次的移动的顶点列表
                 if (movedVertexList == null)
                 {
                     movedVertexList = list;
