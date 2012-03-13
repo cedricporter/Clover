@@ -200,22 +200,8 @@ namespace Clover
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beRotatedFaceList);
             List<Vertex> movedVertexList = null;
-            // 自动旋转摄像头
-            Vector3D vector1 = beRotatedFaceList[0].Normal;
-            Vector3D vector2 = new Vector3D(0, 0, 1);
-            Quaternion quat;
-            if (vector1 == new Vector3D(0, 0, 1))
-                quat = new Quaternion();
-            else if (vector1 == new Vector3D(0, 0, -1))
-                quat = new Quaternion(new Vector3D(0, 1, 0), 180);
-            else
-            {
-                Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
-                axis.Normalize();
-                Double deg = Vector3D.AngleBetween(vector1, vector2);
-                quat = new Quaternion(axis, deg);
-            }
-            renderController.BeginRotationSlerp(quat);
+            AutoCamera(beRotatedFaceList[0]);
+
             // 控制时间
             animaWatch.Restart();
             long lastTime = 0;
@@ -250,6 +236,30 @@ namespace Clover
             node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
             node.Type = SnapshotNodeKind.RotateKind;
             shadowSystem.Snapshot(node);
+        }
+
+        /// <summary>
+        /// 自动在折纸过程中旋转摄像机
+        /// </summary>
+        /// <param name="beRotatedFaceList"></param>
+        private void AutoCamera(Face face)
+        {
+            // 自动旋转摄像头
+            Vector3D vector1 = face.Normal;
+            Vector3D vector2 = new Vector3D(0, 0, 1);
+            Quaternion quat;
+            if (vector1 == new Vector3D(0, 0, 1))
+                quat = new Quaternion();
+            else if (vector1 == new Vector3D(0, 0, -1))
+                quat = new Quaternion(new Vector3D(0, 1, 0), 180);
+            else
+            {
+                Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
+                axis.Normalize();
+                Double deg = Vector3D.AngleBetween(vector1, vector2);
+                quat = new Quaternion(axis, deg);
+            }
+            renderController.BeginRotationSlerp(quat);
         }
         #endregion
 
