@@ -79,13 +79,28 @@ namespace Clover
         /// <param name="vervex"></param>
         /// <param name="face"></param>
         /// <returns></returns>
-        public static Boolean IsVertexInFace(Vertex vervex, Face face)
+        public static Boolean IsVertexInFace(Vertex vertex, Face face)
         {
             foreach (Vertex v in face.Vertices)
             {
-                if (v == vervex)
+                if (v.GetPoint3D() == vertex.GetPoint3D())
                     return true;
             }
+            return false;
+        }
+
+        /// <summary>
+        /// 判断一个点是否在一条边上
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <param name="edge"></param>
+        /// <returns></returns>
+        public static Boolean IsVertexInEdge(Vertex vertex, Edge edge)
+        {
+            if (vertex.GetPoint3D() == edge.Vertex1.GetPoint3D())
+                return true;
+            if (vertex.GetPoint3D() == edge.Vertex2.GetPoint3D())
+                return true;
             return false;
         }
 
@@ -133,6 +148,44 @@ namespace Clover
             //todo 
 
             return null;
+        }
+
+        /// <summary>
+        /// 返回自输入面开始遍历得到的叶子节点
+        /// </summary>
+        /// <param name="root"></param>
+        /// <returns>输入节点的叶子节点</returns>
+        public static List<Face> GetLeaves(Face root)
+        {
+            List<Face> leaves = new List<Face>();
+            Travel(root, leaves);
+            return leaves;
+        }
+
+        /// <summary>
+        /// 后续遍历
+        /// </summary>
+        /// <param name="r">根节点</param>
+        static void Travel(Face r, List<Face> leaves)
+        {
+            if (r == null)
+                return;
+
+            Travel(r.LeftChild, leaves);
+            Travel(r.RightChild, leaves);
+
+            if (IsLeave(r))
+                leaves.Add(r);
+        }
+
+        /// <summary>
+        /// 判断一个face是否叶子节点
+        /// </summary>
+        /// <param name="face">face</param>
+        /// <returns></returns>
+        static bool IsLeave(Face face)
+        {
+            return face.LeftChild == null && face.RightChild == null;
         }
 
 

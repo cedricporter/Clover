@@ -17,7 +17,62 @@ using System.Text;
 
 namespace Clover.Tool
 {
-    class BlendTool
+    class BlendTool : ToolFactory
     {
+        Vertex pickedVertex;
+        Face nearestFace;
+        
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="mainWindow"></param>
+        public BlendTool(MainWindow mainWindow)
+            : base(mainWindow)
+        { }
+
+        public override void onIdle()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onEnterElement(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onLeaveElement(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onOverElement(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onSelectElement(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onUnselectElement(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onDrag(Object element)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void onClick()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected override void exit()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
     }
 }
