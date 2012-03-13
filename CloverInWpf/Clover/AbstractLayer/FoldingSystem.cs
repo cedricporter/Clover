@@ -537,17 +537,17 @@ namespace Clover
         /// <param name="pickedFace"></param>
         /// <param name="pickedVertex"></param>
         /// <param name="projectionPoint"></param>
-        public bool FoldingUpToPoint(Face pickedFace, Vertex pickedVertex, Point3D projectionPoint, Edge currentFoldingLine)
+        public bool FoldingUpToPoint(Face pickedFace, Point3D originPoint, Point3D projectionPoint, Edge currentFoldingLine)
         {
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
 
             // 查找所有需要移动的面
-            List<Face> rotateFaces = AddMovedFace(pickedVertex, pickedFace, currentFoldingLine);
+            List<Face> rotateFaces = AddMovedFace(originPoint, pickedFace, currentFoldingLine);
             lastTimeMovedFaces = rotateFaces;
 
             // 计算所需旋转角度
             Point3D crossPoint = new Point3D();
-            Edge segmentFromOriginToPro = new Edge(pickedVertex, new Vertex(projectionPoint));
+            Edge segmentFromOriginToPro = new Edge(new Vertex(originPoint), new Vertex(projectionPoint));
 
             // 此处应该是求折线所在直线与线段的交点
             // 将当前折线延长
@@ -563,7 +563,7 @@ namespace Clover
                 return false;
             }
 
-            Vector3D v1 = pickedVertex.GetPoint3D() - crossPoint;
+            Vector3D v1 = originPoint - crossPoint;
             Vector3D v2 = projectionPoint - crossPoint;
 
             double angle = Vector3D.AngleBetween(v1, v2);
@@ -581,24 +581,11 @@ namespace Clover
         /// <param name="pickedFace">选中的面</param>
         /// <param name="pickedVertex">选中的点</param>
         /// <returns></returns>
-        public bool TestMovedFace(Face face, Face pickedFace, Vertex pickedVertex)
+        public bool TestMovedFace(Face face, Face pickedFace, Point3D originPoint)
         {
             // 选定的面一定是移动面
             if (face == pickedFace)
                 return true;
-
-            // 所有和移动面有共同边的面都是移动面,即拥有选择点的面
-            foreach (Edge e in face.Edges)
-            {
-                if (e.Vertex1 == pickedVertex || e.Vertex2 == pickedVertex)
-                {
-                    return true; 
-                }
-            }
-
-            // 若有面覆盖在该面上，也为移动面
-            // 需要面分组中的层次信息
-            // bla bla bla.
 
             return false;
         }
@@ -626,7 +613,7 @@ namespace Clover
         /// </summary>
         /// <param name="pickedFace"></param>
         /// <param name="foldingLine"></param>
-        public List<Face> AddMovedFace(Vertex pickedVertex, Face pickedFace, Edge foldingLine)
+        public List<Face> AddMovedFace(Point3D originPoint, Face pickedFace, Edge foldingLine)
         {
             FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
             FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
@@ -635,21 +622,7 @@ namespace Clover
             List<Face> faceWithFoldingLine = new List<Face>();
             List<Face> faceWithoutFoldingLine = new List<Face>();
 
-            // 根据面组遍历所有面，判定是否属于移动面并分组插入
-            foreach (Face face in faceLayer.Leaves)
-            {
-                if (TestMovedFace(face, pickedFace, pickedVertex))
-                {
-                    if (TestFoldingLineCrossed(face, foldingLine))
-                    {
-                        faceWithFoldingLine.Add(face);
-                    }
-                    else
-                    {
-                        faceWithoutFoldingLine.Add(face);
-                    }
-                }
-            }
+           
 
             CutFaces(faceWithFoldingLine, foldingLine);
 
@@ -659,7 +632,6 @@ namespace Clover
                 faceWithoutFoldingLine.Add(face.RightChild);
             }
 
-            faceWithoutFoldingLine = CloverTreeHelper.FindFacesFromVertex(faceWithoutFoldingLine, pickedVertex);
             return faceWithoutFoldingLine;
         }
         #endregion

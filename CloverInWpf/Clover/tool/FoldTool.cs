@@ -101,8 +101,7 @@ namespace Clover.Tool
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
                 
-                // 设置Clover为第一次折叠
-                CloverController.GetInstance().FirstCut = true;
+               
 
                 //if (Mouse.LeftButton == MouseButtonState.Pressed)
                 //{
@@ -115,6 +114,7 @@ namespace Clover.Tool
                 //    EnterBlending();
                 //}
 
+                // 设置Clover为第一次折叠
             }
             #endregion
         }
@@ -177,15 +177,15 @@ namespace Clover.Tool
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
 
                     // 传给下一层处理
-                    List<Face> foldingFaces = new List<Face>();
-                    foldingFaces.Add(nearestFace);
-                    Edge edge = CloverController.GetInstance().FoldingUpToAPoint(foldingFaces, pickedVertex, projectionPoint);
+                    //List<Face> foldingFaces = new List<Face>();
+                    //foldingFaces.Add(nearestFace);
+                    ////Edge edge = CloverController.GetInstance().FoldingUpToAPoint(foldingFaces, pickedVertex, projectionPoint);
 
 
-                    //// 更新折线显示
-                    UpdateFoldLine(edge);
-                    //// 更新提示信息
-                    UpdateFoldLineInfo(edge);
+                    ////// 更新折线显示
+                    //UpdateFoldLine(edge);
+                    ////// 更新提示信息
+                    //UpdateFoldLineInfo(edge);
                 }
                 //else if (mode == FoldingMode.Blending)
                 //{
