@@ -581,15 +581,24 @@ RotateFaces(faces, edge, 90)
             {
                 string output = interpreter.ExecuteOneLine(command);
                 //window.Dispatcher.Invoke(new SetOutputText(window.histroyTextBox
+                window.SetOutputText(output);
             }
         }
 
+        delegate void SetOutputTextHandle(string text);
+
         void SetOutputText(string text)
         {
-            histroyTextBox.Text += commandLineTextBox.Text + "\n" + "[ " + text + " ]\n";
-            //histroyTextBox.Text = commandLineTextBox.Text + "\n--> " + output + "\n" + histroyTextBox.Text;
-            commandLineTextBox.Text = "";
-            histroyTextBox.ScrollToEnd();
+            if (this.Dispatcher.Thread != System.Threading.Thread.CurrentThread)
+            {
+                this.Dispatcher.Invoke(new SetOutputTextHandle(SetOutputText), text);
+            }
+            else
+            {
+                histroyTextBox.Text += text + "\n";
+                commandLineTextBox.Text = "";
+                histroyTextBox.ScrollToEnd();
+            }
         }
 
 

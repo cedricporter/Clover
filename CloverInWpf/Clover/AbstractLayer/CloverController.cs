@@ -323,13 +323,13 @@ namespace Clover
         /// <param name="projectionPoint"></param>
         /// <returns></returns>
 
-        public Edge UpdateFoldingLine(Face face, Point3D pickedPoint)
-        {
-            Edge e = UpdateFoldingLine(face, new Vertex(pickedPoint), new Vertex(projectionPoint));
-            //currentFoldingLine = e;
-            //renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
-            return e;
-        }
+        //public Edge UpdateFoldingLine(Face face, Point3D pickedPoint)
+        //{
+        //    Edge e = UpdateFoldingLine(face, new Vertex(pickedPoint), new Vertex(projectionPoint));
+        //    //currentFoldingLine = e;
+        //    //renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
+        //    return e;
+        //}
 
         /// <summary>
         /// 创建一条折线
@@ -516,34 +516,35 @@ namespace Clover
         /// <returns></returns>
         public Edge GetFoldingLine(Face face, Vertex originVertex, Vertex newVertex)
         {
-            return UpdateFoldingLine(face, originVertex, newVertex);
+            //return UpdateFoldingLine(face, originVertex, newVertex);
+            return foldingSystem.GetFoldingLine(face, originVertex.GetPoint3D(), newVertex.GetPoint3D());
         }
 
-        public Edge UpdateFoldingLine(Face face, Vertex originVertex, Vertex ProjectionVertex)
-        {
-            Vertex vertex1 = originVertex.Clone() as Vertex;
-            Vertex vertex2 = ProjectionVertex.Clone() as Vertex;
+        //public Edge UpdateFoldingLine(Face face, Vertex originVertex, Vertex ProjectionVertex)
+        //{
+        //    Vertex vertex1 = originVertex.Clone() as Vertex;
+        //    Vertex vertex2 = ProjectionVertex.Clone() as Vertex;
 
-            // 求空间折线
-            Edge foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
-            if (foldingLine == null)
-                return null;
+        //    // 求空间折线
+        //    Edge foldingLine = CloverMath.GetPerpendicularBisector3D(face, originVertex.GetPoint3D(), ProjectionVertex.GetPoint3D());
+        //    if (foldingLine == null)
+        //        return null;
 
-            // 计算纹理坐标
-            foreach (Edge e in face.Edges)
-            {
-                if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
-                {
-                    foldingSystem.CalculateTexcoord(foldingLine.Vertex1, e);
-                }
+        //    // 计算纹理坐标
+        //    foreach (Edge e in face.Edges)
+        //    {
+        //        if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
+        //        {
+        //            foldingSystem.CalculateTexcoord(foldingLine.Vertex1, e);
+        //        }
 
-                if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
-                {
-                    foldingSystem.CalculateTexcoord(foldingLine.Vertex2, e);
-                }
-            }
-            return foldingLine;
-        }
+        //        if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.001))
+        //        {
+        //            foldingSystem.CalculateTexcoord(foldingLine.Vertex2, e);
+        //        }
+        //    }
+        //    return foldingLine;
+        //}
 
         #endregion
 

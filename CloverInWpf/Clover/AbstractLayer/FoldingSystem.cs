@@ -383,12 +383,12 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                //render.AddVisualInfoToVertex( newVertex1 );
+                render.AddVisualInfoToVertex(newVertex1);
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                //render.AddVisualInfoToVertex( newVertex2 );
+                render.AddVisualInfoToVertex(newVertex2);
             }
 
 
@@ -427,8 +427,8 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            //newVertex1.Update( newVertex1, null );
-            //newVertex2.Update( newVertex2, null );
+            newVertex1.Update(newVertex1, null);
+            newVertex2.Update(newVertex2, null);
             //render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
 
             // 
@@ -489,9 +489,9 @@ namespace Clover
         /// <param name="pickedPoint">选中的点</param>
         /// <param name="projectionPoint">投影点</param>
         /// <returns></returns>
-        public Edge GetFoldingLine(Face pickedFace, Point3D pickedPoint, Point3D projectionPoint)
+        public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
         {
-            return CloverMath.GetPerpendicularBisector3D(pickedFace, pickedPoint, projectionPoint);
+            return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
         }
         /// <summary>
         /// 找到折线穿过面的那条线段
