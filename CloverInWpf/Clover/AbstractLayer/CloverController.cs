@@ -156,7 +156,7 @@ namespace Clover
         }
 
 
-        public void CutFaces(List<Face> faces, Edge edge)
+        public List<Edge> CutFaces(List<Face> faces, Edge edge)
         {
             // 拍快照
             CloverController controller = CloverController.GetInstance();
@@ -170,23 +170,29 @@ namespace Clover
 
             // 割面
             List<Edge> newEdges = foldingSystem.CutFaces(faces, edge);
-
+            foreach (Edge e in newEdges)
+            {
+                renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
+            }
             node.NewEdges = newEdges;
             shadowSystem.Snapshot(node);
+
+            return newEdges;
         }
         #endregion
 
         #region 动画
         delegate List<Vertex> RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
-        delegate void CutFacesHandle(List<Face> list, Edge foldLine);
+        delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
+
         System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
         long animationDuration = 1000;
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
         {
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beCutFaceList);
-
-            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge);
+            
+            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge);  
         }
 
         public void AnimatedRotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
