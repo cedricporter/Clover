@@ -404,10 +404,10 @@ namespace Clover
             renderController.Update(faceLayer.Leaves[1]);
         }
 
-        public void Revert()
-        {
-            shadowSystem.Revert();
-        }
+        //public void Revert()
+        //{
+        //    shadowSystem.Revert();
+        //}
 
         public void Undo()
         {
