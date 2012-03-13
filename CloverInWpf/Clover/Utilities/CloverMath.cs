@@ -608,7 +608,7 @@ namespace Clover
                 }
                 else
                 {
-                    if (1 == GetIntersectionOfTwoSegments(e, proE, ref pbP2))
+                    if (1 == GetIntersectionOfTwoSegments(e, proE, ref pbP2) && pbP1 != pbP2)
                     {
                         finished = true;
                         break;

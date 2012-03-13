@@ -294,7 +294,6 @@ namespace Clover.Tool
                 cubeNavViewport.PreviewMouseDown += cubeNav.cubeNavViewport_ButtonDown;
                 //cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
             }
-
         }
 
         /// <summary>
@@ -502,40 +501,7 @@ namespace Clover.Tool
 
         #region Blending
 
-        ///// <summary>
-        ///// 计算旋转量
-        ///// </summary>
-        ///// <returns></returns>
-        //Quaternion CalculateBlendingRotation()
-        //{
-        //    Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
-
-        //    // 判断该面是正面朝向用户还是背面朝向用户
-        //    Vector3D vector1 = nearestFace.Normal * mat;
-        //    Vector3D vector2 = new Vector3D(0, 0, 1);
-        //    Vector3D vector3 = projectionPoint - pickedVertex.GetPoint3D();
-        //    if (Vector3D.DotProduct(vector1, vector2) < 0)
-        //        vector1 = nearestFace.Normal * -1;
-        //    else
-        //        vector1 = nearestFace.Normal;
-        //    // 计算旋转
-        //    Quaternion quat;
-        //    if (vector1 == new Vector3D(0, 0, 1))
-        //    {
-        //        quat = new Quaternion(new Vector3D(1, 0, 0), -70);
-        //    }
-        //    else if (vector1 == new Vector3D(0, 0, -1))
-        //        quat = new Quaternion(new Vector3D(1, 0, 0), 110);
-        //    else
-        //    {
-        //        Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
-        //        axis.Normalize();
-        //        Double deg = Vector3D.AngleBetween(vector1, vector2);
-        //        quat = new Quaternion(axis, deg);
-        //        quat = new Quaternion(new Vector3D(1, 0, 0), -70) * quat;
-        //    }
-        //    return quat;
-        //}
+        
 
         ///// <summary>
         ///// 进入Blending模式

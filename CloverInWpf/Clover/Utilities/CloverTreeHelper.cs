@@ -42,16 +42,19 @@ namespace Clover
 
             foreach (Face face in faceList)
             {
-                foreach (Edge edge in face.Edges)
-                {
-                    //if ( CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), vertex.GetPoint3D(), 0.001)
-                    //    || CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), vertex.GetPoint3D(), 0.001))
-                    if (edge.IsVerticeIn(vertex))
-                    {
-                        list.Add(face);
-                        break;
-                    }
-                }
+                if (face.Vertices.Contains(vertex))
+                    list.Add(face);
+
+                //foreach (Edge edge in face.Edges)
+                //{
+                //    //if ( CloverMath.IsTwoPointsEqual(edge.Vertex1.GetPoint3D(), vertex.GetPoint3D(), 0.001)
+                //    //    || CloverMath.IsTwoPointsEqual(edge.Vertex2.GetPoint3D(), vertex.GetPoint3D(), 0.001))
+                //    if (edge.IsVerticeIn(vertex))
+                //    {
+                //        list.Add(face);
+                //        break;
+                //    }
+                //}
             }
 
             return list;
