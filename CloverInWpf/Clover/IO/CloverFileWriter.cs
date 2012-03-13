@@ -35,7 +35,7 @@ namespace Clover.IO
             FileStream fs = new FileStream(filename, FileMode.Create);
             writer = new BinaryWriter(fs);
 
-            // 魔数
+            // 魔数，用于表示这个文件是一个Clover文件
             writer.Write(201203100);
 
             ReAllocateVertexID(vertexLayer);
@@ -60,7 +60,46 @@ namespace Clover.IO
         /// <param name="shadowSystem"></param>
         void SaveShadowSystem(FileStream fs, ShadowSystem shadowSystem)
         {
+            writer.Write("ShadowSystem");
 
+            List<SnapshotNode> nodeList = shadowSystem.SnapshotList;
+
+            writer.Write(nodeList.Count);
+            foreach (SnapshotNode node in nodeList)
+            {
+                SaveSnapshotNode(node);
+            }
+        }
+
+        /// <summary>
+        /// 保存SnapshotNode节点到文件中
+        /// </summary>
+        /// <param name="node"></param>
+        void SaveSnapshotNode(SnapshotNode node)
+        {
+            writer.Write((int)node.Type);
+
+            writer.Write(node.FaceLeaves.Count);
+            foreach (Face face in node.FaceLeaves)
+            {
+                writer.Write(face.ID);
+            }
+
+            writer.Write(node.NewEdges.Count);
+            foreach (Edge edge in node.NewEdges)
+            {
+                writer.Write(edge.ID);
+            }
+
+            writer.Write(node.MovedVertexList.Count);
+            foreach (Vertex v in node.MovedVertexList)
+            {
+                writer.Write(v.ID);
+            }
+
+            writer.Write(node.OriginVertexListCount);
+
+            writer.Write(node.OriginEdgeListCount);
         }
 
         /// <summary>

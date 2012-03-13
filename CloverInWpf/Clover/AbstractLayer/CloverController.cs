@@ -127,9 +127,11 @@ namespace Clover
         {
             fileLoader.LoadFromFile(filename);
 
+            // 重置所有的数据结构
             faceLayer = fileLoader.FaceLayer;
             edgeLayer = fileLoader.EdgeLayer;
             vertexLayer = fileLoader.VertexLayer;
+            shadowSystem = fileLoader.ShadowSystem;
 
             renderController.DeleteAll();
             //renderController.RedrawFoldLine();

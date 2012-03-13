@@ -23,6 +23,10 @@ namespace Clover.IO
         {
             get { return parser.VertexLayer; }
         }
+        public Clover.ShadowSystem ShadowSystem 
+        {
+            get { return parser.ShadowSystem; }
+        }
         #endregion
 
         FileParser parser = new FileParser();

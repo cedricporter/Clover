@@ -22,7 +22,7 @@ namespace Clover
     {
         SnapshotNodeKind type;                                  /// 节点类型
         List<Face> faceLeaves = new List<Face>();               /// 当前快照时候的叶子节点
-        List<Edge> newEdges = null;                             /// 新增加的边，仅在CutFaces时候设置
+        List<Edge> newEdges = new List<Edge>();                 /// 新增加的边，仅在CutFaces时候设置
         List<Vertex> movedVertexList = new List<Vertex>();      /// 被移动的顶点，仅在RotateFaces的时候设置
         int originVertexListCount = -1;                         /// 当前快照的顶点的表的长度
         int originEdgeListCount = -1;                           /// 当前快照的边的表的长度

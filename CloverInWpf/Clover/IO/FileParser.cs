@@ -38,22 +38,24 @@ namespace Clover.IO
         VertexLayer vertexLayer;
         EdgeLayer edgeLayer;
         FaceLayer faceLayer;
+        ShadowSystem shadowSystem;
 
         #region get/set
+        public Clover.ShadowSystem ShadowSystem
+        {
+            get { return shadowSystem; }
+        }
         public Clover.VertexLayer VertexLayer
         {
             get { return vertexLayer; }
-            set { vertexLayer = value; }
         }
         public Clover.EdgeLayer EdgeLayer
         {
             get { return edgeLayer; }
-            set { edgeLayer = value; }
         }
         public Clover.FaceLayer FaceLayer
         {
             get { return faceLayer; }
-            set { faceLayer = value; }
         }
         #endregion
 
@@ -79,6 +81,7 @@ namespace Clover.IO
             vertexLayer = new VertexLayer();
             edgeLayer = new EdgeLayer();
             faceLayer = new FaceLayer();
+            shadowSystem = new ShadowSystem();
 
             Clover();
 
@@ -99,6 +102,7 @@ namespace Clover.IO
             _ShadowSystem();
         }
 
+        #region ShadowSystem
         void _ShadowSystem()
         {
             if (!ReadHeader("ShadowSystem"))
@@ -108,38 +112,51 @@ namespace Clover.IO
 
             for (int i = 0; i < snapshotNodeCount; i++)
             {
-                SnapshotNode();
+                SnapshotNode node = SnapshotNode();
+                shadowSystem.Snapshot(node);
             }
         }
 
-        void SnapshotNode()
+        SnapshotNode SnapshotNode()
         {
-            SnapshotNodeKind type = (SnapshotNodeKind)reader.ReadInt32();
+            SnapshotNode node = new SnapshotNode();
+            node.Type = (SnapshotNodeKind)reader.ReadInt32();
 
+            List<Face> leaves = new List<Face>();
             int faceCount = reader.ReadInt32();
-
             for (int i = 0; i < faceCount; i++)
             {
                 int faceID = reader.ReadInt32();
+                leaves.Add(faceIDDict[faceID]);
             }
+            node.FaceLeaves = leaves;
 
+            List<Edge> newEdgeList = new List<Edge>();
             int newEdgeCount = reader.ReadInt32();
-            for (int i = 0; i < newEdgeCount; i++ )
+            for (int i = 0; i < newEdgeCount; i++)
             {
                 int edgeID = reader.ReadInt32();
+                newEdgeList.Add(edgeIDDict[edgeID]);
             }
+            node.NewEdges = newEdgeList;
 
+            List<Vertex> vertexList = new List<Vertex>();
             int vertexCount = reader.ReadInt32();
             for (int i = 0; i < vertexCount; i++)
             {
                 int vertexID = reader.ReadInt32();
-
+                vertexList.Add(vertexIDDict[vertexID]);
             }
+            node.MovedVertexList = vertexList;
 
             int originVertexListCount = reader.ReadInt32();
+            node.OriginVertexListCount = originVertexListCount;
             int originEdgeListCount = reader.ReadInt32();
+            node.OriginEdgeListCount = originEdgeListCount;
 
+            return node;
         }
+        #endregion
 
         bool ReadHeader(string headerName)
         {
@@ -226,6 +243,9 @@ namespace Clover.IO
             int edgeCount = reader.ReadInt32();
 
             Face face = new Face(0);
+            face.ID = faceID;
+            faceIDDict[face.ID] = face;
+
             for (int i = 0; i < edgeCount; i++)
             {
                 int edgeID = reader.ReadInt32();

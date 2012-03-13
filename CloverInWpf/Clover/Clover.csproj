@@ -82,7 +82,7 @@
     <Compile Include="IO\FileParser.cs" />
     <Compile Include="IO\IOController.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />
-    <Compile Include="ShadowSystem\Snapshot.cs" />
+    <Compile Include="ShadowSystem\SnapshotNode.cs" />
     <Compile Include="PaperSelector.cs" />
     <Compile Include="RenderLayer\MaterialController.cs" />
     <Compile Include="RenderLayer\RenderController.cs" />
