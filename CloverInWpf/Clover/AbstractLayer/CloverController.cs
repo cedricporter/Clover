@@ -276,6 +276,8 @@ namespace Clover
         Face pickedFace;
         Point3D originPoint;
         Point3D lastProjectionPoint;
+        Point3D projectionPoint;
+
         public void EnterFoldingMode(Face nearestFace, Vertex pickedVertex)
         {
             // 修订选中的面为拥有选定点的同层面中最下面的那个面
@@ -292,6 +294,11 @@ namespace Clover
                 if (face.Vertices.Contains(pickedVertex) && face.Layer < nearestFace.Layer)
                     pickedFace = face;
             }
+        }
+
+        public void OnDrag(Point3D projectionPoint)
+        {
+            this.projectionPoint = projectionPoint;
         }
 
         public void ExitFoldingMode()
@@ -316,7 +323,7 @@ namespace Clover
         /// <param name="projectionPoint"></param>
         /// <returns></returns>
 
-        public Edge UpdateFoldingLine(Face face, Point3D pickedPoint, Point3D projectionPoint)
+        public Edge UpdateFoldingLine(Face face, Point3D pickedPoint)
         {
             Edge e = UpdateFoldingLine(face, new Vertex(pickedPoint), new Vertex(projectionPoint));
             //currentFoldingLine = e;
@@ -557,7 +564,7 @@ namespace Clover
         /// <param name="projectionPoint"></param>
         /// <param name="foldingLine"></param>
         /// <returns></returns>
-        public bool DetermineFoldingUpConditionEstablished( Point3D projectionPoint, ref Edge foldingLine)
+        public bool DetermineFoldingUpConditionEstablished( ref Edge foldingLine)
         {
             // 不成立条件一：投影点和原始点是同一个点
             if (originPoint == projectionPoint)
@@ -600,7 +607,7 @@ namespace Clover
         /// <param name="originVertex"></param>
         /// <param name="projetionPoint"></param>
         /// <returns></returns>
-        public bool JudgeCutAnotherFace( List<Face> foldingFaces, Point3D projectionPoint, Edge foldingLine)
+        public bool JudgeCutAnotherFace( List<Face> foldingFaces,Edge foldingLine)
         {
             // 取出与当前折叠面在同一组并且更高层的所有面  
             int currentLayer = 0;
@@ -679,7 +686,7 @@ namespace Clover
         /// </summary>
         /// <param name="pickedFace"></param>
         /// <param name="foldingLine"></param>
-        public void MoveToNewPosition(Point3D projectionPoint,  Edge foldingLine)
+        public void MoveToNewPosition(Edge foldingLine)
         {
             // 和折线共边的那个点
             // Vertex currentVertex = vertexLayer.GetVertex(originVertex.Index);
@@ -811,40 +818,40 @@ namespace Clover
         /// <param name="originVertex">选中的点</param>
         /// <param name="projectionPoint">投影点</param>
         /// <returns>折线边</returns>
-        public Edge FoldingUpToAPoint(Point3D projectionPoint)
+        public Edge FoldingUpToAPoint()
         {
             // 本次的折线
             Edge foldingLine = null;
 
             // 判定FoldingUp的成立条件，若成立则进行FoldingUp，若不成立返回null
-            if (!DetermineFoldingUpConditionEstablished(projectionPoint, ref foldingLine) || foldingLine == null)
+            if (!DetermineFoldingUpConditionEstablished( ref foldingLine) || foldingLine == null)
                 return null;
 
             // 是否是第一次折叠
             if (isFirstCut)
             {
-                if (!FirstCut(projectionPoint, foldingLine))
+                if (!FirstCut(foldingLine))
                     return null;
             }
             else
             {
                 // 不是第一次折叠
                 // 判断本次是否切割了一个新的面
-                if (JudgeCutAnotherFace(foldingFaces, projectionPoint, foldingLine))
+                if (JudgeCutAnotherFace(foldingFaces,foldingLine))
                 {
-                    if (!UndoLastCutAndDoFolding( projectionPoint, foldingLine))
+                    if (!UndoLastCutAndDoFolding( foldingLine))
                         return null;
                 }
                 else
                 {
                     if (JudgeCutAnotherEdge(foldingLine))
                     {
-                        if (!UndoLastCutAndDoFolding(projectionPoint, foldingLine))
+                        if (!UndoLastCutAndDoFolding( foldingLine))
                             return null;
                     }
                     else
                     {
-                        MoveToNewPosition( projectionPoint, foldingLine);
+                        MoveToNewPosition( foldingLine);
                         lastFoldingLine = foldingLine;
                     }
                 }
@@ -859,7 +866,7 @@ namespace Clover
             return foldingLine;
         }
 
-        private bool UndoLastCutAndDoFolding(Point3D projectionPoint, Edge foldingLine)
+        private bool UndoLastCutAndDoFolding(Edge foldingLine)
         {
             //撤消之前的折叠
             shadowSystem.Undo();
@@ -875,7 +882,7 @@ namespace Clover
 
             return true;
         }
-        private bool FirstCut(Point3D projectionPoint, Edge foldingLine)
+        private bool FirstCut(Edge foldingLine)
         {
             if (!foldingSystem.FoldingUpToPoint(pickedFace, originPoint, projectionPoint, foldingLine))
                 //折叠没有成功，直接返回
