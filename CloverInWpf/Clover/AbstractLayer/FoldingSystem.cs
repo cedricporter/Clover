@@ -383,12 +383,12 @@ namespace Clover
             if (newVertex1 == newVertexOld1)
             {
                 vertexLayer.InsertVertex(newVertex1);
-                render.AddVisualInfoToVertex( newVertex1 );
+                //render.AddVisualInfoToVertex( newVertex1 );
             }
             if (newVertex2 == newVertexOld2)
             {
                 vertexLayer.InsertVertex(newVertex2);
-                render.AddVisualInfoToVertex( newVertex2 );
+                //render.AddVisualInfoToVertex( newVertex2 );
             }
 
 
@@ -427,9 +427,9 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            newVertex1.Update( newVertex1, null );
-            newVertex2.Update( newVertex2, null );
-            render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
+            //newVertex1.Update( newVertex1, null );
+            //newVertex2.Update( newVertex2, null );
+            //render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
 
             // 
             controller.FaceLayer.UpdateLeaves();
