@@ -65,11 +65,11 @@ namespace Clover
             ioController = IOController.GetInstance();
 
             // 创建工具
-            ToolFactory tool = new TestTool(this);
-            tools.Add(tool);
-            tool = new FoldTool(this);
+            ToolFactory tool = new FoldTool(this);
             tools.Add(tool);
             ToolFactory.currentTool = tool;
+            tool = new BlendTool(this);
+            tools.Add(tool);
 
             // 杂项
             utility = Utility.GetInstance();
@@ -505,7 +505,8 @@ RotateFaces(faces, edge, 90)
 
         private void ToolFodeButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            if (tools.Count >= 2)
+                ToolFactory.currentTool = tools[0];
         }
 
         private void ToolFodeButton_Unchecked(object sender, RoutedEventArgs e)
@@ -525,7 +526,8 @@ RotateFaces(faces, edge, 90)
 
         private void ToolBlendButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            if (tools.Count >= 2)
+                ToolFactory.currentTool = tools[1];
         }
 
         private void ToolBlendButton_Unchecked(object sender, RoutedEventArgs e)
