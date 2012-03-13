@@ -30,7 +30,6 @@ from Clover import *
 clover = CloverController.GetInstance();
 # 取出所有的函数指针
 FindFacesByVertex = clover.FindFacesByVertex
-GetFoldingLine = clover.GetFoldingLine
 GetVertex = clover.GetVertex
 CutFaces = clover.AnimatedCutFaces
 _CutFaces = clover.CutFaces
