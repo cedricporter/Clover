@@ -121,7 +121,7 @@ namespace Clover
         #region 文件操作
         public void SaveFile(string filename)
         {
-            fileWriter.SaveFile(filename, faceLayer, edgeLayer, vertexLayer);
+            fileWriter.SaveFile(filename, faceLayer, edgeLayer, vertexLayer, shadowSystem);
         }
         public void LoadFile(string filename)
         {
@@ -142,7 +142,7 @@ namespace Clover
 
         #region 动画
         delegate void RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
-        delegate void CutFacesHandle(List<Face> list, Edge foldLine);
+        delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
         System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
         long animationDuration = 1000;
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)

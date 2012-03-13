@@ -14,7 +14,8 @@ namespace Clover.IO
     /// <summary>
     /// Clover文件分析器，分析方式和编译器中的语法分析过程类似
     /// 采用自顶向下的分析方法。
-    /// 
+    /// </summary>
+    /// <remarks>
     /// 文法
     /// Clover           –> VertexLayer EdgeLayer FaceLayer
     /// VertexLayer      -> TrunkName VertexTable
@@ -28,7 +29,7 @@ namespace Clover.IO
     ///                     | –1
     /// face_id          -> positive_number
     /// edge_id          -> positive_number
-    /// </summary>
+    /// </remarks>
     class FileParser
     {
         BinaryReader reader;
@@ -56,6 +57,9 @@ namespace Clover.IO
         }
         #endregion
 
+        /// <summary>
+        /// 用于重新组装整个数据结构
+        /// </summary>
         Dictionary<int, Vertex> vertexIDDict;
         Dictionary<int, Edge> edgeIDDict;
         Dictionary<int, Face> faceIDDict;
@@ -91,6 +95,50 @@ namespace Clover.IO
             _EdgeLayer();
 
             _FaceLayer();
+
+            _ShadowSystem();
+        }
+
+        void _ShadowSystem()
+        {
+            if (!ReadHeader("ShadowSystem"))
+                return;
+
+            int snapshotNodeCount = reader.ReadInt32();
+
+            for (int i = 0; i < snapshotNodeCount; i++)
+            {
+                SnapshotNode();
+            }
+        }
+
+        void SnapshotNode()
+        {
+            SnapshotNodeKind type = (SnapshotNodeKind)reader.ReadInt32();
+
+            int faceCount = reader.ReadInt32();
+
+            for (int i = 0; i < faceCount; i++)
+            {
+                int faceID = reader.ReadInt32();
+            }
+
+            int newEdgeCount = reader.ReadInt32();
+            for (int i = 0; i < newEdgeCount; i++ )
+            {
+                int edgeID = reader.ReadInt32();
+            }
+
+            int vertexCount = reader.ReadInt32();
+            for (int i = 0; i < vertexCount; i++)
+            {
+                int vertexID = reader.ReadInt32();
+
+            }
+
+            int originVertexListCount = reader.ReadInt32();
+            int originEdgeListCount = reader.ReadInt32();
+
         }
 
         bool ReadHeader(string headerName)

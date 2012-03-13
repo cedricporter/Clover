@@ -455,8 +455,13 @@ namespace Clover
         }
         #endregion
 
-        //int counterFUcker = 1;
-        public void CutFaces(List<Face> faceList, Edge foldingLine)
+        /// <summary>
+        /// 切割多个面
+        /// </summary>
+        /// <param name="faceList">要切割的面的列表</param>
+        /// <param name="foldingLine">分割线</param>
+        /// <returns>在每个面上的折线</returns>
+        public List<Edge> CutFaces(List<Face> faceList, Edge foldingLine)
         {
             // 拍快照
             CloverController controller = CloverController.GetInstance();
@@ -467,8 +472,9 @@ namespace Clover
             node.Type = SnapshotNodeKind.CutKind;
             node.OriginVertexListCount = controller.VertexLayer.VertexCellTable.Count;
             node.OriginEdgeListCount = controller.EdgeLayer.Count;
-            List<Edge> newEdges = new List<Edge>();
 
+            // 切割面
+            List<Edge> newEdges = new List<Edge>();
             foreach (Face face in faceList)
             {
                 Edge edge = GetFoldingLineOnAFace(face, foldingLine);
@@ -480,8 +486,9 @@ namespace Clover
             }
 
             node.NewEdges = newEdges;
-
             shadowSystem.Snapshot(node);
+
+            return newEdges;
         }
 
         #endregion

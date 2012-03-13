@@ -30,7 +30,7 @@ namespace Clover.IO
             Vertex.Vertex_count = vertexID;
         }
 
-        public int SaveFile(string filename, FaceLayer faceLayer, EdgeLayer edgeLayer, VertexLayer vertexLayer)
+        public int SaveFile(string filename, FaceLayer faceLayer, EdgeLayer edgeLayer, VertexLayer vertexLayer, ShadowSystem shadowSystem)
         {
             FileStream fs = new FileStream(filename, FileMode.Create);
             writer = new BinaryWriter(fs);
@@ -46,7 +46,7 @@ namespace Clover.IO
 
             SaveFaceLayer(fs, faceLayer);
 
-
+            SaveShadowSystem(fs, shadowSystem);
 
             fs.Close();
 
@@ -54,11 +54,21 @@ namespace Clover.IO
         }
 
         /// <summary>
+        /// 保存影子系统的数据
+        /// </summary>
+        /// <param name="fs"></param>
+        /// <param name="shadowSystem"></param>
+        void SaveShadowSystem(FileStream fs, ShadowSystem shadowSystem)
+        {
+
+        }
+
+        /// <summary>
         /// 保存顶点层
         /// </summary>
         /// <param name="fs"></param>
         /// <param name="vertexLayer"></param>
-        public void SaveVertexLayer(FileStream fs, VertexLayer vertexLayer)
+        void SaveVertexLayer(FileStream fs, VertexLayer vertexLayer)
         {
             writer.Write("Vertex Layer");
 
@@ -91,7 +101,7 @@ namespace Clover.IO
             writer.Write(edge.Vertex2.ID);
         }
 
-        public void SaveEdgeLayer(FileStream fs, EdgeLayer edgeLayer)
+        void SaveEdgeLayer(FileStream fs, EdgeLayer edgeLayer)
         {
             writer.Write("Edge Layer");
 
@@ -126,7 +136,7 @@ namespace Clover.IO
             }
         }
 
-        public void SaveFaceLayer(FileStream fs, FaceLayer faceLayer)
+        void SaveFaceLayer(FileStream fs, FaceLayer faceLayer)
         {
             writer.Write("Face Layer");
 
