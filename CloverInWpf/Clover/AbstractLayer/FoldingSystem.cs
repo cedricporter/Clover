@@ -713,7 +713,7 @@ namespace Clover
 
             TestMovedFace();
 
-            CutFaces(facesWithFoldingLine, foldingLine);
+            CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
 
             // 查找cut完成后所有要移动的面
             List<Face> tempFaces = new List<Face>();
