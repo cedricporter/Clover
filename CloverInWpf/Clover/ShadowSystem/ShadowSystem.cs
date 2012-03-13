@@ -6,17 +6,13 @@ using System.Diagnostics;
 
 namespace Clover
 {
-    
+
     /// <summary>
     /// 影子，用于恢复折纸数据结构
     /// </summary>
     public class ShadowSystem
     {
         #region get/set
-        //public List<Face> OriginFaceList
-        //{
-        //    get { return originFaceList; }
-        //}
         public int OperationLevel
         {
             get { return operationLevel; }
@@ -29,14 +25,10 @@ namespace Clover
 
         #region 成员变量
         int operationLevel = -1;                                            /// 当前level
-        //int originEdgeListCount = -1;
-        //int originVertexListCount = -1;
-
-        //FaceGroupLookupTable originGroup;
-        //List<Face> originFaceList = new List<Face>();    /// 进入折叠模式前的叶子节点表，用于恢复
         List<SnapshotNode> snapshotList = new List<SnapshotNode>();         /// 用以保存Snapshot
         #endregion
 
+        #region 影子系统的基本操作
         /// <summary>
         /// 拍快照
         /// </summary>
@@ -47,27 +39,6 @@ namespace Clover
             snapshotList.Add(node);
             operationLevel++;
         }
-        //public void Snapshot(List<Face> leaves, List<Edge> newEdges)
-        //{
-        //    SnapshotNode snapshot = new SnapshotNode(leaves);
-        //    if (newEdges != null)
-        //        snapshot.NewEdges = newEdges;
-        //    snapshotList.Add(snapshot);
-        //    // 当前操作的层数
-        //    operationLevel++;
-        //}
-        //public void Snapshot(List<Face> leaves)
-        //{
-        //    Snapshot(leaves, null);
-        //}
-        //public void Snapshot(List<Edge> newEdges)
-        //{
-        //    Snapshot(CloverController.GetInstance().FaceLeaves, newEdges);
-        //}
-        //public void Snapshot()
-        //{
-        //    Snapshot(CloverController.GetInstance().FaceLeaves);
-        //}
 
         /// <summary>
         /// 撤销
@@ -108,7 +79,7 @@ namespace Clover
                         controller.RenderController.Update(f);
                     }
 
-                    
+
                     break;
             }
 
@@ -139,6 +110,7 @@ namespace Clover
             }
             controller.RenderController.RedrawFoldLine();
         }
+        #endregion
 
         #region 保存现场
         /// <summary>
