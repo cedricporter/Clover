@@ -369,6 +369,8 @@ RotateFaces(faces, edge, 90)
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
+                    //Face f = cloverController.FaceLayer.Leaves[0].Clone() as Face;
+                    //f.UpdateVertices();
                     var a = cloverController.FaceLayer;
                     // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
                     cloverController.RenderController.UpdateAll();
