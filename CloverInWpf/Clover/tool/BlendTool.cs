@@ -75,6 +75,8 @@ namespace Clover.Tool
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
+                // 求2D到3D的投影点
+                projectionPoint = Get3DProjectionPoint();
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
@@ -97,7 +99,8 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            blendingTest.OnDrag(1);
+            Double offsetX = currMousePos.X - lastMousePos.X;
+            blendingTest.OnDrag(offsetX);
         }
 
         protected override void onClick()
