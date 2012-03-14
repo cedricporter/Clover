@@ -436,8 +436,8 @@ namespace Clover
 
             //render.AntiOverlap();
 
-            newVertex1.Update(newVertex1, null);
-            newVertex2.Update(newVertex2, null);
+            //newVertex1.Update(newVertex1, null);
+            //newVertex2.Update(newVertex2, null);
             //render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
 
             // 
