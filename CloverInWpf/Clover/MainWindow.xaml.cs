@@ -75,6 +75,10 @@ namespace Clover
             utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();
 
+            //BlendAngleVisual vi = new BlendAngleVisual(0, new Point(100, 100), new Point(100, 200));
+            //vi.Start();
+            //visualController.AddVisual(vi);
+
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
             MouseMove += Window_TranslatePaper;
@@ -83,9 +87,6 @@ namespace Clover
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
                 new EventHandler(FrameRateDisplay), this.Dispatcher);
             CompositionTarget.Rendering += FrameCountPlusPlus;
-
-
-
         }
 
         ~MainWindow()

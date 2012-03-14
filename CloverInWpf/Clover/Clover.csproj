@@ -50,6 +50,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\CloverPython\obj\Debug\CloverPython.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -94,6 +95,7 @@
     <Compile Include="Utilities\CloverTreeHelper.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />
     <Compile Include="Utilities\Utility.cs" />
+    <Compile Include="Visual\BlendAngleVisual.cs" />
     <Compile Include="Visual\CurrentModeVisual.cs" />
     <Compile Include="Visual\DashLineVisual.cs" />
     <Compile Include="Visual\EdgeHeightLightVisual.cs" />

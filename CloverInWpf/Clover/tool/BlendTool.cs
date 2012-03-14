@@ -30,6 +30,7 @@ namespace Clover.Tool
         Face nearestFace;
         Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
+        BlendAngleVisual blendAngleVi = null;
         int currDegree = 0;                                 /// 当前Blending的夹角
                                                             
         enum FoldingMode
@@ -55,27 +56,30 @@ namespace Clover.Tool
                 return;
 
             // 更新小蓝点位置
-            Point3D p3d = pickedVertex.GetPoint3D();
-            p3d *= Utility.GetInstance().To2DMat;
-            Point p2d = new Point(p3d.X, p3d.Y);
+            Point3D p3d1 = pickedVertex.GetPoint3D();
+            p3d1 *= Utility.GetInstance().To2DMat;
+            Point p2d1 = new Point(p3d1.X, p3d1.Y);
             if (currOveredElementVi != null)
             {
-                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
-                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d1.X;
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d1.Y;
             }
             // 更新小红点位置
+            Point3D p3d2;
             Vertex currVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
             if (currVertex != null)
-                p3d = currVertex.GetPoint3D();
+                p3d2 = currVertex.GetPoint3D();
             else
-                p3d = pickedVertex.GetPoint3D();
-            p3d *= Utility.GetInstance().To2DMat;
-            p2d = new Point(p3d.X, p3d.Y);
+                p3d2 = pickedVertex.GetPoint3D();
+            p3d2 *= Utility.GetInstance().To2DMat;
+            Point p2d2 = new Point(p3d2.X, p3d2.Y);
             if (currSelectedElementVi != null)
             {
-                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
-                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d2.X;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d2.Y;
             }
+            // 更新角度提示
+            blendAngleVi.Update(currDegree, p2d2, p2d1);
         }
 
         protected override void onEnterElement(Object element)
@@ -162,6 +166,9 @@ namespace Clover.Tool
             LockViewport(false);
         }
 
+        /// <summary>
+        /// 进入Blending
+        /// </summary>
         void EnterBlending()
         {
             mode = FoldingMode.Blending;
@@ -173,13 +180,23 @@ namespace Clover.Tool
             currentModeVi = new CurrentModeVisual("Blending Mode");
             VisualController.GetSingleton().AddVisual(currentModeVi);
             currentModeVi.Start();
+            // 显示纸张夹角vi
+            blendAngleVi = new BlendAngleVisual(0, new Point(100, 100), new Point(200, 200));
+            VisualController.GetSingleton().AddVisual(blendAngleVi);
+            blendAngleVi.Start();
+            
         }
 
+        /// <summary>
+        /// 退出Blending
+        /// </summary>
         void ExitBlending()
         {
             mode = FoldingMode.DoingNothing;
             currentModeVi.End();
             currentModeVi = null;
+            blendAngleVi.End();
+            blendAngleVi = null;
 
             // 向下层传递退出Blending模式
             blendingTest.ExitBlendingMode();
