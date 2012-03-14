@@ -28,6 +28,8 @@ namespace Clover.Tool
         Face nearestFace;
         Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
+        int currDegree = 0;                                 /// 当前Blending的夹角
+                                                            
         enum FoldingMode
         {
             DoingNothing, Blending
@@ -87,7 +89,7 @@ namespace Clover.Tool
                 EnterBlending();
 
                 // 向下层传递数据
-                blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
+                currDegree = blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
 
             }
         }
@@ -99,8 +101,13 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            Double offsetX = currMousePos.X - lastMousePos.X;
-            blendingTest.OnDrag(offsetX);
+            int offsetX = (int)(currMousePos.X - lastMousePos.X);
+            // 控制旋转范围在 0 - 180 之间
+            offsetX = RotateDegreeRangeConverter(offsetX);
+            offsetX = RotateSpecialAngleConverter(offsetX);
+            currDegree += offsetX;
+            offsetX = RotateDirectionConverter(offsetX);
+            blendingTest.OnDrag((int)offsetX);
         }
 
         protected override void onClick()
@@ -248,6 +255,58 @@ namespace Clover.Tool
                 cubeNavViewport.PreviewMouseDown += cubeNav.cubeNavViewport_ButtonDown;
             }
         }
+
+        #region 转换器
+
+        /// <summary>
+        /// 旋转方向转换器，保证旋转方向永远向着用户。
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateDirectionConverter(int offset)
+        {
+            // todo
+            return -offset;
+        }
+
+        /// <summary>
+        /// 特殊值黏合转换器，当开启磁性工具时，调用此转换器。
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateSpecialAngleConverter(int offset)
+        {
+            int threadhold = 3;
+            int val = currDegree + offset;
+            if (Math.Abs(0 - val) < threadhold)
+                return 0 - currDegree;
+            if (Math.Abs(45 - val) < threadhold)
+                return 45 - currDegree;
+            if (Math.Abs(90 - val) < threadhold)
+                return 90 - currDegree;
+            if (Math.Abs(135 - val) < threadhold)
+                return 135 - currDegree;
+            if (Math.Abs(180 - val) < threadhold)
+                return 180 - currDegree;
+
+            return offset;
+        }
+
+        /// <summary>
+        /// 旋转偏移量范围转换器，保证旋转角度在 0 - 180 之间
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateDegreeRangeConverter(int offset)
+        {
+            if (currDegree + offset > 180)
+                return 180 - currDegree;
+            if (currDegree + offset < 0)
+                return 0 - currDegree;
+            return offset;
+        }
+
+        #endregion
 
 
     }
