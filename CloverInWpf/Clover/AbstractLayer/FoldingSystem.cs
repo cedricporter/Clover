@@ -299,6 +299,7 @@ namespace Clover
                         else
                         {
                             System.Windows.MessageBox.Show("fuck2");
+                            return null;
                         }
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge1.LeftChild.Vertex1.GetPoint3D(), 0.001)
@@ -361,6 +362,7 @@ namespace Clover
                         else
                         {
                             System.Windows.MessageBox.Show("fuck");
+                            return null;
                         }
 
                         if (CloverMath.IsTwoPointsEqual(vertexList[i].GetPoint3D(), beCutEdge2.LeftChild.Vertex1.GetPoint3D(), 0.001)

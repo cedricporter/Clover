@@ -338,14 +338,14 @@ namespace Clover
                     break;
                 case Key.F1:
                     string code = @"
-vertex = GetVertex(0)
-face = FindFacesByVertex(0)
-edge = GetFoldingLine(face[0], vertex, Vertex(0, 0))
-
-CutFaces(face, edge)
+edge = Edge(Vertex(0, 50, 0), Vertex(-50, 30, 0))
+faces = FindFacesByVertex(0)
+CutFaces(faces, edge)
 
 faces = FindFacesByVertex(0)
-RotateFaces(faces, edge, 90)
+RotateFaces(faces, edge, 180)
+
+clover.UpdateFaceGroupTable()
                     ";
                     string msg = cloverInterpreter.ExecuteOneLine(code);
                     histroyTextBox.Text += msg;
@@ -369,6 +369,8 @@ RotateFaces(faces, edge, 90)
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
+                    //Face f = cloverController.FaceLayer.Leaves[0].Clone() as Face;
+                    //f.UpdateVertices();
                     var a = cloverController.FaceLayer;
                     // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
                     cloverController.RenderController.UpdateAll();

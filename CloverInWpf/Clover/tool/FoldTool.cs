@@ -31,7 +31,7 @@ namespace Clover.Tool
     {
         Face nearestFace = null;
         Vertex pickedVertex = null;
-        FaceGroup currGroup = null;
+        //FaceGroup currGroup = null;
         List<Vertex> canSelectedVertices = new List<Vertex>();
         List<Face> canSelectedFaces = new List<Face>();
         Point Origin2Dpos = new Point();

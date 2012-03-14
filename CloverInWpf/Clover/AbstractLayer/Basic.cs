@@ -323,9 +323,36 @@ namespace Clover
             newFace.vertices = new List<Vertex>();
             newFace.edges = new List<Edge>();
 
+            Dictionary<Vertex, Vertex> vertexDict = new Dictionary<Vertex, Vertex>();
             foreach (Edge e in edges)
             {
-                newFace.edges.Add(new Edge(e.Vertex1.Clone() as Vertex, e.Vertex2.Clone() as Vertex));
+
+                Vertex n1, n2;
+                if (vertexDict.ContainsKey(e.Vertex1))
+                {
+                    n1 = vertexDict[e.Vertex1];
+                }
+                else
+                {
+                    n1 = e.Vertex1.Clone() as Vertex;
+                    vertexDict[e.Vertex1] = n1;
+                }
+
+                if (vertexDict.ContainsKey(e.Vertex2))
+                {
+                    n2 = vertexDict[e.Vertex2];
+                }
+                else
+                {
+                    n2 = e.Vertex2.Clone() as Vertex;
+                    vertexDict[e.Vertex2] = n2;
+                }
+
+                newFace.edges.Add(new Edge(n1, n2));
+                if (e.Vertex1 == startVertex1)
+                    newFace.startVertex1 = n1;
+                if (e.Vertex2 == startVertex2)
+                    newFace.startVertex2 = n2;
             }
 
             newFace.UpdateVertices();

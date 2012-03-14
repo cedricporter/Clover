@@ -1,4 +1,5 @@
 ﻿import math 
+
 def tan(v):
     return math.tan(v * math.pi / 180.0)
 
