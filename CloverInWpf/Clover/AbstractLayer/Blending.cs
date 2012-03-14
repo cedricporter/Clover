@@ -53,7 +53,8 @@ namespace Clover.AbstractLayer
         /// </summary>
         /// <param name="pickedVertex">当前选取的顶点</param>
         /// <param name="nearestFace">包含当前顶点的离摄像机最近的面</param>
-        public void EnterBlendingMode(Vertex pickedVertex, Face nearestFace)
+        /// <returns>返回当前两个面的夹角</returns>
+        public int EnterBlendingMode(Vertex pickedVertex, Face nearestFace)
         {
             this.pickedVertex = pickedVertex;
             checkMask += 1;
@@ -61,6 +62,8 @@ namespace Clover.AbstractLayer
             checkMask += 2;
             FindBeBlendedFaces();
             FindFoldLine();
+            
+            return GetInitialAngle();
         }
 
         /// <summary>
@@ -137,15 +140,26 @@ namespace Clover.AbstractLayer
             }
         }
 
+        /// <summary>
+        /// 求面初始夹角
+        /// </summary>
+        int GetInitialAngle()
+        {
+            Vector3D gNormal = group.Normal;
+            Vector3D fNormal = nearestFace.Normal;
+            return (int)Math.Round(Vector3D.AngleBetween(fNormal, gNormal));
+        }
+
         #endregion
 
         #region 鼠标拖动时执行旋转
 
         /// <summary>
         /// 根据鼠标的X朝向位移来控制Blending角度
+        /// 旋转量通过上层来控制
         /// </summary>
-        /// <param name="offsetX"></param>
-        public void OnDrag(Double offsetX)
+        /// <param name="offsetX">旋转量</param>
+        public void OnDrag(int offsetX)
         {
             // 未通过验证条件
             if (checkMask != 63)
@@ -156,6 +170,8 @@ namespace Clover.AbstractLayer
             Debug.WriteLine(offsetX);
             RotateFaces(beBlendedFaces, foldLine, offsetX);
         }
+
+
 
         /// <summary>
         /// 克隆和更新一个新的顶点到VertexLayer

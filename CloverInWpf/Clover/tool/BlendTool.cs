@@ -6,6 +6,8 @@ using System.Windows.Media.Media3D;
 using Clover.Visual;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Clover.AbstractLayer;
+using System.Windows;
 
 /**
 @date		:	2012/03/03
@@ -28,6 +30,8 @@ namespace Clover.Tool
         Face nearestFace;
         Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
+        int currDegree = 0;                                 /// 当前Blending的夹角
+                                                            
         enum FoldingMode
         {
             DoingNothing, Blending
@@ -47,7 +51,31 @@ namespace Clover.Tool
 
         public override void onIdle()
         {
+            if (mode == FoldingMode.DoingNothing)
+                return;
 
+            // 更新小蓝点位置
+            Point3D p3d = pickedVertex.GetPoint3D();
+            p3d *= Utility.GetInstance().To2DMat;
+            Point p2d = new Point(p3d.X, p3d.Y);
+            if (currOveredElementVi != null)
+            {
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+            }
+            // 更新小红点位置
+            Vertex currVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
+            if (currVertex != null)
+                p3d = currVertex.GetPoint3D();
+            else
+                p3d = pickedVertex.GetPoint3D();
+            p3d *= Utility.GetInstance().To2DMat;
+            p2d = new Point(p3d.X, p3d.Y);
+            if (currSelectedElementVi != null)
+            {
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+            }
         }
 
         protected override void onEnterElement(Object element)
@@ -87,7 +115,7 @@ namespace Clover.Tool
                 EnterBlending();
 
                 // 向下层传递数据
-                blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
+                currDegree = blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
 
             }
         }
@@ -99,8 +127,17 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            Double offsetX = currMousePos.X - lastMousePos.X;
-            blendingTest.OnDrag(offsetX);
+            int offsetX = (int)(currMousePos.X - lastMousePos.X);
+            
+            // 各种转换器
+            offsetX = RotateDegreeRangeConverter(offsetX);
+            if (Magnet.IsMagnetismEnable)
+                offsetX = RotateSpecialAngleConverter(offsetX, Magnet.RotateAngleMagnetismVal);
+            currDegree += offsetX;
+            offsetX = RotateDirectionConverter(offsetX);
+
+            // 传给下一层
+            blendingTest.OnDrag((int)offsetX);
         }
 
         protected override void onClick()
@@ -248,6 +285,57 @@ namespace Clover.Tool
                 cubeNavViewport.PreviewMouseDown += cubeNav.cubeNavViewport_ButtonDown;
             }
         }
+
+        #region 转换器
+
+        /// <summary>
+        /// 旋转方向转换器，保证旋转方向永远向着用户。
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateDirectionConverter(int offset)
+        {
+            // todo
+            return -offset;
+        }
+
+        /// <summary>
+        /// 特殊值黏合转换器，当开启磁性工具时，调用此转换器。
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateSpecialAngleConverter(int offset, int threadhold)
+        {
+            int val = currDegree + offset;
+            if (Math.Abs(0 - val) < threadhold)
+                return 0 - currDegree;
+            if (Math.Abs(45 - val) < threadhold)
+                return 45 - currDegree;
+            if (Math.Abs(90 - val) < threadhold)
+                return 90 - currDegree;
+            if (Math.Abs(135 - val) < threadhold)
+                return 135 - currDegree;
+            if (Math.Abs(180 - val) < threadhold)
+                return 180 - currDegree;
+
+            return offset;
+        }
+
+        /// <summary>
+        /// 旋转偏移量范围转换器，保证旋转角度在 0 - 180 之间
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        int RotateDegreeRangeConverter(int offset)
+        {
+            if (currDegree + offset > 180)
+                return 180 - currDegree;
+            if (currDegree + offset < 0)
+                return 0 - currDegree;
+            return offset;
+        }
+
+        #endregion
 
 
     }

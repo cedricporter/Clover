@@ -21,14 +21,20 @@ namespace Clover.AbstractLayer
     public class Magnet
     {
         static Boolean isMagnetismEnable = true;
+        static Double vertexMagnetismVal = 5;
+        static Double edgeMagnetismVal = 5;
+        static int rotateAngleMagnetismVal = 3;
+
+        public static int RotateAngleMagnetismVal
+        {
+            get { return rotateAngleMagnetismVal; }
+            set { rotateAngleMagnetismVal = value; }
+        }
         public static System.Boolean IsMagnetismEnable
         {
             get { return isMagnetismEnable; }
             set { isMagnetismEnable = value; }
         }
-        static Double vertexMagnetismVal = 5;
-        static Double edgeMagnetismVal = 5;
-
         /// <summary>
         /// 在给定的Face中寻找可吸附的边或点
         /// </summary>

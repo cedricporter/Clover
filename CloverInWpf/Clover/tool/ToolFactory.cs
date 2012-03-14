@@ -36,7 +36,7 @@ namespace Clover.Tool
         Double pointThreadhold = 10;         /// 拾取点误差
         //Double lineThreadhold = 0.15;      /// 拾取线误差
         Boolean isVisualEnable = true;       /// 开启视觉元素
-        MainWindow mainWindow;
+        protected MainWindow mainWindow;
         VisualController visualController;
 
         protected VisualElementFactory lastOveredElementVi = null;
