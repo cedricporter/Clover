@@ -143,6 +143,9 @@ namespace Clover.Tool
             mode = FoldingMode.DoingNothing;
             currentModeVi.End();
             currentModeVi = null;
+
+            // 向下层传递退出Blending模式
+            blendingTest.ExitBlendingMode();
         }
 
         /// <summary>
