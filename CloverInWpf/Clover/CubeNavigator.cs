@@ -152,20 +152,6 @@ namespace Clover
 
         public void cubeNavViewport_MouseMove(Object sender, MouseEventArgs e)
         {
-            //if (e.RightButton == MouseButtonState.Pressed)
-            //{
-            //    // 计算纸张的平移量
-            //    Point currMousePos = e.GetPosition(mainWindow);
-            //    if (currMousePos.Equals(lastMousePos))
-            //        return;
-            //    Vector offsetVec = currMousePos - lastMousePos;
-
-            //    RenderController.GetInstance().TranslateTransform.OffsetX += offsetVec.X;
-            //    RenderController.GetInstance().TranslateTransform.OffsetY -= offsetVec.Y;
-
-            //    lastMousePos = currMousePos;
-            //}
-
             if (!isDraging)
                 return;
 

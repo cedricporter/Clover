@@ -287,12 +287,12 @@ namespace Clover.Tool
             if (islock)
             {
                 cubeNavViewport.PreviewMouseDown -= cubeNav.cubeNavViewport_ButtonDown;
-                //mainWindow.MouseMove -= cubeNav.cubeNavViewport_MouseMove;
+                // mainWindow.MouseMove -= mainWindow.Window_TranslatePaper;
             }
             else
             {
                 cubeNavViewport.PreviewMouseDown += cubeNav.cubeNavViewport_ButtonDown;
-                //cubeNavViewport.MouseMove += cubeNav.cubeNavViewport_MouseMove;
+                // mainWindow.MouseMove += mainWindow.Window_TranslatePaper;
             }
         }
 

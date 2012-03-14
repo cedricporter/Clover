@@ -77,6 +77,7 @@ namespace Clover
 
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
+            MouseMove += Window_TranslatePaper;
 
             stopwatch.Start();
             statsTimer = new System.Windows.Threading.DispatcherTimer(TimeSpan.FromSeconds(1), System.Windows.Threading.DispatcherPriority.Normal,
@@ -239,8 +240,16 @@ namespace Clover
 
             Grid_Move(sender, e);
 
-            // 右键移动纸张
+            return;
+        }
 
+        /// <summary>
+        /// 右键平移纸张
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void Window_TranslatePaper(Object sender, MouseEventArgs e)
+        {
             if (e.RightButton == MouseButtonState.Pressed)
             {
                 // 计算纸张的平移量
@@ -264,7 +273,6 @@ namespace Clover
                 lastMousePos2 = currMousePos;
             }
         }
-
         /// <summary>
         /// 当鼠标按下
         /// </summary>

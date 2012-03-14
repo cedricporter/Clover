@@ -6,6 +6,7 @@ using System.Windows.Media.Media3D;
 using Clover.Visual;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Clover.AbstractLayer;
 
 /**
 @date		:	2012/03/03
@@ -102,11 +103,15 @@ namespace Clover.Tool
         protected override void onDrag(Object element)
         {
             int offsetX = (int)(currMousePos.X - lastMousePos.X);
-            // 控制旋转范围在 0 - 180 之间
+            
+            // 各种转换器
             offsetX = RotateDegreeRangeConverter(offsetX);
-            offsetX = RotateSpecialAngleConverter(offsetX);
+            if (Magnet.IsMagnetismEnable)
+                offsetX = RotateSpecialAngleConverter(offsetX, Magnet.RotateAngleMagnetismVal);
             currDegree += offsetX;
             offsetX = RotateDirectionConverter(offsetX);
+
+            // 传给下一层
             blendingTest.OnDrag((int)offsetX);
         }
 
@@ -274,9 +279,8 @@ namespace Clover.Tool
         /// </summary>
         /// <param name="offset"></param>
         /// <returns></returns>
-        int RotateSpecialAngleConverter(int offset)
+        int RotateSpecialAngleConverter(int offset, int threadhold)
         {
-            int threadhold = 3;
             int val = currDegree + offset;
             if (Math.Abs(0 - val) < threadhold)
                 return 0 - currDegree;

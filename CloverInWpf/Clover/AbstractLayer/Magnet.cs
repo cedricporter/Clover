@@ -25,7 +25,7 @@ namespace Clover.AbstractLayer
         static Double edgeMagnetismVal = 5;
         static int rotateAngleMagnetismVal = 3;
 
-        public int RotateAngleMagnetismVal
+        public static int RotateAngleMagnetismVal
         {
             get { return rotateAngleMagnetismVal; }
             set { rotateAngleMagnetismVal = value; }
@@ -33,6 +33,7 @@ namespace Clover.AbstractLayer
         public static System.Boolean IsMagnetismEnable
         {
             get { return isMagnetismEnable; }
+            set { isMagnetismEnable = value; }
         }
         /// <summary>
         /// 在给定的Face中寻找可吸附的边或点
