@@ -715,7 +715,7 @@ namespace Clover
 
             TestMovedFace();
 
-            CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
+            List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
 
             // 查找cut完成后所有要移动的面
             List<Face> tempFaces = new List<Face>();
@@ -734,9 +734,11 @@ namespace Clover
                     if (CloverMath.IsIntersectionOfTwoFace(face, faceWPV))
                     {
                         bool isClosed = false;
+                        // 要除去折线的所有边
                         foreach (Edge e in faceWPV.Edges)
                         {
-                            if (e.Face1 == face || e.Face2 == face)
+                            //if (e.Face1 == face || e.Face2 == face)
+                            if ((e.Face1 == face || e.Face2 == face) && !newEdges.Contains(e))
                             {
                                 isClosed = true;
                                 break;
@@ -744,16 +746,17 @@ namespace Clover
                         }
                         if (isClosed)
                         {
+                            facesWithoutFoldingLine.Add(face);
                             break; 
                         }
-                        facesWithoutFoldingLine.Add(face);
                     }
                 }
             }
 
             foreach (Face face in facesWithPickedVertex)
             {
-                facesWithoutFoldingLine.Add(face);
+                if (!facesWithoutFoldingLine.Contains(face))
+                    facesWithoutFoldingLine.Add(face);
             }
 
             return facesWithoutFoldingLine;
