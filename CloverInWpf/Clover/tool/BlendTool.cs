@@ -7,6 +7,7 @@ using Clover.Visual;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Clover.AbstractLayer;
+using System.Windows;
 
 /**
 @date		:	2012/03/03
@@ -50,7 +51,31 @@ namespace Clover.Tool
 
         public override void onIdle()
         {
+            if (mode == FoldingMode.DoingNothing)
+                return;
 
+            // 更新小蓝点位置
+            Point3D p3d = pickedVertex.GetPoint3D();
+            p3d *= Utility.GetInstance().To2DMat;
+            Point p2d = new Point(p3d.X, p3d.Y);
+            if (currOveredElementVi != null)
+            {
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+            }
+            // 更新小红点位置
+            Vertex currVertex = CloverController.GetInstance().GetPrevVersion(pickedVertex);
+            if (currVertex != null)
+                p3d = currVertex.GetPoint3D();
+            else
+                p3d = pickedVertex.GetPoint3D();
+            p3d *= Utility.GetInstance().To2DMat;
+            p2d = new Point(p3d.X, p3d.Y);
+            if (currSelectedElementVi != null)
+            {
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = p2d.X;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = p2d.Y;
+            }
         }
 
         protected override void onEnterElement(Object element)
