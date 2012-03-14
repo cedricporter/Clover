@@ -422,6 +422,9 @@ namespace Clover.Tool
             //}
             stackVi.End();
             stackVi = null;
+
+            // 更新组
+            CloverController.GetInstance().UpdateFaceGroupTable();
         }
 
         /// <summary>

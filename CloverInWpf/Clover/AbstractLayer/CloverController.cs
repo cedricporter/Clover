@@ -281,6 +281,7 @@ namespace Clover
 
         bool isFirstCut = true;
         Face pickedFace;
+        Face originFace = new Face(0);
         Vertex pickedVertex;
         Point3D originPoint;
         Point3D lastProjectionPoint;
@@ -291,7 +292,7 @@ namespace Clover
         {
             // 修订选中的面为拥有选定点的同层面中最下面的那个面
             List<Face> faceList = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace).GetFaceList();
-
+            
             pickedFace = nearestFace;
             this.pickedVertex = pickedVertex;
 
@@ -304,6 +305,7 @@ namespace Clover
                 if (face.Vertices.Contains(pickedVertex) && face.Layer < nearestFace.Layer)
                     pickedFace = face;
             }
+            originFace = pickedFace.Clone() as Face;
         }
 
         public Edge OnDrag(Point3D projectionPoint)
@@ -314,7 +316,7 @@ namespace Clover
 
         public void ExitFoldingMode()
         {
-
+            UpdateFaceGroupTable();
         }
         #endregion
 
@@ -570,7 +572,7 @@ namespace Clover
                 return false;
 
             // 不成立条件二：投隐点和原始点的连线以及折线有穿过与该面不同组的面
-            foldingLine = foldingSystem.GetFoldingLine(pickedFace, originPoint, projectionPoint);
+            foldingLine = foldingSystem.GetFoldingLine(originFace, originPoint, projectionPoint);
 
             if (foldingLine == null)
                 return false;
