@@ -21,6 +21,7 @@ using System.Windows.Input;
 
 namespace Clover.Tool
 {
+    
     class BlendTool : ToolFactory
     {
         Vertex pickedVertex;
@@ -32,6 +33,9 @@ namespace Clover.Tool
             DoingNothing, Blending
         }
         FoldingMode mode = FoldingMode.DoingNothing;
+
+        // 仅供测试用
+        Clover.AbstractLayer.Blending blendingTest = new Clover.AbstractLayer.Blending();
         
         /// <summary>
         /// 构造函数
@@ -71,6 +75,8 @@ namespace Clover.Tool
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
+                // 求2D到3D的投影点
+                projectionPoint = Get3DProjectionPoint();
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
@@ -79,6 +85,10 @@ namespace Clover.Tool
 
                 // 进入Blending模式
                 EnterBlending();
+
+                // 向下层传递数据
+                blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
+
             }
         }
 
@@ -89,7 +99,8 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            
+            Double offsetX = currMousePos.X - lastMousePos.X;
+            blendingTest.OnDrag(offsetX);
         }
 
         protected override void onClick()
@@ -104,11 +115,11 @@ namespace Clover.Tool
         protected override void exit()
         {
             ExitBlending();
-            //currSelectedElementVi.End();
-            //currSelectedElementVi = null;
-            //currOveredElementVi.End();
-            //currOveredElementVi = null;
-            //currSelectedElement = currOveredElement = null;
+            currSelectedElementVi.End();
+            currSelectedElementVi = null;
+            currOveredElementVi.End();
+            currOveredElementVi = null;
+            currSelectedElement = currOveredElement = null;
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
@@ -121,11 +132,20 @@ namespace Clover.Tool
             Quaternion quat = CalculateBlendingRotation();
             // 应用旋转
             RenderController.GetInstance().BeginRotationSlerp(quat);
+            // 显示模式
+            currentModeVi = new CurrentModeVisual("Blending Mode");
+            VisualController.GetSingleton().AddVisual(currentModeVi);
+            currentModeVi.Start();
         }
 
         void ExitBlending()
         {
             mode = FoldingMode.DoingNothing;
+            currentModeVi.End();
+            currentModeVi = null;
+
+            // 向下层传递退出Blending模式
+            blendingTest.ExitBlendingMode();
         }
 
         /// <summary>
