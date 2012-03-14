@@ -357,7 +357,7 @@ namespace Clover.Tool
 
             mode = FoldingMode.DoingNothing;
 
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
         /// <summary>

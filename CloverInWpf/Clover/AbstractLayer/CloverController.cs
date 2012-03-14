@@ -533,27 +533,28 @@ namespace Clover
             }
             else
             {
-                // 不是第一次折叠
-                // 判断本次是否切割了一个新的面
-                if (JudgeCutAnotherFace())
-                {
-                    if (!UndoLastCutAndDoFolding())
-                        return null;
-                }
-                else
-                {
-                    if (JudgeCutAnotherEdge())
-                    {
-                        if (!UndoLastCutAndDoFolding())
-                            return null;
-                    }
-                    else
-                    {
-                        MoveToNewPosition();
-                        lastFoldingLine = foldingLine;
-                        lastProjectionPoint = projectionPoint;
-                    }
-                }
+                UndoLastCutAndDoFolding();
+               // // 不是第一次折叠
+               // // 判断本次是否切割了一个新的面
+               // if (JudgeCutAnotherFace())
+               // {
+               //     if (!UndoLastCutAndDoFolding())
+               //         return null;
+               // }
+               // else
+               // {
+               //     if (JudgeCutAnotherEdge())
+               //     {
+               //         if (!UndoLastCutAndDoFolding())
+               //             return null;
+               //     }
+               //     else
+               //     {
+               //         MoveToNewPosition();
+               //         lastFoldingLine = foldingLine;
+               //         lastProjectionPoint = projectionPoint;
+               //     }
+               // }
             }
 
             // 更新重绘
@@ -845,11 +846,44 @@ namespace Clover
                 {
                     foreach (Vertex v in face.Vertices)
                     {
-                        if (v.Moved == false)
+                        if (CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D()))
                         {
-                            v.SetPoint3D(translateTransform.Transform(v.GetPoint3D()));
-                            v.SetPoint3D(rotateTransform.Transform(v.GetPoint3D()));
-                            v.Moved = true;
+                            if (!v.Moved)
+                            { 
+                                // 对于折线点要计算新的纹理坐标
+                                v.SetPoint3D(foldingLine.Vertex1.GetPoint3D());
+                                foreach (Edge edge in face.Edges)
+                                {
+                                    if (CloverMath.IsPointInTwoPoints(v.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+                                        foldingSystem.CalculateTexcoord(v, edge);
+                                }
+                                v.Moved = true;
+                            }
+                        }
+
+                        if (CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D()))
+                        {
+                            if (!v.Moved)
+                            { 
+                                v.SetPoint3D(foldingLine.Vertex2.GetPoint3D());
+                                foreach (Edge edge in face.Edges)
+                                {
+                                    if (CloverMath.IsPointInTwoPoints(v.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D(), 0.0001))
+                                        foldingSystem.CalculateTexcoord(v, edge);
+                                }
+                                v.Moved = true;
+                            }
+                        }
+                       
+                        if (!CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D()) &&
+                            !CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D()))
+                        {
+                            if (v.Moved == false)
+                            {
+                                v.SetPoint3D(translateTransform.Transform(v.GetPoint3D()));
+                                v.SetPoint3D(rotateTransform.Transform(v.GetPoint3D()));
+                                v.Moved = true;
+                            }
                         }
                     }
                 }
