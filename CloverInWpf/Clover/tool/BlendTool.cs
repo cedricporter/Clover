@@ -21,6 +21,7 @@ using System.Windows.Input;
 
 namespace Clover.Tool
 {
+    
     class BlendTool : ToolFactory
     {
         Vertex pickedVertex;
@@ -32,6 +33,9 @@ namespace Clover.Tool
             DoingNothing, Blending
         }
         FoldingMode mode = FoldingMode.DoingNothing;
+
+        // 仅供测试用
+        Clover.AbstractLayer.Blending blendingTest = new Clover.AbstractLayer.Blending();
         
         /// <summary>
         /// 构造函数
@@ -79,6 +83,10 @@ namespace Clover.Tool
 
                 // 进入Blending模式
                 EnterBlending();
+
+                // 向下层传递数据
+                blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
+
             }
         }
 
@@ -89,7 +97,7 @@ namespace Clover.Tool
 
         protected override void onDrag(Object element)
         {
-            
+            blendingTest.OnDrag(1);
         }
 
         protected override void onClick()
@@ -104,11 +112,11 @@ namespace Clover.Tool
         protected override void exit()
         {
             ExitBlending();
-            //currSelectedElementVi.End();
-            //currSelectedElementVi = null;
-            //currOveredElementVi.End();
-            //currOveredElementVi = null;
-            //currSelectedElement = currOveredElement = null;
+            currSelectedElementVi.End();
+            currSelectedElementVi = null;
+            currOveredElementVi.End();
+            currOveredElementVi = null;
+            currSelectedElement = currOveredElement = null;
             IsOnMoveLocked = false;
             IsOnPressLocked = false;
             LockViewport(false);
@@ -121,11 +129,17 @@ namespace Clover.Tool
             Quaternion quat = CalculateBlendingRotation();
             // 应用旋转
             RenderController.GetInstance().BeginRotationSlerp(quat);
+            // 显示模式
+            currentModeVi = new CurrentModeVisual("Blending Mode");
+            VisualController.GetSingleton().AddVisual(currentModeVi);
+            currentModeVi.Start();
         }
 
         void ExitBlending()
         {
             mode = FoldingMode.DoingNothing;
+            currentModeVi.End();
+            currentModeVi = null;
         }
 
         /// <summary>
