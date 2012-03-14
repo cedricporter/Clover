@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Clover.AbstractLayer;
-
+using System.Windows.Media.Media3D;
 namespace Clover
 {
     public enum FacecellTreeState
@@ -123,6 +123,9 @@ namespace Clover
     public class FaceGroupLookupTable : ICloneable
     {
         List<FaceGroup> faceGroupList = new List<FaceGroup>();
+        BendTpye bendtype;
+        FaceGroup bendingParticipateGroup = null;
+        bool IsBasicBendedFaceTheSameNormalWithItsGroup = false;
 
         #region get/set
         public List<FaceGroup> FaceGroupList
@@ -448,9 +451,8 @@ namespace Clover
         /// <summary>
         /// foldup后对lookuptable进行更新和排序
         /// </summary>
-        /// <param name="IsDefaultDir">是否按照默认方向折叠，默认方向是面向用户，即摄像机的方向</param>
         /// <returns></returns>
-        public bool UpdateTableAfterFoldUp( bool IsDefaultDir = true )
+        public bool UpdateTableAfterFoldUp()
         {
 
             // 找cutface
@@ -598,6 +600,8 @@ namespace Clover
 
             fixedFaceGroup.SortFace();
             movedFaceGroup.SortFace();
+            // 判断组是不是面向用户
+            bool IsDefaultDir = fixedFaceGroup.D > 0 ? true : false;
             if ( IsDefaultDir )
             {
                 int layer = 0;
@@ -655,6 +659,260 @@ namespace Clover
 
             this.FaceGroupList.Remove( participatedGroup );
             AddGroup( fixedFaceGroup );
+            return true;
+        }
+
+
+        /// <summary>
+        /// 在bend前调用
+        /// </summary>
+        /// <param name="faces">要bend的所有面</param>
+        /// <param name="angle">bend的角度,角度</param>
+        public bool BeforeBending(List<Face> faces, double angle)
+        {
+            if (faces == null || Math.Abs(angle) > 180 )
+            {
+                return false;
+            }
+            if ( faces.Count == 0)
+            {
+                return false;
+            }
+            if (bendingParticipateGroup != null)
+            {
+                return false;
+            }
+            // 建立bending的临时组
+            bendingParticipateGroup = new FaceGroup( faces[ 0 ] );
+            for ( int i = 1; i < faces.Count; i++ )
+            {
+                bendingParticipateGroup.AddFace( faces[ i ] );
+            }
+            bendingParticipateGroup.SortFace();
+            bendingParticipateGroup.Normal = bendingParticipateGroup.GetFaceList()[ 0 ].Normal;
+
+            if ( CloverMath.IsTwoVectorTheSameDir( bendingParticipateGroup.Normal, GetGroup( bendingParticipateGroup.GetFaceList()[ 0 ] ).Normal, true ) )
+            {
+                IsBasicBendedFaceTheSameNormalWithItsGroup = true;
+            }
+
+            // 判断折叠样式
+            if (Math.Abs(angle) < 0.00001) // 适应误差
+            {
+                bendtype = BendTpye.BlendZero;
+            }
+            else if ( Math.Abs( angle ) <= 180 && Math.Abs( angle ) >= 179.999999999999 )// 适应误差
+            {
+                bendtype = BendTpye.BlendSemiCycle;
+            }
+            else
+            {
+                bendtype = BendTpye.BlendNormally;
+            }
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// bendh后调用来更新lookuptable
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateTableAfterBending()
+        {
+            
+            if (bendtype == BendTpye.BlendZero)
+            {
+                return true;
+            }
+
+            FaceGroup participateGroup = null;
+            // bend半周即180度
+            if (bendtype == BendTpye.BlendSemiCycle)
+            {
+                bendtype = BendTpye.BlendZero;
+                // 找到相关的组
+                foreach (FaceGroup fg in faceGroupList)
+                {
+                    if ( CloverMath.IsTwoVectorTheSameDir(fg.Normal, bendingParticipateGroup.Normal))
+                    {
+                        if (participateGroup == null)
+                        {
+                            participateGroup = fg;
+                        }
+                        else if ( participateGroup != fg)
+                        {
+                            return false;// 一次只可能有一个组参与
+                        }
+                    }
+                }
+                faceGroupList.Remove( participateGroup );
+                bendingParticipateGroup.RevertFaces();
+
+                foreach (Face f in bendingParticipateGroup.GetFaceList())
+                {
+                    participateGroup.RemoveFace( f );
+                }
+
+                participateGroup.SortFace();
+                // 判断用户的方向：
+                if (participateGroup.D > 0) // 组的正面面向用户
+                {
+                    // 逆序从上贴合
+                    int layer = 0;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        participateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                    }
+
+                    // 根据是否覆盖来调整layer的值
+                    for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                    {
+
+                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
+                        {
+                            layer--;
+                        }
+                    }
+
+                    for ( int i = bendingParticipateGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                    {
+
+                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                        participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
+                    }
+                    RemoveRedundantFaceGroup();
+                }
+                else // 组背向用户
+                {
+                    int layer = 0;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        participateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                    }
+                    layer = participateGroup.GetBottomLayer();
+                    layer--;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
+                        {
+                            layer++;
+                        }
+                    }
+
+                    for ( int i = 0; i < bendingParticipateGroup.GetFaceList().Count; i++ )
+                    {
+                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
+                        layer--;
+                    }
+                    RemoveRedundantFaceGroup();
+                }
+
+                faceGroupList.Add( participateGroup );
+            }
+            // 非180度的折叠
+            if (bendtype == BendTpye.BlendNormally)
+            {
+                if ( !IsBasicBendedFaceTheSameNormalWithItsGroup ) // 基层新组与原来的组指向大致相同方向
+                {
+                    bendingParticipateGroup.RevertFaces();
+                }
+                
+                // 寻找是否会和某个组重合
+                foreach (FaceGroup fg in faceGroupList)
+                {
+                    if ( CloverMath.IsTwoVectorTheSameDir( fg.Normal, bendingParticipateGroup.Normal ) )
+                    {
+                        if ( participateGroup == null )
+                        {
+                            participateGroup = fg;
+                        }
+                        else if ( participateGroup != fg )
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if (participateGroup == null)
+                {
+                    return true; // 很幸运，没有什么组跟你重合
+                }
+
+                // 判断自己组的排序方向和对方是不是一样的
+                if ( !CloverMath.IsTwoVectorTheSameDir( participateGroup.Normal, bendingParticipateGroup.Normal, true ) )
+                {
+                    bendingParticipateGroup.RevertFaces();
+                }
+
+                if (participateGroup.D > 0)// 用户面向对方的组
+                {
+                    // 从上贴合
+                    int layer = 0;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        participateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                    }
+
+                    // 根据是否覆盖来调整layer的值
+                    for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                    {
+
+                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
+                        {
+                            layer--;
+                        }
+                    }
+
+                    for ( int i = 0; i < bendingParticipateGroup.Count; i++ )
+                    {
+
+                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                        participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
+                    }
+                    RemoveRedundantFaceGroup();
+                }
+                else
+                {
+                    // 从下贴合
+                    int layer = 0;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        participateGroup.GetFaceList()[ i ].Layer = layer;
+                        layer++;
+                    }
+                    layer = participateGroup.GetBottomLayer();
+                    layer--;
+                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
+                    {
+                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
+                        {
+                            layer++;
+                        }
+                    }
+
+                    for ( int i = bendingParticipateGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                    {
+
+                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
+                        layer--;
+                    }
+
+                    RemoveRedundantFaceGroup();
+                }
+
+                faceGroupList.Add( participateGroup );
+
+            }
+            bendtype = BendTpye.BlendZero;
+            bendingParticipateGroup = null;
             return true;
         }
 

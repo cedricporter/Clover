@@ -17,6 +17,15 @@ namespace Clover
         TuckIn
     }
 
+    public enum BendTpye
+    {
+        BlendZero,
+        BlendSemiCycle,
+        BlendNormally,
+        
+
+    }
+
     /// <summary>
     /// 抽象的点，里面包含渲染的点和其他信息
     /// </summary>

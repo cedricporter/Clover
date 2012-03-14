@@ -539,24 +539,51 @@ namespace Clover
         }
 
         /// <summary>
-        /// 判断两个face是否相交
+        /// 判断两个face是否有交叉部分，只有公共边不算交叉。
         /// </summary>
         /// <param name="f1"></param>
         /// <param name="f2"></param>
         /// <returns></returns>
         public static bool IsIntersectionOfTwoFace(Face f1, Face f2)
         {
-            foreach (Vertex v1 in f1.Vertices)
+            bool atleastonepointin = false;
+
+            foreach ( Vertex v1 in f1.Vertices )
             {
-                if (IsPointInArea(v1.GetPoint3D(), f2) )
-                    return true;
+                if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
+                {
+                    if (!atleastonepointin )
+                    {
+                        foreach (Edge e2 in f2.Edges)
+                        {
+                            if( !IsPointInTwoPoints(v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()) )
+                                atleastonepointin = true;
+                        }
+                    }
+                    else
+                        return true;
+                }
+                    
             }
 
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
-                    return true;
+                {
+                   if (!atleastonepointin )
+                    {
+                        foreach (Edge e1 in f1.Edges)
+                        {
+                            if( !IsPointInTwoPoints(v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()) )
+                                atleastonepointin = true;
+                        }
+                    }
+                    else
+                        return true;
+                }
+                   
             }
+
             return false;
         }
 

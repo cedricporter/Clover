@@ -47,10 +47,29 @@ namespace Clover.AbstractLayer
             get { return faceList.Count; }
         }
         double a;
+        public double A
+        {
+            get { return a; }
+            set { a = value; }
+        }
         double b;
+        public double B
+        {
+            get { return b; }
+            set { b = value; }
+        }
         double c;
+        public double C
+        {
+            get { return c; }
+            set { c = value; }
+        }
         double d;
-
+        public double D
+        {
+            get { return d; }
+            set { d = value; }
+        }
         Point4D plainFormula = new Point4D();
 
         /// <summary>
@@ -88,6 +107,20 @@ namespace Clover.AbstractLayer
             //}
             //return false;
 
+        }
+        /// <summary>
+        /// 逆序组中的面
+        /// </summary>
+        public void RevertFaces()
+        {
+            int layer = 0;
+            SortFace();
+            for ( int i = faceList.Count; i >= 0; i-- )
+            {
+                faceList[ i ].Layer = layer;
+                layer++;
+            }
+            SortFace();
         }
 
         /// <summary>
