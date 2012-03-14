@@ -549,12 +549,12 @@ clover.UpdateFaceGroupTable()
 
         private void MagnetismButton_Checked(object sender, RoutedEventArgs e)
         {
-            AbstractLayer.Magnet.IsMagnetismEnable = true;
+           // AbstractLayer.Magnet.IsMagnetismEnable = true;
         }
 
         private void MagnetismButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            AbstractLayer.Magnet.IsMagnetismEnable = false;
+           // AbstractLayer.Magnet.IsMagnetismEnable = false;
         }
 
         private void ChangePaperButton_Click(object sender, RoutedEventArgs e)
