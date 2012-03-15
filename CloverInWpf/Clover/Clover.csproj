@@ -73,9 +73,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AbstractLayer\Blending.cs" />
+    <Compile Include="FoldingSystemNew\Blending.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
-    <Compile Include="AbstractLayer\FoldingSystem.cs" />
+    <Compile Include="FoldingSystemNew\FoldingUp.cs" />
+    <Compile Include="FoldingSystemNew\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
     <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="IO\CloverFile.cs" />
@@ -206,9 +207,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="FoldingSystem\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
