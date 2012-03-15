@@ -539,65 +539,124 @@ namespace Clover
         }
 
         /// <summary>
-        /// 判断两个face是否有交叉部分，只有公共边不算交叉。
+        /// 在一个plane上，判断两个face是否有交叉部分，只有公共边不算交叉。
         /// </summary>
         /// <param name="f1"></param>
         /// <param name="f2"></param>
         /// <returns></returns>
-        public static bool IsIntersectionOfTwoFace(Face f1, Face f2)
+        public static bool IsIntersectionOfTwoFaceOnOnePlane(Face f1, Face f2)
         {
-            bool IsOnEdge = false;
-            bool IsOnFace = false;
+
+            if ( !IsInSamePlane( f1, f2 ) )
+                return false;
+
+            // 判断是不是相离
+            bool IsOutside = true;
             foreach ( Vertex v1 in f1.Vertices )
             {
                 if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
-                {
-
-                    foreach ( Edge e2 in f2.Edges )
-                    {
-                        if ( IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) )
-                            IsOnEdge = true;
-                    }
-                    if ( !IsOnEdge )
-                        IsOnFace = true;
-                    else
-                        IsOnEdge = false;
-                }
-                if ( IsOnFace )
-                {
-                    return true;
-                }
-                    
+                    IsOutside = false;
             }
 
-            IsOnFace = false;
-            IsOnEdge = false;
+
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
-                {
-                    if ( !IsOnEdge )
-                    {
-                        foreach (Edge e1 in f1.Edges)
-                        {
-                            if( IsPointInTwoPoints(v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()) )
-                                IsOnEdge = true;
-                        }
-                    }
-                    if ( !IsOnEdge )
-                        IsOnFace = true;
-                    else
-                        IsOnEdge = false;
-                }
-                if ( IsOnFace )
-                {
-                    return true;
-                }
-                   
+                    IsOutside = false;
             }
 
 
-            return false;
+            if ( IsOutside )
+            {
+                return false;
+            }
+
+
+            bool IsTangency  = false;
+            bool flag = true;
+            // 判断是不是相切
+            if( IsTwoFaceConected(f1, f2))
+            {
+                foreach ( Vertex v1 in f1.Vertices )
+                {
+                    if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
+                    {
+                        IsTangency = false;
+                        foreach(Edge e2 in f2.Edges)
+                        {
+                            if (IsPointInTwoPoints(v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                            {
+                                IsTangency = true;
+                            }
+                        }
+                    }
+                }
+
+                if (IsTangency)
+                {
+                    return false;
+                }
+
+                IsTangency = false;
+                foreach ( Vertex v2 in f2.Vertices )
+                {
+                    if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
+                    {
+                        IsTangency = false;
+                        foreach ( Edge e1 in f1.Edges )
+                        {
+                            if ( !IsPointInTwoPoints( v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D() ) )
+                            {
+                                IsTangency = true;
+                            }
+                        }
+                    }
+                }
+
+                if ( IsTangency )
+                {
+                    return false;
+                }
+            }
+
+
+            return true;
+        }
+
+
+        /// <summary>
+        /// 判断两个面是否属于一个组
+        /// </summary>
+        /// <param name="f1"></param>
+        /// <param name="f2"></param>
+        /// <returns></returns>
+        public static bool IsInSamePlane( Face f1, Face f2, double ErrorMargin = 0.00001 )
+        {
+            double A1, B1, C1, D1;
+            double A2, B2, C2, D2;
+            f1.UpdateVertices();
+            f2.UpdateVertices();
+            A1 = f1.Normal.X;
+            A2 = f2.Normal.X;
+
+            B1 = f1.Normal.Y;
+            B2 = f2.Normal.Y;
+
+            C1 = f1.Normal.Z;
+            C2 = f2.Normal.Z;
+
+            D1 = -( f1.Vertices[ 0 ].X * A1 + f1.Vertices[ 0 ].Y * B1 + f1.Vertices[ 0 ].Z * C1 );
+            D2 = -( f1.Vertices[ 0 ].X * A2 + f1.Vertices[ 0 ].Y * B2 + f1.Vertices[ 0 ].Z * C2 );
+            if (
+                ( Math.Abs( A1 * B2 - A2 * B1 ) < ErrorMargin )  &&
+                ( Math.Abs( B1 * C2 - B2 * C1 ) < ErrorMargin )  &&
+                ( Math.Abs( C1 * D2 - C2 * D1 ) < ErrorMargin )
+               )
+            {
+                return true;
+            }
+            else
+                return false;
         }
 
         public static Edge GetPerpendicularBisector3D(Face face, Point3D p1, Point3D p2)

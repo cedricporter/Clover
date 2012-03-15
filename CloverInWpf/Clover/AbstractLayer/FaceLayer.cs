@@ -615,7 +615,7 @@ namespace Clover
                 for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
                     {
                         layer--;
                     }
@@ -643,7 +643,7 @@ namespace Clover
                 layer--;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
-                    if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
                     {
                         layer++;
                     }
@@ -771,7 +771,7 @@ namespace Clover
                     for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
 
-                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
+                        if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer--;
                         }
@@ -798,7 +798,7 @@ namespace Clover
                     layer--;
                     for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
                     {
-                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
+                        if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer++;
                         }
@@ -864,7 +864,7 @@ namespace Clover
                     for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
 
-                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
+                        if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ bendingParticipateGroup.GetFaceList().Count - 1 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer--;
                         }
@@ -892,7 +892,7 @@ namespace Clover
                     layer--;
                     for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
                     {
-                        if ( !CloverMath.IsIntersectionOfTwoFace( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
+                        if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer++;
                         }
