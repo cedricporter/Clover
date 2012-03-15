@@ -240,7 +240,7 @@ namespace Clover
 
             foreach (Vertex v in beDeleteVertexVertexList)
             {
-                controller.VertexLayer.DeleteThisVersionToEnd(v);
+                controller.VertexLayer.DeleteNextVersionToEnd(v);
             }
 
             RevertTailVertex();

@@ -592,7 +592,7 @@ namespace Clover
             double angle = Vector3D.AngleBetween(v1, v2);
 
             // 根据旋转角度对所有移动面进行旋转
-            RotateFaces(rotateFaces, foldingLine, angle);
+            CloverController.GetInstance().RotateFaces(rotateFaces, foldingLine, angle);
 
             return true;
         }

@@ -82,7 +82,7 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-                CloverController.GetInstance().EnterFoldingMode(nearestFace, pickedVertex);
+                CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
                 // 找到当前Face所在的组
                 //currGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace);
                 //// 找到所有拥有和selectedVertex重叠的Vertex的Face
@@ -180,7 +180,7 @@ namespace Clover.Tool
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
 
                     // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().OnDrag(projectionPoint);
+                    Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
 
 
                     // 更新折线显示
@@ -357,6 +357,7 @@ namespace Clover.Tool
 
             mode = FoldingMode.DoingNothing;
 
+            CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
@@ -424,7 +425,7 @@ namespace Clover.Tool
             stackVi = null;
 
             // 更新组
-            CloverController.GetInstance().UpdateFaceGroupTable();
+            //CloverController.GetInstance().UpdateFaceGroupTable();
         }
 
         /// <summary>

@@ -37,7 +37,6 @@ _RotateFaces = clover.RotateFaces
 RotateFaces = clover.AnimatedRotateFaces
 Undo = clover.Undo
 Redo = clover.Redo
-UpdateFaceGroupTable = clover.UpdateFaceGroupTable
 ";
 
             pythonEngine.Execute(initialString, pythonScope);
