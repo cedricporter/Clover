@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Clover.AbstractLayer;
+using System.Windows.Media.Media3D;
 
 namespace Clover
 {
@@ -188,6 +189,77 @@ namespace Clover
             return face.LeftChild == null && face.RightChild == null;
         }
 
+        /// <summary>
+        /// 判断线段是否通过一个Face
+        /// </summary>
+        /// <param name="face">当前判定Face</param>
+        /// <param name="edge">线段端点坐标</param>
+        /// <returns></returns>
+        public static bool IsEdgeCrossedFace(Face face, Edge edge)
+        {
+            int crossCount = 0;
+            Point3D crossPoint = new Point3D();
+            foreach (Edge e in face.Edges)
+            {
+                if (CloverMath.GetIntersectionOfTwoSegments(e, edge, ref crossPoint) == 1)
+                    crossCount++;
+                if (crossCount >= 2)
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 找到折线穿过面的那条线段
+        /// </summary>
+        /// <param name="face">要测试的面</param>
+        /// <param name="currentFoldingLine">当前的折线</param>
+        /// <returns>对于测试面的折线</returns>
+        public static Edge GetEdgeCrossedFace(Face face, Edge currentFoldingLine)
+        {
+            Vertex vertex1 = new Vertex();
+            Vertex vertex2 = new Vertex();
+            bool findFirst = false;
+
+            foreach (Edge e in face.Edges)
+            {
+                Point3D crossPoint = new Point3D();
+                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
+                {
+                    if (!findFirst)
+                    {
+                        vertex1.SetPoint3D(crossPoint);
+                        findFirst = true;
+                    }
+                    else if (crossPoint != vertex1.GetPoint3D())
+                    {
+                        vertex2.SetPoint3D(crossPoint);
+                        Edge foldingLine = new Edge(vertex1, vertex2);
+                        return foldingLine;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 在一个面中，通过两个顶点找到包含这两个顶点的边
+        /// </summary>
+        /// <param name="face"></param>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static Edge FindEdge(Face face, Vertex v1, Vertex v2)
+        {
+            foreach (Edge e in face.Edges)
+            {
+                if (IsVertexInEdge(v1, e) && IsVertexInEdge(v2, e))
+                {
+                    return e;
+                }
+            }
+            return null;
+        }
 
     }
 }
