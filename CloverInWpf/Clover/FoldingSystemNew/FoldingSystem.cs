@@ -13,6 +13,7 @@ namespace Clover
         List<Face> lastTimeMovedFaces;
         List<Face> facesWithFoldingLine = new List<Face>();
         List<Face> facesWithoutFoldingLine = new List<Face>();
+
         Face pickedFace;
         Point3D originPoint;
         Point3D projectionPoint;

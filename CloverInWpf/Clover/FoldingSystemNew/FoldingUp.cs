@@ -164,6 +164,8 @@ namespace Clover
 
         #endregion
 
+        #region 退出折叠模式
+        
         public void ExitFoldingMode()
         {
             // 更新Group
@@ -174,11 +176,13 @@ namespace Clover
             // 释放资源
         }
 
+        #endregion
+
         #region 与FoldingUp相关
 
-        
 
-        
+
+
 
         /// <summary>
         /// 判断本次拖拽是否有切割新的面
