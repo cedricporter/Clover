@@ -1149,6 +1149,68 @@ namespace Clover
                     foreach (Edge e in face.Edges)
                     { 
                          // 假如其中有一条边的一个顶点等于新折线，而另一个顶点等于旧折线中的点，折更新旧点到新点
+                        if (e.Vertex1 == foldingLineOnFace.Vertex1 &&
+                            CloverMath.IsPointInTwoPoints(e.Vertex2.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            e.Vertex2.SetPoint3D(foldingLineOnFace.Vertex2.GetPoint3D());
+                            e.Vertex2.Moved = true;
+                            // 计算纹理坐标
+                            // 通过查找原始面计算纹理坐标
+                            foreach (Edge edge in face.Parent.Edges)
+                            {
+                                if (CloverMath.IsPointInTwoPoints(e.Vertex2.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D()))
+                                {
+                                    foldingSystem.CalculateTexcoord(e.Vertex2, edge);
+                                    break;
+                                } 
+                            }
+                        }
+
+                        if (e.Vertex2 == foldingLineOnFace.Vertex1 &&
+                            CloverMath.IsPointInTwoPoints(e.Vertex1.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            e.Vertex1.SetPoint3D(foldingLineOnFace.Vertex1.GetPoint3D());
+                            e.Vertex1.Moved = true;
+                            // 计算纹理坐标
+                            foreach (Edge edge in face.Parent.Edges)
+                            {
+                                if (CloverMath.IsPointInTwoPoints(e.Vertex1.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D()))
+                                { 
+                                    foldingSystem.CalculateTexcoord(e.Vertex1, edge);
+                                    break;                                
+                                }
+                            }
+                        }
+
+                        if (e.Vertex1 == foldingLineOnFace.Vertex2 &&
+                            CloverMath.IsPointInTwoPoints(e.Vertex2.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            e.Vertex2.SetPoint3D(foldingLineOnFace.Vertex2.GetPoint3D());
+                            e.Vertex2.Moved = true;
+                            foreach (Edge edge in face.Parent.Edges)
+                            {
+                                if (CloverMath.IsPointInTwoPoints(e.Vertex2.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D()))
+                                {
+                                    foldingSystem.CalculateTexcoord(e.Vertex2, edge);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (e.Vertex2 == foldingLineOnFace.Vertex2 &&
+                            CloverMath.IsPointInTwoPoints(e.Vertex1.GetPoint3D(), lastFoldingLine.Vertex1.GetPoint3D(), lastFoldingLine.Vertex2.GetPoint3D(), 0.001))
+                        {
+                            e.Vertex1.SetPoint3D(foldingLineOnFace.Vertex1.GetPoint3D());
+                            e.Vertex1.Moved = true;
+                            foreach (Edge edge in face.Parent.Edges)
+                            {
+                                if (CloverMath.IsPointInTwoPoints(e.Vertex1.GetPoint3D(), edge.Vertex1.GetPoint3D(), edge.Vertex2.GetPoint3D()))
+                                { 
+                                    foldingSystem.CalculateTexcoord(e.Vertex1, edge);
+                                    break;
+                                }
+                            }
+                        }
                     }
                     continue;
                 }

@@ -57,7 +57,7 @@ namespace Clover
             Point3D p3 = p1 + t * V1;
             if ((p - p3).Length < threadhold)
             {
-                if (Vector3D.DotProduct((p - p1), (p - p2)) <= 0)
+                if (Vector3D.DotProduct((p - p1), (p - p2)) <= threadhold)
                     return true;
             }
             return false;
