@@ -9,53 +9,7 @@ namespace Clover
 {
     public class FoldingSystem
     {
-        #region 属性
-        List<Face> lastTimeMovedFaces;
-        List<Face> facesWithFoldingLine = new List<Face>();
-        List<Face> facesWithoutFoldingLine = new List<Face>();
-
-        Face pickedFace;
-        Point3D originPoint;
-        Point3D projectionPoint;
-        Edge foldingLine;
-        Vertex pickedVertex;
-
-        #region get/set
-        public List<Face> GetLastTimeMovedFace()
-        {
-            return lastTimeMovedFaces;
-        }
-        #endregion
-
-        #endregion
-
-        #region 一些辅助计算的函数
-        /// <summary>
-        /// 将一堆面的周围的顶点找出并返回一个list
-        /// </summary>
-        /// <param name="faces"></param>
-        /// <returns></returns>
-        List<Vertex> UnionVertex(params Face[] faces)
-        {
-            List<Vertex> vertices = new List<Vertex>();
-            Dictionary<Vertex, int> dict = new Dictionary<Vertex, int>();
-
-            for (int i = 0; i < faces.Length; i++)
-            {
-                faces[i].UpdateVertices();
-                foreach (Vertex v in faces[i].Vertices)
-                {
-                    dict[v] = 0;
-                }
-            }
-
-            foreach (KeyValuePair<Vertex, int> pair in dict)
-            {
-                vertices.Add(pair.Key);
-            }
-
-            return vertices;
-        }
+        #region 有关纹理计算的函数
 
         /// <summary>
         /// 计算顶点纹理坐标
@@ -81,91 +35,6 @@ namespace Clover
             return true; 
         }
 
-        /// <summary>
-        /// 计算顶点纹理坐标
-        /// </summary>
-        /// <param name="vertex">需要计算纹理坐标的点</param>
-        /// <param name="edge">该点所在的边</param>
-        /// <param name = "length">该边根节点的总长度</param>>
-        public bool CalculateTexcoord(Vertex vertex, Edge edge, double length)
-        {
-            // 确认该点在该直线上
-            double a = vertex.X - edge.Vertex1.X;
-            double b = edge.Vertex2.X - edge.Vertex1.X;
-            double c = vertex.Y - edge.Vertex1.Y;
-            double d = edge.Vertex2.Y - edge.Vertex1.Y;
-            double e = vertex.Z = edge.Vertex1.Z;
-            double f = edge.Vertex2.Z - edge.Vertex1.Z;
-
-            if (Math.Abs(a / b - c / d) > 0.1)
-                return false;
-
-            if (Math.Abs(a / b - e / f) > 0.1)
-                return false;
-
-
-            // 取edge两边纹理坐标的较小值
-            double u, v;
-            if (edge.Vertex1.u == edge.Vertex2.u)
-            {
-                u = edge.Vertex1.u;
-            }
-            else
-            {
-                if (edge.Vertex1.u < edge.Vertex2.u)
-                {
-                    // 求两点之间的距离
-                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
-                    u = edge.Vertex1.u + vd.Length / length;
-                }
-                else
-                {
-                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
-                    u = edge.Vertex2.u + vd.Length / length;
-                }
-            }
-
-            if (edge.Vertex1.v == edge.Vertex2.v)
-            {
-                v = edge.Vertex2.v;
-            }
-            else
-            {
-                if (edge.Vertex1.v <= edge.Vertex2.v)
-                {
-                    Vector3D vd = edge.Vertex1.GetPoint3D() - vertex.GetPoint3D();
-                    v = edge.Vertex1.v + vd.Length / length;
-                }
-                else
-                {
-                    Vector3D vd = edge.Vertex2.GetPoint3D() - vertex.GetPoint3D();
-                    v = edge.Vertex2.v + vd.Length / length;
-                }
-            }
-            vertex.u = u;
-            vertex.v = v;
-
-            return true;
-        }
-
-        /// <summary>
-        /// 在一个面中，通过两个顶点找到包含这两个顶点的边
-        /// </summary>
-        /// <param name="face"></param>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
-        Edge FindEdgeByTwoVertexInAFace(Face face, Vertex v1, Vertex v2)
-        {
-            foreach (Edge e in face.Edges)
-            {
-                if (e.IsVerticeIn(v1) && e.IsVerticeIn(v2))
-                {
-                    return e;
-                }
-            }
-            return null;
-        }
         #endregion
 
         #region 分割面
@@ -176,7 +45,7 @@ namespace Clover
         /// <param name="face">要切割的面</param>
         /// <param name="edge">割线，不一定要在边层里面的边，只要两个端点的坐标在面的边上即可</param>
         /// <returns>被边引用的割线</returns>
-        public Edge CutFace(Face face, Edge edge)
+        Edge CutFace(Face face, Edge edge)
         {
             Debug.Assert(edge != null);
             if (edge == null)
@@ -188,7 +57,7 @@ namespace Clover
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
             VertexLayer vertexLayer = controller.VertexLayer;
-            ShadowSystem shadowSystem = controller.ShadowSystem;
+            //ShadowSystem shadowSystem = controller.ShadowSystem;
 
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
@@ -196,9 +65,10 @@ namespace Clover
             Vertex newVertexOld2 = newVertex2;
 
             // 生成一个面的周围的顶点的环形表
-            face.UpdateVertices();
+            face.UpdateVertices(); // 为什么这里要排序呢？ ---kid
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
+            /// <remarks>既然face中的点现在是有序的了，也许下面这段不需要了---kid</remarks>
             int count = vertexList.Count + 1;
             while (true)
             {
@@ -207,10 +77,10 @@ namespace Clover
                     !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
                     && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
                     )
-                    || 
+                    ||
                     (
                      !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
-                    && CloverMath.IsPointInTwoPoints( newVertex2.GetPoint3D(), vertexList[ 0 ].GetPoint3D(), vertexList[ 1 ].GetPoint3D(), 0.001 )
+                    && CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
                     )
                     )
                 {
@@ -233,7 +103,7 @@ namespace Clover
             List<Edge> rangeA = new List<Edge>();
             List<Edge> rangeB = new List<Edge>();
 
-            // 分割面
+            // 分割出来的子面
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
             face.LeftChild = f1;
@@ -242,7 +112,7 @@ namespace Clover
             List<Edge> currentEdgeList = null;
             for (int i = 0; i < vertexList.Count - 1; i++)
             {
-                Edge currentEdge = FindEdgeByTwoVertexInAFace(face, vertexList[i], vertexList[i + 1]);
+                Edge currentEdge = CloverTreeHelper.FindEdge(face, vertexList[i], vertexList[i + 1]);
 
                 // 割线过顶点
                 if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D()))
@@ -435,35 +305,10 @@ namespace Clover
             render.New(f1);
             render.New(f2);
 
-            //render.AntiOverlap();
-
-            //newVertex1.Update(newVertex1, null);
-            //newVertex2.Update(newVertex2, null);
-            //render.AddFoldingLine( newVertex1.u, newVertex1.v, newVertex2.u, newVertex2.v );
-
-            // 
             controller.FaceLayer.UpdateLeaves();
-           
-            //controller.Table.UpdateTableAfterFoldUp(true);
 
             return newEdge;
         }
-
-        #region 辅助函数
-        /// <summary>
-        /// 更新面的所有的顶点到在vertexLayer中最新的版本。
-        /// </summary>
-        public void UpdateFaceVerticesToLastedVersion(Face face)
-        {
-            VertexLayer vertexLayer = CloverController.GetInstance().VertexLayer;
-            foreach (Edge e in face.Edges)
-            {
-                e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
-                e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
-            }
-            face.UpdateVertices();
-        }
-        #endregion
 
         /// <summary>
         /// 切割多个面
@@ -473,11 +318,14 @@ namespace Clover
         /// <returns>在每个面上的折线</returns>
         public List<Edge> CutFaces(List<Face> faceList, Edge foldingLine)
         {
+            CloverController cloverController = CloverController.GetInstance();
+            SnapshotNode node = cloverController.SnapshotBeforeCut();
+
             // 切割面
             List<Edge> newEdges = new List<Edge>();
             foreach (Face face in faceList)
             {
-                Edge edge = GetFoldingLineOnAFace(face, foldingLine);
+                Edge edge = CloverTreeHelper.GetEdgeCrossedFace(face, foldingLine);
 
                 Debug.Assert(edge != null);
 
@@ -485,287 +333,11 @@ namespace Clover
                 
             }
 
+            cloverController.SnapshotAfterCut(node, newEdges);
+
             return newEdges;
         }
 
-        #endregion
-
-        #region 有关折线的函数
-
-        ///// <summary>
-        ///// 获取折线
-        ///// </summary>
-        ///// <param name="pickedFace">选中的面</param>
-        ///// <param name="pickedPoint">选中的点</param>
-        ///// <param name="projectionPoint">投影点</param>
-        ///// <returns></returns>
-        //public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
-        //{
-        //    return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
-        //}
-
-        /// <summary>
-        /// 找到折线穿过面的那条线段
-        /// </summary>
-        /// <param name="face">要测试的面</param>
-        /// <param name="currentFoldingLine">当前的折线</param>
-        /// <returns>对于测试面的折线</returns>
-        public Edge GetFoldingLineOnAFace(Face face, Edge currentFoldingLine)
-        {
-            Vertex vertex1 = new Vertex();
-            Vertex vertex2 = new Vertex();
-
-            bool findFirst = false;
-            
-            foreach (Edge e in face.Edges)
-            { 
-                Point3D crossPoint = new Point3D();
-                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
-                {
-                    if (!findFirst)
-                    {
-                        vertex1.SetPoint3D(crossPoint);
-                        findFirst = true;
-                    }
-                    else if ( crossPoint != vertex1.GetPoint3D())
-                    {
-                        vertex2.SetPoint3D(crossPoint);
-                        Edge foldingLine = new Edge(vertex1, vertex2);
-                        return foldingLine;
-                    }
-                }
-            }
-            return null;
-        }
-
-        #endregion
-
-        #region 有关折叠的函数
-        /// <summary>
-        /// 执行FoldingUp过程
-        /// </summary>
-        /// <returns></returns>
-        public bool ProcessFoldingUp(Face pickedFace, Vertex pickedVertex, Point3D originPoint, Point3D projectionPoint, Edge foldingLine)
-        {
-            this.pickedFace = pickedFace;
-            this.originPoint = originPoint;
-            this.projectionPoint = projectionPoint;
-            this.foldingLine = foldingLine;
-            this.pickedVertex = pickedVertex;
-
-            return FoldingUpToPoint();        
-        }
-
-        /// <summary>
-        /// 直接折叠到投影点上
-        /// </summary>
-        /// <param name="pickedFace"></param>
-        /// <param name="pickedVertex"></param>
-        /// <param name="projectionPoint"></param>
-        public bool FoldingUpToPoint()
-        {
-            ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
-
-            // 查找所有需要移动的面
-            TestMovedFace();
-            List<Face> rotateFaces = AddMovedFace();
-            lastTimeMovedFaces = rotateFaces;
-
-            // 计算所需旋转角度
-            Point3D crossPoint = new Point3D();
-            Edge segmentFromOriginToPro = new Edge(new Vertex(originPoint), new Vertex(projectionPoint));
-
-            // 此处应该是求折线所在直线与线段的交点
-            // 将当前折线延长
-            Vertex longVertex1 = new Vertex(foldingLine.Vertex1.GetPoint3D());
-            Vertex longVertex2 = new Vertex(foldingLine.Vertex2.GetPoint3D());
-            Vector3D foldingLineVector = longVertex1.GetPoint3D() - longVertex2.GetPoint3D();
-            longVertex1.SetPoint3D(longVertex1.GetPoint3D() + foldingLineVector * 100);
-            longVertex2.SetPoint3D(longVertex2.GetPoint3D() - foldingLineVector * 100);
-            Edge longFoldingLine = new Edge(longVertex1, longVertex2);
-            if (1 != CloverMath.GetIntersectionOfTwoSegments(longFoldingLine, segmentFromOriginToPro, ref crossPoint))
-            {
-                // System.Windows.MessageBox.Show("Fuck 木有交点");
-                return false;
-            }
-
-            Vector3D v1 = originPoint - crossPoint;
-            Vector3D v2 = projectionPoint - crossPoint;
-
-            double angle = Vector3D.AngleBetween(v1, v2);
-
-            // 根据旋转角度对所有移动面进行旋转
-            CloverController.GetInstance().RotateFaces(rotateFaces, foldingLine, angle);
-
-            return true;
-        }
-
-        /// <summary>
-        /// 测试要移动的面
-        /// </summary>
-        /// <param name="face">待测试的面</param>
-        /// <param name="pickedFace">选中的面</param>
-        /// <param name="pickedVertex">选中的点</param>
-        /// <returns></returns>
-        public void TestMovedFace()
-        {
-            facesWithFoldingLine.Clear();
-            facesWithoutFoldingLine.Clear();
-
-            // 选中的面一定是移动的面
-            facesWithFoldingLine.Add(pickedFace);
-
-            // 查找同层面中有折线跨过的那些面
-            List<Face> facesInTheSameGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(pickedFace).GetFaceList();
-            foreach (Face face in facesInTheSameGroup)
-            {
-                if (face.Layer > pickedFace.Layer)
-                {
-                    if (TestFoldingLineCrossed(face, foldingLine))
-                    {
-                        facesWithFoldingLine.Add(face);
-                    }
-                }
-            }
-
-            #region 在不同组中找到所有和移动部分有联系的面
-            // 在不同组中除了折线以外所有和移动部分有联系的面
-            List<Face> faceNotInSameGroup = CloverController.GetInstance().FaceGroupLookupTable.GetFaceExcludeGroupFoundByFace(pickedFace);
-            if (faceNotInSameGroup.Count == 0)
-                return;
-            // 首先找到折线所在的两条边,并记录下这两条边的4个顶点
-            List<Vertex> foldingLineVertexList = new List<Vertex>();
-
-            foreach (Edge e in pickedFace.Edges)
-            {
-                if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
-                {
-                    foldingLineVertexList.Add(e.Vertex1);
-                    foldingLineVertexList.Add(e.Vertex2);
-                }
-            }
-
-            // 从其中的一个顶点出发，找到所有的边，直到遇到另外一个顶点
-            List<Vertex> PartOfVertices = new List<Vertex>();
-            int index = pickedFace.Vertices.IndexOf(foldingLineVertexList[0]);
-            for (int i = 0; i < pickedFace.Vertices.Count(); i++)
-            {
-                if (i + index > pickedFace.Vertices.Count())
-                {
-                    index = -i;
-                }
-
-                if (foldingLineVertexList.Contains(pickedFace.Vertices[i]))
-                    break;
-
-                PartOfVertices.Add(pickedFace.Vertices[i]);
-            }
-
-            List<Vertex> verticesIncludedPickedVertex = null;
-            // 如果该部分顶点包含选中点，则选取该部分顶点作为迭代条件
-            if (PartOfVertices.Contains(pickedVertex))
-            {
-                verticesIncludedPickedVertex = PartOfVertices;
-            }
-            else
-            {
-                verticesIncludedPickedVertex = (pickedFace.Vertices.Except(foldingLineVertexList).ToList()).Except(PartOfVertices).ToList();
-            }
-
-            // 对于包含选中点的点集，迭代的查找所有包含该点集的面的集合
-            foreach (Vertex v in verticesIncludedPickedVertex)
-            {
-                foreach (Face face in faceNotInSameGroup)
-                {
-                    if (face.Vertices.Contains(v))
-                    {
-                        facesWithoutFoldingLine.Add(face);
-                    }
-                }
-            }
-            #endregion
-
-        }
-        
-        /// <summary>
-        /// 判断折线是否通过该平面
-        /// </summary>
-        /// <param name="face">当前判定平面</param>
-        /// <param name="currentFoldingLine">折线亮点坐标</param>
-        /// <returns></returns>
-        public bool TestFoldingLineCrossed(Face face, Edge currentFoldingLine)
-        {
-            int crossCount = 0;
-            foreach (Edge e in face.Edges)
-            { 
-                Point3D crossPoint = new Point3D();
-                if (CloverMath.GetIntersectionOfTwoSegments(e, currentFoldingLine, ref crossPoint) == 1)
-                    crossCount++;
-            }
-            return crossCount >= 2;
-        }
-
-        /// <summary>
-        /// 判定移动的面
-        /// </summary>
-        /// <param name="pickedFace"></param>
-        /// <param name="foldingLine"></param>
-        public List<Face> AddMovedFace()
-        {
-            FaceLayer faceLayer = CloverController.GetInstance().FaceLayer;
-            FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
-            //table.UpdateLookupTable();
-
-            // 割面并拍照
-            SnapshotNode node = CloverController.GetInstance().SnapshotBeforeCut();
-            List<Edge> newEdges = CutFaces(facesWithFoldingLine, foldingLine);
-            CloverController.GetInstance().SnapshotAfterCut(node, newEdges);
-            //List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
-
-            // 查找cut完成后所有要移动的面
-            List<Face> tempFaces = new List<Face>();
-            foreach (Face face in facesWithFoldingLine)
-            {
-                tempFaces.Add(face.LeftChild);
-                tempFaces.Add(face.RightChild);
-            }
-
-            List<Face> facesWithPickedVertex = CloverTreeHelper.FindFacesFromVertex(tempFaces, pickedVertex);
-            tempFaces = tempFaces.Except(facesWithPickedVertex).ToList();
-            foreach (Face face in tempFaces)
-            {
-                foreach (Face faceWPV in facesWithPickedVertex)
-                {
-                    if ( CloverMath.IsIntersectionOfTwoFaceOnOnePlane( face, faceWPV ) )
-                    {
-                        bool isClosed = false;
-                        // 要除去折线的所有边
-                        foreach (Edge e in faceWPV.Edges)
-                        {
-                            //if (e.Face1 == face || e.Face2 == face)
-                            if ((e.Face1 == face || e.Face2 == face) && !newEdges.Contains(e))
-                            {
-                                isClosed = true;
-                                break;
-                            }
-                        }
-                        if (isClosed)
-                        {
-                            facesWithoutFoldingLine.Add(face);
-                            break; 
-                        }
-                    }
-                }
-            }
-
-            foreach (Face face in facesWithPickedVertex)
-            {
-                if (!facesWithoutFoldingLine.Contains(face))
-                    facesWithoutFoldingLine.Add(face);
-            }
-
-            return facesWithoutFoldingLine;
-        }
         #endregion
 
         #region 有关旋转的函数
@@ -799,11 +371,11 @@ namespace Clover
             Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
             foreach (Face f in beRotatedFaceList)
             {
-                foreach (Edge e in f.Edges)
-                {
+                //foreach (Edge e in f.Edges)
+                //{
                     foreach (Vertex v in f.Vertices)
                         movedVertexDict[v.Index] = false;
-                }
+                //}
             }
 
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
@@ -811,8 +383,7 @@ namespace Clover
             {
                 foreach (Edge e in f.Edges)
                 {
-                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex1.Index] )
+                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex1, foldingLine) && !movedVertexDict[e.Vertex1.Index] )
                     {
                         CloneAndUpdateVertex(e.Vertex1);
 
@@ -835,8 +406,7 @@ namespace Clover
                         movedVertexList.Add(e.Vertex1);
                     }
 
-                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex2.Index])
+                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex2, foldingLine) && !movedVertexDict[e.Vertex2.Index])
                     {
                         CloneAndUpdateVertex(e.Vertex2);
 
@@ -870,11 +440,263 @@ namespace Clover
 
             // 必须先更新group后更新render
             //table.UpdateLookupTable();
-            render.UpdateAll();
+            // 你们在滥用UpdateAll…… ---kid
+            //render.UpdateAll();
+            foreach (Face face in beRotatedFaceList)
+            {
+                render.Update(face);
+            }
 
             return movedVertexList;
         }
 
         #endregion
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public bool MoveToANewPosition(Vertex pickedVertex, List<Face> lastTimeMovedFaces, Edge lastFoldingLine,
+            Edge foldingLine, Point3D projectionPoint, Point3D lastProjectionPoint)
+        {
+            CloverController cloverController = CloverController.GetInstance();
+
+            // 用于计算矩阵的两个关键向量
+            Vector3D vectorFromLastFoldingLineToOriginVertex = new Vector3D();
+            Vector3D vectorFromCurrentFoldingLineToProjVertex = new Vector3D();
+
+            // 更新当前选中点到最新的状态
+            Vertex currentVertex = cloverController.VertexLayer.GetVertex(pickedVertex.Index);
+
+            // 从上次移动的面中找到带有选中点的那个面
+            Face pickedFaceAfterCutting = null;
+
+            // 从上次移动的面中找到带有选中点的那个面
+            foreach (Face face in lastTimeMovedFaces)
+            {
+                foreach (Vertex v in face.Vertices)
+                {
+                    if (v == currentVertex)
+                    {
+                        if (pickedFaceAfterCutting == null || pickedFaceAfterCutting.Layer > face.Layer)
+                            pickedFaceAfterCutting = face;
+                        break;
+                    }
+                }
+            }
+
+            if (pickedFaceAfterCutting == null)
+                return false;
+
+            // 在选定的面上找到与折线边顶点位置相等的那条边
+            Edge foldingLineOnFace = null;
+            foreach (Edge e in pickedFaceAfterCutting.Edges)
+            {
+                if (CloverMath.AreTwoEdgesEqual(e, lastFoldingLine))
+                    foldingLineOnFace = e;
+            }
+
+            if (null == foldingLineOnFace)
+                return false;
+
+            // 在找到选顶点与折线的一条连线边，计算出计算角度所需的向量1
+            Edge edgeBeforeMoving = null;
+            foreach (Edge e in pickedFaceAfterCutting.Edges)
+            {
+                if (e.Vertex1 == currentVertex && e.Vertex2 == foldingLineOnFace.Vertex1)
+                {
+                    edgeBeforeMoving = e;
+                    break;
+                }
+                if (e.Vertex2 == currentVertex && e.Vertex1 == foldingLineOnFace.Vertex1)
+                {
+                    edgeBeforeMoving = e;
+                    break;
+                }
+                if (e.Vertex1 == currentVertex && e.Vertex2 == foldingLineOnFace.Vertex2)
+                {
+                    edgeBeforeMoving = e;
+                    break;
+                }
+                if (e.Vertex2 == currentVertex && e.Vertex1 == foldingLineOnFace.Vertex2)
+                {
+                    edgeBeforeMoving = e;
+                    break;
+                }
+            }
+
+            // 得到关键向量1
+            vectorFromLastFoldingLineToOriginVertex = edgeBeforeMoving.Vertex2.GetPoint3D() - edgeBeforeMoving.Vertex1.GetPoint3D();
+
+            // 在原始面中找到折线顶点所在的两条边，并用这两条边计算折线的纹理坐标
+            foreach (Edge e in pickedFaceAfterCutting.Parent.Edges)
+            {
+                // 判断折线的两个顶点，更新坐标并计算纹理
+                // 顶点1
+                if (CloverMath.IsPointInTwoPoints(foldingLineOnFace.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                {
+                    cloverController.FoldingSystem.CalculateTexcoord(foldingLineOnFace.Vertex1, e);
+                    if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                    {
+                        foldingLineOnFace.Vertex1.SetPoint3D(foldingLine.Vertex1.GetPoint3D());
+                        foldingLineOnFace.Vertex1.Moved = true;
+                    }
+                    else
+                    {
+                        foldingLineOnFace.Vertex1.SetPoint3D(foldingLine.Vertex2.GetPoint3D());
+                        foldingLineOnFace.Vertex1.Moved = true;
+                    }
+                }
+
+                // 顶点2
+                if (CloverMath.IsPointInTwoPoints(foldingLineOnFace.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                {
+                    cloverController.FoldingSystem.CalculateTexcoord(foldingLineOnFace.Vertex2, e);
+                    if (CloverMath.IsPointInTwoPoints(foldingLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                    {
+                        foldingLineOnFace.Vertex2.SetPoint3D(foldingLine.Vertex1.GetPoint3D());
+                        foldingLineOnFace.Vertex2.Moved = true;
+                    }
+                    else
+                    {
+                        foldingLineOnFace.Vertex2.SetPoint3D(foldingLine.Vertex2.GetPoint3D());
+                        foldingLineOnFace.Vertex2.Moved = true;
+                    }
+                }
+            }
+            // 设置选中点的新位置为projectinPoint;
+            currentVertex.SetPoint3D(projectionPoint);
+            currentVertex.Moved = true;
+
+            // 找到选中点和折线之间的向量,得到关键向量2
+            vectorFromCurrentFoldingLineToProjVertex = edgeBeforeMoving.Vertex2.GetPoint3D() - edgeBeforeMoving.Vertex1.GetPoint3D();
+
+            // 计算所有上次移动面的折线，对于折线完全相等的直接更新到新的位置，对于不相等的要重新找打对应的边，然后计算折线位置，再更新折线
+            foreach (Face face in lastTimeMovedFaces)
+            {
+                if (face == pickedFaceAfterCutting)
+                    continue;
+
+                Edge foldingLineForThisFace = null;
+                foreach (Edge e in face.Edges)
+                {
+                    // 找到与原来折线共线的那条边
+                    Point3D crossedPoint = new Point3D();
+                    if (2 == CloverMath.GetIntersectionOfTwoSegments(lastFoldingLine, e, ref crossedPoint))
+                    {
+                        foldingLineForThisFace = e;
+                        break;
+                    }
+                }
+
+                // 假如木有折线，或者折线中的其中一个点和上面的折线拥有相同点返回
+                if (foldingLineForThisFace == null)
+                {
+                    // 采用点更新法 
+                    foreach (Edge e in face.Edges)
+                    {
+                        // 假如其中有一条边的一个顶点等于新折线，而另一个顶点等于旧折线中的点，折更新旧点到新点
+                    }
+                    continue;
+                }
+
+                // 计算现在的折线位置
+                Edge currentFoldingLineForThisFace = CloverTreeHelper.GetEdgeCrossedFace(face, foldingLine);
+                if (currentFoldingLineForThisFace == null)
+                    continue;
+
+                // 通过该面的原始面查询折线并更新折线位置和纹理坐标
+                foreach (Edge e in face.Parent.Edges)
+                {
+                    // 判断折线的两个顶点，更新坐标并计算纹理
+                    // 顶点1
+                    if (CloverMath.IsPointInTwoPoints(foldingLineForThisFace.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()) &&
+                        !foldingLineForThisFace.Vertex1.Moved)
+                    {
+                        cloverController.FoldingSystem.CalculateTexcoord(foldingLineForThisFace.Vertex1, e);
+                        if (CloverMath.IsPointInTwoPoints(currentFoldingLineForThisFace.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                        {
+                            foldingLineOnFace.Vertex1.SetPoint3D(currentFoldingLineForThisFace.Vertex1.GetPoint3D());
+                            foldingLineOnFace.Vertex1.Moved = true;
+                        }
+                        else
+                        {
+                            foldingLineOnFace.Vertex1.SetPoint3D(currentFoldingLineForThisFace.Vertex2.GetPoint3D());
+                            foldingLineOnFace.Vertex1.Moved = true;
+                        }
+                    }
+
+                    // 顶点2
+                    if (CloverMath.IsPointInTwoPoints(foldingLineForThisFace.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()) &&
+                        !foldingLineForThisFace.Vertex2.Moved)
+                    {
+                        cloverController.FoldingSystem.CalculateTexcoord(foldingLineForThisFace.Vertex2, e);
+                        if (CloverMath.IsPointInTwoPoints(currentFoldingLineForThisFace.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D()))
+                        {
+                            foldingLineOnFace.Vertex2.SetPoint3D(currentFoldingLineForThisFace.Vertex1.GetPoint3D());
+                            foldingLineOnFace.Vertex2.Moved = true;
+                        }
+                        else
+                        {
+                            foldingLineOnFace.Vertex2.SetPoint3D(currentFoldingLineForThisFace.Vertex2.GetPoint3D());
+                            foldingLineOnFace.Vertex2.Moved = true;
+                        }
+                    }
+                }
+            }
+
+            // 求得旋转量,并创建旋转矩阵
+            Vector3D axis = Vector3D.CrossProduct(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOriginVertex);
+            axis.Normalize();
+            axis.Negate();
+            double angle = Vector3D.AngleBetween(vectorFromCurrentFoldingLineToProjVertex, vectorFromLastFoldingLineToOriginVertex);
+            AxisAngleRotation3D asixRotation = new AxisAngleRotation3D(axis, angle);
+            RotateTransform3D rotateTransform = new RotateTransform3D(asixRotation);
+            rotateTransform.CenterX = projectionPoint.X;
+            rotateTransform.CenterY = projectionPoint.Y;
+            rotateTransform.CenterZ = projectionPoint.Z;
+
+            // 创建平移矩阵
+            Vector3D vectorFromProjToOrigin = projectionPoint - lastProjectionPoint;
+            TranslateTransform3D translateTransform = new TranslateTransform3D(vectorFromProjToOrigin);
+
+            // 移动所有没有移动过的顶点
+            foreach (Face face in lastTimeMovedFaces)
+            {
+                foreach (Vertex v in face.Vertices)
+                {
+                    if (!v.Moved)
+                    {
+                        v.SetPoint3D(translateTransform.Transform(v.GetPoint3D()));
+                        v.SetPoint3D(rotateTransform.Transform(v.GetPoint3D()));
+                        v.Moved = true;
+                    }
+                }
+            }
+
+            // 最终更改所有顶点移动属性复位
+            foreach (Face face in lastTimeMovedFaces)
+            {
+                foreach (Vertex v in face.Vertices)
+                {
+                    v.Moved = false;
+                }
+            }
+
+            // 更新渲染层
+            // 也许UpdateAll曾今给了你们许多欢乐的时光，但现在它应该退场了 ---kid
+            //cloverController.RenderController.UpdateAll();
+            //foreach (Face face in lastTimeMovedFaces)
+            //{
+            //    cloverController.RenderController.Update(face);
+            //}
+            // 好吧。。你们还是继续使用UpdateAll好了。。 ---kid
+            cloverController.RenderController.UpdateAll();
+
+            return true;
+        }
+
+
+
     }
 }
