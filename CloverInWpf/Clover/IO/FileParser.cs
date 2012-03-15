@@ -258,7 +258,7 @@ namespace Clover.IO
             face.LeftChild = FaceTree();
             face.RightChild = FaceTree();
 
-            face.SortVertices();
+            face.UpdateVertices();
 
             return face;
         }

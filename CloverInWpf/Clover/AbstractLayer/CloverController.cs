@@ -407,7 +407,7 @@ namespace Clover
             // use root to initialize facecell tree and lookuptable
             faceLayer.Initliaze(face);
 
-            face.SortVertices();
+            face.UpdateVertices();
             faceLayer.UpdateLeaves();
 
             faceGroupLookupTable = new FaceGroupLookupTable(face);

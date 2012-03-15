@@ -45,7 +45,7 @@ namespace Clover
         /// <param name="face">要切割的面</param>
         /// <param name="edge">割线，不一定要在边层里面的边，只要两个端点的坐标在面的边上即可</param>
         /// <returns>被边引用的割线</returns>
-        public Edge CutFace(Face face, Edge edge)
+        Edge CutFace(Face face, Edge edge)
         {
             Debug.Assert(edge != null);
             if (edge == null)
@@ -57,7 +57,7 @@ namespace Clover
             CloverController controller = CloverController.GetInstance();
             RenderController render = controller.RenderController;
             VertexLayer vertexLayer = controller.VertexLayer;
-            ShadowSystem shadowSystem = controller.ShadowSystem;
+            //ShadowSystem shadowSystem = controller.ShadowSystem;
 
             Vertex newVertex1 = edge.Vertex1.Clone() as Vertex;
             Vertex newVertex2 = edge.Vertex2.Clone() as Vertex;
@@ -65,34 +65,34 @@ namespace Clover
             Vertex newVertexOld2 = newVertex2;
 
             // 生成一个面的周围的顶点的环形表
-            face.SortVertices();
+            face.UpdateVertices(); // 为什么这里要排序呢？ ---kid
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
             /// <remarks>既然face中的点现在是有序的了，也许下面这段不需要了---kid</remarks>
-            //int count = vertexList.Count + 1;
-            //while (true)
-            //{
-            //    if (
-            //        (
-            //        !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
-            //        && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
-            //        )
-            //        || 
-            //        (
-            //         !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
-            //        && CloverMath.IsPointInTwoPoints( newVertex2.GetPoint3D(), vertexList[ 0 ].GetPoint3D(), vertexList[ 1 ].GetPoint3D(), 0.001 )
-            //        )
-            //        )
-            //    {
-            //        break;
-            //    }
-            //    vertexList.Add(vertexList[0]);
-            //    vertexList.RemoveAt(0);
+            int count = vertexList.Count + 1;
+            while (true)
+            {
+                if (
+                    (
+                    !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
+                    && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
+                    )
+                    ||
+                    (
+                     !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
+                    && CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
+                    )
+                    )
+                {
+                    break;
+                }
+                vertexList.Add(vertexList[0]);
+                vertexList.RemoveAt(0);
 
-            //    // 防止死循环
-            //    if (count-- == 0)
-            //        return null;
-            //}
+                // 防止死循环
+                if (count-- == 0)
+                    return null;
+            }
             vertexList.Add(vertexList[0]);
 
             // 要被分割的边
@@ -297,8 +297,8 @@ namespace Clover
             f2.StartVertex2 = newVertex2;
 
             // 更新面的都为顶点的顺序
-            f1.SortVertices();
-            f2.SortVertices();
+            f1.UpdateVertices();
+            f2.UpdateVertices();
 
             // 更新渲染层的部分
             render.Delete(face);
@@ -318,6 +318,9 @@ namespace Clover
         /// <returns>在每个面上的折线</returns>
         public List<Edge> CutFaces(List<Face> faceList, Edge foldingLine)
         {
+            CloverController cloverController = CloverController.GetInstance();
+            SnapshotNode node = cloverController.SnapshotBeforeCut();
+
             // 切割面
             List<Edge> newEdges = new List<Edge>();
             foreach (Face face in faceList)
@@ -329,6 +332,8 @@ namespace Clover
                 newEdges.Add(CutFace(face, edge));
                 
             }
+
+            cloverController.SnapshotAfterCut(node, newEdges);
 
             return newEdges;
         }
@@ -366,11 +371,11 @@ namespace Clover
             Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
             foreach (Face f in beRotatedFaceList)
             {
-                foreach (Edge e in f.Edges)
-                {
+                //foreach (Edge e in f.Edges)
+                //{
                     foreach (Vertex v in f.Vertices)
                         movedVertexDict[v.Index] = false;
-                }
+                //}
             }
 
             // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
@@ -378,8 +383,7 @@ namespace Clover
             {
                 foreach (Edge e in f.Edges)
                 {
-                    if (e.Vertex1.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex1.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex1.Index] )
+                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex1, foldingLine) && !movedVertexDict[e.Vertex1.Index] )
                     {
                         CloneAndUpdateVertex(e.Vertex1);
 
@@ -402,8 +406,7 @@ namespace Clover
                         movedVertexList.Add(e.Vertex1);
                     }
 
-                    if (e.Vertex2.GetPoint3D() != foldingLine.Vertex1.GetPoint3D() 
-                        && e.Vertex2.GetPoint3D() != foldingLine.Vertex2.GetPoint3D() && !movedVertexDict[e.Vertex2.Index])
+                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex2, foldingLine) && !movedVertexDict[e.Vertex2.Index])
                     {
                         CloneAndUpdateVertex(e.Vertex2);
 
@@ -437,7 +440,12 @@ namespace Clover
 
             // 必须先更新group后更新render
             //table.UpdateLookupTable();
-            render.UpdateAll();
+            // 你们在滥用UpdateAll…… ---kid
+            //render.UpdateAll();
+            foreach (Face face in beRotatedFaceList)
+            {
+                render.Update(face);
+            }
 
             return movedVertexList;
         }
@@ -675,7 +683,20 @@ namespace Clover
                 }
             }
 
+            // 更新渲染层
+            // 也许UpdateAll曾今给了你们许多欢乐的时光，但现在它应该退场了 ---kid
+            //cloverController.RenderController.UpdateAll();
+            //foreach (Face face in lastTimeMovedFaces)
+            //{
+            //    cloverController.RenderController.Update(face);
+            //}
+            // 好吧。。你们还是继续使用UpdateAll好了。。 ---kid
+            cloverController.RenderController.UpdateAll();
+
             return true;
         }
+
+
+
     }
 }

@@ -355,7 +355,7 @@ namespace Clover
                     newFace.startVertex2 = n2;
             }
 
-            newFace.SortVertices();
+            newFace.UpdateVertices();
 
             return newFace;
         }
@@ -446,7 +446,7 @@ namespace Clover
         /// 更新面的点，方便绘制时使用
         /// </summary>
         /// <remarks>其实这个函数的真正作用是对Face上的Vertex进行排序吧？---kid</remarks>
-        public void SortVertices()
+        public void UpdateVertices()
         {
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
             // 顺序由第一个和第二个顶点来决定
@@ -536,7 +536,7 @@ namespace Clover
         public bool RemoveEdge(Edge edge)
         {
             bool ret = edges.Remove(edge);
-            SortVertices();
+            UpdateVertices();
             return ret;
         }
         #endregion

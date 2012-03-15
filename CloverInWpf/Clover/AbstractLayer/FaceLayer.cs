@@ -712,7 +712,7 @@ namespace Clover
         public void Initliaze( Face root )
         {
             this.root = root;
-            root.SortVertices();
+            root.UpdateVertices();
 
             facecellTree = new FacecellTree( root );
             lookupTable = new FaceGroupLookupTable( root );

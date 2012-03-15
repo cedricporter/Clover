@@ -102,7 +102,6 @@ namespace Clover
                         lastTimeMovedFaces, lastFoldingLine, foldingLine, projectionPoint, lastProjectionPoint);
                     lastFoldingLine = foldingLine;
                     lastProjectionPoint = projectionPoint;
-                    cloverController.RenderController.UpdateAll();
                 }
             }
 
@@ -300,9 +299,8 @@ namespace Clover
             FindFacesWithFoldLine();
 
             // 向下层传递，割面并拍照
-            SnapshotNode node = cloverController.SnapshotBeforeCut();
             newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldingLine, foldingLine);
-            cloverController.SnapshotAfterCut(node, newEdges);
+            
 
             // 查找所有需要移动的面
             FindFaceWithoutFoldLine();
