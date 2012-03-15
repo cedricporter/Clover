@@ -321,7 +321,12 @@ namespace Clover
 
         public void ExitFoldingMode()
         {
+            // 更新Group
             UpdateFaceGroupTable();
+            // 反重叠
+            RenderController.GetInstance().AntiOverlap();
+            // 添加折线
+            // 释放资源
         }
         #endregion
 
