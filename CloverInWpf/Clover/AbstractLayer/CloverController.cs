@@ -486,10 +486,10 @@ namespace Clover
         /// <summary>
         /// 
         /// </summary>
-        //public void UpdateFaceGroupTable()
-        //{
-        //    faceGroupLookupTable.UpdateTableAfterFoldUp();
-        //}
+        public void UpdateFaceGroupTable()
+        {
+            faceGroupLookupTable.UpdateTableAfterFoldUp();
+        }
 
         /// <summary>
         /// 通过点找面
