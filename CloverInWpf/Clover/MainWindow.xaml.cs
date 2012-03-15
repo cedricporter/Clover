@@ -382,7 +382,7 @@ clover.UpdateFaceGroupTable()
                     //f.UpdateVertices();
                     var a = cloverController.FaceLayer;
                     // cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
-                    cloverController.RenderController.UpdateAll();
+                    //cloverController.RenderController.UpdateAll();
                     cloverController.RenderController.AntiOverlap();
                     break;
 

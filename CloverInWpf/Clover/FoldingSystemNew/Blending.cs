@@ -296,6 +296,8 @@ namespace Clover.AbstractLayer
             beBlendedFaces = null;
             faceContainVertex = null;
             checkMask = 0;
+            // 反重叠
+            RenderController.GetInstance().AntiOverlap();
         }
 
         

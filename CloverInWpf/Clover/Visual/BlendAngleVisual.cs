@@ -24,68 +24,66 @@ namespace Clover.Visual
 {
     class BlendAngleVisual : VisualElementFactory
     {
-        int degree;
-        LineArrow lineArrow1 = new LineArrow();
-        LineArrow lineArrow2 = new LineArrow();
+        LineArrow lineArrow = new LineArrow();
         TextBlock textBlock = new TextBlock();
-        TranslateTransform translate1, translate2, translateText;
+        TranslateTransform translateText;
 
         public BlendAngleVisual(int degree, Point pos1, Point pos2)
         {
-            this.degree = degree;
-            box.Children.Add(lineArrow1);
-            box.Children.Add(lineArrow2);
+            box.Children.Add(lineArrow);
             box.Children.Add(textBlock);
-            //lineArrow1.Width = lineArrow2.Width = 30;
-            //lineArrow1.Height = lineArrow2.Height = (pos2.Y - pos1.Y) / 2 - 10;
-            lineArrow1.StrokeThickness = lineArrow2.StrokeThickness = 3;
-            lineArrow1.ArrowSize = lineArrow2.ArrowSize = 8;
-            lineArrow1.Stroke = lineArrow2.Stroke = (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush");
-            lineArrow2.StartCorner = Microsoft.Expression.Media.CornerType.BottomLeft;
-            lineArrow1.BendAmount = lineArrow2.BendAmount = 0;
-            //translate1 = new TranslateTransform(pos1.X, pos1.Y);
-            lineArrow1.RenderTransform = translate1;
-            translate2 = new TranslateTransform(0, lineArrow1.Height + 20);
-            lineArrow2.RenderTransform = translate2;
-            textBlock.Text = degree.ToString();
+            lineArrow.StrokeThickness = 3;
+            lineArrow.ArrowSize = 8;
+            lineArrow.Stroke = (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush");
+            lineArrow.BendAmount = 0;
+            lineArrow.StartArrow = Microsoft.Expression.Media.ArrowType.Arrow;
             textBlock.Width = 40;
             textBlock.Height = 20;
             textBlock.FontSize = 13;
             textBlock.Foreground = new SolidColorBrush(Colors.White);
             textBlock.Background = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0));
             textBlock.TextAlignment = TextAlignment.Center;
-            translateText = new TranslateTransform(10, lineArrow1.Height);
+            translateText = new TranslateTransform();
             textBlock.RenderTransform = translateText;
-            TransformGroup = new TranslateTransform(pos1.X, pos1.Y);
+            TransformGroup = new TranslateTransform();
             box.Opacity = 0;
             //Update(degree)
         }
 
         public void Update(int degree, Point pos1, Point pos2)
         {
-            double w = pos1.X + 30 - pos2.X;
-            lineArrow1.Width = 30;
-            if (w < 0)
+            double w = pos2.X - pos1.X;
+            double h = pos2.Y - pos1.Y;
+            double halfw = w / 2;
+            double halfh = h / 2;
+            if (w >= 0)
             {
-                lineArrow2.Width = -w;
-                translate2.X = pos2.X - pos1.X + w;
-                lineArrow2.StartCorner = Microsoft.Expression.Media.CornerType.BottomRight;
+                lineArrow.Width = w;
+                (TransformGroup as TranslateTransform).X = pos1.X + 5;
+                lineArrow.StartCorner = Microsoft.Expression.Media.CornerType.TopLeft;
+                translateText.X = halfw - 20;
             }
             else
             {
-                lineArrow2.Width = w;
-                translate2.X = pos2.X - pos1.X;
-                lineArrow2.StartCorner = Microsoft.Expression.Media.CornerType.BottomLeft;
+                lineArrow.Width = -w;
+                (TransformGroup as TranslateTransform).X = pos2.X + 5;
+                lineArrow.StartCorner = Microsoft.Expression.Media.CornerType.TopRight;
+                translateText.X = - 20 - halfw;
             }
-            //lineArrow2.Width = w > 0 ? w : -w;
-            //translate2.X = pos2.X - pos1.X;
-            double h = (pos2.Y - pos1.Y) / 2 - 10;
-            lineArrow1.Height = lineArrow2.Height = h > 0 ? h : 0;
-            translate2.Y = lineArrow1.Height + 20;
-            textBlock.Text = degree.ToString();
-            translateText.Y = lineArrow1.Height;
-            (TransformGroup as TranslateTransform).X = pos1.X + 5;
-            (TransformGroup as TranslateTransform).Y = pos1.Y;
+            if (h >= 0)
+            {
+                lineArrow.Height = h;
+                (TransformGroup as TranslateTransform).Y = pos1.Y;
+                translateText.Y = halfh - 10;
+            }
+            else
+            {
+                lineArrow.Height = -h;
+                (TransformGroup as TranslateTransform).Y = pos1.Y - h;
+                translateText.Y = - 10 - halfh;
+            }
+            textBlock.Text = (180 - degree).ToString();
+            textBlock.Text += "°";
         }
 
         public override void FadeIn()

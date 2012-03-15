@@ -13,6 +13,7 @@ namespace Clover
         List<Face> lastTimeMovedFaces;
         List<Face> facesWithFoldingLine = new List<Face>();
         List<Face> facesWithoutFoldingLine = new List<Face>();
+
         Face pickedFace;
         Point3D originPoint;
         Point3D projectionPoint;
@@ -491,17 +492,18 @@ namespace Clover
 
         #region 有关折线的函数
 
-        /// <summary>
-        /// 获取折线
-        /// </summary>
-        /// <param name="pickedFace">选中的面</param>
-        /// <param name="pickedPoint">选中的点</param>
-        /// <param name="projectionPoint">投影点</param>
-        /// <returns></returns>
-        public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
-        {
-            return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
-        }
+        ///// <summary>
+        ///// 获取折线
+        ///// </summary>
+        ///// <param name="pickedFace">选中的面</param>
+        ///// <param name="pickedPoint">选中的点</param>
+        ///// <param name="projectionPoint">投影点</param>
+        ///// <returns></returns>
+        //public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
+        //{
+        //    return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
+        //}
+
         /// <summary>
         /// 找到折线穿过面的那条线段
         /// </summary>
@@ -565,6 +567,7 @@ namespace Clover
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
 
             // 查找所有需要移动的面
+            TestMovedFace();
             List<Face> rotateFaces = AddMovedFace();
             lastTimeMovedFaces = rotateFaces;
 
@@ -592,7 +595,7 @@ namespace Clover
             double angle = Vector3D.AngleBetween(v1, v2);
 
             // 根据旋转角度对所有移动面进行旋转
-            RotateFaces(rotateFaces, foldingLine, angle);
+            CloverController.GetInstance().RotateFaces(rotateFaces, foldingLine, angle);
 
             return true;
         }
@@ -713,9 +716,11 @@ namespace Clover
             FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
             //table.UpdateLookupTable();
 
-            TestMovedFace();
-
-            List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
+            // 割面并拍照
+            SnapshotNode node = CloverController.GetInstance().SnapshotBeforeCut();
+            List<Edge> newEdges = CutFaces(facesWithFoldingLine, foldingLine);
+            CloverController.GetInstance().SnapshotAfterCut(node, newEdges);
+            //List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
 
             // 查找cut完成后所有要移动的面
             List<Face> tempFaces = new List<Face>();

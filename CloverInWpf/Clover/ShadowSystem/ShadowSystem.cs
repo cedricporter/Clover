@@ -108,7 +108,7 @@ namespace Clover
             {
                 controller.RenderController.New(f);
             }
-            controller.RenderController.RedrawFoldLine();
+            //controller.RenderController.RedrawFoldLine();
         }
         #endregion
 
@@ -240,7 +240,7 @@ namespace Clover
 
             foreach (Vertex v in beDeleteVertexVertexList)
             {
-                controller.VertexLayer.DeleteThisVersionToEnd(v);
+                controller.VertexLayer.DeleteNextVersionToEnd(v);
             }
 
             RevertTailVertex();
