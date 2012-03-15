@@ -161,29 +161,38 @@ namespace Clover
             shadowSystem.Snapshot(node);
         }
 
-        public List<Edge> CutFaces(List<Face> faces, Edge edge)
+        #region 原CutFaces
+
+        public SnapshotNode SnapshotBeforeCut()
         {
             // 拍快照
-            CloverController controller = CloverController.GetInstance();
-            ShadowSystem shadowSystem = controller.ShadowSystem;
             shadowSystem.CheckUndoTree();
-
-            SnapshotNode node = new SnapshotNode(controller.FaceLayer.Leaves);
+            SnapshotNode node = new SnapshotNode(faceLayer.Leaves);
             node.Type = SnapshotNodeKind.CutKind;
-            node.OriginVertexListCount = controller.VertexLayer.VertexCellTable.Count;
-            node.OriginEdgeListCount = controller.EdgeLayer.Count;
+            node.OriginVertexListCount = vertexLayer.VertexCellTable.Count;
+            node.OriginEdgeListCount = edgeLayer.Count;
+            return node;
+        }
 
-            // 割面
-            List<Edge> newEdges = foldingSystem.CutFaces(faces, edge);
-            //foreach (Edge e in newEdges)
-            //{
-            //    renderController.AddFoldingLine(e.Vertex1.u, e.Vertex1.v, e.Vertex2.u, e.Vertex2.v);
-            //}
+        public void SnapshotAfterCut(SnapshotNode node, List<Edge> newEdges)
+        {
             node.NewEdges = newEdges;
             shadowSystem.Snapshot(node);
+        }
+
+        public List<Edge> CutFaces(List<Face> faces, Edge edge)
+        {
+            SnapshotNode node = SnapshotBeforeCut();
+            // 割面
+            List<Edge> newEdges = foldingSystem.CutFaces(faces, edge);
+            SnapshotAfterCut(node, newEdges);
 
             return newEdges;
         }
+
+        #endregion
+
+        
 
         public Vertex GetPrevVersion(Vertex vertex)
         {

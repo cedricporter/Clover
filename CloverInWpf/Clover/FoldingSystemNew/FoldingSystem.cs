@@ -566,6 +566,7 @@ namespace Clover
             ShadowSystem shadowSystem = CloverController.GetInstance().ShadowSystem;
 
             // 查找所有需要移动的面
+            TestMovedFace();
             List<Face> rotateFaces = AddMovedFace();
             lastTimeMovedFaces = rotateFaces;
 
@@ -714,9 +715,11 @@ namespace Clover
             FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
             //table.UpdateLookupTable();
 
-            TestMovedFace();
-
-            List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
+            // 割面并拍照
+            SnapshotNode node = CloverController.GetInstance().SnapshotBeforeCut();
+            List<Edge> newEdges = CutFaces(facesWithFoldingLine, foldingLine);
+            CloverController.GetInstance().SnapshotAfterCut(node, newEdges);
+            //List<Edge> newEdges = CloverController.GetInstance().CutFaces(facesWithFoldingLine, foldingLine);
 
             // 查找cut完成后所有要移动的面
             List<Face> tempFaces = new List<Face>();
