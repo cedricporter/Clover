@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
+using Clover.AbstractLayer;
 
 namespace Clover
 {
@@ -16,6 +17,7 @@ namespace Clover
         List<Face> originFaces = new List<Face>();
 
         bool isFirstCut = true;
+        FaceGroup group;
         Face nearestFace;
         Face pickedFace;
         Face originFace;
@@ -33,59 +35,45 @@ namespace Clover
         //    this.cloverController = CloverController.GetInstance();
         //}
 
+        #region 进入折叠模式
+        
         public void EnterFoldingMode(Face nearestFace, Vertex pickedVertex)
         {
             this.cloverController = CloverController.GetInstance();
 
             // 修订选中的面为拥有选定点的同层面中最下面的那个面
-            List<Face> faceList = cloverController.FaceGroupLookupTable.GetGroup(nearestFace).GetFaceList();
+            group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
+            List<Face> faceList = group.GetFaceList();
 
+            // 记录选中的面和选中的点
             this.nearestFace = nearestFace;
-            pickedFace = nearestFace;
+            this.pickedFace = nearestFace;
             this.pickedVertex = pickedVertex;
-
-            originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
-            lastProjectionPoint = new Point3D(originPoint.X, originPoint.Y, originPoint.Z);
-            isFirstCut = true;
-
+            // 找到最下层的面为pickedFace，最上层的face为nearestFace
             foreach (Face face in faceList)
             {
-                if (face.Vertices.Contains(pickedVertex) && face.Layer < pickedFace.Layer)
+                if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < pickedFace.Layer)
                     pickedFace = face;
-                if (face.Vertices.Contains(pickedVertex) && face.Layer > this.nearestFace.Layer)
+                if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > this.nearestFace.Layer)
                     this.nearestFace = face;
             }
-
-            originFace = pickedFace.Clone() as Face;
+            // 拷贝一份pickedFace作为originFace
+            this.originFace = pickedFace.Clone() as Face;
+            
+            // 记录初始点位置
+            originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
+            lastProjectionPoint = new Point3D(originPoint.X, originPoint.Y, originPoint.Z);
+            isFirstCut = true; 
         }
+
+        #endregion
+
+        #region 执行折叠
 
         public Edge OnDrag(Point3D projectionPoint)
         {
             this.projectionPoint = projectionPoint;
-            return FoldingUpToAPoint();
-        }
 
-        public void ExitFoldingMode()
-        {
-            // 更新Group
-            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
-            // 反重叠
-            cloverController.RenderController.AntiOverlap();
-            // 添加折线
-            // 释放资源
-        }
-
-        #region 与FoldingUp相关
-
-        /// <summary>
-        /// FoldingUp到一个投影点上
-        /// </summary>
-        /// <param name="pickedFace">选中的面</param>
-        /// <param name="originVertex">选中的点</param>
-        /// <param name="projectionPoint">投影点</param>
-        /// <returns>折线边</returns>
-        private Edge FoldingUpToAPoint()
-        {
             // 判定FoldingUp的成立条件，若成立则进行FoldingUp，若不成立返回null
             if (!DetermineFoldingUpConditionEstablished() || foldingLine == null)
                 return null;
@@ -126,6 +114,8 @@ namespace Clover
             cloverController.RenderController.UpdateAll();
 
             return foldingLine;
+
+            //return FoldingUpToAPoint();
         }
 
         /// <summary>
@@ -143,8 +133,8 @@ namespace Clover
                 return false;
 
             // 不成立条件二：投隐点和原始点的连线以及折线有穿过与该面不同组的面
-            foldingLine = cloverController.FoldingSystem.GetFoldingLine(originFace, originPoint, projectionPoint);
-
+            foldingLine = CloverMath.GetPerpendicularBisector3D(originFace, originPoint, projectionPoint);
+            //foldingLine = cloverController.FoldingSystem.GetFoldingLine(originFace, originPoint, projectionPoint);
             if (foldingLine == null)
                 return false;
 
@@ -171,6 +161,24 @@ namespace Clover
 
             return true;
         }
+
+        #endregion
+
+        public void ExitFoldingMode()
+        {
+            // 更新Group
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            // 反重叠
+            cloverController.RenderController.AntiOverlap();
+            // 添加折线
+            // 释放资源
+        }
+
+        #region 与FoldingUp相关
+
+        
+
+        
 
         /// <summary>
         /// 判断本次拖拽是否有切割新的面

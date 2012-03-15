@@ -491,17 +491,18 @@ namespace Clover
 
         #region 有关折线的函数
 
-        /// <summary>
-        /// 获取折线
-        /// </summary>
-        /// <param name="pickedFace">选中的面</param>
-        /// <param name="pickedPoint">选中的点</param>
-        /// <param name="projectionPoint">投影点</param>
-        /// <returns></returns>
-        public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
-        {
-            return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
-        }
+        ///// <summary>
+        ///// 获取折线
+        ///// </summary>
+        ///// <param name="pickedFace">选中的面</param>
+        ///// <param name="pickedPoint">选中的点</param>
+        ///// <param name="projectionPoint">投影点</param>
+        ///// <returns></returns>
+        //public Edge GetFoldingLine(Face pickedFace, Point3D startPoint, Point3D targetPoint)
+        //{
+        //    return CloverMath.GetPerpendicularBisector3D(pickedFace, startPoint, targetPoint);
+        //}
+
         /// <summary>
         /// 找到折线穿过面的那条线段
         /// </summary>
