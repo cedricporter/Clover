@@ -449,10 +449,11 @@ namespace Clover
 
 
         /// <summary>
-        /// foldup后对lookuptable进行更新和排序
+        /// 
         /// </summary>
+        /// <param name="IsFacingUser"></param>
         /// <returns></returns>
-        public bool UpdateTableAfterFoldUp()
+        public bool UpdateTableAfterFoldUp( bool IsFacingUser = true )
         {
 
             // 找cutface
@@ -601,8 +602,8 @@ namespace Clover
             fixedFaceGroup.SortFace();
             movedFaceGroup.SortFace();
             // 判断组是不是面向用户
-            bool IsDefaultDir = fixedFaceGroup.D > 0 ? true : false;
-            if ( IsDefaultDir )
+            //bool IsDefaultDir = fixedFaceGroup.D > 0 ? true : false;
+            if ( IsFacingUser )
             {
                 int layer = 0;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
@@ -718,7 +719,7 @@ namespace Clover
         /// bendh后调用来更新lookuptable
         /// </summary>
         /// <returns></returns>
-        public bool UpdateTableAfterBending()
+        public bool UpdateTableAfterBending(bool IsFacingUser = true)
         {
             
             if (bendtype == BendTpye.BlendZero)
@@ -756,7 +757,7 @@ namespace Clover
 
                 participateGroup.SortFace();
                 // 判断用户的方向：
-                if (participateGroup.D > 0) // 组的正面面向用户
+                if ( IsFacingUser ) // 组的正面面向用户
                 {
                     // 逆序从上贴合
                     int layer = 0;
@@ -849,7 +850,7 @@ namespace Clover
                     bendingParticipateGroup.RevertFaces();
                 }
 
-                if (participateGroup.D > 0)// 用户面向对方的组
+                if ( IsFacingUser )// 用户面向对方的组
                 {
                     // 从上贴合
                     int layer = 0;

@@ -546,43 +546,56 @@ namespace Clover
         /// <returns></returns>
         public static bool IsIntersectionOfTwoFace(Face f1, Face f2)
         {
-            bool atleastonepointin = false;
-
+            bool IsOnEdge = false;
+            bool IsOnFace = false;
             foreach ( Vertex v1 in f1.Vertices )
             {
                 if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
                 {
-                    if (!atleastonepointin )
+
+                    foreach ( Edge e2 in f2.Edges )
                     {
-                        foreach (Edge e2 in f2.Edges)
-                        {
-                            if( !IsPointInTwoPoints(v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()) )
-                                atleastonepointin = true;
-                        }
+                        if ( IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) )
+                            IsOnEdge = true;
                     }
+                    if ( !IsOnEdge )
+                        IsOnFace = true;
                     else
-                        return true;
+                        IsOnEdge = false;
+                }
+                if ( IsOnFace )
+                {
+                    return true;
                 }
                     
             }
 
+            IsOnFace = false;
+            IsOnEdge = false;
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
                 {
-                   if (!atleastonepointin )
+                    if ( !IsOnEdge )
                     {
                         foreach (Edge e1 in f1.Edges)
                         {
-                            if( !IsPointInTwoPoints(v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()) )
-                                atleastonepointin = true;
+                            if( IsPointInTwoPoints(v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()) )
+                                IsOnEdge = true;
                         }
                     }
+                    if ( !IsOnEdge )
+                        IsOnFace = true;
                     else
-                        return true;
+                        IsOnEdge = false;
+                }
+                if ( IsOnFace )
+                {
+                    return true;
                 }
                    
             }
+
 
             return false;
         }
