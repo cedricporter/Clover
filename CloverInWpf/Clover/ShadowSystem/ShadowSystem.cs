@@ -108,7 +108,7 @@ namespace Clover
             {
                 controller.RenderController.New(f);
             }
-            controller.RenderController.RedrawFoldLine();
+            //controller.RenderController.RedrawFoldLine();
         }
         #endregion
 

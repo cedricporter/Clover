@@ -687,6 +687,30 @@ namespace Clover
             return v.Length > 0.001 ? false : true;
         }
 
+        /// <summary>
+        /// 两条边是否相等
+        /// </summary>
+        /// <param name="e1"></param>
+        /// <param name="e2"></param>
+        /// <returns></returns>
+        public static bool AreTwoEdgesEqual(Edge e1, Edge e2)
+        {
+            if (CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D()) &&
+                CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                return true;
+
+            if (CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D()) &&
+                CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                return true;
+           // if (e1.Vertex1.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex2.GetPoint3D() == e2.Vertex2.GetPoint3D())
+           //     return true;
+
+           // if (e1.Vertex2.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex1.GetPoint3D() == e2.Vertex2.GetPoint3D())
+           //     return true;
+
+            return false; 
+        }
+
     }
 }
 
