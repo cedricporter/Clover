@@ -78,7 +78,6 @@
     <Compile Include="FoldingSystemNew\FoldingUp.cs" />
     <Compile Include="FoldingSystemNew\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
-    <Compile Include="AbstractLayer\Paper.cs" />
     <Compile Include="IO\CloverFile.cs" />
     <Compile Include="IO\CloverFileLoader.cs" />
     <Compile Include="IO\CloverFileWriter.cs" />

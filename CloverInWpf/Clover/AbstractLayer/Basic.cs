@@ -355,7 +355,7 @@ namespace Clover
                     newFace.startVertex2 = n2;
             }
 
-            newFace.UpdateVertices();
+            newFace.SortVertices();
 
             return newFace;
         }
@@ -445,50 +445,41 @@ namespace Clover
         /// <summary>
         /// 更新面的点，方便绘制时使用
         /// </summary>
-        public void UpdateVertices()
+        /// <remarks>其实这个函数的真正作用是对Face上的Vertex进行排序吧？---kid</remarks>
+        public void SortVertices()
         {
-            // testing
-            CloverController ctrl = CloverController.GetInstance();
-
             // 可能在这里要对边进行排序，才可以得到有序的点，否则就要保证添加边的时候按顺序。
+            // 顺序由第一个和第二个顶点来决定
             vertices.Clear();
-
             vertices.Add(startVertex1);
             vertices.Add(startVertex2);
 
-            //vertices.Add(edges[0].Vertex1);
-            //vertices.Add(edges[0].Vertex2);
-
             Vertex currentVertex = startVertex2;
-            //Vertex currentVertex = edges[0].Vertex2;
-
             List<Edge> ignoreList = new List<Edge>();
-            //ignoreList.Add(edges[0]);
+            // 找到第一条边
             foreach (Edge edge in edges)
             {
-                if (edge.IsVerticeIn(startVertex1) && edge.IsVerticeIn(startVertex2))
+                if (CloverTreeHelper.IsVertexInEdge(startVertex1, edge) && CloverTreeHelper.IsVertexInEdge(startVertex2, edge))
                 {
                     ignoreList.Add(edge);
                     break;
                 }
             }
 
+            // 通过遍历边来找到下一个顶点，并按顺序插入Face的点表中
             int counter = vertices.Count + 1;
-
             while (ignoreList.Count < edges.Count - 1)
             {
                 foreach (Edge e in edges)
                 {
                     if (!ignoreList.Contains(e))
                     {
-                        //if (CloverMath.IsTwoPointsEqual(e.Vertex1.GetPoint3D(), currentVertex.GetPoint3D()))
                         if (e.Vertex1 == currentVertex)
                         {
                             ignoreList.Add(e);
                             if (!vertices.Contains(e.Vertex2))
                                 vertices.Add(currentVertex = e.Vertex2);
                         }
-                        //else if (CloverMath.IsTwoPointsEqual(e.Vertex2.GetPoint3D(), currentVertex.GetPoint3D()))
                         else if (e.Vertex2 == currentVertex)
                         {
                             ignoreList.Add(e);
@@ -497,22 +488,9 @@ namespace Clover
                         }
                     }
                 }
-
                 if (counter-- == 0)
                     return;
             }
-
-            Edge e2 = null;
-            foreach (Edge e in edges)
-            {
-                if (!ignoreList.Contains(e))
-                {
-                    e2 = e;
-                    break;
-                }
-            }
-
-            
         }
 
         /// <summary>
@@ -558,7 +536,7 @@ namespace Clover
         public bool RemoveEdge(Edge edge)
         {
             bool ret = edges.Remove(edge);
-            UpdateVertices();
+            SortVertices();
             return ret;
         }
         #endregion

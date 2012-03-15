@@ -65,33 +65,34 @@ namespace Clover
             Vertex newVertexOld2 = newVertex2;
 
             // 生成一个面的周围的顶点的环形表
-            face.UpdateVertices();
+            face.SortVertices();
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
-            int count = vertexList.Count + 1;
-            while (true)
-            {
-                if (
-                    (
-                    !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
-                    && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
-                    )
-                    || 
-                    (
-                     !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
-                    && CloverMath.IsPointInTwoPoints( newVertex2.GetPoint3D(), vertexList[ 0 ].GetPoint3D(), vertexList[ 1 ].GetPoint3D(), 0.001 )
-                    )
-                    )
-                {
-                    break;
-                }
-                vertexList.Add(vertexList[0]);
-                vertexList.RemoveAt(0);
+            /// <remarks>既然face中的点现在是有序的了，也许下面这段不需要了---kid</remarks>
+            //int count = vertexList.Count + 1;
+            //while (true)
+            //{
+            //    if (
+            //        (
+            //        !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[1].GetPoint3D())
+            //        && CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[0].GetPoint3D(), vertexList[1].GetPoint3D(), 0.001)
+            //        )
+            //        || 
+            //        (
+            //         !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[1].GetPoint3D())
+            //        && CloverMath.IsPointInTwoPoints( newVertex2.GetPoint3D(), vertexList[ 0 ].GetPoint3D(), vertexList[ 1 ].GetPoint3D(), 0.001 )
+            //        )
+            //        )
+            //    {
+            //        break;
+            //    }
+            //    vertexList.Add(vertexList[0]);
+            //    vertexList.RemoveAt(0);
 
-                // 防止死循环
-                if (count-- == 0)
-                    return null;
-            }
+            //    // 防止死循环
+            //    if (count-- == 0)
+            //        return null;
+            //}
             vertexList.Add(vertexList[0]);
 
             // 要被分割的边
@@ -102,7 +103,7 @@ namespace Clover
             List<Edge> rangeA = new List<Edge>();
             List<Edge> rangeB = new List<Edge>();
 
-            // 分割面
+            // 分割出来的子面
             Face f1 = new Face(face.Layer);
             Face f2 = new Face(face.Layer);
             face.LeftChild = f1;
@@ -296,8 +297,8 @@ namespace Clover
             f2.StartVertex2 = newVertex2;
 
             // 更新面的都为顶点的顺序
-            f1.UpdateVertices();
-            f2.UpdateVertices();
+            f1.SortVertices();
+            f2.SortVertices();
 
             // 更新渲染层的部分
             render.Delete(face);

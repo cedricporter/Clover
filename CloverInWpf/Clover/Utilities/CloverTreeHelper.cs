@@ -28,7 +28,7 @@ namespace Clover
             face.StartVertex1 = vertexLayer.GetVertex(face.StartVertex1.Index);
             face.StartVertex2 = vertexLayer.GetVertex(face.StartVertex2.Index);
 
-            face.UpdateVertices();
+            face.SortVertices();
         }
 
         /// <summary>

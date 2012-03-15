@@ -139,8 +139,8 @@ namespace Clover.AbstractLayer
         {
             double A1, B1, C1, D1;
             double A2, B2, C2, D2;
-            f1.UpdateVertices();
-            f2.UpdateVertices();
+            f1.SortVertices();
+            f2.SortVertices();
             A1 = f1.Normal.X;
             A2 = f2.Normal.X;
 
@@ -172,7 +172,7 @@ namespace Clover.AbstractLayer
         /// <returns></returns>
         public bool IsMatch(Face f, double ErrorMargin = 0.00001)
         {
-            f.UpdateVertices();
+            f.SortVertices();
             double A1, B1, C1, D1;
             A1 = f.Normal.X;
             B1 = f.Normal.Y;
