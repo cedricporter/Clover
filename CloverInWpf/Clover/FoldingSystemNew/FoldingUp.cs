@@ -82,9 +82,9 @@ namespace Clover
             if (isFirstCut)
             {
                 // 不用进行任何Undo操作，直接进行
-                isFirstCut = false;
                 if (!DoFolding())
                     return null;
+                isFirstCut = false;
             }
             else
             {
@@ -122,6 +122,10 @@ namespace Clover
         /// <returns></returns>
         private bool DetermineFoldingUpConditionEstablished()
         {
+            // 不成立条件零：投影点在纸张外……--kid
+            if (!CloverMath.IsPointInArea(projectionPoint, pickedFace))
+                return false;
+
             // 不成立条件一：投影点和原始点是同一个点
             if (originPoint == projectionPoint)
                 return false;
@@ -167,6 +171,13 @@ namespace Clover
             // 反重叠
             cloverController.RenderController.AntiOverlap();
             // 添加折线
+            if (newEdges != null)
+            {
+                foreach (Edge edge in newEdges)
+                {
+                    cloverController.RenderController.AddFoldingLine(edge.Vertex1.u, edge.Vertex1.v, edge.Vertex2.u, edge.Vertex2.v);
+                }
+            }
             // 释放资源
         }
 
@@ -303,7 +314,8 @@ namespace Clover
             
 
             // 查找所有需要移动的面
-            FindFaceWithoutFoldLine();
+            if (!FindFaceWithoutFoldLine())
+                return false;
             lastTimeMovedFaces = facesWithoutFoldingLine;
 
             // 向下层传递，旋转面
@@ -406,7 +418,7 @@ namespace Clover
         /// </summary>
         /// <param name="pickedFace"></param>
         /// <param name="foldingLine"></param>
-        public void FindFaceWithoutFoldLine()
+        public bool FindFaceWithoutFoldLine()
         {
 
 
@@ -414,9 +426,13 @@ namespace Clover
             List<Face> tempFaces = new List<Face>();
             foreach (Face face in facesWithFoldingLine)
             {
-                tempFaces.Add(face.LeftChild);
-                tempFaces.Add(face.RightChild);
+                if (face.LeftChild != null)
+                    tempFaces.Add(face.LeftChild);
+                if (face.RightChild != null)
+                    tempFaces.Add(face.RightChild);
             }
+            if (tempFaces.Count == 0)
+                return false;
 
             // 从tempFaces中剔除拥有PickedVertex的那些Face
 
@@ -454,6 +470,8 @@ namespace Clover
                 if (!facesWithoutFoldingLine.Contains(face))
                     facesWithoutFoldingLine.Add(face);
             }
+
+            return true;
         }
 
 

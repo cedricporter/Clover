@@ -167,8 +167,9 @@ namespace Clover.AbstractLayer
                 //Debug.WriteLine(checkMask);
                 return;
             }
-            Debug.WriteLine(offsetX);
-            RotateFaces(beBlendedFaces, foldLine, offsetX);
+            //Debug.WriteLine(offsetX);
+            CloverController.GetInstance().FoldingSystem.RotateFaces(beBlendedFaces, foldLine, offsetX);
+            //RotateFaces(beBlendedFaces, foldLine, offsetX);
         }
 
 
