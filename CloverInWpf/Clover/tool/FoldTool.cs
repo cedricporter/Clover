@@ -152,9 +152,9 @@ namespace Clover.Tool
                     Edge edge = foldingUp.OnDrag(projectionPoint);
 
                     // 更新折线显示
-                    //UpdateFoldLine(edge);
+                    UpdateFoldLine(edge);
                     // 更新提示信息
-                    //UpdateFoldLineInfo(edge);
+                    UpdateFoldLineInfo(edge);
                 }
 
             }

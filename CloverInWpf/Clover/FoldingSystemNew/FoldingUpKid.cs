@@ -80,22 +80,30 @@ namespace Clover
             if (lastFoldLine == null)
                 lastFoldLine = currFoldLine;
 
-            // 第二步，在facesAboveBase中找出所有被折线切过的面
+            // 第二步，在facesAboveBase中找出所有被折线切过的面。如果没有任何面被切过，则判定失败。
             foreach (Face face in facesAboveBase)
             {
                 if (CloverTreeHelper.IsEdgeCrossedFace(face, currFoldLine))
                     facesWithFoldLine.Add(face);
             }
+            if (facesWithFoldLine.Count == 0)
+                return null;
 
-            //double fuck = Vector3D.DotProduct((p1 - p2), (originPoint - projectionPoint));
+            // 第三步，对facesWithFoldLine中的面进行逐个判定，只要有一个面判定失败，则判定失败。
+            // todo
+
+            // 第四步，求currFoldLine与baseFace的交点
+            Edge returnEdge = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
+
+            // 第五步，移动两个虚像，造成面已经被切割折叠的假象
 
 
-
-            // 下一个轮回
+            // 第六步，进入下一个轮回
             lastFoldLine = currFoldLine;
             facesWithFoldLine.Clear();
 
-            return null;
+            // 第七步，返回值
+            return returnEdge;
         }
 
         #endregion
