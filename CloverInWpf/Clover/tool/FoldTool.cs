@@ -88,6 +88,8 @@ namespace Clover.Tool
                 // 进入折叠模式，传递给下层
                 //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
                 foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
+                // 隐藏实像
+                //RenderController.GetInstance().Entity.Content = null;
                 // 创建虚像……
                 PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
                         mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
@@ -333,6 +335,8 @@ namespace Clover.Tool
 
             //CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             foldingUp.ExitFoldingMode();
+            // 显示实像
+            //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
             PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport, mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
         }
@@ -520,7 +524,7 @@ namespace Clover.Tool
 
             Vector v1 = lineVi.EndPoint - Origin2Dpos;
             Vector v2 = outP2 - outP1;
-            if (Vector.CrossProduct(v2, v1) < 0)
+            if (Vector.CrossProduct(v2, v1) > 0)
             {
                 Point temp = outP1;
                 outP1 = outP2;
