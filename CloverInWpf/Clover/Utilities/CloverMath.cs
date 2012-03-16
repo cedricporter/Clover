@@ -140,15 +140,34 @@ namespace Clover
         /// </summary>
         /// <param name="p1">线段的一个端点，计算完后会由该变量返回中垂线的一个端点</param>
         /// <param name="p2">线段的另一个端点，计算完后会由该变量返回中垂线的另一个端点</param>
+        /// <remarks>中垂线默认返回一条无限长的线</remarks>
         /// <author>Kid</author>
-        public static void GetPerpendicularBisector(ref Point p1, ref Point p2)
+        public static void GetPerpendicularBisector(ref Point p1, ref Point p2, Double len = 100000)
         {
             Vector V1 = p2 - p1;
             Point Pmid = p1 + V1 / 2;
             Vector V2 = new Vector(V1.Y, -V1.X);
             V2.Normalize();
-            p1 = Pmid + 1000 * V2;
-            p2 = Pmid - 1000 * V2;
+            p1 = Pmid + len * V2;
+            p2 = Pmid - len * V2;
+        }
+
+        /// <summary>
+        /// 求一线段的中垂线
+        /// </summary>
+        /// <param name="p1">线段的一个端点，计算完后会由该变量返回中垂线的一个端点</param>
+        /// <param name="p2">线段的另一个端点，计算完后会由该变量返回中垂线的另一个端点</param>
+        /// <param name="nromal">空间中求中垂线需要一条法线</param>
+        /// <remarks>中垂线默认返回一条无限长的线</remarks>
+        /// <author>Kid</author>
+        public static void GetPerpendicularBisector(ref Point3D p1, ref Point3D p2, Vector3D normal, Double len = 100000)
+        {
+            Vector3D V1 = p2 - p1;
+            Point3D Pmid = p1 + V1 / 2;
+            Vector3D V2 = Vector3D.CrossProduct(V1, normal);
+            V2.Normalize();
+            p1 = Pmid + len * V2;
+            p2 = Pmid - len * V2;
         }
 
         /// <summary>

@@ -18,9 +18,12 @@ namespace Clover
         Vertex pickedVertex;
         Face baseFace;
         List<Face> facesAboveBase = new List<Face>();
-        List<Face> facesUnderBase = new List<Face>();
+        List<Face> facesBelowBase = new List<Face>();
+        List<Face> facesWithFoldLine = new List<Face>();
         Point3D originPoint;
         Point3D projectionPoint;
+        Edge currFoldLine = null;
+        Edge lastFoldLine = null;
 
         #endregion
 
@@ -46,11 +49,14 @@ namespace Clover
                 if (face.Layer >= baseFace.Layer)
                     this.facesAboveBase.Add(face);
                 else
-                    this.facesUnderBase.Add(face);
+                    this.facesBelowBase.Add(face);
             }
 
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
+
+            // todo
+            // 为facesAboveBase和faceUnderBase生成平面纹理
         }
 
         #endregion
@@ -60,6 +66,34 @@ namespace Clover
         public Edge OnDrag(Point3D projectionPoint)
         {
             this.projectionPoint = projectionPoint;
+
+            // todo 
+            // 这里还应该有个判断条件，当facesAboveBase中的面有不同group的相邻面时，不可进行FoldingUp
+
+            // 第一步，作折线
+            if (CloverMath.IsTwoPointsEqual(originPoint, projectionPoint))
+                return null;
+            Point3D p1 = new Point3D(originPoint.X, originPoint.Y, originPoint.Z);
+            Point3D p2 = new Point3D(projectionPoint.X, projectionPoint.Y, projectionPoint.Z);
+            CloverMath.GetPerpendicularBisector(ref p1, ref p2, group.Normal);
+            currFoldLine = new Edge(new Vertex(p1), new Vertex(p2));
+            if (lastFoldLine == null)
+                lastFoldLine = currFoldLine;
+
+            // 第二步，在facesAboveBase中找出所有被折线切过的面
+            foreach (Face face in facesAboveBase)
+            {
+                if (CloverTreeHelper.IsEdgeCrossedFace(face, currFoldLine))
+                    facesWithFoldLine.Add(face);
+            }
+
+            //double fuck = Vector3D.DotProduct((p1 - p2), (originPoint - projectionPoint));
+
+
+
+            // 下一个轮回
+            lastFoldLine = currFoldLine;
+            facesWithFoldLine.Clear();
 
             return null;
         }
@@ -72,7 +106,9 @@ namespace Clover
         {
             // 释放资源
             facesAboveBase.Clear();
-            facesUnderBase.Clear();
+            facesBelowBase.Clear();
+            facesWithFoldLine.Clear();
+            lastFoldLine = null;
         }
 
         #endregion
