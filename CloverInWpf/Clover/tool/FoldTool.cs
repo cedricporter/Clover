@@ -42,6 +42,9 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         FaceLayerStackVisual stackVi = null;
+        // 测试用
+        FoldingUpKid foldingUp = new FoldingUpKid();
+
         enum FoldingMode
         {
             DoingNothing, FoldingUp//, Blending
@@ -82,22 +85,9 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-                CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
-                // 找到当前Face所在的组
-                //currGroup = CloverController.GetInstance().FaceGroupLookupTable.GetGroup(nearestFace);
-                //// 找到所有拥有和selectedVertex重叠的Vertex的Face
-                //foreach (Face f in currGroup.GetFaceList())
-                //{
-                //    foreach (Vertex v in f.Vertices)
-                //    {
-                //        if (pickedVertex == v)
-                //        {
-                //            canSelectedVertices.Add(v);
-                //            canSelectedFaces.Add(f);
-                //            break;
-                //        }
-                //    }
-                //}
+                //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
+                foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
+
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
@@ -105,19 +95,8 @@ namespace Clover.Tool
                 IsOnPressLocked = true;
                 
                
-
-                //if (Mouse.LeftButton == MouseButtonState.Pressed)
-                //{
-                // 进入Folding模式
                 EnterFoldingUp();
-                //}
-                //else if (Mouse.RightButton == MouseButtonState.Pressed)
-                //{
-                //    // 进入Blending模式
-                //    EnterBlending();
-                //}
 
-                // 设置Clover为第一次折叠
             }
             #endregion
         }
@@ -132,17 +111,6 @@ namespace Clover.Tool
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
                 exit();
-
-            //if (mode == FoldingMode.FoldingUp && Mouse.RightButton == MouseButtonState.Pressed)
-            //{
-            //    ExitFoldingUp();
-            //    EnterBlending();
-            //}
-            //else if (mode == FoldingMode.Blending && Mouse.LeftButton == MouseButtonState.Pressed)
-            //{
-            //    ExitBlending();
-            //    EnterFoldingUp();
-            //}
         }
 
         protected override void onUnselectElement(Object element)
@@ -180,18 +148,14 @@ namespace Clover.Tool
                     lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
 
                     // 传给下一层处理
-                    Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
-
+                    //Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
+                    Edge edge = foldingUp.OnDrag(projectionPoint);
 
                     // 更新折线显示
-                    UpdateFoldLine(edge);
+                    //UpdateFoldLine(edge);
                     // 更新提示信息
-                    UpdateFoldLineInfo(edge);
+                    //UpdateFoldLineInfo(edge);
                 }
-                //else if (mode == FoldingMode.Blending)
-                //{
-
-                //}
 
             }
 
@@ -357,8 +321,8 @@ namespace Clover.Tool
 
             mode = FoldingMode.DoingNothing;
 
-            CloverController.GetInstance().FoldingUp.ExitFoldingMode();
-            //CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            //CloverController.GetInstance().FoldingUp.ExitFoldingMode();
+            foldingUp.ExitFoldingMode();
         }
 
         /// <summary>
