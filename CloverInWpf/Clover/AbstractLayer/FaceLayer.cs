@@ -241,10 +241,7 @@ namespace Clover
             newtables.faceGroupList.Clear();
             foreach ( FaceGroup fg in faceGroupList )
             {
-                foreach ( Face f in fg.GetFaceList() )
-                {
-                    newtables.AddFace( f );
-                }
+                newtables.AddGroup(fg.Clone() as FaceGroup);
             }
             return newtables;
         }

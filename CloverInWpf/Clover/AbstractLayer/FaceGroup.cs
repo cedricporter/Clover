@@ -33,10 +33,17 @@ namespace Clover.AbstractLayer
     /// <summary>
     /// 面组，里面的face都位于同一个plane上
     /// </summary>
-    public class FaceGroup
+    public class FaceGroup : ICloneable
     {
         List<Face> faceList;
         Vector3D normal = new Vector3D(); // 组的法向量
+        Point4D plainFormula = new Point4D();
+        double a;
+        double b;
+        double c;
+        double d;
+
+        #region get/set
         public System.Windows.Media.Media3D.Vector3D Normal
         {
             get { return normal; }
@@ -46,12 +53,7 @@ namespace Clover.AbstractLayer
         {
             get { return faceList.Count; }
         }
-        double a;
-        double b;
-        double c;
-        double d;
-
-        Point4D plainFormula = new Point4D();
+        #endregion
 
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
@@ -72,6 +74,7 @@ namespace Clover.AbstractLayer
             }
         }
 
+        #region 各种函数
 
         /// <summary>
         /// 向一个组中增加面
@@ -201,6 +204,23 @@ namespace Clover.AbstractLayer
             return faceList[faceList.Count - 1].Layer;
         }
 
+        #endregion
+
+        #region ICloneable 成员
+
+        public object Clone()
+        {
+            FaceGroup newGroup = this.MemberwiseClone() as FaceGroup;
+
+            newGroup.plainFormula = new Point4D(plainFormula.X, plainFormula.Y, plainFormula.Z, plainFormula.W);
+            newGroup.normal = new Vector3D(normal.X, normal.Y, normal.Z);
+            newGroup.faceList = new List<Face>();
+            newGroup.faceList.AddRange(faceList);
+
+            return newGroup;
+        }
+
+        #endregion
     }
 }
 

@@ -240,12 +240,14 @@ namespace Clover
 
             foreach (Vertex v in beDeleteVertexVertexList)
             {
-                controller.VertexLayer.DeleteThisVersionToEnd(v);
+                // 这里有个小问题，如果是level为最后一层时，我们应该调用DeleteThisVersionToEnd。
+                // 不过可喜的是，在Undo里面做了。所以只能是处于undo链表内部。
+                controller.VertexLayer.DeleteNextVersionToEnd(v);
             }
 
             RevertTailVertex();
         }
-         
+
         void RevertCutVertex()
         {
             RevertFaceAndEdge();
