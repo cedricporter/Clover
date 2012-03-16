@@ -30,6 +30,7 @@ namespace Clover
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         ModelVisual3D model = null; /// 纸张的模型
+        ModelVisual3D shadowModel = null; /// 纸张的虚像，FoldingUp时候用的
         FoldingUp foldingUp = new FoldingUp();
         
         #endregion
@@ -89,6 +90,11 @@ namespace Clover
         public System.Windows.Media.Media3D.ModelVisual3D Model
         {
             get { return model; }
+        }
+        public System.Windows.Media.Media3D.ModelVisual3D ShadowModel
+        {
+            get { return shadowModel; }
+            set { shadowModel = value; }
         }
         #endregion
 
@@ -446,6 +452,7 @@ namespace Clover
             // 初始化模型
             renderController.New(face);
             model = renderController.Entity;
+            shadowModel = renderController.Shadow;
         }
 
         #endregion

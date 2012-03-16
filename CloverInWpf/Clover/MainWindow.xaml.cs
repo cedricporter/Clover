@@ -109,6 +109,7 @@ namespace Clover
             cloverController = CloverController.GetInstance();
             cloverController.Initialize(100, 100);
             foldingPaperViewport.Children.Add(cloverController.Model);
+            foldingPaperViewport.Children.Add(cloverController.ShadowModel);
             cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();

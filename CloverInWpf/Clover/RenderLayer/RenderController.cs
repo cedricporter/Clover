@@ -113,11 +113,24 @@ namespace Clover
             }
         }
 
+        /// <summary>
+        /// 纸张模型
+        /// </summary>
         ModelVisual3D entity = new ModelVisual3D();
         public System.Windows.Media.Media3D.ModelVisual3D Entity
         {
             get { return entity; }
             set { entity = value; }
+        }
+
+        /// <summary>
+        /// 纸张虚像
+        /// </summary>
+        ModelVisual3D shadow = new ModelVisual3D();
+        public System.Windows.Media.Media3D.ModelVisual3D Shadow
+        {
+            get { return shadow; }
+            set { shadow = value; }
         }
 
         Model3DGroup modelGroup = new Model3DGroup();
@@ -283,7 +296,7 @@ namespace Clover
 
         public void testSuck(Image img, Viewport3D vpn)
         {
-
+            shadow.Content = null;
             // tempModelGroup
             Model3DGroup fuckModelGroup = new Model3DGroup();
             foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
@@ -310,7 +323,7 @@ namespace Clover
             DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
             DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
 
-            // 在3D控件找创建一个刚好可以填满视口的矩形
+            // 在3D空间中创建一个刚好可以填满视口的矩形
             // 求矩形大小
             Matrix3D to3DMat = Utility.GetInstance().To2DMat;
             if (!to3DMat.HasInverse)
@@ -327,11 +340,13 @@ namespace Clover
             end *= to3DMat;
             Point3D rb = CloverMath.IntersectionOfLineAndPlane(start, end, new Vector3D(0, 0, 1), new Point3D(0, 0, 0));
             // 创建矩形
+            Double w = 41.35;  // 我会告诉你这个数字是我一点一点试出来的吗？---kid
+            Double h = w * vpn.ActualHeight / vpn.ActualWidth;
             MeshGeometry3D mesh = new MeshGeometry3D();
-            mesh.Positions.Add(lt);
-            mesh.Positions.Add(new Point3D(lt.X, rb.Y, 0));
-            mesh.Positions.Add(rb);
-            mesh.Positions.Add(new Point3D(rb.X, lt.Y, 0));
+            mesh.Positions.Add(new Point3D(-w, h, -100));
+            mesh.Positions.Add(new Point3D(-w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, h, -100));
             mesh.TextureCoordinates.Add(new Point(0, 0));
             mesh.TextureCoordinates.Add(new Point(0, 1));
             mesh.TextureCoordinates.Add(new Point(1, 1));
@@ -347,13 +362,18 @@ namespace Clover
             GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
             tempModel.BackMaterial = dmb;
 
-            Transform3DGroup tempTransformGroup = new Transform3DGroup();
-            Quaternion invQuat = srcQuaternion;
-            invQuat.Invert();
-            tempTransformGroup.Children.Add(new RotateTransform3D(new QuaternionRotation3D(invQuat)));
-            //tempTransformGroup.Children.Add(transformGroup.Children[1]);
-            //tempModel.Transform = tempTransformGroup;
-            modelGroup.Children.Add(tempModel);
+            Model3DGroup shadowGroup = new Model3DGroup();
+            shadowGroup.Children.Add(tempModel);
+            shadow.Content = shadowGroup;
+
+
+            //Transform3DGroup tempTransformGroup = new Transform3DGroup();
+            //Quaternion invQuat = srcQuaternion;
+            //invQuat.Invert();
+            //tempTransformGroup.Children.Add(new RotateTransform3D(new QuaternionRotation3D(invQuat)));
+            ////tempTransformGroup.Children.Add(transformGroup.Children[1]);
+            ////tempModel.Transform = tempTransformGroup;
+            //modelGroup.Children.Add(tempModel);
             
         }
 

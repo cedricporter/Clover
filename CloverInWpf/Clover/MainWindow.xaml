@@ -388,7 +388,7 @@
             </Canvas>
             
             <!-- testsuck -->
-            <Image x:Name="TestSuckImage" Visibility="Hidden"  Panel.ZIndex="100" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-100,0,0,0"/>
+            <Image x:Name="TestSuckImage" Panel.ZIndex="10" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0"/>
 
         </Grid>
         <!-- 菜单栏 -->
