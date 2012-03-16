@@ -37,6 +37,11 @@ namespace Clover
 
             // 寻找同group面中拥有pickedVertex的面中最下面的那个面作为baseFace
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
+            if (this.group == null)
+            {
+                System.Windows.MessageBox.Show("找不到Groups");
+                return;
+            }
             this.pickedVertex = pickedVertex;
             this.baseFace = nearestFace;
             foreach (Face face in group.GetFaceList())

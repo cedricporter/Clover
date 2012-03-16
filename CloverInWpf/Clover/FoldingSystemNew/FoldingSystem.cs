@@ -318,9 +318,6 @@ namespace Clover
         /// <returns>在每个面上的折线</returns>
         public List<Edge> CutFaces(List<Face> faceList, Edge foldingLine)
         {
-            CloverController cloverController = CloverController.GetInstance();
-            SnapshotNode node = cloverController.SnapshotBeforeCut();
-
             // 切割面
             List<Edge> newEdges = new List<Edge>();
             foreach (Face face in faceList)
@@ -332,8 +329,6 @@ namespace Clover
                 newEdges.Add(CutFace(face, edge));
                 
             }
-
-            cloverController.SnapshotAfterCut(node, newEdges);
 
             return newEdges;
         }
