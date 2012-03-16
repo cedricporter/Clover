@@ -363,7 +363,7 @@ clover.UpdateFaceGroupTable()
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
-                    RenderController.GetInstance().BeginRotatePaperY(true);
+                    RenderController.GetInstance().testSuck(TestSuckImage, foldingPaperViewport);
                     break;
                 //case Key.Up:
                 //    cloverController.Update(0, 10, null, null);

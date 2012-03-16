@@ -387,6 +387,9 @@
                 <Image MouseLeftButtonDown="ResetArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/reset.png" Opacity="0.5" Height="40" Canvas.Left="3"  Canvas.Top="34"/>
             </Canvas>
             
+            <!-- testsuck -->
+            <Image x:Name="TestSuckImage" Visibility="Hidden"  Panel.ZIndex="100" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="-100,0,0,0"/>
+
         </Grid>
         <!-- 菜单栏 -->
         <Grid x:Name="MenuBar" Height="34" Margin="0" VerticalAlignment="Top" MouseLeftButtonDown="MenuBar_MouseLeftButtonDown">

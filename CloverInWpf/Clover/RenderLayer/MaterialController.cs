@@ -435,6 +435,20 @@ namespace Clover
             backMaterial.Children.Add(backEdgeLayer);
         }
 
+        void testSuck()
+        {
+            // 在一个新的Viewport中重绘指定Face
+            Viewport3DVisual vp3dvi = new Viewport3DVisual();
+            Viewport3D vp3d = new Viewport3D();
+
+            RenderTargetBitmap bmp = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bmp.Render(vp3d);
+
+            DrawingVisual dv = new DrawingVisual();
+            DrawingContext dc = dv.RenderOpen();
+            dc.Close();
+        }
+
         #region 切换纹理时候的动画
 
         int paperChangeCount = -1;
