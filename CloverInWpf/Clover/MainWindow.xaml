@@ -402,11 +402,6 @@
             <!-- 纸张虚像 -->
             <Image x:Name="VoidPaperBgImg" Panel.ZIndex="10"></Image>
             <Image x:Name="VoidPaperTopImgFront" Panel.ZIndex="11">
-                <Image.RenderTransform>
-                    <TransformGroup>
-                        <TranslateTransform X="100"/>
-                    </TransformGroup>
-                </Image.RenderTransform>
             </Image>
 
         </Grid>

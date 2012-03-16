@@ -31,7 +31,7 @@ namespace Clover
 
             if (topFaces != null && topFaces.Count != 0)
             {
-                // 上层纸张
+                //// 上层纸张
                 Model3DGroup topModelGroup = new Model3DGroup();
                 foreach (Face face in topFaces)
                 {
@@ -42,13 +42,24 @@ namespace Clover
                 RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                 bmpf.Render(vp);
                 topImgFront.Source = bmpf;
-                // 背面再拍一张照
-                RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                Quaternion quat = new Quaternion(0, 1, 0, 0);
-                quat = quat * render.SrcQuaternion;
-                render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
-                bmpb.Render(vp);
-                render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(render.SrcQuaternion));
+                //// 尝试提高性能
+                //Rect rect = new Rect(new Size(vp.ActualWidth, vp.ActualHeight));
+                //DrawingVisual dv = new DrawingVisual();
+                //DrawingContext dc = dv.RenderOpen();
+                //dc.DrawRectangle((Brush)null, (Pen)null, rect);
+                //foreach (Face face in topFaces)
+                //{
+                //    dc.dr
+                //}
+                //dc.Close();
+
+                //// 背面再拍一张照
+                //RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                //Quaternion quat = new Quaternion(0, 1, 0, 0);
+                //quat = quat * render.SrcQuaternion;
+                //render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
+                //bmpb.Render(vp);
+                //render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(render.SrcQuaternion));
             }
 
             if (bgFaces != null && bgFaces.Count != 0)
@@ -94,7 +105,8 @@ namespace Clover
 
         public static void DestoryShadow(Viewport3D vp, Image topImgFront, Image bgImg)
         {
-
+            topImgFront.Source = null;
+            bgImg.Source = null;
         }
 
     }
