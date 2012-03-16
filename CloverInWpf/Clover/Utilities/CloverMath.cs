@@ -312,11 +312,11 @@ namespace Clover
             Vertex v1 = e1.Vertex1;
             Vertex v2 = e1.Vertex2;
             e1 = new Edge(new Vertex(Math.Round(v1.GetPoint3D().X, 5), Math.Round(v1.GetPoint3D().Y, 5), Math.Round(v1.GetPoint3D().Z, 5)),
-               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)) );
+               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)));
             v1 = e2.Vertex1;
             v2 = e2.Vertex2;
             e2 = new Edge(new Vertex(Math.Round(v1.GetPoint3D().X, 5), Math.Round(v1.GetPoint3D().Y, 5), Math.Round(v1.GetPoint3D().Z, 5)),
-               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)) );
+               new Vertex(Math.Round(v2.GetPoint3D().X, 5), Math.Round(v2.GetPoint3D().Y, 5), Math.Round(v2.GetPoint3D().Z, 5)));
 
             // 计算
 
@@ -326,7 +326,7 @@ namespace Clover
             double D = PerpProduct(u, v);
 
             // 假如e1是个点
-            if ( Math.Abs(u.X) <= 0.00001 && Math.Abs(u.Y) <= 0.00001 && Math.Abs(u.Z) <= 0.00001)
+            if (Math.Abs(u.X) <= 0.00001 && Math.Abs(u.Y) <= 0.00001 && Math.Abs(u.Z) <= 0.00001)
             {
                 if (IsPointInTwoPoints(e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
                 {
@@ -427,6 +427,41 @@ namespace Clover
             return 1;
         }
 
+        /// <summary>
+        /// 计算两线段之间的交点
+        /// </summary>
+        /// <param name="p1">线段E1的一段</param>
+        /// <param name="p2">线段E1的另一段</param>
+        /// <param name="p3">线段E2的一段</param>
+        /// <param name="p4">线段E2的另一段</param>
+        /// <param name="p">交点，如果有的话</param>
+        /// <returns>如果平行或交点不在线段上，返回false</returns>
+        public static Boolean GetIntersectionOfTwoSegments(Point p1, Point p2, Point p3, Point p4, out Point p)
+        {
+            Double dx, dy, qx, qy, ux, vy;
+            dx = p2.X - p1.X;	 //计算△
+            dy = p2.Y - p1.Y;
+            qx = p4.X - p3.X;
+            qy = p4.Y - p3.Y;
+            Double sp;
+            Double sq = dx * qy - dy * qx;
+            if (Math.Abs(sq) > 0.00001)//△≠0
+            {
+                ux = p3.X - p1.X;
+                vy = p3.Y - p1.Y;
+                sp = (qy * ux - qx * vy) / sq;
+                sq = (dy * ux - dx * vy) / sq;
+                if (1 >= sp && sp >= 0 && 1 >= sq && sq >= 0)
+                {
+                    p = p1 + (p2 - p1) * sp;
+                    return true;
+                }
+                p = new Point();
+                return false;
+            }
+            p = new Point();
+            return false; //直线无交点
+        }
 
         /// <summary>
         /// 判断一个3D点是否处在由points围成的平面内
@@ -531,7 +566,7 @@ namespace Clover
         /// <param name="v2"></param>
         /// <param name="rigorous">是否严格判断，这时仅当两向量同向时才返回true，反向以及其他情况都是返回false</param>
         /// <returns></returns>
-        public static bool IsTwoVectorTheSameDir( Vector3D v1, Vector3D v2, bool rigorous = false)
+        public static bool IsTwoVectorTheSameDir(Vector3D v1, Vector3D v2, bool rigorous = false)
         {
             double threshold = 0.000001;
             v1.Normalize();
@@ -548,7 +583,7 @@ namespace Clover
             if (!rigorous)
             {
                 Vector3D t = v1 + v2;
-                if ( Math.Abs( t.X ) < threshold && Math.Abs( t.Y ) < threshold && Math.Abs( t.Z ) < threshold )
+                if (Math.Abs(t.X) < threshold && Math.Abs(t.Y) < threshold && Math.Abs(t.Z) < threshold)
                 {
                     return true;
                 }
@@ -567,13 +602,13 @@ namespace Clover
         {
             foreach (Vertex v1 in f1.Vertices)
             {
-                if (IsPointInArea(v1.GetPoint3D(), f2) )
+                if (IsPointInArea(v1.GetPoint3D(), f2))
                     return true;
             }
 
-            foreach ( Vertex v2 in f2.Vertices )
+            foreach (Vertex v2 in f2.Vertices)
             {
-                if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
+                if (IsPointInArea(v2.GetPoint3D(), f1))
                     return true;
             }
             return false;
@@ -685,7 +720,7 @@ namespace Clover
             {
                 foreach (Edge e2 in f2.Edges)
                 {
-                    if ( e1 == e2 )
+                    if (e1 == e2)
                         return true;
                 }
             }
@@ -721,13 +756,13 @@ namespace Clover
             if (CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D()) &&
                 CloverMath.AreTwoPointsSameWithDeviation(e1.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
                 return true;
-           // if (e1.Vertex1.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex2.GetPoint3D() == e2.Vertex2.GetPoint3D())
-           //     return true;
+            // if (e1.Vertex1.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex2.GetPoint3D() == e2.Vertex2.GetPoint3D())
+            //     return true;
 
-           // if (e1.Vertex2.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex1.GetPoint3D() == e2.Vertex2.GetPoint3D())
-           //     return true;
+            // if (e1.Vertex2.GetPoint3D() == e2.Vertex1.GetPoint3D() && e1.Vertex1.GetPoint3D() == e2.Vertex2.GetPoint3D())
+            //     return true;
 
-            return false; 
+            return false;
         }
 
     }

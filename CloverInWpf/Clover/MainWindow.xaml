@@ -388,7 +388,26 @@
             </Canvas>
             
             <!-- testsuck -->
-            <Image x:Name="TestSuckImage" Panel.ZIndex="10" Visibility="Hidden" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,0,0,0"/>
+            <Image x:Name="TestSuckImage" Panel.ZIndex="10">
+                <Image.RenderTransform>             
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="-1"/>
+                        <TranslateTransform X="{Binding Path=ActualWidth,ElementName=MainContainer}"/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+                <!--<Image.Clip>
+                    <EllipseGeometry Center="300, 300" RadiusX="50" RadiusY="100"/>
+                </Image.Clip>-->
+            </Image>
+            <!-- 纸张虚像 -->
+            <Image x:Name="VoidPaperBgImg" Panel.ZIndex="10"></Image>
+            <Image x:Name="VoidPaperTopImgFront" Panel.ZIndex="11">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform X="100"/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
 
         </Grid>
         <!-- 菜单栏 -->
