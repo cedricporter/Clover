@@ -50,8 +50,7 @@ namespace Clover
             Debug.Assert(edge != null);
             if (edge == null)
             {
-                System.Windows.MessageBox.Show("There is no edge for CutFace.");
-                return null;
+                throw new System.ArgumentNullException();
             }
 
             CloverController controller = CloverController.GetInstance();
@@ -65,10 +64,9 @@ namespace Clover
             Vertex newVertexOld2 = newVertex2;
 
             // 生成一个面的周围的顶点的环形表
-            face.UpdateVertices(); // 为什么这里要排序呢？ ---kid
+            face.UpdateVertices(); 
             List<Vertex> vertexList = new List<Vertex>();
             vertexList.AddRange(face.Vertices);
-            /// <remarks>既然face中的点现在是有序的了，也许下面这段不需要了---kid</remarks>
             int count = vertexList.Count + 1;
             while (true)
             {

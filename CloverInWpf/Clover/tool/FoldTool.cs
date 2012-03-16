@@ -42,6 +42,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         FaceLayerStackVisual stackVi = null;
+        Edge foldLine = null;
         // 测试用
         FoldingUpKid foldingUp = new FoldingUpKid();
 
@@ -128,7 +129,6 @@ namespace Clover.Tool
         /// <param name="element"></param>
         protected override void onDrag(Object element)
         {
-            #region 如果选中的是点
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
@@ -149,17 +149,13 @@ namespace Clover.Tool
 
                     // 传给下一层处理
                     //Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
-                    Edge edge = foldingUp.OnDrag(projectionPoint);
+                    this.foldLine = foldingUp.OnDrag(projectionPoint);
 
-                    // 更新折线显示
-                    UpdateFoldLine(edge);
-                    // 更新提示信息
-                    UpdateFoldLineInfo(edge);
+                    
                 }
 
             }
 
-            #endregion
         }
 
         public override void onIdle()
@@ -177,6 +173,10 @@ namespace Clover.Tool
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
                 }
+                // 更新折线显示
+                UpdateFoldLine(foldLine);
+                // 更新提示信息
+                UpdateFoldLineInfo(foldLine);
             }
         }
 
