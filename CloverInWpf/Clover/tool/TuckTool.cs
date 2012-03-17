@@ -6,6 +6,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Controls;
 using Clover.Visual;
 using System.Windows.Input;
+using Clover.FoldingSystemNew;
 
 /**
 @date		:	2012/03/03
@@ -28,6 +29,9 @@ namespace Clover.Tool
         Vertex pickedVertex = null;
         Point3D projectionPoint;
         CurrentModeVisual currentModeVi = null;
+
+        // 测试用
+        Tucking tuckingIn = new Tucking();
 
         enum FoldingMode
         {
@@ -55,7 +59,7 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-
+                tuckingIn.EnterTuckingMode();
 
                 // 锁定视角
                 LockViewport(true);
@@ -76,6 +80,7 @@ namespace Clover.Tool
                 projectionPoint = Get3DProjectionPoint();
 
                 // 传给下层
+                tuckingIn.OnDrag();
             }
         }
 
@@ -94,6 +99,7 @@ namespace Clover.Tool
             LockViewport(false);
 
             // 向下层传递
+            tuckingIn.ExitTuckingMode();
 
             mode = FoldingMode.DoingNothing;
         }
