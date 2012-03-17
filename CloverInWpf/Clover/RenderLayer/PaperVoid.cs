@@ -114,13 +114,8 @@ namespace Clover
             PathFigure pathFigure = new PathFigure();
             pathFigure.StartPoint = p1;
             pathFigure.Segments.Add(new LineSegment(p2, false));
-            //for (int i = 0; i < 4; i++) // 这堆写得比较蛋疼，主要功能是让它按顺序地绘制点
-            //{
-            //    if (!ignorePointList.Contains(c[i]))
-            //        pathFigure.Segments.Add(new LineSegment(c[i], false));
-            //}
             Point lastPoint = p2;
-            while (ignorePointList.Count < 4)
+            while (ignorePointList.Count < 4)// 这堆写得比较蛋疼，主要功能是让它按顺序地绘制点
             {
                 foreach (Point p in c)
                 {

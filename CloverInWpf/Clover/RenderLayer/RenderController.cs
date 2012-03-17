@@ -601,38 +601,38 @@ namespace Clover
             transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
             bmpb.Render(vpn);
             transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
-            img.Source = bmpb;
+            //img.Source = bmpb;
             entity.Content = modelGroup;
 
-            //DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
-            //DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
+            DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
+            DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
 
-            //// 在3D空间中创建一个刚好可以填满视口的矩形
-            //Double w = 41.35;  // 我会告诉你这个数字是我一点一点试出来的吗？---kid
-            //Double h = w * vpn.ActualHeight / vpn.ActualWidth;
-            //MeshGeometry3D mesh = new MeshGeometry3D();
-            //mesh.Positions.Add(new Point3D(-w, h, -100));
-            //mesh.Positions.Add(new Point3D(-w, -h, -100));
-            //mesh.Positions.Add(new Point3D(w, -h, -100));
-            //mesh.Positions.Add(new Point3D(w, h, -100));
-            //mesh.TextureCoordinates.Add(new Point(0, 0));
-            //mesh.TextureCoordinates.Add(new Point(0, 1));
-            //mesh.TextureCoordinates.Add(new Point(1, 1));
-            //mesh.TextureCoordinates.Add(new Point(1, 0));
-            //mesh.TriangleIndices.Add(0);
-            //mesh.TriangleIndices.Add(1);
-            //mesh.TriangleIndices.Add(3);
-            //mesh.TriangleIndices.Add(3);
-            //mesh.TriangleIndices.Add(1);
-            //mesh.TriangleIndices.Add(2);
+            // 在3D空间中创建一个刚好可以填满视口的矩形
+            Double w = 41.35;  // 我会告诉你这个数字是我一点一点试出来的吗？---kid
+            Double h = w * vpn.ActualHeight / vpn.ActualWidth;
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions.Add(new Point3D(-w, h, -100));
+            mesh.Positions.Add(new Point3D(-w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, h, -100));
+            mesh.TextureCoordinates.Add(new Point(0, 0));
+            mesh.TextureCoordinates.Add(new Point(0, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 0));
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(2);
 
-            ////GeometryModel3D tempModel = new GeometryModel3D(mesh, new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
-            //GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
-            //tempModel.BackMaterial = dmb;
+            //GeometryModel3D tempModel = new GeometryModel3D(mesh, new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
+            tempModel.BackMaterial = dmb;
 
-            //Model3DGroup shadowGroup = new Model3DGroup();
-            //shadowGroup.Children.Add(tempModel);
-            //shadow.Content = shadowGroup;
+            Model3DGroup shadowGroup = new Model3DGroup();
+            shadowGroup.Children.Add(tempModel);
+            shadow.Content = shadowGroup;
 
 
             //Transform3DGroup tempTransformGroup = new Transform3DGroup();
