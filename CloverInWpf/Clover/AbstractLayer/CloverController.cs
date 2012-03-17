@@ -157,9 +157,11 @@ namespace Clover
         #region 折叠
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+
             List<Vertex> movedVertexList = foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
 
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            // 记录本次移动了的顶点
             node.MovedVertexList = movedVertexList;
             node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
             node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;

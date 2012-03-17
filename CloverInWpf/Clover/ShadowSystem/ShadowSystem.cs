@@ -83,6 +83,8 @@ namespace Clover
                     break;
             }
 
+            UndoFaceLayer();
+
             // 修改操作层数
             operationLevel--;
         }
@@ -129,6 +131,18 @@ namespace Clover
         #endregion
 
         #region 还原
+
+        /// <summary>
+        /// 重新将面的Layer设置到过去
+        /// </summary>
+        private void UndoFaceLayer()
+        {
+            foreach (KeyValuePair<Face, int> pair in snapshotList[operationLevel].FaceLayerMap)
+            {
+                pair.Key.Layer = pair.Value;
+            }
+        }
+
 
         /// <summary>
         /// 检查Undo完了有没有新的snapshot，

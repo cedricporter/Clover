@@ -27,13 +27,13 @@ namespace Clover
         int originVertexListCount = -1;                         /// 当前快照的顶点的表的长度
         int originEdgeListCount = -1;                           /// 当前快照的边的表的长度
         FaceGroupLookupTable faceGroupLookupTable;              /// group快照，先整个备份下来，以后再改成增量备份                                                                
-        Dictionary<int, int> faceIDMap = new Dictionary<int, int>();/// 用于还原面的layer                                                                
+        Dictionary<Face, int> faceLayerMap = new Dictionary<Face, int>();/// 用于还原面的layer                                                                
         
         #region get/set
-        public Dictionary<int, int> FaceIDMap
+        public Dictionary<Face, int> FaceLayerMap
         {
-            get { return faceIDMap; }
-            set { faceIDMap = value; }
+            get { return faceLayerMap; }
+            set { faceLayerMap = value; }
         }
         public Clover.FaceGroupLookupTable FaceGroupLookupTable
         {
@@ -82,6 +82,7 @@ namespace Clover
             foreach (Face f in leaves)
             {
                 faceLeaves.Add(f);
+                faceLayerMap[f] = f.Layer;
             }
             type = SnapshotNodeKind.Invalid;
         }

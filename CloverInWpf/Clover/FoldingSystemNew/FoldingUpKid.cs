@@ -208,9 +208,9 @@ namespace Clover
             //Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
             if (currFoldLine == null)
                 return;
-            newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, currFoldLine);
+            newEdges = cloverController.CutFaces(facesWithFoldLine, currFoldLine);
             FindFaceWithoutFoldLine();
-            cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
+            cloverController.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
 
             // 添加折线
             if (newEdges.Count != 0)
