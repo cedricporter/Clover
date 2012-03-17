@@ -102,7 +102,7 @@ namespace Clover.Tool
                         {
                             // 创建虚像……
                             PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
-                                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
+                                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
                             RenderController.GetInstance().OnRotationEndOnce = null;
                         }
                     );
@@ -167,7 +167,7 @@ namespace Clover.Tool
                     if(!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
                         return;
                     PaperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
-                        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
+                        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
 
 
                 }
@@ -344,7 +344,8 @@ namespace Clover.Tool
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
-            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport, mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
+            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport, 
+                mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
         }
 
         /// <summary>

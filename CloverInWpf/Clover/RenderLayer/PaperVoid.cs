@@ -24,8 +24,15 @@ namespace Clover
 {
     class PaperVoid
     {
-
-        public static void CreateShadow(Viewport3D vp, List<Face>topFaces, List<Face>bgFaces, Image topImgFront, Image bgImg)
+        /// <summary>
+        /// 创建纸张快照
+        /// </summary>
+        /// <param name="vp"></param>
+        /// <param name="topFaces"></param>
+        /// <param name="bgFaces"></param>
+        /// <param name="topImgFront"></param>
+        /// <param name="bgImg"></param>
+        public static void CreateShadow(Viewport3D vp, List<Face>topFaces, List<Face>bgFaces, Image topImgFront, Image bgImg, Image topImgBack)
         {
             RenderController render = RenderController.GetInstance();
 
@@ -42,24 +49,15 @@ namespace Clover
                 RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                 bmpf.Render(vp);
                 topImgFront.Source = bmpf;
-                //// 尝试提高性能
-                //Rect rect = new Rect(new Size(vp.ActualWidth, vp.ActualHeight));
-                //DrawingVisual dv = new DrawingVisual();
-                //DrawingContext dc = dv.RenderOpen();
-                //dc.DrawRectangle((Brush)null, (Pen)null, rect);
-                //foreach (Face face in topFaces)
-                //{
-                //    dc.dr
-                //}
-                //dc.Close();
 
-                //// 背面再拍一张照
-                //RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                //Quaternion quat = new Quaternion(0, 1, 0, 0);
-                //quat = quat * render.SrcQuaternion;
-                //render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
-                //bmpb.Render(vp);
-                //render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(render.SrcQuaternion));
+                // 背面再拍一张照
+                RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                Quaternion quat = new Quaternion(0, 1, 0, 0);
+                quat = quat * render.SrcQuaternion;
+                render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
+                bmpb.Render(vp);
+                render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(render.SrcQuaternion));
+                topImgBack.Source = bmpb;
             }
 
             if (bgFaces != null && bgFaces.Count != 0)
@@ -78,19 +76,17 @@ namespace Clover
             }
 
             render.Entity.Content = null;
-
-            //List<PathFigure> pathFigures = new List<PathFigure>();
-            //PathFigure pathFigure = new PathFigure();
-            //pathFigure.StartPoint = new Point(vp.ActualWidth / 2, 0);
-            //pathFigure.Segments.Add(new LineSegment(new Point(100, vp.ActualHeight), false));
-            //pathFigure.Segments.Add(new LineSegment(new Point(vp.ActualWidth, vp.ActualHeight), false));
-            //pathFigure.Segments.Add(new LineSegment(new Point(vp.ActualWidth, 0), false));
-            //pathFigures.Add(pathFigure);
-            //Geometry topImgFrontClipGeometry = new PathGeometry(pathFigures);
-            //topImgFront.Clip = topImgFrontClipGeometry;
         }
 
-        public static void UpdateShadow(Viewport3D vp, Point p1, Point p2, Image topImgFront, Image bgImg)
+        /// <summary>
+        /// 更新Shadow的显示，通过三张Image来模拟纸张的折叠
+        /// </summary>
+        /// <param name="vp"></param>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="topImgFront"></param>
+        /// <param name="bgImg"></param>
+        public static void UpdateShadow(Viewport3D vp, Point p1, Point p2, Image topImgFront, Image bgImg, Image topImgBack)
         {
             // 消除误差
             p1 = new Point(Math.Round(p1.X), Math.Round(p1.Y));
@@ -133,12 +129,18 @@ namespace Clover
             pathFigures.Add(pathFigure);
             Geometry topImgFrontClipGeometry = new PathGeometry(pathFigures);
             topImgFront.Clip = topImgFrontClipGeometry;
+
+            // 划定
+
         }
 
-        public static void DestoryShadow(Viewport3D vp, Image topImgFront, Image bgImg)
+
+
+        public static void DestoryShadow(Viewport3D vp, Image topImgFront, Image bgImg, Image topImgBack)
         {
             topImgFront.Source = null;
             bgImg.Source = null;
+            topImgBack.Source = null;
 
             // 显示实像
             RenderController render = RenderController.GetInstance();
