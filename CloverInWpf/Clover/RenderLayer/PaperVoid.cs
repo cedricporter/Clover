@@ -91,6 +91,7 @@ namespace Clover
             // 消除误差
             p1 = new Point(Math.Round(p1.X), Math.Round(p1.Y));
             p2 = new Point(Math.Round(p2.X), Math.Round(p2.Y));
+            Point p1Origin = new Point(p1.X, p1.Y);
 
             #region 计算topImgFront的显示部分
             
@@ -102,10 +103,10 @@ namespace Clover
             c[3] = new Point(vp.ActualWidth, 0);
             //c[4] = new Point(0, 0);
             List<Point> ignorePointList = new List<Point>();
-            Vector v = p2 - p1;
+            Vector v1 = p2 - p1;
             for (int i = 0; i < 4; i++)
             {
-                if (Vector.CrossProduct((c[i] - p1), v) < 0)
+                if (Vector.CrossProduct((c[i] - p1), v1) < 0)
                     ignorePointList.Add(c[i]);
             }
             // 划定topImgFront的显示区域
@@ -142,10 +143,10 @@ namespace Clover
             p2.X = vp.ActualWidth - p2.X;
             // 按逆时针寻找并剔除被折线“切掉”的点
             ignorePointList = new List<Point>();
-            v = p2 - p1;
+            Vector v2 = p2 - p1;
             for (int i = 0; i < 4; i++)
             {
-                if (Vector.CrossProduct((c[i] - p1), v) < 0)
+                if (Vector.CrossProduct((c[i] - p1), v2) < 0)
                     ignorePointList.Add(c[i]);
             }
             // 划定topImgBack的显示区域
@@ -175,6 +176,23 @@ namespace Clover
             #endregion
 
             #region 计算topImgBack的旋转和平移
+
+            // v1为topImgFront的折线向量
+            // v2为topImgBack的折线向量
+            // 第一步，计算v1和v2的夹角
+            Double angle = Vector.AngleBetween(v2, v1); // 微软真好，求出来的角度居然带正负 --- kid
+            // 第二步，将topImgBack旋转刚才计算出来的角度，使v1和v2平行
+            TransformGroup tg = new TransformGroup();
+            RotateTransform rt = new RotateTransform(angle);
+            tg.Children.Add(rt);
+            // 第三步，计算位移，目的是使当前的p1'和p1重合
+            p1 = rt.Transform(p1);
+            // 第四步，将topImgBack平移刚才计算出来的位移量
+            TranslateTransform tt = new TranslateTransform(p1Origin.X - p1.X, p1Origin.Y - p1.Y);
+            tg.Children.Add(tt);
+            // 应用变换, 大功告成
+            topImgBack.RenderTransform = tg;
+
             #endregion
 
         }
