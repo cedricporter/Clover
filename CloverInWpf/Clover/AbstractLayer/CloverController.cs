@@ -30,13 +30,14 @@ namespace Clover
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         ModelVisual3D model = null; /// 纸张的模型
-        FoldingUp_Old foldingUp = new FoldingUp_Old();
+        ModelVisual3D shadowModel = null; /// 纸张的虚像，FoldingUp时候用的
+        FoldingUp foldingUp = new FoldingUp();
         
         #endregion
 
         #region get/set
 
-        public Clover.FoldingUp_Old FoldingUp
+        public Clover.FoldingUp FoldingUp
         {
             get { return foldingUp; }
         }
@@ -89,6 +90,11 @@ namespace Clover
         public System.Windows.Media.Media3D.ModelVisual3D Model
         {
             get { return model; }
+        }
+        public System.Windows.Media.Media3D.ModelVisual3D ShadowModel
+        {
+            get { return shadowModel; }
+            set { shadowModel = value; }
         }
         #endregion
 
@@ -151,9 +157,11 @@ namespace Clover
         #region 折叠
         public void RotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
+            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+
             List<Vertex> movedVertexList = foldingSystem.RotateFaces(beRotatedFaceList, foldingLine, angle);
 
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+            // 记录本次移动了的顶点
             node.MovedVertexList = movedVertexList;
             node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
             node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
@@ -446,6 +454,7 @@ namespace Clover
             // 初始化模型
             renderController.New(face);
             model = renderController.Entity;
+            shadowModel = renderController.Shadow;
         }
 
         #endregion

@@ -42,6 +42,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         FaceLayerStackVisual stackVi = null;
+        Edge foldLine = null;
         // 测试用
         FoldingUp foldingUp = new FoldingUp();
 
@@ -73,7 +74,7 @@ namespace Clover.Tool
         /// <param name="element"></param>
         protected override void onSelectElement(Object element)
         {
-            #region 选取到的是点
+
             // 将视角变换到与当前纸张平行
             if (element.GetType().ToString() == "Clover.Vertex")
             {
@@ -95,18 +96,29 @@ namespace Clover.Tool
                 // 进入折叠模式，传递给下层
                 //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
                 foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
+                // 隐藏实像
+                //RenderController.GetInstance().Entity.Content = null;
 
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
-                
-               
+
+                RenderController.GetInstance().OnRotationEndOnce += new OnRotationEndHandle(
+                    () => 
+                        {
+                            // 创建虚像……
+                            PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
+                                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
+                            RenderController.GetInstance().OnRotationEndOnce = null;
+                        }
+                    );
+
                 EnterFoldingUp();
 
             }
-            #endregion
+
         }
 
         /// <summary>
@@ -136,7 +148,6 @@ namespace Clover.Tool
         /// <param name="element"></param>
         protected override void onDrag(Object element)
         {
-            #region 如果选中的是点
 
             if (element.GetType().ToString() == "Clover.Vertex")
             {
@@ -157,17 +168,20 @@ namespace Clover.Tool
 
                     // 传给下一层处理
                     //Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
-                    Edge edge = foldingUp.OnDrag(projectionPoint);
+                    this.foldLine = foldingUp.OnDrag(projectionPoint);
+                    // 更新虚像。。。
+                    Point outP1 = new Point();
+                    Point outP2 = new Point();
+                    if(!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
+                        return;
+                    PaperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
+                        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
 
-                    // 更新折线显示
-                    UpdateFoldLine(edge);
-                    // 更新提示信息
-                    UpdateFoldLineInfo(edge);
+
                 }
 
             }
 
-            #endregion
         }
 
         public override void onIdle()
@@ -185,6 +199,10 @@ namespace Clover.Tool
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
                 }
+                // 更新折线显示
+                UpdateFoldLine(foldLine);
+                // 更新提示信息
+                UpdateFoldLineInfo(foldLine);
             }
         }
 
@@ -331,6 +349,11 @@ namespace Clover.Tool
 
             //CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             foldingUp.ExitFoldingMode();
+            // 显示实像
+            //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
+            // 销毁虚像……
+            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport, 
+                mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
         }
 
         /// <summary>
@@ -475,9 +498,60 @@ namespace Clover.Tool
 
         }
 
+        /// <summary>
+        /// 寻找折线与视口的交点
+        /// </summary>
+        /// <param name="outP1"></param>
+        /// <param name="outP2"></param>
+        /// <returns>没找全两个，返回false</returns>
+        private Boolean FineIntersectionOfFoldlineAndViewport(ref Point outP1, ref Point outP2)
+        {
+            Vector v = foldLineVi.StartPoint - foldLineVi.EndPoint;
+            Point p1 = foldLineVi.StartPoint + v * 10000;
+            Point p2 = foldLineVi.StartPoint - v * 10000;
+            Point c1, c2, c3, c4;
+            c1 = new Point(0, 0);
+            c2 = new Point(0, mainWindow.foldingPaperViewport.ActualHeight);
+            c3 = new Point(mainWindow.foldingPaperViewport.ActualWidth, mainWindow.foldingPaperViewport.ActualHeight);
+            c4 = new Point(mainWindow.foldingPaperViewport.ActualWidth, 0);
+            List<Point> pList = new List<Point>();
+            pList.Add(c1);
+            pList.Add(c2);
+            pList.Add(c3);
+            pList.Add(c4);
+            pList.Add(c1);
+
+            // 寻找折线与视口大小的矩形的交点
+            int finded = 0;
+            for (int i = 0; i < 4; i++)
+            {
+
+                if (finded == 0 && CloverMath.GetIntersectionOfTwoSegments(p1, p2, pList[i], pList[i + 1], out outP1))
+                    finded++;
+                else if (finded == 1 && CloverMath.GetIntersectionOfTwoSegments(p1, p2, pList[i], pList[i + 1], out outP2))
+                {
+                    finded++;
+                    break;
+                }
+            }
+            if (finded != 2)
+                return false;
+
+            Vector v1 = lineVi.EndPoint - Origin2Dpos;
+            Vector v2 = outP2 - outP1;
+            if (Vector.CrossProduct(v2, v1) > 0)
+            {
+                Point temp = outP1;
+                outP1 = outP2;
+                outP2 = temp;
+            }
+
+            return true;
+        }
+
         #region Blending
 
-        
+
 
         ///// <summary>
         ///// 进入Blending模式

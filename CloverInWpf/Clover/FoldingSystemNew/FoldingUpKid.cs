@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace Clover
 {
-    public class FoldingUp
+    class FoldingUpKid
     {
 
         #region 成员变量
@@ -37,6 +37,11 @@ namespace Clover
 
             // 寻找同group面中拥有pickedVertex的面中最下面的那个面作为baseFace
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
+            if (this.group == null)
+            {
+                System.Windows.MessageBox.Show("找不到Groups");
+                return;
+            }
             this.pickedVertex = pickedVertex;
             this.baseFace = nearestFace;
             foreach (Face face in group.GetFaceList())
@@ -93,27 +98,32 @@ namespace Clover
                 return null;
 
             // 第三步，对facesWithFoldLine中的面进行逐个判定，只要有一个面判定失败，则判定失败。
-            // 投隐点和原始点的连线以及折线有穿过与该面不同组的面
-            //找到所有与该面不同组的面
-            List<Face> facesInDifferentGroup = cloverController.FaceGroupLookupTable.GetFaceExcludeGroupFoundByFace(baseFace);
-            foreach (Face face in facesInDifferentGroup)
-            {
-                // 求线段和面的交点 
-                Point3D crossPoint = new Point3D();
-                if (CloverMath.IntersectionOfLineAndFace(originPoint, projectionPoint, face, ref crossPoint))
-                {
-                    if (CloverMath.IsPointInTwoPoints(crossPoint, originPoint, projectionPoint, 0.0001))
-                        return null;
-                }
+            // 不成立条件二：投隐点和原始点的连线以及折线有穿过与该面不同组的面
+            //foldingLine = CloverMath.GetPerpendicularBisector3D(originFace, originPoint, projectionPoint);
+            ////foldingLine = cloverController.FoldingSystem.GetFoldingLine(originFace, originPoint, projectionPoint);
+            //if (foldingLine == null)
+            //    return false;
 
-                if (CloverMath.IntersectionOfLineAndFace(currFoldLine.Vertex1.GetPoint3D(), currFoldLine.Vertex2.GetPoint3D(),
-                                                        face, ref crossPoint))
-                {
-                    if (CloverMath.IsPointInTwoPoints(crossPoint, currFoldLine.Vertex1.GetPoint3D(),
-                                                        currFoldLine.Vertex2.GetPoint3D(), 0.0001))
-                        return null;
-                }
-            }
+            ////找到所有与该面不同组的面
+            //List<Face> facesInDifferentGroup = cloverController.FaceGroupLookupTable.GetFaceExcludeGroupFoundByFace(pickedFace);
+            //foreach (Face face in facesInDifferentGroup)
+            //{
+            //    // 求线段和面的交点 
+            //    Point3D crossPoint = new Point3D();
+            //    if (CloverMath.IntersectionOfLineAndFace(originPoint, projectionPoint, face, ref crossPoint))
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints(crossPoint, originPoint, projectionPoint, 0.0001))
+            //            return false;
+            //    }
+
+            //    if (CloverMath.IntersectionOfLineAndFace(foldingLine.Vertex1.GetPoint3D(), foldingLine.Vertex2.GetPoint3D(),
+            //                                            face, ref crossPoint))
+            //    {
+            //        if (CloverMath.IsPointInTwoPoints(crossPoint, foldingLine.Vertex1.GetPoint3D(),
+            //                                            foldingLine.Vertex2.GetPoint3D(), 0.0001))
+            //            return false;
+            //    }
+            //}
 
             // 第四步，求currFoldLine与baseFace的交点
             Edge returnEdge = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
@@ -149,13 +159,6 @@ namespace Clover
                 return false;
 
             // 从tempFaces中剔除拥有PickedVertex的那些Face
-            // 同时tempFaces里面应该有与该面同组的并在其上层的面
-            List<Face> facesInSameGroup = cloverController.FaceGroupLookupTable.GetGroup(baseFace).GetFaceList();
-            foreach (Face face in facesInSameGroup)
-            {
-                if (face.Layer > baseFace.Layer)
-                    tempFaces.Add(face);
-            }
 
             List<Face> facesWithPickedVertex = CloverTreeHelper.FindFacesFromVertex(tempFaces, pickedVertex);
             tempFaces = tempFaces.Except(facesWithPickedVertex).ToList();
@@ -202,10 +205,12 @@ namespace Clover
         public void ExitFoldingMode()
         {
             // 应用折叠
-            Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
-            newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, foldLine);
+            //Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
+            if (currFoldLine == null)
+                return;
+            newEdges = cloverController.CutFaces(facesWithFoldLine, currFoldLine);
             FindFaceWithoutFoldLine();
-            cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
+            cloverController.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
 
             // 添加折线
             if (newEdges.Count != 0)
@@ -218,9 +223,6 @@ namespace Clover
 
             // 更新组
             cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
-
-            // 饭重叠 very funny. ^_^
-            RenderController.GetInstance().AntiOverlap();
 
 
             // 释放资源

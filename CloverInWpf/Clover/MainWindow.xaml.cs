@@ -109,6 +109,7 @@ namespace Clover
             cloverController = CloverController.GetInstance();
             cloverController.Initialize(100, 100);
             foldingPaperViewport.Children.Add(cloverController.Model);
+            foldingPaperViewport.Children.Add(cloverController.ShadowModel);
             cloverInterpreter.InitialzeInterpreter();
 
             this.Focus();
@@ -364,6 +365,8 @@ clover.UpdateFaceGroupTable()
                     break;
                 case Key.F4:
                     RenderController.GetInstance().testSuck(TestSuckImage, foldingPaperViewport);
+                    //PaperVoid.CreateShadow(foldingPaperViewport, cloverController.FaceLeaves, null,
+                    //    VoidPaperTopImgFront, VoidPaperBgImg);
                     break;
                 //case Key.Up:
                 //    cloverController.Update(0, 10, null, null);

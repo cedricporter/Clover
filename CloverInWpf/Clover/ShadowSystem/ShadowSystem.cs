@@ -83,6 +83,8 @@ namespace Clover
                     break;
             }
 
+            UndoFaceLayer();
+
             // 修改操作层数
             operationLevel--;
         }
@@ -129,6 +131,18 @@ namespace Clover
         #endregion
 
         #region 还原
+
+        /// <summary>
+        /// 重新将面的Layer设置到过去
+        /// </summary>
+        private void UndoFaceLayer()
+        {
+            foreach (KeyValuePair<Face, int> pair in snapshotList[operationLevel].FaceLayerMap)
+            {
+                pair.Key.Layer = pair.Value;
+            }
+        }
+
 
         /// <summary>
         /// 检查Undo完了有没有新的snapshot，
@@ -240,12 +254,14 @@ namespace Clover
 
             foreach (Vertex v in beDeleteVertexVertexList)
             {
-                controller.VertexLayer.DeleteThisVersionToEnd(v);
+                // 这里有个小问题，如果是level为最后一层时，我们应该调用DeleteThisVersionToEnd。
+                // 不过可喜的是，在Undo里面做了。所以只能是处于undo链表内部。
+                controller.VertexLayer.DeleteNextVersionToEnd(v);
             }
 
             RevertTailVertex();
         }
-         
+
         void RevertCutVertex()
         {
             RevertFaceAndEdge();

@@ -24,6 +24,8 @@ using Clover.AbstractLayer;
 
 namespace Clover
 {
+    public delegate void OnRotationEndHandle();
+
     public class RenderController
     {
 
@@ -113,6 +115,9 @@ namespace Clover
             }
         }
 
+        /// <summary>
+        /// 纸张模型
+        /// </summary>
         ModelVisual3D entity = new ModelVisual3D();
         public System.Windows.Media.Media3D.ModelVisual3D Entity
         {
@@ -120,15 +125,39 @@ namespace Clover
             set { entity = value; }
         }
 
+        /// <summary>
+        /// 纸张虚像
+        /// </summary>
+        ModelVisual3D shadow = new ModelVisual3D();
+        public System.Windows.Media.Media3D.ModelVisual3D Shadow
+        {
+            get { return shadow; }
+            set { shadow = value; }
+        }
+
         Model3DGroup modelGroup = new Model3DGroup();
+        public System.Windows.Media.Media3D.Model3DGroup ModelGroup
+        {
+            get { return modelGroup; }
+            //set { modelGroup = value; }
+        }
 
         Dictionary<Face, GeometryModel3D> faceMeshMap = new Dictionary<Face, GeometryModel3D>();
-
+        public Dictionary<Face, GeometryModel3D> FaceMeshMap
+        {
+            get { return faceMeshMap; }
+            //set { faceMeshMap = value; }
+        }
         #endregion
 
         #region 私有成员变量
         MaterialController materialController = new MaterialController();
         Transform3DGroup transformGroup = new Transform3DGroup();
+        public System.Windows.Media.Media3D.Transform3DGroup TransformGroup
+        {
+            get { return transformGroup; }
+            //set { transformGroup = value; }
+        }
         #endregion
 
         #region 单例
@@ -279,106 +308,6 @@ namespace Clover
                 //Debug.WriteLine(face.Vertices[i].point);
             }
             return mesh;
-        }
-
-        public void testSuck(Image img, Viewport3D vpn)
-        {
-
-            // tempModelGroup
-            Model3DGroup fuckModelGroup = new Model3DGroup();
-            foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
-            {
-                fuckModelGroup.Children.Add(pair.Value);
-            }
-
-            entity.Content = fuckModelGroup;
-
-            // 正面拍一张照
-            RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vpn.ActualWidth, (int)vpn.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            bmpf.Render(vpn);
-            //img.Source = bmpf;
-            // 背面再拍一张照
-            RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vpn.ActualWidth, (int)vpn.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            Quaternion quat = new Quaternion(0, 1, 0, 0);
-            quat = quat * srcQuaternion;
-            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
-            bmpb.Render(vpn);
-            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
-
-            entity.Content = modelGroup;
-
-            DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
-            DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
-
-            // 在3D控件找创建一个刚好可以填满视口的矩形
-            // 求矩形大小
-            Matrix3D to3DMat = Utility.GetInstance().To2DMat;
-            if (!to3DMat.HasInverse)
-                MessageBox.Show("At CreateShadow  无法创建2dMat的inverse");
-            to3DMat.Invert();
-            Point3D start = new Point3D(0, 0, 0.0000001);
-            Point3D end = new Point3D(0, 0, 0.9999999);
-            start *= to3DMat;
-            end *= to3DMat;
-            Point3D lt = CloverMath.IntersectionOfLineAndPlane(start, end, new Vector3D(0, 0, 1), new Point3D(0, 0, 0));
-            start = new Point3D(vpn.ActualWidth, vpn.ActualHeight, 0.0000001);
-            end = new Point3D(vpn.ActualWidth, vpn.ActualHeight, 0.9999999);
-            start *= to3DMat;
-            end *= to3DMat;
-            Point3D rb = CloverMath.IntersectionOfLineAndPlane(start, end, new Vector3D(0, 0, 1), new Point3D(0, 0, 0));
-            // 创建矩形
-            MeshGeometry3D mesh = new MeshGeometry3D();
-            mesh.Positions.Add(lt);
-            mesh.Positions.Add(new Point3D(lt.X, rb.Y, 0));
-            mesh.Positions.Add(rb);
-            mesh.Positions.Add(new Point3D(rb.X, lt.Y, 0));
-            mesh.TextureCoordinates.Add(new Point(0, 0));
-            mesh.TextureCoordinates.Add(new Point(0, 1));
-            mesh.TextureCoordinates.Add(new Point(1, 1));
-            mesh.TextureCoordinates.Add(new Point(1, 0));
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(3);
-            mesh.TriangleIndices.Add(3);
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(2);
-
-            //GeometryModel3D tempModel = new GeometryModel3D(mesh, new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
-            GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
-            tempModel.BackMaterial = dmb;
-
-            Transform3DGroup tempTransformGroup = new Transform3DGroup();
-            Quaternion invQuat = srcQuaternion;
-            invQuat.Invert();
-            tempTransformGroup.Children.Add(new RotateTransform3D(new QuaternionRotation3D(invQuat)));
-            //tempTransformGroup.Children.Add(transformGroup.Children[1]);
-            //tempModel.Transform = tempTransformGroup;
-            modelGroup.Children.Add(tempModel);
-            
-        }
-
-        /// <summary>
-        /// 将传入的面压平成一张纹理，同时创建正面和负面
-        /// </summary>
-        /// <param name="vp">借用一下外面的ViewPort</param>
-        /// <param name="faces">要渲染成纹理的面集</param>
-        /// <param name="normal">指示哪边为正面</param>
-        public void CreateShadow(Viewport3D vp, List<Face> faces, Vector3D normal)
-        {
-
-            // tempModelGroup
-            Model3DGroup tempModelGroup = new Model3DGroup();
-            foreach (Face face in faces)
-            {
-                tempModelGroup.Children.Add(faceMeshMap[face]);
-            }
-
-            // 借用viewport来渲染，渲染完后要设置回去
-            entity.Content = tempModelGroup;
-            RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-            bmpf.Render(vp);
-            entity.Content = modelGroup;
-
         }
 
         Point3D UpdateRenderPoint(Vertex v)
@@ -549,6 +478,9 @@ namespace Clover
         #region 从3D视角变为2D视角的插值动画
 
         int RotationSlerpCount = -1;
+
+        public OnRotationEndHandle OnRotationEndOnce;
+
         public void BeginRotationSlerp(Quaternion dst)
         {
             dstQuaternion = dst;
@@ -566,6 +498,8 @@ namespace Clover
             {
                 srcQuaternion = dstQuaternion;
                 RotationSlerpCount = -1;
+                if (OnRotationEndOnce != null)
+                    OnRotationEndOnce();
             }
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
@@ -646,6 +580,141 @@ namespace Clover
         }
 
         #endregion
+
+        #endregion
+
+        #region 虚像
+
+        public void testSuck(Image img, Viewport3D vpn)
+        {
+            shadow.Content = null;
+            // tempModelGroup
+            Model3DGroup fuckModelGroup = new Model3DGroup();
+            foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
+            {
+                fuckModelGroup.Children.Add(pair.Value);
+            }
+
+            entity.Content = fuckModelGroup;
+
+            // 正面拍一张照
+            RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vpn.ActualWidth, (int)vpn.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            bmpf.Render(vpn);
+            //img.Source = bmpf;
+            // 背面再拍一张照
+            RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vpn.ActualWidth, (int)vpn.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            Quaternion quat = new Quaternion(0, 1, 0, 0);
+            quat = quat * srcQuaternion;
+            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
+            bmpb.Render(vpn);
+            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
+            //img.Source = bmpb;
+            entity.Content = modelGroup;
+
+            DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
+            DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
+
+            // 在3D空间中创建一个刚好可以填满视口的矩形
+            Double w = 41.35;  // 我会告诉你这个数字是我一点一点试出来的吗？---kid
+            Double h = w * vpn.ActualHeight / vpn.ActualWidth;
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions.Add(new Point3D(-w, h, -100));
+            mesh.Positions.Add(new Point3D(-w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, h, -100));
+            mesh.TextureCoordinates.Add(new Point(0, 0));
+            mesh.TextureCoordinates.Add(new Point(0, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 0));
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(2);
+
+            //GeometryModel3D tempModel = new GeometryModel3D(mesh, new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
+            tempModel.BackMaterial = dmb;
+
+            Model3DGroup shadowGroup = new Model3DGroup();
+            shadowGroup.Children.Add(tempModel);
+            shadow.Content = shadowGroup;
+
+
+            //Transform3DGroup tempTransformGroup = new Transform3DGroup();
+            //Quaternion invQuat = srcQuaternion;
+            //invQuat.Invert();
+            //tempTransformGroup.Children.Add(new RotateTransform3D(new QuaternionRotation3D(invQuat)));
+            ////tempTransformGroup.Children.Add(transformGroup.Children[1]);
+            ////tempModel.Transform = tempTransformGroup;
+            //modelGroup.Children.Add(tempModel);
+
+        }
+
+        /// <summary>
+        /// 将传入的面压平成一张纹理，同时创建正面和负面
+        /// </summary>
+        /// <param name="vp">借用一下外面的ViewPort</param>
+        /// <param name="faces">要渲染成纹理的面集</param>
+        /// <param name="normal">指示哪边为正面</param>
+        public void CreateShadow(Viewport3D vp, List<Face> upperFaces, List<Face>bgFaces, Vector3D normal)
+        {
+            shadow.Content = null;
+            // tempModelGroup
+            Model3DGroup fuckModelGroup = new Model3DGroup();
+            foreach (KeyValuePair<Face, GeometryModel3D> pair in faceMeshMap)
+            {
+                fuckModelGroup.Children.Add(pair.Value);
+            }
+
+            entity.Content = fuckModelGroup;
+
+            // 正面拍一张照
+            RenderTargetBitmap bmpf = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            bmpf.Render(vp);
+            //img.Source = bmpf;
+            // 背面再拍一张照
+            RenderTargetBitmap bmpb = new RenderTargetBitmap((int)vp.ActualWidth, (int)vp.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            Quaternion quat = new Quaternion(0, 1, 0, 0);
+            quat = quat * srcQuaternion;
+            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(quat));
+            bmpb.Render(vp);
+            transformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
+
+            entity.Content = modelGroup;
+
+            DiffuseMaterial dmf = new DiffuseMaterial(new ImageBrush(bmpf));
+            DiffuseMaterial dmb = new DiffuseMaterial(new ImageBrush(bmpb));
+
+            // 在3D空间中创建一个刚好可以填满视口的矩形
+            Double w = 41.35;  // 我会告诉你这个数字是我一点一点试出来的吗？---kid
+            Double h = w * vp.ActualHeight / vp.ActualWidth;
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions.Add(new Point3D(-w, h, -100));
+            mesh.Positions.Add(new Point3D(-w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, -h, -100));
+            mesh.Positions.Add(new Point3D(w, h, -100));
+            mesh.TextureCoordinates.Add(new Point(0, 0));
+            mesh.TextureCoordinates.Add(new Point(0, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 1));
+            mesh.TextureCoordinates.Add(new Point(1, 0));
+            mesh.TriangleIndices.Add(0);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(3);
+            mesh.TriangleIndices.Add(1);
+            mesh.TriangleIndices.Add(2);
+
+            // 将渲染出来的东西摆在屏幕上
+            //GeometryModel3D tempModel = new GeometryModel3D(mesh, new DiffuseMaterial(new SolidColorBrush(Colors.Black)));
+            GeometryModel3D tempModel = new GeometryModel3D(mesh, dmf);
+            tempModel.BackMaterial = dmb;
+            Model3DGroup shadowGroup = new Model3DGroup();
+            shadowGroup.Children.Add(tempModel);
+            shadow.Content = shadowGroup;
+
+        }
 
         #endregion
 
