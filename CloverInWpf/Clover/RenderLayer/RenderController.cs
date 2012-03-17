@@ -24,6 +24,8 @@ using Clover.AbstractLayer;
 
 namespace Clover
 {
+    public delegate void OnRotationEndHandle();
+
     public class RenderController
     {
 
@@ -476,6 +478,9 @@ namespace Clover
         #region 从3D视角变为2D视角的插值动画
 
         int RotationSlerpCount = -1;
+
+        public OnRotationEndHandle OnRotationEnd;
+
         public void BeginRotationSlerp(Quaternion dst)
         {
             dstQuaternion = dst;
@@ -493,6 +498,8 @@ namespace Clover
             {
                 srcQuaternion = dstQuaternion;
                 RotationSlerpCount = -1;
+                if (OnRotationEnd != null)
+                    OnRotationEnd();
             }
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));

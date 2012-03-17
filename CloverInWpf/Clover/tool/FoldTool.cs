@@ -74,7 +74,7 @@ namespace Clover.Tool
         /// <param name="element"></param>
         protected override void onSelectElement(Object element)
         {
-            #region 选取到的是点
+
             // 将视角变换到与当前纸张平行
             if (element.GetType().ToString() == "Clover.Vertex")
             {
@@ -90,9 +90,6 @@ namespace Clover.Tool
                 foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
                 // 隐藏实像
                 //RenderController.GetInstance().Entity.Content = null;
-                // 创建虚像……
-                PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
-                        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
 
                 // 锁定视角
                 LockViewport(true);
@@ -100,11 +97,20 @@ namespace Clover.Tool
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
 
+                RenderController.GetInstance().OnRotationEnd += new OnRotationEndHandle(
+                    () => 
+                        {
+                            // 创建虚像……
+                            PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
+                                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
+                            RenderController.GetInstance().OnRotationEnd = null;
+                        }
+                    );
 
                 EnterFoldingUp();
 
             }
-            #endregion
+
         }
 
         /// <summary>
