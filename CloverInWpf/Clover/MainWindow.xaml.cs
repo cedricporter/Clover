@@ -366,7 +366,6 @@ clover.UpdateFaceGroupTable()
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
-                    RenderController.GetInstance().testSuck(TestSuckImage, foldingPaperViewport);
                     //PaperVoid.CreateShadow(foldingPaperViewport, cloverController.FaceLeaves, null,
                     //    VoidPaperTopImgFront, VoidPaperBgImg);
                     break;
