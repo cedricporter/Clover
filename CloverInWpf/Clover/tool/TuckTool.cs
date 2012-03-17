@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Clover.Visual;
 using System.Windows.Input;
 using Clover.FoldingSystemNew;
+using System.Windows;
 
 /**
 @date		:	2012/03/03
@@ -28,6 +29,7 @@ namespace Clover.Tool
         Face nearestFace = null;
         Vertex pickedVertex = null;
         Point3D projectionPoint;
+        Point Origin2Dpos;
         CurrentModeVisual currentModeVi = null;
 
         // 测试用
@@ -78,6 +80,10 @@ namespace Clover.Tool
             {
                 // 求2D到3D的投影点
                 projectionPoint = Get3DProjectionPoint();
+                // 视觉效果
+                Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
 
                 // 传给下层
                 tuckingIn.OnDrag();
@@ -106,13 +112,30 @@ namespace Clover.Tool
 
         public override void onIdle()
         {
-            
+            if (mode == FoldingMode.DoingNothing)
+                return;
+
+            // 更新视觉坐标。。
+            Point3D p3d = pickedVertex.GetPoint3D();
+            p3d *= Utility.GetInstance().To2DMat;
+            Origin2Dpos = new Point(p3d.X, p3d.Y);
+            //if (lineVi != null)
+            //    lineVi.StartPoint = Origin2Dpos;
+            if (currOveredElementVi != null)
+            {
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
+                (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
+            }
         }
 
         void EnterTuckingIn()
         {
             mode = FoldingMode.TuckingIn;
 
+            // 计算旋转
+            Quaternion quat = CalculateFoldingUpRotation();
+            // 应用旋转
+            RenderController.GetInstance().BeginRotationSlerp(quat);
             // 显示模式
             currentModeVi = new CurrentModeVisual("Tucking In Mode");
             VisualController.GetSingleton().AddVisual(currentModeVi);
@@ -193,6 +216,37 @@ namespace Clover.Tool
                     nearestFace = f;
                 }
             }
+        }
+
+        /// <summary>
+        /// 计算旋转量
+        /// </summary>
+        /// <returns></returns>
+        Quaternion CalculateFoldingUpRotation()
+        {
+            Matrix3D mat = RenderController.GetInstance().Entity.Transform.Value;
+
+            // 判断该面是正面朝向用户还是背面朝向用户
+            Vector3D vector1 = nearestFace.Normal * mat;
+            Vector3D vector2 = new Vector3D(0, 0, 1);
+            if (Vector3D.DotProduct(vector1, vector2) < 0)
+                vector1 = nearestFace.Normal * -1;
+            else
+                vector1 = nearestFace.Normal;
+            // 计算旋转
+            Quaternion quat;
+            if (vector1 == new Vector3D(0, 0, 1))
+                quat = new Quaternion();
+            else if (vector1 == new Vector3D(0, 0, -1))
+                quat = new Quaternion(new Vector3D(0, 1, 0), 180);
+            else
+            {
+                Vector3D axis = Vector3D.CrossProduct(vector1, vector2);
+                axis.Normalize();
+                Double deg = Vector3D.AngleBetween(vector1, vector2);
+                quat = new Quaternion(axis, deg);
+            }
+            return quat;
         }
 
 
