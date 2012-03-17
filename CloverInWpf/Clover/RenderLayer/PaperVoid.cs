@@ -91,6 +91,9 @@ namespace Clover
             // 消除误差
             p1 = new Point(Math.Round(p1.X), Math.Round(p1.Y));
             p2 = new Point(Math.Round(p2.X), Math.Round(p2.Y));
+
+            #region 计算topImgFront的显示部分
+            
             // 按逆时针寻找并剔除被折线“切掉”的点
             Point[] c = new Point[4];
             c[0] = new Point(0, 0);
@@ -130,7 +133,49 @@ namespace Clover
             Geometry topImgFrontClipGeometry = new PathGeometry(pathFigures);
             topImgFront.Clip = topImgFrontClipGeometry;
 
-            // 划定
+            #endregion
+
+            #region 计算topImgBack的显示部分
+
+            // topImgBack的两个点应该是topImgFront的两个点的水平翻转
+            p1.X = vp.ActualWidth - p1.X;
+            p2.X = vp.ActualWidth - p2.X;
+            // 按逆时针寻找并剔除被折线“切掉”的点
+            ignorePointList = new List<Point>();
+            v = p2 - p1;
+            for (int i = 0; i < 4; i++)
+            {
+                if (Vector.CrossProduct((c[i] - p1), v) < 0)
+                    ignorePointList.Add(c[i]);
+            }
+            // 划定topImgBack的显示区域
+            pathFigures = new List<PathFigure>();
+            pathFigure = new PathFigure();
+            pathFigure.StartPoint = p1;
+            pathFigure.Segments.Add(new LineSegment(p2, false));
+            lastPoint = p2;
+            while (ignorePointList.Count < 4)// 这堆写得比较蛋疼，主要功能是让它按顺序地绘制点
+            {
+                foreach (Point p in c)
+                {
+                    if (ignorePointList.Contains(p))
+                        continue;
+                    if (p.X == lastPoint.X || p.Y == lastPoint.Y)
+                    {
+                        pathFigure.Segments.Add(new LineSegment(p, false));
+                        ignorePointList.Add(p);
+                        lastPoint = p;
+                    }
+                }
+            }
+            pathFigures.Add(pathFigure);
+            Geometry topImgBackClipGeometry = new PathGeometry(pathFigures);
+            topImgBack.Clip = topImgBackClipGeometry;
+
+            #endregion
+
+            #region 计算topImgBack的旋转和平移
+            #endregion
 
         }
 
