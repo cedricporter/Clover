@@ -30,13 +30,13 @@ namespace Clover
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         ModelVisual3D model = null; /// 纸张的模型
-        FoldingUp foldingUp = new FoldingUp();
+        FoldingUp_Old foldingUp = new FoldingUp_Old();
         
         #endregion
 
         #region get/set
 
-        public Clover.FoldingUp FoldingUp
+        public Clover.FoldingUp_Old FoldingUp
         {
             get { return foldingUp; }
         }

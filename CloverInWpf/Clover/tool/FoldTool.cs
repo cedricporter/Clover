@@ -43,7 +43,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         FaceLayerStackVisual stackVi = null;
         // 测试用
-        FoldingUpKid foldingUp = new FoldingUpKid();
+        FoldingUp foldingUp = new FoldingUp();
 
         enum FoldingMode
         {
@@ -83,6 +83,14 @@ namespace Clover.Tool
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
+                
+                // 判定法向量正反
+                bool isPositive;
+                Vector3D normal = nearestFace.Normal * RenderController.GetInstance().Entity.Transform.Value;
+                if (0 < Vector3D.DotProduct(normal, new Vector3D(0, 0, 1)))
+                    isPositive = true;
+                else
+                    isPositive = false;
 
                 // 进入折叠模式，传递给下层
                 //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
