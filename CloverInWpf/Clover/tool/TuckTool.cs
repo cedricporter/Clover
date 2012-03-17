@@ -8,6 +8,7 @@ using Clover.Visual;
 using System.Windows.Input;
 using Clover.FoldingSystemNew;
 using System.Windows;
+using System.Windows.Media;
 
 /**
 @date		:	2012/03/03
@@ -30,7 +31,10 @@ namespace Clover.Tool
         Vertex pickedVertex = null;
         Point3D projectionPoint;
         Point Origin2Dpos;
+        Edge foldLine = null;
         CurrentModeVisual currentModeVi = null;
+        DashLineVisual lineVi = null;
+        DashLineVisual tuckLineVi = null;
 
         // 测试用
         Tucking tuckingIn = new Tucking();
@@ -61,7 +65,7 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-                tuckingIn.EnterTuckingMode();
+                tuckingIn.EnterTuckingMode(pickedVertex, nearestFace);
 
                 // 锁定视角
                 LockViewport(true);
@@ -84,9 +88,9 @@ namespace Clover.Tool
                 Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
                 (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
                 (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
-
+                lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                 // 传给下层
-                tuckingIn.OnDrag();
+                this.foldLine = tuckingIn.OnDrag(projectionPoint);
             }
         }
 
@@ -119,13 +123,15 @@ namespace Clover.Tool
             Point3D p3d = pickedVertex.GetPoint3D();
             p3d *= Utility.GetInstance().To2DMat;
             Origin2Dpos = new Point(p3d.X, p3d.Y);
-            //if (lineVi != null)
-            //    lineVi.StartPoint = Origin2Dpos;
+            if (lineVi != null)
+                lineVi.StartPoint = Origin2Dpos;
             if (currOveredElementVi != null)
             {
                 (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
                 (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
             }
+            // 更新折线显示
+            UpdateTuckLine(foldLine);
         }
 
         void EnterTuckingIn()
@@ -140,6 +146,13 @@ namespace Clover.Tool
             currentModeVi = new CurrentModeVisual("Tucking In Mode");
             VisualController.GetSingleton().AddVisual(currentModeVi);
             currentModeVi.Start();
+            // 显示连线提示
+            lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+            VisualController.GetSingleton().AddVisual(lineVi);
+            lineVi.Start();
+            tuckLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
+            VisualController.GetSingleton().AddVisual(tuckLineVi);
+            tuckLineVi.Start();
         }
 
         void ExitTuckingIn()
@@ -148,6 +161,10 @@ namespace Clover.Tool
 
             currentModeVi.End();
             currentModeVi = null;
+            tuckLineVi.End();
+            tuckLineVi = null;
+            lineVi.End();
+            lineVi = null;
         }
 
         /// <summary>
@@ -247,6 +264,22 @@ namespace Clover.Tool
                 quat = new Quaternion(axis, deg);
             }
             return quat;
+        }
+
+        /// <summary>
+        /// 更新折线
+        /// </summary>
+        /// <param name="edge"></param>
+        void UpdateTuckLine(Edge edge)
+        {
+            if (edge == null || tuckLineVi == null)
+                return;
+            Point3D p1 = edge.Vertex1.GetPoint3D();
+            Point3D p2 = edge.Vertex2.GetPoint3D();
+            p1 *= Utility.GetInstance().To2DMat;
+            p2 *= Utility.GetInstance().To2DMat;
+            tuckLineVi.StartPoint = new Point(p1.X, p1.Y);
+            tuckLineVi.EndPoint = new Point(p2.X, p2.Y);
         }
 
 

@@ -61,9 +61,6 @@ namespace Clover
 
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
-
-            // todo
-            // 为facesAboveBase和faceUnderBase生成平面纹理
         }
 
         #endregion
@@ -129,7 +126,7 @@ namespace Clover
             Edge returnEdge = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
 
             // 第五步，移动两个虚像，造成面已经被切割折叠的假象
-
+            // 该部分已经移至UI层处理
 
             // 第六步，进入下一个轮回
             lastFoldLine = currFoldLine;
