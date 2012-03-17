@@ -97,13 +97,13 @@ namespace Clover.Tool
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
 
-                RenderController.GetInstance().OnRotationEnd += new OnRotationEndHandle(
+                RenderController.GetInstance().OnRotationEndOnce += new OnRotationEndHandle(
                     () => 
                         {
                             // 创建虚像……
                             PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
                                     mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
-                            RenderController.GetInstance().OnRotationEnd = null;
+                            RenderController.GetInstance().OnRotationEndOnce = null;
                         }
                     );
 

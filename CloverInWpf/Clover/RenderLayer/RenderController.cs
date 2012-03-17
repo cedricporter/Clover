@@ -479,7 +479,7 @@ namespace Clover
 
         int RotationSlerpCount = -1;
 
-        public OnRotationEndHandle OnRotationEnd;
+        public OnRotationEndHandle OnRotationEndOnce;
 
         public void BeginRotationSlerp(Quaternion dst)
         {
@@ -498,8 +498,8 @@ namespace Clover
             {
                 srcQuaternion = dstQuaternion;
                 RotationSlerpCount = -1;
-                if (OnRotationEnd != null)
-                    OnRotationEnd();
+                if (OnRotationEndOnce != null)
+                    OnRotationEndOnce();
             }
             // 动画
             RotateTransform = new RotateTransform3D(new QuaternionRotation3D(srcQuaternion));
