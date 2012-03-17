@@ -93,6 +93,7 @@
     <Compile Include="Tool\BlendTool.cs" />
     <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
+    <Compile Include="Tool\TuckTool.cs" />
     <Compile Include="Utilities\CloverMath.cs" />
     <Compile Include="Utilities\CloverTreeHelper.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />

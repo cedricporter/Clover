@@ -70,6 +70,8 @@ namespace Clover
             ToolFactory.currentTool = tool;
             tool = new BlendTool(this);
             tools.Add(tool);
+            tool = new TuckTool(this);
+            tools.Add(tool);
 
             // 杂项
             utility = Utility.GetInstance();
@@ -519,7 +521,7 @@ clover.UpdateFaceGroupTable()
 
         private void ToolFodeButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (tools.Count >= 2)
+            if (tools.Count >= 3)
                 ToolFactory.currentTool = tools[0];
         }
 
@@ -530,7 +532,8 @@ clover.UpdateFaceGroupTable()
 
         private void ToolTuckButton_Checked(object sender, RoutedEventArgs e)
         {
-
+            if (tools.Count >= 3)
+                ToolFactory.currentTool = tools[2];
         }
 
         private void ToolTuckButton_Unchecked(object sender, RoutedEventArgs e)
@@ -540,7 +543,7 @@ clover.UpdateFaceGroupTable()
 
         private void ToolBlendButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (tools.Count >= 2)
+            if (tools.Count >= 3)
                 ToolFactory.currentTool = tools[1];
         }
 
