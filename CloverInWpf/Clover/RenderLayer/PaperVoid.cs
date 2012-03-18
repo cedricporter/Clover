@@ -121,8 +121,8 @@ namespace Clover
                 {
                     if (ignorePointList.Contains(p))
                         continue;
-                    //if (Math.Abs(p.X - lastPoint.X) < 0.00001 || Math.Abs(p.Y - lastPoint.Y) < 0.00001)
-                    if (p.X == lastPoint.X || p.Y == lastPoint.Y)
+                    if (Math.Abs(p.X - lastPoint.X) < 0.00001 || Math.Abs(p.Y - lastPoint.Y) < 0.00001)
+                    //if (p.X == lastPoint.X || p.Y == lastPoint.Y)
                     {
                         pathFigure.Segments.Add(new LineSegment(p, false));
                         ignorePointList.Add(p);
