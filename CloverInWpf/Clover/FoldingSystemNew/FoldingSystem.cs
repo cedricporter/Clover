@@ -137,6 +137,7 @@ namespace Clover
 
                     if (beCutEdge1.LeftChild == null && beCutEdge1.RightChild == null)
                     {
+                        // 没人用过的共边
                         Debug.Assert(newVertex1 != null);
                         // 分割一条边生成两条新的边
                         cutEdge1 = new Edge(vertexList[i], newVertex1);
@@ -145,6 +146,9 @@ namespace Clover
                         beCutEdge1.RightChild = cutEdge2;
                         rangeB.Add(cutEdge1);
                         rangeA.Add(cutEdge2);
+
+                        cutEdge1.Face1 = f2;
+                        cutEdge2.Face1 = f1;
                     }
                     else
                     {
@@ -176,11 +180,17 @@ namespace Clover
                         {
                             rangeB.Add(beCutEdge1.LeftChild);
                             rangeA.Add(beCutEdge1.RightChild);
+
+                            beCutEdge1.LeftChild.Face2 = f2;
+                            beCutEdge1.RightChild.Face2 = f1;
                         }
                         else
                         {
                             rangeA.Add(beCutEdge1.LeftChild);
                             rangeB.Add(beCutEdge1.RightChild);
+
+                            beCutEdge1.LeftChild.Face2 = f1;
+                            beCutEdge1.RightChild.Face2 = f2;
                         }
                     }
 
@@ -208,6 +218,9 @@ namespace Clover
 
                         rangeA.Add(cutEdge1);
                         rangeB.Add(cutEdge2);
+
+                        cutEdge1.Face1 = f1;
+                        cutEdge2.Face1 = f2;
                     }
                     else
                     {
@@ -239,11 +252,17 @@ namespace Clover
                         {
                             rangeA.Add(beCutEdge2.LeftChild);
                             rangeB.Add(beCutEdge2.RightChild);
+
+                            beCutEdge2.LeftChild.Face2 = f1;
+                            beCutEdge2.RightChild.Face2 = f2;
                         }
                         else
                         {
                             rangeB.Add(beCutEdge2.LeftChild);
                             rangeA.Add(beCutEdge2.RightChild);
+
+                            beCutEdge2.LeftChild.Face2 = f2;
+                            beCutEdge2.RightChild.Face2 = f1;
                         }
                     }
                     // 计算newVertex1和newVertex2的纹理坐标
