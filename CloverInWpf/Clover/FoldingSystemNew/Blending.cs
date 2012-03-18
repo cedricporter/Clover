@@ -29,7 +29,6 @@ namespace Clover.AbstractLayer
     /// 
     /// Todo
     /// 增加组的法线的正负向判断
-    /// 磁性
     /// </summary>
     class Blending
     {

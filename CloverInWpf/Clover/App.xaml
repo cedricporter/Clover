@@ -370,12 +370,12 @@
     				<Microsoft_Windows_Themes:SystemDropShadowChrome x:Name="Shdw" Color="Transparent">
     					<ContentControl x:Name="SubMenuBorder" IsTabStop="false" Template="{DynamicResource {ComponentResourceKey ResourceId=SubmenuContent, TypeInTargetAssembly={x:Type FrameworkElement}}}">
     						<ScrollViewer x:Name="SubMenuScrollViewer" CanContentScroll="true" Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
-    							<Grid RenderOptions.ClearTypeHint="Enabled">
+    							<!--<Grid RenderOptions.ClearTypeHint="Enabled">
     								<Canvas HorizontalAlignment="Left" Height="0" VerticalAlignment="Top" Width="0">
     									<Rectangle Fill="{StaticResource SubMenuBackgroundBrush}" Height="{Binding ActualHeight, ElementName=SubMenuBorder}" Width="{Binding ActualWidth, ElementName=SubMenuBorder}"/>
-    								</Canvas>
+    								</Canvas>-->
     								<ItemsPresenter x:Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle" Grid.IsSharedSizeScope="true" Margin="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" KeyboardNavigation.TabNavigation="Cycle"/>
-    							</Grid>
+    							<!--</Grid>-->
     						</ScrollViewer>
     					</ContentControl>
     				</Microsoft_Windows_Themes:SystemDropShadowChrome>

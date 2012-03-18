@@ -75,10 +75,11 @@
     </ApplicationDefinition>
     <Compile Include="FoldingSystemNew\Blending.cs" />
     <Compile Include="AbstractLayer\FaceGroup.cs" />
-    <Compile Include="FoldingSystemNew\FoldingUp_Old.cs" />
+    <Compile Include="FoldingSystemNew\FoldingUp.cs" />
     <Compile Include="FoldingSystemNew\FoldingSystem.cs" />
     <Compile Include="AbstractLayer\Magnet.cs" />
-    <Compile Include="FoldingSystemNew\FoldingUp.cs" />
+    <Compile Include="FoldingSystemNew\FoldingUpKid.cs" />
+    <Compile Include="FoldingSystemNew\Tucking.cs" />
     <Compile Include="IO\CloverFile.cs" />
     <Compile Include="IO\CloverFileLoader.cs" />
     <Compile Include="IO\CloverFileWriter.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="Tool\BlendTool.cs" />
     <Compile Include="Tool\FoldTool.cs" />
     <Compile Include="Tool\ToolFactory.cs" />
+    <Compile Include="Tool\TuckTool.cs" />
     <Compile Include="Utilities\CloverMath.cs" />
     <Compile Include="Utilities\CloverTreeHelper.cs" />
     <Compile Include="Utilities\LinearEquation.cs" />
