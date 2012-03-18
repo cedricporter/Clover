@@ -326,12 +326,12 @@ namespace Clover.Tool
             int val = currDegree + offset;
             if (Math.Abs(0 - val) < threadhold)
                 return 0 - currDegree;
-            if (Math.Abs(45 - val) < threadhold)
-                return 45 - currDegree;
+            //if (Math.Abs(45 - val) < threadhold)
+            //    return 45 - currDegree;
             if (Math.Abs(90 - val) < threadhold)
                 return 90 - currDegree;
-            if (Math.Abs(135 - val) < threadhold)
-                return 135 - currDegree;
+            //if (Math.Abs(135 - val) < threadhold)
+            //    return 135 - currDegree;
             if (Math.Abs(180 - val) < threadhold)
                 return 180 - currDegree;
 
