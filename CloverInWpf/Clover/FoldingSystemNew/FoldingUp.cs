@@ -149,11 +149,11 @@ namespace Clover
                 return false;
 
             // 从tempFaces中剔除拥有PickedVertex的那些Face
-            // 同时tempFaces里面应该有与该面同组的并在其上层的面
+            // 同时tempFaces里面应该有与该面同组的并在其上层且没有折线经过的面
             List<Face> facesInSameGroup = cloverController.FaceGroupLookupTable.GetGroup(baseFace).GetFaceList();
             foreach (Face face in facesInSameGroup)
             {
-                if (face.Layer > baseFace.Layer)
+                if (face.Layer > baseFace.Layer && !facesWithFoldLine.Contains(face))
                     tempFaces.Add(face);
             }
 
