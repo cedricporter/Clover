@@ -396,49 +396,49 @@ namespace Clover
                 Vector3D offVec = group.Normal * -offset;
                 foreach (Vertex v in faceList[bottom].Vertices)
                 {
-                    //v.RenderPoint += offVec;
-                    if (!historyOffset.ContainsKey(v))
-                    {
-                        v.RenderPoint += offVec;
-                        historyOffset[v] = -offset;
-                    }
-                    else
-                    {
-                        if (historyOffset[v] == 0)
-                        {
-                            v.RenderPoint += offVec;
-                            historyOffset[v] = -offset;
-                        }
-                        else if (historyOffset[v] + offset == 0)
-                        {
-                            v.RenderPoint += offVec;
-                            historyOffset[v] = 0;
-                        }
-                    }
+                    v.RenderPoint += offVec;
+                    //if (!historyOffset.ContainsKey(v))
+                    //{
+                    //    v.RenderPoint += offVec;
+                    //    historyOffset[v] = -offset;
+                    //}
+                    //else
+                    //{
+                    //    if (historyOffset[v] == 0)
+                    //    {
+                    //        v.RenderPoint += offVec;
+                    //        historyOffset[v] = -offset;
+                    //    }
+                    //    else if (historyOffset[v] + offset == 0)
+                    //    {
+                    //        v.RenderPoint += offVec;
+                    //        historyOffset[v] = 0;
+                    //    }
+                    //}
                 }
 
                 offVec *= -1;
                 foreach (Vertex v in faceList[top].Vertices)
                 {
-                    //v.RenderPoint += offVec;
-                    if (!historyOffset.ContainsKey(v))
-                    {
-                        v.RenderPoint += offVec;
-                        historyOffset[v] = offset;
-                    }
-                    else
-                    {
-                        if (historyOffset[v] == 0)
-                        {
-                            v.RenderPoint += offVec;
-                            historyOffset[v] = offset;
-                        }
-                        else if (historyOffset[v] - offset == 0)
-                        {
-                            v.RenderPoint += offVec;
-                            historyOffset[v] = 0;
-                        }
-                    }
+                    v.RenderPoint += offVec;
+                    //if (!historyOffset.ContainsKey(v))
+                    //{
+                    //    v.RenderPoint += offVec;
+                    //    historyOffset[v] = offset;
+                    //}
+                    //else
+                    //{
+                    //    if (historyOffset[v] == 0)
+                    //    {
+                    //        v.RenderPoint += offVec;
+                    //        historyOffset[v] = offset;
+                    //    }
+                    //    else if (historyOffset[v] - offset == 0)
+                    //    {
+                    //        v.RenderPoint += offVec;
+                    //        historyOffset[v] = 0;
+                    //    }
+                    //}
                 }
 
                 offset -= step;

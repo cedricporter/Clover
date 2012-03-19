@@ -31,7 +31,7 @@ namespace Clover
 
         #region 进入折叠模式
 
-        public void EnterFoldingMode(Vertex pickedVertex, Face nearestFace)
+        public List<Face> EnterFoldingMode(Vertex pickedVertex, Face nearestFace)
         {
             this.cloverController = CloverController.GetInstance();
 
@@ -57,8 +57,7 @@ namespace Clover
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
 
-            // todo
-            // 为facesAboveBase和faceUnderBase生成平面纹理
+            return facesAboveBase;
         }
 
         #endregion

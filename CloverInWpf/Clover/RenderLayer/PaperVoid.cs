@@ -58,6 +58,8 @@ namespace Clover
                 bmpb.Render(vp);
                 render.TransformGroup.Children[0] = new RotateTransform3D(new QuaternionRotation3D(render.SrcQuaternion));
                 topImgBack.Source = bmpb;
+                // 将topImgBack移到看不见
+                topImgBack.RenderTransform = new TranslateTransform(-10000, -10000);
             }
 
             if (bgFaces != null && bgFaces.Count != 0)

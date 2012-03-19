@@ -84,7 +84,7 @@ namespace Clover.Tool
                 // 首先寻找离我们最近的那个面……
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
-                
+
                 // 判定法向量正反
                 bool isPositive;
                 Vector3D normal = nearestFace.Normal * RenderController.GetInstance().Entity.Transform.Value;
@@ -95,7 +95,7 @@ namespace Clover.Tool
 
                 // 进入折叠模式，传递给下层
                 //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
-                foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
+                List<Face> topFaces = foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
                 // 隐藏实像
                 //RenderController.GetInstance().Entity.Content = null;
 
@@ -106,13 +106,22 @@ namespace Clover.Tool
                 IsOnPressLocked = true;
 
                 RenderController.GetInstance().OnRotationEndOnce += new OnRotationEndHandle(
-                    () => 
+                    () =>
+                    {
+                        // 创建虚像……
+                        //PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
+                        //        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
+                        List<Face> bgFaces = new List<Face>();
+                        foreach (Face leave in mainWindow.cloverController.FaceLeaves)
                         {
-                            // 创建虚像……
-                            PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
-                                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
-                            RenderController.GetInstance().OnRotationEndOnce = null;
+                            if (topFaces.Contains(leave))
+                                continue;
+                            bgFaces.Add(leave);
                         }
+                        PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, topFaces, bgFaces,
+                                mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
+                        RenderController.GetInstance().OnRotationEndOnce = null;
+                    }
                     );
 
                 EnterFoldingUp();
@@ -172,7 +181,7 @@ namespace Clover.Tool
                     // 更新虚像。。。
                     Point outP1 = new Point();
                     Point outP2 = new Point();
-                    if(!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
+                    if (!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
                         return;
                     PaperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
                         mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
@@ -352,7 +361,7 @@ namespace Clover.Tool
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
-            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport, 
+            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
         }
 

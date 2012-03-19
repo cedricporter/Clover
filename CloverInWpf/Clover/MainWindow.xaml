@@ -400,9 +400,9 @@
                 </Image.Clip>-->
             </Image>
             <!-- 纸张虚像 -->
-            <Image x:Name="VoidPaperBgImg" Panel.ZIndex="10"></Image>
-            <Image x:Name="VoidPaperTopImgFront" Panel.ZIndex="11"></Image>
-            <Image x:Name="VoidPaperTopImgBack" Panel.ZIndex="12">
+            <Image x:Name="VoidPaperBgImg" Panel.ZIndex="11"></Image>
+            <Image x:Name="VoidPaperTopImgFront" Panel.ZIndex="12"></Image>
+            <Image x:Name="VoidPaperTopImgBack" Panel.ZIndex="13">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <RotateTransform></RotateTransform>
