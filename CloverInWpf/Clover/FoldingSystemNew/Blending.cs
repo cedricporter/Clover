@@ -30,7 +30,7 @@ namespace Clover.AbstractLayer
     /// Todo
     /// 增加组的法线的正负向判断
     /// </summary>
-    class Blending
+    public class Blending
     {
 
         #region 成员变量

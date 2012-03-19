@@ -44,7 +44,7 @@ namespace Clover.Tool
         FaceLayerStackVisual stackVi = null;
         Edge foldLine = null;
         // 测试用
-        FoldingUp foldingUp = new FoldingUp();
+        //FoldingUp foldingUp = new FoldingUp();
 
         enum FoldingMode
         {
@@ -86,16 +86,16 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 判定法向量正反
-                bool isPositive;
-                Vector3D normal = nearestFace.Normal * RenderController.GetInstance().Entity.Transform.Value;
-                if (0 < Vector3D.DotProduct(normal, new Vector3D(0, 0, 1)))
-                    isPositive = true;
-                else
-                    isPositive = false;
+                //bool isPositive;
+                //Vector3D normal = nearestFace.Normal * RenderController.GetInstance().Entity.Transform.Value;
+                //if (0 < Vector3D.DotProduct(normal, new Vector3D(0, 0, 1)))
+                //    isPositive = true;
+                //else
+                //    isPositive = false;
 
                 // 进入折叠模式，传递给下层
                 //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
-                List<Face> topFaces = foldingUp.EnterFoldingMode(pickedVertex, nearestFace);
+                List<Face> topFaces = CloverController.GetInstance().FoldingUp.EnterFoldingMode(pickedVertex, nearestFace);
                 // 隐藏实像
                 //RenderController.GetInstance().Entity.Content = null;
 
@@ -177,7 +177,7 @@ namespace Clover.Tool
 
                     // 传给下一层处理
                     //Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
-                    this.foldLine = foldingUp.OnDrag(projectionPoint);
+                    this.foldLine = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
                     // 更新虚像。。。
                     Point outP1 = new Point();
                     Point outP2 = new Point();
@@ -357,7 +357,7 @@ namespace Clover.Tool
             mode = FoldingMode.DoingNothing;
 
             //CloverController.GetInstance().FoldingUp.ExitFoldingMode();
-            foldingUp.ExitFoldingMode();
+            CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……

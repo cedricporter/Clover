@@ -32,6 +32,8 @@ namespace Clover
         ModelVisual3D model = null; /// 纸张的模型
         ModelVisual3D shadowModel = null; /// 纸张的虚像，FoldingUp时候用的
         FoldingUp foldingUp = new FoldingUp();
+        Blending blending = new Blending();
+        Tucking tucking = new Tucking();
         
         #endregion
 
@@ -41,7 +43,14 @@ namespace Clover
         {
             get { return foldingUp; }
         }
-
+        public Clover.AbstractLayer.Blending Blending
+        {
+            get { return blending; }
+        }
+        public Clover.Tucking Tucking
+        {
+            get { return tucking; }
+        }
         public Clover.FaceGroupLookupTable FaceGroupLookupTable
         {
             get { return faceGroupLookupTable; }

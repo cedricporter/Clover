@@ -6,7 +6,6 @@ using System.Windows.Media.Media3D;
 using System.Windows.Controls;
 using Clover.Visual;
 using System.Windows.Input;
-using Clover.FoldingSystemNew;
 using System.Windows;
 using System.Windows.Media;
 
@@ -39,7 +38,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi2 = null;
 
         // 测试用
-        Tucking tuckingIn = new Tucking();
+        //Tucking tuckingIn = new Tucking();
 
         enum FoldingMode
         {
@@ -67,7 +66,7 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-                tuckingIn.EnterTuckingMode(pickedVertex, nearestFace);
+                CloverController.GetInstance().Tucking.EnterTuckingMode(pickedVertex, nearestFace);
 
                 // 锁定视角
                 LockViewport(true);
@@ -97,7 +96,7 @@ namespace Clover.Tool
                 (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
                 lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                 // 传给下层
-                this.tuckLine = tuckingIn.OnDrag(projectionPoint);
+                this.tuckLine = CloverController.GetInstance().Tucking.OnDrag(projectionPoint);
             }
         }
 
@@ -116,7 +115,7 @@ namespace Clover.Tool
             LockViewport(false);
 
             // 向下层传递
-            tuckingIn.ExitTuckingMode();
+            CloverController.GetInstance().Tucking.ExitTuckingMode();
 
             mode = FoldingMode.DoingNothing;
         }

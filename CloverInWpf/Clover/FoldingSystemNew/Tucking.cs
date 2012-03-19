@@ -5,9 +5,9 @@ using System.Text;
 using System.Windows.Media.Media3D;
 using Clover.AbstractLayer;
 
-namespace Clover.FoldingSystemNew
+namespace Clover
 {
-    class Tucking
+    public class Tucking
     {
 
         #region 成员变量
