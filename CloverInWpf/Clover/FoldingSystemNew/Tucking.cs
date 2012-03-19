@@ -234,6 +234,8 @@ namespace Clover.FoldingSystemNew
                 face.Layer--; 
             }
 
+            currGroup.SortFace();
+
             return true; 
         }
         #endregion
@@ -248,6 +250,15 @@ namespace Clover.FoldingSystemNew
             FindFaceWithoutTuckLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutTuckLine, currTuckLine, 180);
 
+            // 添加折线
+            if (newEdges.Count != 0)
+            {
+                foreach (Edge edge in newEdges)
+                {
+                    cloverController.RenderController.AddFoldingLine(edge.Vertex1.u, edge.Vertex1.v, edge.Vertex2.u, edge.Vertex2.v);
+                }
+            }
+
             // 更新组
             cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
 
@@ -258,9 +269,9 @@ namespace Clover.FoldingSystemNew
             RenderController.GetInstance().AntiOverlap();
 
             // 测试散开
-           // group = cloverController.FaceGroupLookupTable.GetGroup(newEdges[0].Face1);
-           // RenderController.GetInstance().DisperseLayer(group);
-           // RenderController.GetInstance().Update(group, false);
+            group = cloverController.FaceGroupLookupTable.GetGroup(newEdges[0].Face1);
+            RenderController.GetInstance().DisperseLayer(group);
+            RenderController.GetInstance().Update(group, false);
 
             // 释放资源
             facesInHouse.Clear();

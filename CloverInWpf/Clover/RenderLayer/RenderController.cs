@@ -345,8 +345,8 @@ namespace Clover
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
                 float baseval = 0;
-                float step = 6f;
-               // float step = 0.01f;
+                //float step = 6f;
+                float step = 0.05f;
                 foreach (Face f in g.GetFaceList())
                 {
                     if (faceMeshMap.ContainsKey(f))
@@ -388,6 +388,7 @@ namespace Clover
             int step = 1;
             int offset = faceList.Count / 2 * step;
             // 从faceList的两头向中间逼近，逐层计算偏移量
+            Dictionary<Vertex, int> historyOffset = new Dictionary<Vertex, int>();// 这蛋疼的玩意记录了每个点的历史偏移量。一个顶点不可以两次偏向同一方向
             int bottom = 0;
             int top = faceList.Count - 1;
             while (top >= bottom)
@@ -395,13 +396,49 @@ namespace Clover
                 Vector3D offVec = group.Normal * -offset;
                 foreach (Vertex v in faceList[bottom].Vertices)
                 {
-                    v.RenderPoint += offVec;
+                    //v.RenderPoint += offVec;
+                    if (!historyOffset.ContainsKey(v))
+                    {
+                        v.RenderPoint += offVec;
+                        historyOffset[v] = -offset;
+                    }
+                    else
+                    {
+                        if (historyOffset[v] == 0)
+                        {
+                            v.RenderPoint += offVec;
+                            historyOffset[v] = -offset;
+                        }
+                        else if (historyOffset[v] + offset == 0)
+                        {
+                            v.RenderPoint += offVec;
+                            historyOffset[v] = 0;
+                        }
+                    }
                 }
 
                 offVec *= -1;
                 foreach (Vertex v in faceList[top].Vertices)
                 {
-                    v.RenderPoint += offVec;
+                    //v.RenderPoint += offVec;
+                    if (!historyOffset.ContainsKey(v))
+                    {
+                        v.RenderPoint += offVec;
+                        historyOffset[v] = offset;
+                    }
+                    else
+                    {
+                        if (historyOffset[v] == 0)
+                        {
+                            v.RenderPoint += offVec;
+                            historyOffset[v] = offset;
+                        }
+                        else if (historyOffset[v] - offset == 0)
+                        {
+                            v.RenderPoint += offVec;
+                            historyOffset[v] = 0;
+                        }
+                    }
                 }
 
                 offset -= step;
