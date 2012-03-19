@@ -384,8 +384,8 @@ namespace Clover
                 }
             }
             // 以当前总层数作为依据，指定offset值
-            //int step = 6;
-            int step = 1;
+            int step = 6;
+            //int step = 1;
             int offset = faceList.Count / 2 * step;
             // 从faceList的两头向中间逼近，逐层计算偏移量
             int bottom = 0;
