@@ -36,6 +36,7 @@ namespace Clover.Tool
         DashLineVisual tuckLineVi = null;
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
+        PaperVoid paperVoid;
 
         // 测试用
         //Tucking tuckingIn = new Tucking();
@@ -49,7 +50,7 @@ namespace Clover.Tool
         public TuckTool(MainWindow mainWindow)
             : base(mainWindow)
         {
-
+            paperVoid = PaperVoid.GetInstance();
         }
 
 
@@ -66,13 +67,32 @@ namespace Clover.Tool
                 FindNearestFace(faces);
 
                 // 进入折叠模式，传递给下层
-                CloverController.GetInstance().Tucking.EnterTuckingMode(pickedVertex, nearestFace);
+                List<Face> topFaces = CloverController.GetInstance().Tucking.EnterTuckingMode(pickedVertex, nearestFace);
 
                 // 锁定视角
                 LockViewport(true);
                 // 锁定鼠标OnPress和OnMove
                 IsOnMoveLocked = true;
                 IsOnPressLocked = true;
+
+                RenderController.GetInstance().OnRotationEndOnce += new OnRotationEndHandle(
+                    () =>
+                    {
+                        // 创建虚像……
+                        //PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, mainWindow.cloverController.FaceLeaves, null,
+                        //        mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
+                        List<Face> bgFaces = new List<Face>();
+                        foreach (Face leave in mainWindow.cloverController.FaceLeaves)
+                        {
+                            if (topFaces.Contains(leave))
+                                continue;
+                            bgFaces.Add(leave);
+                        }
+                        paperVoid.CreateShadow(mainWindow.foldingPaperViewport, topFaces, bgFaces,
+                                mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
+                        RenderController.GetInstance().OnRotationEndOnce = null;
+                    }
+                    );
 
                 EnterTuckingIn();
 
@@ -97,6 +117,13 @@ namespace Clover.Tool
                 lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                 // 传给下层
                 this.tuckLine = CloverController.GetInstance().Tucking.OnDrag(projectionPoint);
+                // 更新虚像。。。
+                Point outP1 = new Point();
+                Point outP2 = new Point();
+                if (!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
+                    return;
+                paperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
+                    mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg);
             }
         }
 
@@ -116,6 +143,10 @@ namespace Clover.Tool
 
             // 向下层传递
             CloverController.GetInstance().Tucking.ExitTuckingMode();
+
+            // 销毁虚像……
+            paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
+                mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
 
             mode = FoldingMode.DoingNothing;
         }
@@ -345,26 +376,76 @@ namespace Clover.Tool
             foldLineInfoVi2.Offset = offset2;
         }
 
+        /// <summary>
+        /// 寻找折线与视口的交点
+        /// </summary>
+        /// <param name="outP1"></param>
+        /// <param name="outP2"></param>
+        /// <returns>没找全两个，返回false</returns>
+        private Boolean FineIntersectionOfFoldlineAndViewport(ref Point outP1, ref Point outP2)
+        {
+            Vector v = tuckLineVi.StartPoint - tuckLineVi.EndPoint;
+            Point p1 = tuckLineVi.StartPoint + v * 10000;
+            Point p2 = tuckLineVi.StartPoint - v * 10000;
+            Point c1, c2, c3, c4;
+            c1 = new Point(0, 0);
+            c2 = new Point(0, mainWindow.foldingPaperViewport.ActualHeight);
+            c3 = new Point(mainWindow.foldingPaperViewport.ActualWidth, mainWindow.foldingPaperViewport.ActualHeight);
+            c4 = new Point(mainWindow.foldingPaperViewport.ActualWidth, 0);
+            List<Point> pList = new List<Point>();
+            pList.Add(c1);
+            pList.Add(c2);
+            pList.Add(c3);
+            pList.Add(c4);
+            pList.Add(c1);
+
+            // 寻找折线与视口大小的矩形的交点
+            int finded = 0;
+            for (int i = 0; i < 4; i++)
+            {
+
+                if (finded == 0 && CloverMath.GetIntersectionOfTwoSegments(p1, p2, pList[i], pList[i + 1], out outP1))
+                    finded++;
+                else if (finded == 1 && CloverMath.GetIntersectionOfTwoSegments(p1, p2, pList[i], pList[i + 1], out outP2))
+                {
+                    finded++;
+                    break;
+                }
+            }
+            if (finded != 2)
+                return false;
+
+            Vector v1 = lineVi.EndPoint - Origin2Dpos;
+            Vector v2 = outP2 - outP1;
+            if (Vector.CrossProduct(v2, v1) > 0)
+            {
+                Point temp = outP1;
+                outP1 = outP2;
+                outP2 = temp;
+            }
+
+            return true;
+        }
 
 
         protected override void onEnterElement(Object element)
         {
-            
+
         }
 
         protected override void onLeaveElement(Object element)
         {
-            
+
         }
 
         protected override void onOverElement(Object element)
         {
-            
+
         }
 
         protected override void onUnselectElement(Object element)
         {
-            
+
         }
 
         protected override void onClick()
