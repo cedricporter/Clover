@@ -30,17 +30,12 @@ namespace Clover
 
         #region 进入Tucking
 
-        public void EnterTuckingMode(Vertex pickedVertex, Face nearestFace)
+        public List<Face> EnterTuckingMode(Vertex pickedVertex, Face nearestFace)
         {
             this.cloverController = CloverController.GetInstance();
 
             // 寻找同group面中拥有pickedVertex的面中最下面的那个面作为floorFace,最上面的那个面作为ceilingFace
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
-            if (this.group == null)
-            {
-                System.Windows.MessageBox.Show("找不到Groups");
-                return;
-            }
             this.pickedVertex = pickedVertex;
             this.floorFace = this.ceilingFace = nearestFace;
             foreach (Face face in group.GetFaceList())
@@ -62,6 +57,8 @@ namespace Clover
 
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
+
+            return facesInHouse;
         }
 
         #endregion

@@ -43,6 +43,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         FaceLayerStackVisual stackVi = null;
         Edge foldLine = null;
+        PaperVoid paperVoid;
         // 测试用
         //FoldingUp foldingUp = new FoldingUp();
 
@@ -55,7 +56,7 @@ namespace Clover.Tool
         public FoldTool(MainWindow mainWindow)
             : base(mainWindow)
         {
-
+            paperVoid = PaperVoid.GetInstance();
         }
 
         protected override void onEnterElement(Object element)
@@ -118,7 +119,7 @@ namespace Clover.Tool
                                 continue;
                             bgFaces.Add(leave);
                         }
-                        PaperVoid.CreateShadow(mainWindow.foldingPaperViewport, topFaces, bgFaces,
+                        paperVoid.CreateShadow(mainWindow.foldingPaperViewport, topFaces, bgFaces,
                                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
                         RenderController.GetInstance().OnRotationEndOnce = null;
                     }
@@ -183,7 +184,7 @@ namespace Clover.Tool
                     Point outP2 = new Point();
                     if (!FineIntersectionOfFoldlineAndViewport(ref outP1, ref outP2))
                         return;
-                    PaperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
+                    paperVoid.UpdateShadow(mainWindow.foldingPaperViewport, outP1, outP2,
                         mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
 
 
@@ -361,7 +362,7 @@ namespace Clover.Tool
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
-            PaperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
+            paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
         }
 
