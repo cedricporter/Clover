@@ -472,16 +472,38 @@ namespace Clover
         /// <author>kid</author>
         public static Boolean IsPointInArea(Point3D pe, Face f)
         {
-            Vector3D lastN = new Vector3D(0, 0, 0);
-            for (int i = 0; i < f.Vertices.Count; i++)
+            foreach (Vertex v in f.Vertices)
             {
-                Vector3D v1 = pe - f.Vertices[i].GetPoint3D();
-                Vector3D v2 = f.Vertices[(i + 1) % f.Vertices.Count].GetPoint3D() - pe;
-                Vector3D currN = Vector3D.CrossProduct(v1, v2);
-                if (Vector3D.DotProduct(currN, lastN) < 0)
-                    return false;
-                lastN = currN;
+                if (AreTwoPointsSameWithDeviation(pe, v.GetPoint3D()))
+                    return true;
             }
+
+           Vector3D lastN = new Vector3D(0, 0, 0);
+           for (int i = 0; i < f.Vertices.Count; i++)
+           {
+               Point3D p1 = f.Vertices[i].GetPoint3D();
+               Point3D p2 = f.Vertices[(i + 1) % f.Vertices.Count].GetPoint3D();
+               Vector3D v1 = pe - p1;
+               Vector3D v2 =  p2 - pe;
+               Vector3D currN = Vector3D.CrossProduct(v1, v2);
+               if (currN.Length < 0.0001)
+               {
+                   if (IsPointInTwoPoints(pe, p1, p2))
+                       return true;
+                   else
+                       return false;
+               }
+               if (Vector3D.DotProduct(currN, lastN) < 0)
+                   return false;
+               lastN = currN;
+           }
+           // for (int i = 0; i < f.Vertices.Count; i++)
+           // {
+           //      Vector3D v1 = pe - f.Vertices[i].GetPoint3D();
+           //      Vector3D v2 = f.Vertices[(i + 1) % f.Vertices.Count].GetPoint3D() - f.Vertices[i].GetPoint3D();
+           //      if (Vector3D.DotProduct(v1, v2) < 0)
+           //          return false;
+           // }
             return true;
         }
 
