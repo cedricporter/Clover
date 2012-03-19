@@ -222,6 +222,11 @@ namespace Clover
             // 饭重叠 very funny. ^_^
             RenderController.GetInstance().AntiOverlap();
 
+            // 测试散开
+            group = cloverController.FaceGroupLookupTable.GetGroup(newEdges[0].Face1);
+            RenderController.GetInstance().DisperseLayer(group);
+            RenderController.GetInstance().Update(group, false);
+
 
             // 释放资源
             facesAboveBase.Clear();

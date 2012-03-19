@@ -260,11 +260,23 @@ namespace Clover
         /// 更新一个已存在的面
         /// </summary>
         /// <param name="face"></param>
-        public void Update(Face face)
+        public void Update(Face face, Boolean autoUpdate = true)
         {
-            faceMeshMap[face].Geometry = NewMesh(face);
+            faceMeshMap[face].Geometry = NewMesh(face, autoUpdate);
             // 让纸张散开
             //AntiOverlap();
+        }
+
+        /// <summary>
+        /// 更新整个组的面
+        /// </summary>
+        /// <param name="group"></param>
+        public void Update(FaceGroup group, Boolean autoUpdate = true)
+        {
+            foreach (Face face in group.GetFaceList())
+            {
+                faceMeshMap[face].Geometry = NewMesh(face, autoUpdate);
+            }
         }
 
         /// <summary>
@@ -286,16 +298,19 @@ namespace Clover
         /// </summary>
         /// <param name="face"></param>
         /// <returns></returns>
-        MeshGeometry3D NewMesh(Face face)
+        MeshGeometry3D NewMesh(Face face, Boolean autoUpdate = true)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
             // 更新顶点
             foreach (Vertex v in face.Vertices)
             {
-                Point3D rp;
-                rp = UpdateRenderPoint(v);
+                //Point3D rp;
+                //rp = UpdateRenderPoint(v);
                 // 更新3d坐标
-                mesh.Positions.Add(new Point3D(rp.X, rp.Y, rp.Z));
+                if (autoUpdate)
+                    mesh.Positions.Add(UpdateRenderPoint(v));
+                else
+                    mesh.Positions.Add(v.RenderPoint);
                 // 更新纹理坐标
                 mesh.TextureCoordinates.Add(new Point(v.u, v.v));
             }
@@ -320,6 +335,9 @@ namespace Clover
             return rp;
         }
 
+        /// <summary>
+        /// 反重叠
+        /// </summary>
         public void AntiOverlap()
         {
             FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
@@ -327,13 +345,14 @@ namespace Clover
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
                 float baseval = 0;
+                //float step = 6f;
                 float step = 0.01f;
                 foreach (Face f in g.GetFaceList())
                 {
                     if (faceMeshMap.ContainsKey(f))
                     {
-                        Vector3D offset = g.Normal * baseval;
-
+                        //Vector3D offset = g.Normal * baseval;
+                        Vector3D offset = g.Normal * f.Layer * step;
                         faceMeshMap[f].Transform = new TranslateTransform3D(offset);
                         baseval += step;
                     }
@@ -348,49 +367,47 @@ namespace Clover
         }
 
         /// <summary>
-        /// 反重叠，让纸张散开
+        /// 使纸张按组的法线方向散开
         /// </summary>
-        public void AntiOverlap(FaceGroup group)
+        /// <param name="group"></param>
+        public void DisperseLayer(FaceGroup group)
         {
-            float baseval = 0;
-            float step = 0.1f;
-            foreach (Face f in group.GetFaceList())
+            if (group == null || group.GetFaceList().Count == 0)
+                return;
+            List<Face> faceList = group.GetFaceList();
+            // 重置同组所有面的渲染点坐标
+            foreach (Face face in faceList)
             {
-                if (faceMeshMap.ContainsKey(f))
+                foreach (Vertex v in face.Vertices)
                 {
-                    Vector3D offset = group.Normal * baseval;
-                    faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-                    baseval += step;
-                }
-                else
-                {
-                    //int a = 1;
-                    System.Windows.MessageBox.Show("你又2B了，faceMeshMap里面没有Group里面的face。");
+                    v.RenderPoint = new Point3D(v.X, v.Y, v.Z);
                 }
             }
+            // 以当前总层数作为依据，指定offset值
+            //int step = 6;
+            int step = 1;
+            int offset = faceList.Count / 2 * step;
+            // 从faceList的两头向中间逼近，逐层计算偏移量
+            int bottom = 0;
+            int top = faceList.Count - 1;
+            while (top >= bottom)
+            {
+                Vector3D offVec = group.Normal * -offset;
+                foreach (Vertex v in faceList[bottom].Vertices)
+                {
+                    v.RenderPoint += offVec;
+                }
 
-            //FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
+                offVec *= -1;
+                foreach (Vertex v in faceList[top].Vertices)
+                {
+                    v.RenderPoint += offVec;
+                }
 
-            //foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
-            //{
-            //    float baseval = 0;
-            //    float step = 0.01f;
-            //    foreach (Face f in g.GetFaceList())
-            //    {
-            //        if (faceMeshMap.ContainsKey(f))
-            //        {
-            //            Vector3D offset = g.Normal * baseval;
-
-            //            faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-            //            baseval += step;
-            //        }
-            //        else
-            //        {
-            //            int a =1;
-            //            //System.Windows.MessageBox.Show("你又2B了，faceMeshMap里面没有Group里面的face。");
-            //        }
-            //    }
-            //}
+                offset -= step;
+                top--;
+                bottom++;
+            }
         }
 
         #endregion
@@ -452,11 +469,11 @@ namespace Clover
         /// <param name="v"></param>
         public void AddVisualInfoToVertex(Vertex v)
         {
-            VertexInfoVisual vi = new VertexInfoVisual(v);
-            VisualController.GetSingleton().AddVisual(vi);
-            v.Update += vi.UpdateInfoCallBack;
-            //CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
-            vi.Start();
+            //VertexInfoVisual vi = new VertexInfoVisual(v);
+            //VisualController.GetSingleton().AddVisual(vi);
+            //v.Update += vi.UpdateInfoCallBack;
+            ////CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
+            //vi.Start();
         }
 
         #region 动画
