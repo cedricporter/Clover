@@ -40,7 +40,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Logo256.ico</ApplicationIcon>
+    <ApplicationIcon>NewLogo128.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="3DTools">
@@ -143,6 +143,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="NewLogo128.ico" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -200,6 +201,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="media\texture\Logo128.ico" />
+    <Resource Include="media\texture\NewLogo128.ico" />
     <Content Include="media\texture\reset.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
