@@ -603,14 +603,17 @@ namespace Clover
                     fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
                     layer++;
                 }
+                
                 // 根据是否覆盖来调整layer的值
                 for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    if (!CloverMath.IsIntersectionOfTwoFace(movedFaceGroup.GetFaceList()[movedFaceGroup.GetFaceList().Count - 1], fixedFaceGroup.GetFaceList()[i]))
                     {
                         layer--;
                     }
+                    else if (i == fixedFaceGroup.GetFaceList().Count - 1)
+                        break;
                 }
 
                 for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
@@ -638,6 +641,10 @@ namespace Clover
                     if ( !CloverMath.IsIntersectionOfTwoFace( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
                     {
                         layer++;
+                    }
+                    else if (i == 0)
+                    {
+                        break; 
                     }
                 }
 

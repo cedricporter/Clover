@@ -345,8 +345,8 @@ namespace Clover
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
                 float baseval = 0;
-                //float step = 6f;
-                float step = 0.01f;
+                float step = 6f;
+               // float step = 0.01f;
                 foreach (Face f in g.GetFaceList())
                 {
                     if (faceMeshMap.ContainsKey(f))

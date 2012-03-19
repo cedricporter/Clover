@@ -193,13 +193,14 @@ namespace Clover.FoldingSystemNew
         /// </summary>
         private bool UpdateLayerInfoAfterTuckIn()
         {
-            List<Face> facesContainsCeiling = cloverController.FaceGroupLookupTable.GetGroup(ceilingFace.LeftChild).GetFaceList();
+            FaceGroup currGroup = cloverController.FaceGroupLookupTable.GetGroup(ceilingFace.LeftChild);
+            List<Face> facesContainsCeiling = currGroup.GetFaceList();
             List<Face> facesAboveCeiling = new List<Face>();
             
             // 找到当前正确的ceilingFace
             foreach (Face face in facesContainsCeiling)
             {
-                if (face.Layer == facesContainsCeiling.Count / 2 - 1)
+                if (face.Layer == ceilingFace.Layer)
                 {
                     ceilingFace = face;
                     break;
@@ -212,7 +213,7 @@ namespace Clover.FoldingSystemNew
                     facesAboveCeiling.Add(face);
             }
 
-            // 修订ceilingFace的层数到最高层, 且ceilingFace的层数一定为偶数
+            // 修订ceilingFace的层数到最高层, 且ceilingFace的层数一定为奇数
             ceilingFace.Layer += facesAboveCeiling.Count();
             if (ceilingFace.Layer % 2 == 0)
                 return false;
@@ -255,6 +256,11 @@ namespace Clover.FoldingSystemNew
 
             // 反重叠
             RenderController.GetInstance().AntiOverlap();
+
+            // 测试散开
+           // group = cloverController.FaceGroupLookupTable.GetGroup(newEdges[0].Face1);
+           // RenderController.GetInstance().DisperseLayer(group);
+           // RenderController.GetInstance().Update(group, false);
 
             // 释放资源
             facesInHouse.Clear();
