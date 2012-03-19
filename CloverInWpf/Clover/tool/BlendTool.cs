@@ -38,9 +38,6 @@ namespace Clover.Tool
             DoingNothing, Blending
         }
         FoldingMode mode = FoldingMode.DoingNothing;
-
-        // 仅供测试用
-        Clover.AbstractLayer.Blending blendingTest = new Clover.AbstractLayer.Blending();
         
         /// <summary>
         /// 构造函数
@@ -119,7 +116,7 @@ namespace Clover.Tool
                 EnterBlending();
 
                 // 向下层传递数据
-                currDegree = blendingTest.EnterBlendingMode(pickedVertex, nearestFace);
+                currDegree = CloverController.GetInstance().Blending.EnterBlendingMode(pickedVertex, nearestFace);
 
             }
         }
@@ -141,7 +138,7 @@ namespace Clover.Tool
             offsetX = RotateDirectionConverter(offsetX);
 
             // 传给下一层
-            blendingTest.OnDrag((int)offsetX);
+            CloverController.GetInstance().Blending.OnDrag((int)offsetX);
         }
 
         protected override void onClick()
@@ -199,7 +196,7 @@ namespace Clover.Tool
             blendAngleVi = null;
 
             // 向下层传递退出Blending模式
-            blendingTest.ExitBlendingMode();
+            CloverController.GetInstance().Blending.ExitBlendingMode();
         }
 
         /// <summary>
