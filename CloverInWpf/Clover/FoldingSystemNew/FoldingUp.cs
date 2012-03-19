@@ -221,8 +221,10 @@ namespace Clover
         public void ExitFoldingMode()
         {
             // 应用折叠
-            Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
-            newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, foldLine);
+            //Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
+            if (currFoldLine == null)
+                return;
+            newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, currFoldLine);
             FindFaceWithoutFoldLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
 
@@ -253,7 +255,7 @@ namespace Clover
             facesWithFoldLine.Clear();
             facesWithoutFoldLine.Clear();
             newEdges.Clear();
-            lastFoldLine = null;
+            lastFoldLine = currFoldLine = null;
         }
 
         #endregion
