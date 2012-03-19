@@ -24,6 +24,7 @@ namespace Clover.FoldingSystemNew
         Point3D originPoint;
         Edge currTuckLine = null;
         Edge lastTuckLine = null;
+        List<Edge> newEdges = new List<Edge>();
 
         #endregion
 
@@ -69,11 +70,17 @@ namespace Clover.FoldingSystemNew
 
         public Edge OnDrag(Point3D projectionPoint)
         {
+            // 预定义
+            FaceGroupLookupTable faceLookupTable = cloverController.FaceGroupLookupTable;
             this.projectionPoint = projectionPoint;
             facesWithTuckLine.Clear();
 
             // 第零步，如果floorFace和ceilingFace是同一个，那就说明不可能进行tucking
+            // 如果面所在组的层数为非偶数，也不能够进行tucking in
             if (floorFace == ceilingFace)
+                return null;
+
+            if (faceLookupTable.GetGroup(ceilingFace).GetFaceList().Count % 2 != 0)
                 return null;
 
             // 第一步，作折线
@@ -96,6 +103,10 @@ namespace Clover.FoldingSystemNew
                 return null;
 
             // 第三步，对facesWithTuckLine中的面进行逐个判定，只要有一个面判定失败，则判定失败。
+            // 第一小步，首先折线应该至少穿过两个面 
+            if (facesWithTuckLine.Count < 2)
+                return null;
+            // 第二小步，暂时还没有想到
 
             // 第四步，求currTuckLine与ceilingFace的交点
             Edge returnEdge = CloverTreeHelper.GetEdgeCrossedFace(ceilingFace, currTuckLine);
@@ -111,12 +122,141 @@ namespace Clover.FoldingSystemNew
             return returnEdge;
         }
 
+        /// <summary>
+        /// 判定移动的面
+        /// </summary>
+        /// <param name="pickedFace"></param>
+        /// <param name="foldingLine"></param>
+        public bool FindFaceWithoutTuckLine()
+        {
+            // 查找cut完成后所有要移动的面
+            List<Face> tempFaces = new List<Face>();
+            foreach (Face face in facesWithTuckLine)
+            {
+                if (face.LeftChild != null)
+                    tempFaces.Add(face.LeftChild);
+                if (face.RightChild != null)
+                    tempFaces.Add(face.RightChild);
+            }
+            if (tempFaces.Count == 0)
+                return false;
+
+            // 从tempFaces中剔除拥有PickedVertex的那些Face
+            // 同时tempFaces里面应该有与该面同组的并在其上层且没有折线经过的面
+            List<Face> facesInSameGroup = cloverController.FaceGroupLookupTable.GetGroup(floorFace).GetFaceList();
+            foreach (Face face in facesInSameGroup)
+            {
+                if (face.Layer > floorFace.Layer && !facesWithTuckLine.Contains(face))
+                    tempFaces.Add(face);
+            }
+
+            List<Face> facesWithPickedVertex = CloverTreeHelper.FindFacesFromVertex(tempFaces, pickedVertex);
+            tempFaces = tempFaces.Except(facesWithPickedVertex).ToList();
+
+            foreach (Face face in tempFaces)
+            {
+                foreach (Face faceWPV in facesWithPickedVertex)
+                {
+                    if (CloverMath.IsIntersectionOfTwoFace(face, faceWPV))
+                    {
+                        bool isClosed = false;
+                        // 要除去折线的所有边
+                        foreach (Edge e in faceWPV.Edges)
+                        {
+                            //if (e.Face1 == face || e.Face2 == face)
+                            if ((e.Face1 == face || e.Face2 == face) && !newEdges.Contains(e))
+                            {
+                                isClosed = true;
+                                break;
+                            }
+                        }
+                        if (isClosed)
+                        {
+                            facesWithoutTuckLine.Add(face);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foreach (Face face in facesWithPickedVertex)
+            {
+                if (!facesWithoutTuckLine.Contains(face))
+                    facesWithoutTuckLine.Add(face);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 两边对称的进行tuck in层的调整 
+        /// </summary>
+        private bool UpdateLayerInfoAfterTuckIn()
+        {
+            List<Face> facesContainsCeiling = cloverController.FaceGroupLookupTable.GetGroup(ceilingFace.LeftChild).GetFaceList();
+            List<Face> facesAboveCeiling = new List<Face>();
+            
+            // 找到当前正确的ceilingFace
+            foreach (Face face in facesContainsCeiling)
+            {
+                if (face.Layer == facesContainsCeiling.Count / 2 - 1)
+                {
+                    ceilingFace = face;
+                    break;
+                }
+            }
+            
+            foreach (Face face in facesContainsCeiling)
+            {
+                if (face.Layer > ceilingFace.Layer)
+                    facesAboveCeiling.Add(face);
+            }
+
+            // 修订ceilingFace的层数到最高层, 且ceilingFace的层数一定为偶数
+            ceilingFace.Layer += facesAboveCeiling.Count();
+            if (ceilingFace.Layer % 2 == 0)
+                return false;
+            
+            // 先将所有高于ceilingFace的面按照层进行排序
+            facesAboveCeiling.Sort(new layerComparer());
+            
+           // 将面中的层数进行交换
+            for (int i = 0, j = (facesAboveCeiling.Count() - 1); i <= j; i++, j--)
+            {
+                facesAboveCeiling[i].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
+                facesAboveCeiling[j].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
+                facesAboveCeiling[i].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
+            }
+
+            foreach (Face face in facesAboveCeiling)
+            {
+                face.Layer--; 
+            }
+
+            return true; 
+        }
         #endregion
 
         #region 退出Tucking
 
         public void ExitTuckingMode()
         {
+            // 应用折叠
+            Edge tuckLine = CloverTreeHelper.GetEdgeCrossedFace(floorFace, currTuckLine);
+            newEdges = cloverController.FoldingSystem.CutFaces(facesWithTuckLine, tuckLine);
+            FindFaceWithoutTuckLine();
+            cloverController.FoldingSystem.RotateFaces(facesWithoutTuckLine, currTuckLine, 180);
+
+            // 更新组
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+
+            // 更新层信息
+            UpdateLayerInfoAfterTuckIn();
+
+            // 反重叠
+            RenderController.GetInstance().AntiOverlap();
+
+            // 释放资源
             facesInHouse.Clear();
             facesNotInHouse.Clear();
             facesWithTuckLine.Clear();

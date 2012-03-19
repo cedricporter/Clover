@@ -452,11 +452,11 @@ namespace Clover
         /// <param name="v"></param>
         public void AddVisualInfoToVertex(Vertex v)
         {
-            VertexInfoVisual vi = new VertexInfoVisual(v);
-            VisualController.GetSingleton().AddVisual(vi);
-            v.Update += vi.UpdateInfoCallBack;
-            //CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
-            vi.Start();
+            //VertexInfoVisual vi = new VertexInfoVisual(v);
+            //VisualController.GetSingleton().AddVisual(vi);
+            //v.Update += vi.UpdateInfoCallBack;
+            ////CubeNavigator.GetInstance().Update += vi.UpdateInfoCallBack;
+            //vi.Start();
         }
 
         #region 动画

@@ -8,6 +8,17 @@ using System.Windows.Media.Media3D;
 namespace Clover
 {
     /// <summary>
+    /// 面层的层比较器
+    /// </summary>
+    public class layerComparer:IComparer<Face>
+    {
+            public int Compare(Face x, Face y) 
+            {
+                return (x.Layer.CompareTo(y.Layer));
+            }
+    };
+
+    /// <summary>
     /// 提供一些使用的查询折纸结构的工具函数
     /// </summary>
     class CloverTreeHelper
