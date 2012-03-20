@@ -619,6 +619,10 @@ namespace Clover
                     {
                         layer--;
                     }
+                    else if ( i == fixedFaceGroup.GetFaceList().Count - 1 )
+                    {
+                        break;
+                    }
                 }
 
                 for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
@@ -646,6 +650,10 @@ namespace Clover
                     if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
                     {
                         layer++;
+                    }
+                    else if (i == 0)
+                    {
+                        break;
                     }
                 }
 
