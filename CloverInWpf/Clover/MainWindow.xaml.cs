@@ -373,6 +373,7 @@ clover.UpdateFaceGroupTable()
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
+                    cloverController.RenderController.SpreadOutOut();
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
@@ -385,8 +386,16 @@ clover.UpdateFaceGroupTable()
                     break;
 
             }
+        }
 
-            //cloverController.RenderController.UpdatePosition();
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F4:
+                    cloverController.RenderController.SpreadOutIn();
+                    break;
+            }
         }
 
         #endregion
@@ -773,7 +782,6 @@ clover.UpdateFaceGroupTable()
         }
 
         #endregion
-        
 
         
 
