@@ -77,7 +77,7 @@ namespace Clover
             utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();
 
-            //BlendAngleVisual vi = new BlendAngleVisual(0, new Point(100, 100), new Point(100, 200));
+            //TuckTriangleVisual vi = new TuckTriangleVisual(new Point(), new Point(200, 0), new Point(0, 200), new SolidColorBrush(Colors.Red));
             //vi.Start();
             //visualController.AddVisual(vi);
 

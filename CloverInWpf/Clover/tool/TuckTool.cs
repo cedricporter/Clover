@@ -36,6 +36,7 @@ namespace Clover.Tool
         DashLineVisual tuckLineVi = null;
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
+        TuckTriangleVisual tuckTriangleVi = null;
         PaperVoid paperVoid;
 
         // 测试用
@@ -171,11 +172,14 @@ namespace Clover.Tool
             UpdateTuckLine(tuckLine);
             // 更新提示信息
             UpdateFoldLineInfo(tuckLine);
+            // 更新虚像三角形
+            UpdateTuckTriangle(tuckLine);
         }
 
         void EnterTuckingIn()
         {
             mode = FoldingMode.TuckingIn;
+            VisualController visualController = VisualController.GetSingleton();
 
             // 计算旋转
             Quaternion quat = CalculateFoldingUpRotation();
@@ -183,22 +187,26 @@ namespace Clover.Tool
             RenderController.GetInstance().BeginRotationSlerp(quat);
             // 显示模式
             currentModeVi = new CurrentModeVisual("Tucking In Mode");
-            VisualController.GetSingleton().AddVisual(currentModeVi);
+            visualController.AddVisual(currentModeVi);
             currentModeVi.Start();
             // 显示连线提示
             lineVi = new DashLineVisual(Origin2Dpos, currMousePos, (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
-            VisualController.GetSingleton().AddVisual(lineVi);
+            visualController.AddVisual(lineVi);
             lineVi.Start();
             tuckLineVi = new DashLineVisual(new Point(0, 0), new Point(0, 0), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrush"));
-            VisualController.GetSingleton().AddVisual(tuckLineVi);
+            visualController.AddVisual(tuckLineVi);
             tuckLineVi.Start();
             // 显示折线提示
             foldLineInfoVi1 = new FoldLinePercentageVisual(new Point(-100, -100), new Point(-100, -100), 0);
             foldLineInfoVi2 = new FoldLinePercentageVisual(new Point(-100, -100), new Point(-100, -100), 0);
-            VisualController.GetSingleton().AddVisual(foldLineInfoVi1);
-            VisualController.GetSingleton().AddVisual(foldLineInfoVi2);
+            visualController.AddVisual(foldLineInfoVi1);
+            visualController.AddVisual(foldLineInfoVi2);
             foldLineInfoVi1.Start();
             foldLineInfoVi2.Start();
+            // 显示虚影三角形
+            tuckTriangleVi = new TuckTriangleVisual(new Point(), new Point(), new Point(), (SolidColorBrush)App.Current.FindResource("VisualElementBlueBrushTran"));
+            visualController.AddVisual(tuckTriangleVi);
+            tuckTriangleVi.Start();
         }
 
         void ExitTuckingIn()
@@ -216,6 +224,8 @@ namespace Clover.Tool
             foldLineInfoVi1 = null;
             foldLineInfoVi2.End();
             foldLineInfoVi2 = null;
+            tuckTriangleVi.End();
+            tuckTriangleVi = null;
         }
 
         /// <summary>
@@ -323,7 +333,7 @@ namespace Clover.Tool
         /// <param name="edge"></param>
         void UpdateTuckLine(Edge edge)
         {
-            if (edge == null || tuckLineVi == null)
+            if (edge == null)
                 return;
             Point3D p1 = edge.Vertex1.GetPoint3D();
             Point3D p2 = edge.Vertex2.GetPoint3D();
@@ -374,6 +384,24 @@ namespace Clover.Tool
             foldLineInfoVi2.Point2 = new Point(p4.X, p4.Y);
             foldLineInfoVi1.Offset = offset1;
             foldLineInfoVi2.Offset = offset2;
+        }
+
+        /// <summary>
+        /// 更新tucking三角形虚像
+        /// </summary>
+        /// <param name="edge"></param>
+        void UpdateTuckTriangle(Edge edge)
+        {
+            if (edge == null)
+                return;
+            Point3D p1 = edge.Vertex1.GetPoint3D();
+            Point3D p2 = edge.Vertex2.GetPoint3D();
+            p1 *= Utility.GetInstance().To2DMat;
+            p2 *= Utility.GetInstance().To2DMat;
+            Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
+            tuckTriangleVi.P1 = new Point(p1.X, p1.Y);
+            tuckTriangleVi.P2 = new Point(p2.X, p2.Y);
+            tuckTriangleVi.P3 = new Point(visualPoint.X, visualPoint.Y);
         }
 
         /// <summary>
