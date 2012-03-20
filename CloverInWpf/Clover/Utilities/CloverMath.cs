@@ -573,7 +573,6 @@ namespace Clover
 
 
             bool IsTangency  = false;
-            bool flag = true;
             // 判断是不是相切
             if( IsTwoFaceConected(f1, f2))
             {
