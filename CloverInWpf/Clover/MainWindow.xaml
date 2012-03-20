@@ -386,19 +386,6 @@
                 <Image MouseUp="Arrow_MouseUp" MouseLeftButtonDown="RightArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/rightarrow.png" Opacity="0.5" Height="46" Canvas.Left="30" Canvas.Top="30"/>
                 <Image MouseLeftButtonDown="ResetArrow_Press" MouseEnter="Arrow_MouseEnter" MouseLeave="Arrow_MouseLeave" Source="media/texture/reset.png" Opacity="0.5" Height="40" Canvas.Left="3"  Canvas.Top="34"/>
             </Canvas>
-            
-            <!-- testsuck -->
-            <Image x:Name="TestSuckImage" Panel.ZIndex="10">
-                <Image.RenderTransform>             
-                    <TransformGroup>
-                        <ScaleTransform ScaleX="-1"/>
-                        <TranslateTransform X="{Binding Path=ActualWidth,ElementName=MainContainer}"/>
-                    </TransformGroup>
-                </Image.RenderTransform>
-                <!--<Image.Clip>
-                    <EllipseGeometry Center="300, 300" RadiusX="50" RadiusY="100"/>
-                </Image.Clip>-->
-            </Image>
             <!-- 纸张虚像 -->
             <Image x:Name="VoidPaperBgImg" Panel.ZIndex="11"></Image>
             <Image x:Name="VoidPaperTopImgFront" Panel.ZIndex="12"></Image>

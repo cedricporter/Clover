@@ -77,10 +77,6 @@ namespace Clover
             utility = Utility.GetInstance();
             utility.UpdateWorlCameMat();
 
-            //TuckTriangleVisual vi = new TuckTriangleVisual(new Point(), new Point(200, 0), new Point(0, 200), new SolidColorBrush(Colors.Red));
-            //vi.Start();
-            //visualController.AddVisual(vi);
-
             // 注册回调函数
             CompositionTarget.Rendering += MainLoop;
             MouseMove += Window_TranslatePaper;
@@ -121,7 +117,7 @@ namespace Clover
         {
             CloverController.InitializeInstance(this);
             cloverController = CloverController.GetInstance();
-            cloverController.Initialize(100, 100);
+            cloverController.Initialize(width, height);
             if (foldingPaperViewport.Children.Contains(cloverController.Model))
                 foldingPaperViewport.Children.Remove(cloverController.Model);
             foldingPaperViewport.Children.Add(cloverController.Model);
@@ -377,19 +373,6 @@ clover.UpdateFaceGroupTable()
                     cloverController.ShadowSystem.Redo();
                     break;
                 case Key.F4:
-                    //PaperVoid.CreateShadow(foldingPaperViewport, cloverController.FaceLeaves, null,
-                    //    VoidPaperTopImgFront, VoidPaperBgImg);
-                    break;
-                //case Key.Up:
-                //    cloverController.Update(0, 10, null, null);
-                //    //cloverController.UpdateVertexPosition(null, 0, 10);
-                //    break;
-                //case Key.Down:
-                //    cloverController.Update(0, -10, null, null);
-                //    //cloverController.UpdateVertexPosition(null, 0, -10);
-                //    break;
-                case Key.Left:
-                    //cloverController.UpdateVertexPosition(null, -10, 0);
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
@@ -511,7 +494,7 @@ clover.UpdateFaceGroupTable()
 
         private void NewPaper_New(object sender, RoutedEventArgs e)
         {
-            InitializePaper(100, 100);
+            InitializePaper(Single.Parse(NewPaperWidth.Text), Single.Parse(NewPaperHeight.Text));
             NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 
