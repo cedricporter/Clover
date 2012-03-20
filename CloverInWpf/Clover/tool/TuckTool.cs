@@ -38,6 +38,7 @@ namespace Clover.Tool
         FoldLinePercentageVisual foldLineInfoVi2 = null;
         TuckTriangleVisual tuckTriangleVi = null;
         PaperVoid paperVoid;
+        Point projectionPoint2D, foldLinePointA2D, foldLinePointB2D; 
 
         // 测试用
         //Tucking tuckingIn = new Tucking();
@@ -111,11 +112,6 @@ namespace Clover.Tool
                 Boolean isAttached = AbstractLayer.Magnet.PerformVertexAttach(projectionPoint, nearestFace, out nearestPoint);
                 if (isAttached)
                     projectionPoint = nearestPoint;
-                // 视觉效果
-                Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
-                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
-                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
-                lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
                 // 传给下层
                 this.tuckLine = CloverController.GetInstance().Tucking.OnDrag(projectionPoint);
                 // 更新虚像。。。
@@ -157,10 +153,22 @@ namespace Clover.Tool
             if (mode == FoldingMode.DoingNothing)
                 return;
 
-            // 更新视觉坐标。。
-            Point3D p3d = pickedVertex.GetPoint3D();
-            p3d *= Utility.GetInstance().To2DMat;
+
+            // 更新各点的2D坐标 
+            Matrix3D to2DMat = Utility.GetInstance().To2DMat;
+            Point3D p3d;
+            p3d = pickedVertex.GetPoint3D() * to2DMat;
             Origin2Dpos = new Point(p3d.X, p3d.Y);
+            p3d = projectionPoint * to2DMat;
+            projectionPoint2D = new Point(p3d.X, p3d.Y);
+            if (tuckLine != null)
+            {
+                p3d = tuckLine.Vertex1.GetPoint3D() * to2DMat;
+                foldLinePointA2D = new Point(p3d.X, p3d.Y);
+                p3d = tuckLine.Vertex2.GetPoint3D() * to2DMat;
+                foldLinePointB2D = new Point(p3d.X, p3d.Y);
+            }
+            // 蓝点视觉效果
             if (lineVi != null)
                 lineVi.StartPoint = Origin2Dpos;
             if (currOveredElementVi != null)
@@ -168,12 +176,16 @@ namespace Clover.Tool
                 (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
                 (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
             }
+            // 红点视觉效果
+            (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = projectionPoint2D.X - 5;
+            (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = projectionPoint2D.Y;
+            lineVi.EndPoint = projectionPoint2D;
             // 更新折线显示
-            UpdateTuckLine(tuckLine);
+            UpdateTuckLine();
             // 更新提示信息
-            UpdateFoldLineInfo(tuckLine);
+            UpdateFoldLineInfo();
             // 更新虚像三角形
-            UpdateTuckTriangle(tuckLine);
+            UpdateTuckTriangle();
         }
 
         void EnterTuckingIn()
@@ -331,34 +343,30 @@ namespace Clover.Tool
         /// 更新折线
         /// </summary>
         /// <param name="edge"></param>
-        void UpdateTuckLine(Edge edge)
+        void UpdateTuckLine()
         {
-            if (edge == null)
+            if (tuckLine == null)
                 return;
-            Point3D p1 = edge.Vertex1.GetPoint3D();
-            Point3D p2 = edge.Vertex2.GetPoint3D();
-            p1 *= Utility.GetInstance().To2DMat;
-            p2 *= Utility.GetInstance().To2DMat;
-            tuckLineVi.StartPoint = new Point(p1.X, p1.Y);
-            tuckLineVi.EndPoint = new Point(p2.X, p2.Y);
+            tuckLineVi.StartPoint = foldLinePointA2D;
+            tuckLineVi.EndPoint = foldLinePointB2D;
         }
 
         /// <summary>
         /// 更新折线提示
         /// </summary>
         /// <param name="edge"></param>
-        void UpdateFoldLineInfo(Edge edge)
+        void UpdateFoldLineInfo()
         {
-            if (edge == null)
+            if (tuckLine == null)
                 return;
             KeyValuePair<Vertex, Edge> pair1 = new KeyValuePair<Vertex, Edge>();
             KeyValuePair<Vertex, Edge> pair2 = new KeyValuePair<Vertex, Edge>();
             foreach (Edge e in nearestFace.Edges)
             {
-                if (pair1.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
-                    pair1 = new KeyValuePair<Vertex, Edge>(edge.Vertex1, e);
-                if (pair2.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
-                    pair2 = new KeyValuePair<Vertex, Edge>(edge.Vertex2, e);
+                if (pair1.Key == null && CloverMath.IsPointInTwoPoints(tuckLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair1 = new KeyValuePair<Vertex, Edge>(tuckLine.Vertex1, e);
+                if (pair2.Key == null && CloverMath.IsPointInTwoPoints(tuckLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair2 = new KeyValuePair<Vertex, Edge>(tuckLine.Vertex2, e);
             }
             if (pair1.Key == null || pair2.Key == null)
                 return;
@@ -390,18 +398,13 @@ namespace Clover.Tool
         /// 更新tucking三角形虚像
         /// </summary>
         /// <param name="edge"></param>
-        void UpdateTuckTriangle(Edge edge)
+        void UpdateTuckTriangle()
         {
-            if (edge == null)
+            if (tuckLine == null)
                 return;
-            Point3D p1 = edge.Vertex1.GetPoint3D();
-            Point3D p2 = edge.Vertex2.GetPoint3D();
-            p1 *= Utility.GetInstance().To2DMat;
-            p2 *= Utility.GetInstance().To2DMat;
-            Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
-            tuckTriangleVi.P1 = new Point(p1.X, p1.Y);
-            tuckTriangleVi.P2 = new Point(p2.X, p2.Y);
-            tuckTriangleVi.P3 = new Point(visualPoint.X, visualPoint.Y);
+            tuckTriangleVi.P1 = foldLinePointA2D;
+            tuckTriangleVi.P2 = foldLinePointB2D;
+            tuckTriangleVi.P3 = projectionPoint2D;
         }
 
         /// <summary>

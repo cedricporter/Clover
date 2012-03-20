@@ -41,11 +41,9 @@ namespace Clover.Tool
         DashLineVisual foldLineVi = null;
         FoldLinePercentageVisual foldLineInfoVi1 = null;
         FoldLinePercentageVisual foldLineInfoVi2 = null;
-        FaceLayerStackVisual stackVi = null;
         Edge foldLine = null;
+        Point projectionPoint2D, foldLinePointA2D, foldLinePointB2D;
         PaperVoid paperVoid;
-        // 测试用
-        //FoldingUp foldingUp = new FoldingUp();
 
         enum FoldingMode
         {
@@ -86,19 +84,8 @@ namespace Clover.Tool
                 // 按照道理nearestFace是不可能为空的
                 FindNearestFace(faces);
 
-                // 判定法向量正反
-                //bool isPositive;
-                //Vector3D normal = nearestFace.Normal * RenderController.GetInstance().Entity.Transform.Value;
-                //if (0 < Vector3D.DotProduct(normal, new Vector3D(0, 0, 1)))
-                //    isPositive = true;
-                //else
-                //    isPositive = false;
-
                 // 进入折叠模式，传递给下层
-                //CloverController.GetInstance().FoldingUp.EnterFoldingMode(nearestFace, pickedVertex);
                 List<Face> topFaces = CloverController.GetInstance().FoldingUp.EnterFoldingMode(pickedVertex, nearestFace);
-                // 隐藏实像
-                //RenderController.GetInstance().Entity.Content = null;
 
                 // 锁定视角
                 LockViewport(true);
@@ -170,14 +157,7 @@ namespace Clover.Tool
                     Boolean isAttached = AbstractLayer.Magnet.PerformVertexAttach(projectionPoint, nearestFace, out nearestPoint);
                     if (isAttached)
                         projectionPoint = nearestPoint;
-                    // 视觉效果
-                    Point3D visualPoint = projectionPoint * Utility.GetInstance().To2DMat;
-                    (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = visualPoint.X - 5;
-                    (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = visualPoint.Y;
-                    lineVi.EndPoint = new Point(visualPoint.X, visualPoint.Y);
-
                     // 传给下一层处理
-                    //Edge edge = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
                     this.foldLine = CloverController.GetInstance().FoldingUp.OnDrag(projectionPoint);
                     // 更新虚像。。。
                     Point outP1 = new Point();
@@ -198,10 +178,21 @@ namespace Clover.Tool
         {
             if (mode != FoldingMode.DoingNothing)
             {
-                // 更新视觉坐标。。
-                Point3D p3d = pickedVertex.GetPoint3D();
-                p3d *= Utility.GetInstance().To2DMat;
+                // 更新各点的2D坐标 
+                Matrix3D to2DMat = Utility.GetInstance().To2DMat;
+                Point3D p3d;
+                p3d = pickedVertex.GetPoint3D() * to2DMat;
                 Origin2Dpos = new Point(p3d.X, p3d.Y);
+                p3d = projectionPoint * to2DMat;
+                projectionPoint2D = new Point(p3d.X, p3d.Y);
+                if (foldLine != null)
+                {
+                    p3d = foldLine.Vertex1.GetPoint3D() * to2DMat;
+                    foldLinePointA2D = new Point(p3d.X, p3d.Y);
+                    p3d = foldLine.Vertex2.GetPoint3D() * to2DMat;
+                    foldLinePointB2D = new Point(p3d.X, p3d.Y);
+                }
+                // 蓝点视觉效果
                 if (lineVi != null)
                     lineVi.StartPoint = Origin2Dpos;
                 if (currOveredElementVi != null)
@@ -209,10 +200,14 @@ namespace Clover.Tool
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.X = Origin2Dpos.X - 5;
                     (currOveredElementVi as VertexHeightLightVisual).TranslateTransform.Y = Origin2Dpos.Y;
                 }
+                // 红点视觉效果
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.X = projectionPoint2D.X - 5;
+                (currSelectedElementVi as VertexHeightLightVisual).TranslateTransform.Y = projectionPoint2D.Y;
+                lineVi.EndPoint = projectionPoint2D;
                 // 更新折线显示
-                UpdateFoldLine(foldLine);
+                UpdateFoldLine();
                 // 更新提示信息
-                UpdateFoldLineInfo(foldLine);
+                UpdateFoldLineInfo();
             }
         }
 
@@ -319,16 +314,12 @@ namespace Clover.Tool
         /// 更新折线
         /// </summary>
         /// <param name="edge"></param>
-        void UpdateFoldLine(Edge edge)
+        void UpdateFoldLine()
         {
-            if (edge == null || foldLineVi == null)
+            if (foldLine == null)
                 return;
-            Point3D p1 = edge.Vertex1.GetPoint3D();
-            Point3D p2 = edge.Vertex2.GetPoint3D();
-            p1 *= Utility.GetInstance().To2DMat;
-            p2 *= Utility.GetInstance().To2DMat;
-            foldLineVi.StartPoint = new Point(p1.X, p1.Y);
-            foldLineVi.EndPoint = new Point(p2.X, p2.Y);
+            foldLineVi.StartPoint = foldLinePointA2D;
+            foldLineVi.EndPoint = foldLinePointB2D;
         }
 
         /// <summary>
@@ -339,10 +330,7 @@ namespace Clover.Tool
             if (mode == FoldingMode.DoingNothing)
                 return;
 
-            if (mode == FoldingMode.FoldingUp)
-                ExitFoldingUp();
-            //else if (mode == FoldingMode.Blending)
-            //    ExitBlending();
+            ExitFoldingUp();
 
             currSelectedElementVi.End();
             currSelectedElementVi = null;
@@ -355,15 +343,14 @@ namespace Clover.Tool
             IsOnPressLocked = false;
             LockViewport(false);
 
-            mode = FoldingMode.DoingNothing;
-
-            //CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
             paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
+
+            mode = FoldingMode.DoingNothing;
         }
 
         /// <summary>
@@ -394,16 +381,6 @@ namespace Clover.Tool
             VisualController.GetSingleton().AddVisual(foldLineInfoVi2);
             foldLineInfoVi1.Start();
             foldLineInfoVi2.Start();
-            // 显示纸张的层次栈
-            //if (canSelectedFaces.Count > 1)
-            //{
-            //    stackVi = new FaceLayerStackVisual(canSelectedFaces, new Point(currMousePos.X + 30, currMousePos.Y));
-            //    VisualController.GetSingleton().AddVisual(stackVi);
-            //    stackVi.Start();
-            //}
-            stackVi = new FaceLayerStackVisual(canSelectedFaces, new Point(currMousePos.X + 30, currMousePos.Y));
-            VisualController.GetSingleton().AddVisual(stackVi);
-            stackVi.Start();
         }
 
         /// <summary>
@@ -421,34 +398,24 @@ namespace Clover.Tool
             foldLineInfoVi1 = null;
             foldLineInfoVi2.End();
             foldLineInfoVi2 = null;
-            //if (canSelectedFaces.Count > 1)
-            //{
-            //    stackVi.End();
-            //    stackVi = null;
-            //}
-            stackVi.End();
-            stackVi = null;
-
-            // 更新组
-            //CloverController.GetInstance().UpdateFaceGroupTable();
         }
 
         /// <summary>
         /// 更新折线提示
         /// </summary>
         /// <param name="edge"></param>
-        void UpdateFoldLineInfo(Edge edge)
+        void UpdateFoldLineInfo()
         {
-            if (edge == null)
+            if (foldLine == null)
                 return;
             KeyValuePair<Vertex, Edge> pair1 = new KeyValuePair<Vertex, Edge>();
             KeyValuePair<Vertex, Edge> pair2 = new KeyValuePair<Vertex, Edge>();
             foreach (Edge e in nearestFace.Edges)
             {
-                if (pair1.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
-                    pair1 = new KeyValuePair<Vertex, Edge>(edge.Vertex1, e);
-                if (pair2.Key == null && CloverMath.IsPointInTwoPoints(edge.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
-                    pair2 = new KeyValuePair<Vertex, Edge>(edge.Vertex2, e);
+                if (pair1.Key == null && CloverMath.IsPointInTwoPoints(foldLine.Vertex1.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair1 = new KeyValuePair<Vertex, Edge>(foldLine.Vertex1, e);
+                if (pair2.Key == null && CloverMath.IsPointInTwoPoints(foldLine.Vertex2.GetPoint3D(), e.Vertex1.GetPoint3D(), e.Vertex2.GetPoint3D(), 0.01))
+                    pair2 = new KeyValuePair<Vertex, Edge>(foldLine.Vertex2, e);
             }
             if (pair1.Key == null || pair2.Key == null)
                 return;
@@ -476,37 +443,37 @@ namespace Clover.Tool
             foldLineInfoVi2.Offset = offset2;
         }
 
-        /// <summary>
-        /// 如果有多层存在，将纸张散开以供用户选择
-        /// </summary>
-        void SpreadOut()
-        {
-            if (canSelectedFaces.Count < 2)
-                return;
-            //计算散开的方向
-            Vector3D dir, v1, v2;
-            Point3D p0, p1, p2;
-            p0 = p1 = p2 = new Point3D();
-            int count = nearestFace.Vertices.Count;
-            for (int i = 0; i < count; i++)
-            {
-                if (pickedVertex.GetPoint3D() == nearestFace.Vertices[i].GetPoint3D())
-                {
-                    p0 = pickedVertex.GetPoint3D();
-                    p1 = nearestFace.Vertices[(i + count - 1) % count].GetPoint3D();
-                    p2 = nearestFace.Vertices[(i + 1) % count].GetPoint3D();
-                    break;
-                }
-            }
-            v1 = p1 - p0;
-            v1.Normalize();
-            v2 = p2 - p0;
-            v2.Normalize();
-            dir = v1 + v2;
-            dir.Normalize();
-            // 计算散开的位移
+        ///// <summary>
+        ///// 如果有多层存在，将纸张散开以供用户选择
+        ///// </summary>
+        //void SpreadOut()
+        //{
+        //    if (canSelectedFaces.Count < 2)
+        //        return;
+        //    //计算散开的方向
+        //    Vector3D dir, v1, v2;
+        //    Point3D p0, p1, p2;
+        //    p0 = p1 = p2 = new Point3D();
+        //    int count = nearestFace.Vertices.Count;
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        if (pickedVertex.GetPoint3D() == nearestFace.Vertices[i].GetPoint3D())
+        //        {
+        //            p0 = pickedVertex.GetPoint3D();
+        //            p1 = nearestFace.Vertices[(i + count - 1) % count].GetPoint3D();
+        //            p2 = nearestFace.Vertices[(i + 1) % count].GetPoint3D();
+        //            break;
+        //        }
+        //    }
+        //    v1 = p1 - p0;
+        //    v1.Normalize();
+        //    v2 = p2 - p0;
+        //    v2.Normalize();
+        //    dir = v1 + v2;
+        //    dir.Normalize();
+        //    // 计算散开的位移
 
-        }
+        //}
 
         /// <summary>
         /// 寻找折线与视口的交点
@@ -558,37 +525,6 @@ namespace Clover.Tool
 
             return true;
         }
-
-        #region Blending
-
-
-
-        ///// <summary>
-        ///// 进入Blending模式
-        ///// </summary>
-        //void EnterBlending()
-        //{
-        //    mode = FoldingMode.Blending;
-        //    // 计算旋转
-        //    Quaternion quat = CalculateBlendingRotation();
-        //    // 应用旋转
-        //    RenderController.GetInstance().BeginRotationSlerp(quat);
-        //    // 显示模式
-        //    currentModeVi = new CurrentModeVisual("Blending Mode");
-        //    VisualController.GetSingleton().AddVisual(currentModeVi);
-        //    currentModeVi.Start();
-        //}
-
-        ///// <summary>
-        ///// 退出Blending模式
-        ///// </summary>
-        //void ExitBlending()
-        //{
-        //    currentModeVi.End();
-        //    currentModeVi = null;
-        //}
-
-        #endregion
 
     }
 
