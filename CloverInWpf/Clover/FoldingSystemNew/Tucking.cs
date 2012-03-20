@@ -194,14 +194,13 @@ namespace Clover
             List<Face> facesContainsCeiling = currGroup.GetFaceList();
             List<Face> facesAboveCeiling = new List<Face>();
             
-            // 找到当前正确的ceilingFace
+            // 找到当前正确的ceilingFace和floorFace.
             foreach (Face face in facesContainsCeiling)
             {
-                if (face.Layer == ceilingFace.Layer)
-                {
+                if (face.Layer == ceilingFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, currTuckLine))
                     ceilingFace = face;
-                    break;
-                }
+                if (face.Layer == floorFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, currTuckLine))
+                    floorFace = face; 
             }
             
             foreach (Face face in facesContainsCeiling)
@@ -211,25 +210,20 @@ namespace Clover
             }
 
             // 修订ceilingFace的层数到最高层, 且ceilingFace的层数一定为奇数
-            ceilingFace.Layer += facesAboveCeiling.Count();
-            if (ceilingFace.Layer % 2 == 0)
-                return false;
-            
+            // 若ceilingFace和floorFace的层数相差超过一层，则不修改
+            if ((ceilingFace.Layer - floorFace.Layer) <= 1)
+            {
+                ceilingFace.Layer += facesAboveCeiling.Count();
+                if (ceilingFace.Layer % 2 == 0)
+                    return false;
+            }
+
             // 先将所有高于ceilingFace的面按照层进行排序
             facesAboveCeiling.Sort(new layerComparer());
             
-           // 将面中的层数进行交换
-            for (int i = 0, j = (facesAboveCeiling.Count() - 1); i <= j; i++, j--)
-            {
-                facesAboveCeiling[i].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
-                facesAboveCeiling[j].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
-                facesAboveCeiling[i].Layer = facesAboveCeiling[i].Layer ^ facesAboveCeiling[j].Layer;
-            }
-
-            foreach (Face face in facesAboveCeiling)
-            {
-                face.Layer--; 
-            }
+            // 将TuckingIn的面进行层排列
+            for (int i = (facesAboveCeiling.Count() - 1), j = 1; i >= 0; i--, j++)
+                facesAboveCeiling[i].Layer = floorFace.Layer + j;
 
             currGroup.SortFace();
 

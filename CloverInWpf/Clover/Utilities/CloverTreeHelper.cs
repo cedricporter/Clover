@@ -95,7 +95,8 @@ namespace Clover
         {
             foreach (Vertex v in face.Vertices)
             {
-                if (v.GetPoint3D() == vertex.GetPoint3D())
+                //if (v.GetPoint3D() == vertex.GetPoint3D())
+                if(v == vertex)
                     return true;
             }
             return false;
