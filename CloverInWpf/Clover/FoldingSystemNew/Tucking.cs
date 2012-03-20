@@ -242,8 +242,10 @@ namespace Clover
         public void ExitTuckingMode()
         {
             // 应用折叠
-            Edge tuckLine = CloverTreeHelper.GetEdgeCrossedFace(floorFace, currTuckLine);
-            newEdges = cloverController.FoldingSystem.CutFaces(facesWithTuckLine, tuckLine);
+            //Edge tuckLine = CloverTreeHelper.GetEdgeCrossedFace(floorFace, currTuckLine);
+            if (currTuckLine == null)
+                return;
+            newEdges = cloverController.FoldingSystem.CutFaces(facesWithTuckLine, currTuckLine);
             FindFaceWithoutTuckLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutTuckLine, currTuckLine, 180);
 
@@ -275,6 +277,7 @@ namespace Clover
             facesNotInHouse.Clear();
             facesWithTuckLine.Clear();
             facesWithoutTuckLine.Clear();
+            lastTuckLine = currTuckLine = null;
         }
 
         #endregion
