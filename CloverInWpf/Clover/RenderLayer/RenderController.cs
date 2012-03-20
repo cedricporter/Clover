@@ -125,16 +125,6 @@ namespace Clover
             set { entity = value; }
         }
 
-        /// <summary>
-        /// 纸张虚像
-        /// </summary>
-        ModelVisual3D shadow = new ModelVisual3D();
-        public System.Windows.Media.Media3D.ModelVisual3D Shadow
-        {
-            get { return shadow; }
-            set { shadow = value; }
-        }
-
         Model3DGroup modelGroup = new Model3DGroup();
         public System.Windows.Media.Media3D.Model3DGroup ModelGroup
         {
@@ -215,6 +205,17 @@ namespace Clover
         }
 
         #endregion
+
+        /// <summary>
+        /// 初始化RenderController
+        /// </summary>
+        public void InitializeRenderController()
+        {
+            dstQuaternion = new Quaternion();
+            srcQuaternion = new Quaternion();
+            DeleteAll();
+            materialController.InitializeMaterial();
+        }
 
         #region 对Mesh的操作
 

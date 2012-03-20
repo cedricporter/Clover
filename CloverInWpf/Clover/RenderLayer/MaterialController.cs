@@ -43,6 +43,22 @@ namespace Clover
         }
 
         /// <summary>
+        /// 初始化并清空MaterialController
+        /// </summary>
+        public void InitializeMaterial()
+        {
+            frontMaterial = new MaterialGroup();
+            backMaterial = new MaterialGroup();
+            transparentFrontMaterial = null;
+            transparentBackMaterial = null;
+            frontEdgeLayer = null;
+            backEdgeLayer = null;
+            frontFoldLineLayer = null;
+            backFoldLineLayer = null;
+            frontAnimationLayer = null;
+        }
+
+        /// <summary>
         /// 获取纸张正面的半透明材质
         /// </summary>
         /// <returns></returns>

@@ -107,14 +107,25 @@ namespace Clover
             utility.UpdateProjViewMat(foldingPaperViewport.ActualHeight, foldingPaperViewport.ActualWidth);
 
             // 初始化纸张
+            InitializePaper(100, 100);
+
+            this.Focus();
+        }
+
+        /// <summary>
+        /// 初始化纸张
+        /// </summary>
+        /// <param name="width">纸张的宽</param>
+        /// <param name="height">纸张的高</param>
+        private void InitializePaper(Single width, Single height)
+        {
             CloverController.InitializeInstance(this);
             cloverController = CloverController.GetInstance();
             cloverController.Initialize(100, 100);
+            if (foldingPaperViewport.Children.Contains(cloverController.Model))
+                foldingPaperViewport.Children.Remove(cloverController.Model);
             foldingPaperViewport.Children.Add(cloverController.Model);
-            foldingPaperViewport.Children.Add(cloverController.ShadowModel);
             cloverInterpreter.InitialzeInterpreter();
-
-            this.Focus();
         }
 
         #endregion
@@ -500,6 +511,7 @@ clover.UpdateFaceGroupTable()
 
         private void NewPaper_New(object sender, RoutedEventArgs e)
         {
+            InitializePaper(100, 100);
             NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeOut"));
         }
 

@@ -30,7 +30,6 @@ namespace Clover
         CloverFileWriter fileWriter = new CloverFileWriter();
         CloverFileLoader fileLoader = new CloverFileLoader();
         ModelVisual3D model = null; /// 纸张的模型
-        ModelVisual3D shadowModel = null; /// 纸张的虚像，FoldingUp时候用的
         FoldingUp foldingUp = new FoldingUp();
         Blending blending = new Blending();
         Tucking tucking = new Tucking();
@@ -99,11 +98,6 @@ namespace Clover
         public System.Windows.Media.Media3D.ModelVisual3D Model
         {
             get { return model; }
-        }
-        public System.Windows.Media.Media3D.ModelVisual3D ShadowModel
-        {
-            get { return shadowModel; }
-            set { shadowModel = value; }
         }
         #endregion
 
@@ -452,18 +446,18 @@ namespace Clover
                 renderController.DeleteAll();
             }
 
+            // 初始化模型
+            renderController.InitializeRenderController();
+            renderController.New(face);
+            model = renderController.Entity;
+
             // 初始化纹理
             ImageBrush imb = new ImageBrush();
             imb.ImageSource = new BitmapImage(new Uri(@"media/paper/paper1.jpg", UriKind.Relative));
             DiffuseMaterial mgf = new DiffuseMaterial(imb);
             DiffuseMaterial mgb = new DiffuseMaterial(new SolidColorBrush(Colors.OldLace));
             renderController.FrontMaterial = mgf;
-            renderController.BackMaterial = mgb;
-
-            // 初始化模型
-            renderController.New(face);
-            model = renderController.Entity;
-            shadowModel = renderController.Shadow;
+            renderController.BackMaterial = mgb;      
         }
 
         #endregion
