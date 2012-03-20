@@ -614,6 +614,20 @@ namespace Clover
             return false;
         }
 
+
+        public static bool IsTwoEdgeTheSameSize(Edge e1, Edge e2)
+        {
+            if (IsTwoPointsEqual(e1.Vertex1.GetPoint3D(), e2.Vertex1.GetPoint3D()) && IsTwoPointsEqual(e1.Vertex2.GetPoint3D(), e2.Vertex2.GetPoint3D()) )
+            {
+                return true;
+            }
+            if ( IsTwoPointsEqual( e1.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) && IsTwoPointsEqual( e1.Vertex2.GetPoint3D(), e2.Vertex1.GetPoint3D() ) )
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// 在一个plane上，判断两个face是否有交叉部分，只有公共边不算交叉。
         /// </summary>
@@ -648,11 +662,11 @@ namespace Clover
             }
 
 
+
             bool IsTangency  = false;
-            bool flag = true;
 
             // 判断是不是相切
-            if ( IsTwoFaceConected( f1, f2 ) )
+            if ( !IsTwoFaceConected( f1, f2 ) )
             {
                 foreach ( Vertex v1 in f1.Vertices )
                 {
@@ -668,12 +682,6 @@ namespace Clover
                         }
                     }
 
-                    if ( !IsPointInArea( v1.GetPoint3D(), f2 ) && IsTangency )
-                    {
-                        IsTangency = true;
-                    }
-                    else
-                        IsTangency = false;
                 }
 
                 if ( IsTangency )
@@ -695,13 +703,6 @@ namespace Clover
                             }
                         }
                     }
-
-                    if ( !IsPointInArea( v2.GetPoint3D(), f1 ) && IsTangency )
-                    {
-                        IsTangency = true;
-                    }
-                    else
-                        IsTangency = false;
                 }
 
                 if ( IsTangency )
@@ -709,7 +710,6 @@ namespace Clover
                     return false;
                 }
             }
-
 
             return true;
         }

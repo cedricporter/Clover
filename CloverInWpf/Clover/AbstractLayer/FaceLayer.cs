@@ -606,11 +606,21 @@ namespace Clover
             if ( IsFacingUser )
             {
                 int layer = 0;
+                int lastlayer = fixedFaceGroup.GetFaceList()[0].Layer;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
-                    fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                    layer++;
+                    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer++;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                 }
+                layer++;
                 // 根据是否覆盖来调整layer的值
                 for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
@@ -638,10 +648,19 @@ namespace Clover
             else
             {
                 int layer = 0;
+                int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
-                    fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                    layer++;
+                    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer++;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                 }
                 layer = fixedFaceGroup.GetBottomLayer();
                 layer--;
