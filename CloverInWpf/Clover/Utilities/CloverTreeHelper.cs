@@ -209,11 +209,32 @@ namespace Clover
         public static bool IsEdgeCrossedFace(Face face, Edge edge)
         {
             int crossCount = 0;
+            Point3D lastCrossPoint = new Point3D();
             Point3D crossPoint = new Point3D();
+            bool isFirst = true;
             foreach (Edge e in face.Edges)
             {
                 if (CloverMath.GetIntersectionOfTwoSegments(e, edge, ref crossPoint) == 1)
-                    crossCount++;
+                { 
+                    if (isFirst)
+                    {
+                        lastCrossPoint.X = crossPoint.X;
+                        lastCrossPoint.Y = crossPoint.Y;
+                        lastCrossPoint.Z = crossPoint.Z;
+                        crossCount++;
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        if (!CloverMath.AreTwoPointsSameWithDeviation(lastCrossPoint, crossPoint))
+                        {
+                            crossCount++;
+                            lastCrossPoint.X = crossPoint.X;
+                            lastCrossPoint.Y = crossPoint.Y;
+                            lastCrossPoint.Z = crossPoint.Z;
+                        }
+                    }
+                }
                 if (crossCount >= 2)
                     return true;
             }
