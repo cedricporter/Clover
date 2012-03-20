@@ -339,15 +339,14 @@ namespace Clover
         /// <summary>
         /// 反重叠
         /// </summary>
-        public void AntiOverlap()
+        public void AntiOverlap(Double step = 0.05)
         {
             FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
 
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
-                float baseval = 0;
+                Double baseval = 0;
                 //float step = 6f;
-                float step = 0.05f;
                 foreach (Face f in g.GetFaceList())
                 {
                     if (faceMeshMap.ContainsKey(f))
@@ -539,7 +538,7 @@ namespace Clover
             TranslateSlerp();
             materialController.PaperChange();
             RotatePaperY();
-            //AntiOverlap();
+            SpreadOut();
         }
 
         #region 从3D视角变为2D视角的插值动画
@@ -644,6 +643,55 @@ namespace Clover
         public void EndTranslateSlerp()
         {
             translateSlerpDirection = "";
+        }
+
+        #endregion
+
+        #region 所有面按层散开，调试用
+
+        int spreadOutFlag = 0; //0:啥也不做  1：向外散开  2：向内收缩
+        Double step = 0.05;
+
+        void SpreadOut()
+        {
+            if (spreadOutFlag == 0)
+                return;
+            if (spreadOutFlag == 1)
+            {
+                if (step < 8)
+                {
+                    step = (8 - step) / 2;
+                    AntiOverlap(step);
+                }
+                else
+                {
+                    step = 8;
+                    AntiOverlap(8);
+                    spreadOutFlag = 0;
+                }
+            }
+            else
+            {
+                if (step > 0.05)
+                {
+                    step = (step - 0.05) / 2;
+                    AntiOverlap(step);
+                }
+                else
+                {
+                    step = 0.05;
+                    AntiOverlap(0.05);
+                    spreadOutFlag = 0;
+                }
+            }
+        }
+        public void SpreadOutOut()
+        {
+            spreadOutFlag = 1;
+        }
+        public void SpreadOutIn()
+        {
+            spreadOutFlag = -1;
         }
 
         #endregion
