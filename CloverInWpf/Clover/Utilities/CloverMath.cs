@@ -628,6 +628,49 @@ namespace Clover
             return false;
         }
 
+
+        public static bool IsTwoSegmentOverlay(Edge e1, Edge e2)
+        {
+            Point3D p11 = new Point3D();
+            Point3D p12 = new Point3D();
+            Point3D p21 = new Point3D();
+            Point3D p22 = new Point3D();
+            p11 = e1.Vertex1.GetPoint3D();
+            p12 = e1.Vertex2.GetPoint3D();
+
+            p21 = e2.Vertex1.GetPoint3D();
+            p22 = e2.Vertex2.GetPoint3D();
+            
+            p11.X = Math.Round(p11.X, 3);
+            p11.Y = Math.Round(p11.Y, 3);
+            p11.Z = Math.Round(p11.Z, 3);
+
+            p12.X = Math.Round(p12.X, 3);
+            p12.Y = Math.Round(p12.Y, 3);
+            p12.Z = Math.Round(p12.Z, 3);
+
+            p21.X = Math.Round(p21.X, 3);
+            p21.Y = Math.Round(p21.Y, 3);
+            p21.Z = Math.Round(p21.Z, 3);
+
+            p22.X = Math.Round(p22.X, 3);
+            p22.Y = Math.Round(p22.Y, 3);
+            p22.Z = Math.Round(p22.Z, 3);
+
+            Vector3D v1 = p11 - p12;
+            Vector3D v2 = p21 - p22;
+
+            if ( !IsTwoVectorTheSameDir(v1, v2) )
+            {
+                return false;
+            }
+
+            if ( IsPointInTwoPoints( p21, p12, p11 ) || IsPointInTwoPoints( p22, p12, p11 ) )
+                return true;
+
+            return false;
+        }
+
         /// <summary>
         /// 在一个plane上，判断两个face是否有交叉部分，只有公共边不算交叉。
         /// </summary>
@@ -636,7 +679,9 @@ namespace Clover
         /// <returns></returns>
         public static bool IsIntersectionOfTwoFaceOnOnePlane( Face f1, Face f2 )
         {
+            
 
+            // 两个face必须在同一个平面上
             if ( !IsInSamePlane( f1, f2 ) )
                 return false;
 
@@ -655,62 +700,95 @@ namespace Clover
                     IsOutside = false;
             }
 
-
+            // 相离的面不可能相交
             if ( IsOutside )
             {
                 return false;
             }
 
-
-
-            bool IsTangency  = false;
-
-            // 判断是不是相切
-            if ( !IsTwoFaceConected( f1, f2 ) )
+           
+            // 判断两面是否相切
+            int overlaynum = 0;
+            foreach ( Edge e1 in f1.Edges)
             {
-                foreach ( Vertex v1 in f1.Vertices )
+                foreach(Edge e2 in f2.Edges)
                 {
-                    if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
+                    if ( IsTwoSegmentOverlay(e1, e2) )
                     {
-                        IsTangency = false;
-                        foreach ( Edge e2 in f2.Edges )
-                        {
-                            if ( IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) )
-                            {
-                                IsTangency = true;
-                            }
-                        }
+                        overlaynum++;
                     }
-
-                }
-
-                if ( IsTangency )
-                {
-                    return false;
-                }
-
-                IsTangency = false;
-                foreach ( Vertex v2 in f2.Vertices )
-                {
-                    if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
+                    if ( overlaynum >= 2 )// 超过两条边重合表明两个面也是相交的
                     {
-                        IsTangency = false;
-                        foreach ( Edge e1 in f1.Edges )
-                        {
-                            if ( IsPointInTwoPoints( v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D() ) )
-                            {
-                                IsTangency = true;
-                            }
-                        }
+                        return true;
                     }
-                }
-
-                if ( IsTangency )
-                {
-                    return false;
                 }
             }
 
+            List<bool> IsTangencyList = new List<bool>();
+            bool IsRealTangencyAtoB = true;
+            bool IsRealTangencyBtoA = true;
+            // 有可能相切
+            if (overlaynum == 1)
+            {
+                foreach (Vertex v1 in f1.Vertices)
+                {
+                    if (IsPointInArea(v1.GetPoint3D(), f2))
+                    {
+                        bool IsTangency = false;
+                        foreach(Edge e2 in f2.Edges)
+                        {
+                            if(IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                            {
+                                IsTangency = true;
+                            }
+                        }
+                        IsTangencyList.Add( IsTangency );
+
+                    }
+                }
+
+                foreach (bool b in IsTangencyList)
+                {
+                    if (!b) // 说明两个面不是相切的
+                    {
+                        IsRealTangencyAtoB = false;
+                    }
+                }
+
+
+                IsTangencyList.Clear();
+                foreach ( Vertex v2 in f2.Vertices )
+                {
+                  if (IsPointInArea(v2.GetPoint3D(), f1))
+                    {
+                        bool IsTangency = false;
+                        foreach(Edge e1 in f1.Edges)
+                        {
+                            if(IsPointInTwoPoints( v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()))
+                            {
+                                IsTangency = true;
+                            }
+                        }
+                        IsTangencyList.Add( IsTangency );
+                    }
+                }
+
+
+                foreach ( bool b in IsTangencyList )
+                {
+                    if ( !b ) // 说明两个面不是相切的
+                    {
+                        IsRealTangencyBtoA = false;
+                    }
+                }
+
+                if ( IsRealTangencyBtoA && IsRealTangencyAtoB) // 相切的face不相交
+                {
+                    return false;
+                }
+
+            }
+          // 其他情况都是相交的
             return true;
         }
 

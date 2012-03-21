@@ -603,24 +603,29 @@ namespace Clover
             movedFaceGroup.SortFace();
             // 判断组是不是面向用户
             //bool IsDefaultDir = fixedFaceGroup.D > 0 ? true : false;
+            //IsFacingUser = false;
             if ( IsFacingUser )
             {
                 int layer = 0;
+                int hardlayer = 0;
                 int lastlayer = fixedFaceGroup.GetFaceList()[0].Layer;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
                     if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
                     {
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                         fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
                     }
                     else
                     {
                         layer++;
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                         fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
                     }
-                    lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                    hardlayer++;
+                    
                 }
-                layer++;
+                layer = hardlayer;
                 // 根据是否覆盖来调整layer的值
                 for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
@@ -647,20 +652,23 @@ namespace Clover
             }
             else
             {
+
                 int layer = 0;
                 int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
                     if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
                     {
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                         fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
                     }
                     else
                     {
                         layer++;
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
                         fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
                     }
-                    lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                    
                 }
                 layer = fixedFaceGroup.GetBottomLayer();
                 layer--;
