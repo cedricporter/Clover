@@ -225,6 +225,7 @@ namespace Clover
             if (currFoldLine == null)
                 return;
             newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, currFoldLine);
+            ScriptGenerator.GetInstance().AddFoldingUpAction(facesWithFoldLine, currFoldLine);
             FindFaceWithoutFoldLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
 
