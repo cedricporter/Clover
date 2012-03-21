@@ -238,7 +238,9 @@ namespace Clover
             }
 
             // 更新组
-            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
+            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(judge < 0 ? false : true);
 
             // 饭重叠 very funny. ^_^
             RenderController.GetInstance().AntiOverlap();
