@@ -86,6 +86,7 @@
     <Compile Include="IO\FileParser.cs" />
     <Compile Include="IO\IOController.cs" />
     <Compile Include="RenderLayer\PaperVoid.cs" />
+    <Compile Include="ScriptEngine\ScriptGenerator.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />
     <Compile Include="ShadowSystem\SnapshotNode.cs" />
     <Compile Include="PaperSelector.cs" />
