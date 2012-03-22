@@ -201,6 +201,126 @@ namespace Clover.AbstractLayer
             return faceList[faceList.Count - 1].Layer;
         }
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="IsFacingUser"></param>
+        /// <returns></returns>
+        public bool UpdateGroupAfterFoldUp( FaceGroup participatedGroup ,FaceGroup movedFaceGroup, FaceGroup fixedFaceGroup, bool IsFacingUser = true )
+        {
+
+            // 发现不是foldup操作，直接返回
+            if ( !CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal ) )
+            {
+                return false;
+            }
+
+            fixedFaceGroup.SortFace();
+            movedFaceGroup.SortFace();
+            fixedFaceGroup.Normal = participatedGroup.Normal;
+
+            // 判断组是不是面向用户
+
+            if ( IsFacingUser )
+            {
+                int layer = 0;
+                int hardlayer = 0;
+                int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer++;
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    hardlayer++;
+
+                }
+                layer = hardlayer;
+                // 根据是否覆盖来调整layer的值
+                for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                {
+
+                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    {
+                        layer--;
+                    }
+                    else if ( i == fixedFaceGroup.GetFaceList().Count - 1 )
+                    {
+                        break;
+                    }
+                }
+
+                for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                {
+
+                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    layer++;
+                    fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
+                }
+            }
+            else
+            {
+
+                int layer = 0;
+                int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer++;
+                        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
+                        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+
+                }
+                layer = fixedFaceGroup.GetBottomLayer();
+                layer--;
+                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    {
+                        layer++;
+                    }
+                    else if ( i == 0 )
+                    {
+                        break;
+                    }
+                }
+
+                for ( int i = 0; i < movedFaceGroup.GetFaceList().Count; i++ )
+                {
+                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
+                    layer--;
+                }
+            }
+
+            faceList.Clear();
+            foreach(Face f in faceList)
+            {
+                faceList.Add( f );
+            }
+            return true;
+        }
+
+
     }
+
+
+        
 }
 
