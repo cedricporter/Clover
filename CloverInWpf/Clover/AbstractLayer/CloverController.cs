@@ -217,6 +217,12 @@ namespace Clover
         #region 动画
         delegate List<Vertex> RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
         delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
+        delegate void AntiOverlapHandle(double step);
+
+        public void AntiOverlap()
+        {
+            mainWindow.Dispatcher.Invoke(new AntiOverlapHandle(renderController.AntiOverlap), 0.05);
+        }
 
         System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
         long animationDuration = 1000;
@@ -374,6 +380,10 @@ namespace Clover
         /// <param name="height"></param>
         public void Initialize(float width, float height)
         {
+            Vertex.Vertex_count = 0;
+            Face.Face_count = 0;
+            Edge.Edge_count = 0;
+            
             faceLayer = new FaceLayer();
             edgeLayer = new EdgeLayer();
             vertexLayer = new VertexLayer();
@@ -488,6 +498,13 @@ namespace Clover
 
         #endregion
 
+        public List<Face> FindFacesByID(int id)
+        {
+            List<Face> list = new List<Face>();
+            Face face = faceLayer.FindFaceByID(id);
+            list.Add(face);
+            return list;
+        }
         
 
         #region 与TuckingIn相关

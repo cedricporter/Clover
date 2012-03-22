@@ -1024,6 +1024,15 @@ namespace Clover
 
         }
 
+        public Face FindFaceByID(int id)
+        {
+            foreach (Face face in facecellTree.Leaves)
+            {
+                if (face.ID == id)
+                    return face;
+            }
+            return null;
+        }
 
         public void UpdateLeaves( Face oldFace = null )
         {
