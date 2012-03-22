@@ -193,12 +193,12 @@ namespace Clover.AbstractLayer
 
         public int GetTopLayer()
         {
-            return faceList[0].Layer;
+            return faceList[ faceList.Count - 1 ].Layer;
         }
 
         public int GetBottomLayer()
         {
-            return faceList[faceList.Count - 1].Layer;
+            return faceList[0].Layer;
         }
 
 
