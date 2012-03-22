@@ -459,6 +459,22 @@ namespace Clover
             FaceGroup participatedGroup = GetGroup( participatedFaces[ 0 ] );
             FaceGroup movedFaceGroup = new FaceGroup( movedFaces[ 0 ] );
             FaceGroup fixedFaceGroup = new FaceGroup( fixedFaces[0] );
+
+            foreach (Face f in movedFaces)
+            {
+                if( !movedFaceGroup.HasFace(f) )
+                {
+                    movedFaceGroup.AddFace( f );
+                }
+            }
+
+            foreach ( Face f in fixedFaces )
+            {
+                if ( !fixedFaceGroup.HasFace( f ) )
+                {
+                    fixedFaceGroup.AddFace( f );
+                }
+            }
             fixedFaceGroup.Normal = participatedGroup.Normal;
             return participatedGroup.UpdateGroupAfterFoldUp( participatedGroup, movedFaceGroup, fixedFaceGroup, IsFacingUser );
            

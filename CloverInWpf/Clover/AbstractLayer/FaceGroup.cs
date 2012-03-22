@@ -259,11 +259,21 @@ namespace Clover.AbstractLayer
                     }
                 }
 
+                lastlayer = movedFaceGroup.GetFaceList()[ 0 ].Layer;
                 for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
-                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                    layer++;
+                    if ( movedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        lastlayer = movedFaceGroup.GetFaceList()[ i ].Layer;
+                        movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer++;
+                        lastlayer = movedFaceGroup.GetFaceList()[ i ].Layer;
+                        movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
                     fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
                 }
             }
@@ -301,16 +311,28 @@ namespace Clover.AbstractLayer
                     }
                 }
 
+                lastlayer = movedFaceGroup.GetFaceList()[ 0 ].Layer;
                 for ( int i = 0; i < movedFaceGroup.GetFaceList().Count; i++ )
                 {
-                    movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    if ( movedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
+                    {
+                        lastlayer = movedFaceGroup.GetFaceList()[ i ].Layer;
+                        movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+                    else
+                    {
+                        layer--;
+                        lastlayer = movedFaceGroup.GetFaceList()[ i ].Layer;
+                        movedFaceGroup.GetFaceList()[ i ].Layer = layer;
+                    }
+
                     fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
-                    layer--;
+                    
                 }
             }
 
             faceList.Clear();
-            foreach(Face f in faceList)
+            foreach(Face f in fixedFaceGroup.GetFaceList())
             {
                 faceList.Add( f );
             }
