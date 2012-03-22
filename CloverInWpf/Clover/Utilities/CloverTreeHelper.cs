@@ -227,7 +227,7 @@ namespace Clover
                     }
                     else
                     {
-                        if (!CloverMath.AreTwoPointsSameWithDeviation(lastCrossPoint, crossPoint))
+                        if (!CloverMath.IsTwoPointsEqual(lastCrossPoint, crossPoint, 0.1))
                         {
                             crossCount++;
                             lastCrossPoint.X = crossPoint.X;
