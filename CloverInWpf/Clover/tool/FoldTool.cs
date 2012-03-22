@@ -330,6 +330,8 @@ namespace Clover.Tool
             if (mode == FoldingMode.DoingNothing)
                 return;
 
+            mode = FoldingMode.DoingNothing;
+
             ExitFoldingUp();
 
             currSelectedElementVi.End();
@@ -350,7 +352,7 @@ namespace Clover.Tool
             paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
 
-            mode = FoldingMode.DoingNothing;
+            
         }
 
         /// <summary>

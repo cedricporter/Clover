@@ -47,6 +47,7 @@ namespace Clover
         /// <returns>被边引用的割线</returns>
         Edge CutFace(Face face, Edge edge)
         {
+
             Debug.Assert(edge != null);
             if (edge == null)
             {
@@ -113,19 +114,19 @@ namespace Clover
                 Edge currentEdge = CloverTreeHelper.FindEdge(face, vertexList[i], vertexList[i + 1]);
 
                 // 割线过顶点
-                if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D()))
+                if (CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), 0.1))
                 {
                     currentEdgeList = rangeA;
                     newVertex1 = vertexList[i];
                 }
-                else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D()))
+                else if (CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), 0.1))
                 {
                     currentEdgeList = rangeB;
                     newVertex2 = vertexList[i];
                 }
                 // 割线过边
                 else if (CloverMath.IsPointInTwoPoints(newVertex1.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001)
-                    && !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i + 1].GetPoint3D()))
+                    && !CloverMath.IsTwoPointsEqual(newVertex1.GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.1))
                 {
                     currentEdgeList = rangeA;
 
@@ -200,7 +201,7 @@ namespace Clover
                     continue;
                 }
                 else if (CloverMath.IsPointInTwoPoints(newVertex2.GetPoint3D(), vertexList[i].GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.001)
-                    && !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i + 1].GetPoint3D()))
+                    && !CloverMath.IsTwoPointsEqual(newVertex2.GetPoint3D(), vertexList[i + 1].GetPoint3D(), 0.1))
                 {
                     currentEdgeList = rangeB;
 
