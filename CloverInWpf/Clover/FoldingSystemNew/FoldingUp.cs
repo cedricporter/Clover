@@ -21,6 +21,7 @@ namespace Clover
         List<Face> facesBelowBase = new List<Face>();
         List<Face> facesWithFoldLine = new List<Face>();
         List<Face> facesWithoutFoldLine = new List<Face>();
+        List<Face> fixedFaces = new List<Face>();
         List<Edge> newEdges = new List<Edge>();
         Point3D originPoint;
         Point3D projectionPoint;
@@ -212,6 +213,9 @@ namespace Clover
                     facesWithoutFoldLine.Add(face);
             }
 
+            // 找到所有不动的面
+            fixedFaces = tempFaces.Except(facesWithoutFoldLine).ToList();
+
             return true;
         }
 
@@ -240,7 +244,10 @@ namespace Clover
             }
 
             // 更新组
-            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
+            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
+            bool isPositive = judge < 0 ? false : true;
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithFoldLine, facesWithoutFoldLine, fixedFaces, isPositive);
 
             // 饭重叠 very funny. ^_^
             RenderController.GetInstance().AntiOverlap();

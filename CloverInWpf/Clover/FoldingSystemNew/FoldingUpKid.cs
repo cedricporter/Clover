@@ -219,7 +219,7 @@ namespace Clover
             }
 
             // 更新组
-            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
+            //cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
 
 
             // 释放资源
