@@ -253,9 +253,7 @@ namespace Clover
             }
 
             // 更新组
-            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
-            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
-            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(judge < 0 ? false : true);
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp();
 
             // 更新层信息
             UpdateLayerInfoAfterTuckIn();

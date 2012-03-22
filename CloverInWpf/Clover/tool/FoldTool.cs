@@ -346,6 +346,8 @@ namespace Clover.Tool
             LockViewport(false);
 
             CloverController.GetInstance().FoldingUp.ExitFoldingMode();
+            // 显示实像
+            //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
             paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
                 mainWindow.VoidPaperTopImgFront, mainWindow.VoidPaperBgImg, mainWindow.VoidPaperTopImgBack);
