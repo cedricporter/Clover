@@ -155,7 +155,8 @@ namespace Clover
                 if (face.Layer > baseFace.Layer && !facesWithFoldLine.Contains(face))
                     tempFaces.Add(face);
             }
-
+            
+            // 这是一段神奇的算法
             List<Face> facesWithPickedVertex = CloverTreeHelper.FindFacesFromVertex(tempFaces, pickedVertex);
             tempFaces = tempFaces.Except(facesWithPickedVertex).ToList();
 
