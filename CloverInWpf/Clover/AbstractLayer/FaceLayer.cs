@@ -488,7 +488,7 @@ namespace Clover
                 }
             }
 
-
+            participatedGroup.SortFace();
             //  没有发现折叠的face, 一定是只移动了面
             if ( cutedFace.Count == 0 )
             {
@@ -593,17 +593,19 @@ namespace Clover
                 }
             }
 
-            // 发现不是foldup操作，直接返回，并且对group进行更新
+            // 发现不是foldup操作，直接返回
             if ( !CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal ) )
             {
                 return false;
             }
 
+            
             fixedFaceGroup.SortFace();
             movedFaceGroup.SortFace();
+            fixedFaceGroup.Normal = participatedGroup.Normal;
+
             // 判断组是不是面向用户
-            //bool IsDefaultDir = fixedFaceGroup.D > 0 ? true : false;
-            //IsFacingUser = false;
+
             if ( IsFacingUser )
             {
                 int layer = 0;

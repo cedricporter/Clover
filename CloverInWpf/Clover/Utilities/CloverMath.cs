@@ -709,12 +709,14 @@ namespace Clover
            
             // 判断两面是否相切
             int overlaynum = 0;
+            Edge CommonEdge = null;
             foreach ( Edge e1 in f1.Edges)
             {
                 foreach(Edge e2 in f2.Edges)
                 {
                     if ( IsTwoSegmentOverlay(e1, e2) )
                     {
+                        CommonEdge = e1;
                         overlaynum++;
                     }
                     if ( overlaynum >= 2 )// 超过两条边重合表明两个面也是相交的
@@ -734,14 +736,15 @@ namespace Clover
                 {
                     if (IsPointInArea(v1.GetPoint3D(), f2))
                     {
+                        // 如果点f1的点f2内，则该点必然在他们的公共边上
                         bool IsTangency = false;
-                        foreach(Edge e2 in f2.Edges)
-                        {
-                            if(IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D()))
+                       // foreach(Edge e2 in f2.Edges)
+                      //  {
+                            if(IsPointInTwoPoints( v1.GetPoint3D(), CommonEdge.Vertex1.GetPoint3D(), CommonEdge.Vertex2.GetPoint3D()))
                             {
                                 IsTangency = true;
                             }
-                        }
+                      //  }
                         IsTangencyList.Add( IsTangency );
 
                     }
@@ -762,13 +765,13 @@ namespace Clover
                   if (IsPointInArea(v2.GetPoint3D(), f1))
                     {
                         bool IsTangency = false;
-                        foreach(Edge e1 in f1.Edges)
-                        {
-                            if(IsPointInTwoPoints( v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D()))
+                     //   foreach(Edge e1 in f1.Edges)
+                      //  {
+                            if(IsPointInTwoPoints( v2.GetPoint3D(), CommonEdge.Vertex1.GetPoint3D(), CommonEdge.Vertex2.GetPoint3D()))
                             {
                                 IsTangency = true;
                             }
-                        }
+                     //   }
                         IsTangencyList.Add( IsTangency );
                     }
                 }

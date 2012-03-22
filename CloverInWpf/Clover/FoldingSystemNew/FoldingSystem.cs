@@ -47,6 +47,7 @@ namespace Clover
         /// <returns>被边引用的割线</returns>
         Edge CutFace(Face face, Edge edge)
         {
+
             Debug.Assert(edge != null);
             if (edge == null)
             {
