@@ -49,15 +49,15 @@ namespace Clover
         public Update Update;
 
         static int vertex_count = 0;
+        int id;
+        #endregion
+
+        #region get/set
         public static int Vertex_count
         {
             get { return vertex_count; }
             set { vertex_count = value; }
         }
-        int id;
-        #endregion
-
-        #region get/set
         public int ID
         {
             get { return id; }
@@ -206,6 +206,11 @@ namespace Clover
     public class Edge
     {
         #region get/set
+        public static int Edge_count
+        {
+            get { return edge_count; }
+            set { edge_count = value; }
+        }
         public int ID
         {
             get { return id; }
@@ -389,6 +394,11 @@ namespace Clover
         #endregion
 
         #region get/set
+        public static int Face_count
+        {
+            get { return face_count; }
+            set { face_count = value; }
+        }
         public int ID
         {
             get { return id; }

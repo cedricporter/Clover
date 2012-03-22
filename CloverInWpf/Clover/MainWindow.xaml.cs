@@ -376,7 +376,11 @@ clover.UpdateFaceGroupTable()
                     cloverController.RenderController.SpreadOutOut();
                     break;
                 case Key.F12:
-                    System.Windows.MessageBox.Show(ScriptGenerator.GetInstance().GetScript());
+                    string script = ScriptGenerator.GetInstance().GetScript();
+
+                    histroyTextBox.Text = script;
+
+                    //System.Windows.MessageBox.Show(ScriptGenerator.GetInstance().GetScript());
                     break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
