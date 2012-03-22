@@ -154,7 +154,7 @@ namespace Clover
             {
                 foreach (Face faceWPV in facesWithPickedVertex)
                 {
-                    if (CloverMath.IsIntersectionOfTwoFace(face, faceWPV))
+                    if (CloverMath.IsIntersectionOfTwoFaceOnOnePlane(face, faceWPV))
                     {
                         bool isClosed = false;
                         // 要除去折线的所有边

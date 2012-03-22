@@ -33,17 +33,10 @@ namespace Clover.AbstractLayer
     /// <summary>
     /// 面组，里面的face都位于同一个plane上
     /// </summary>
-    public class FaceGroup : ICloneable
+    public class FaceGroup
     {
         List<Face> faceList;
         Vector3D normal = new Vector3D(); // 组的法向量
-        Point4D plainFormula = new Point4D();
-        double a;
-        double b;
-        double c;
-        double d;
-
-        #region get/set
         public System.Windows.Media.Media3D.Vector3D Normal
         {
             get { return normal; }
@@ -53,7 +46,31 @@ namespace Clover.AbstractLayer
         {
             get { return faceList.Count; }
         }
-        #endregion
+        double a;
+        public double A
+        {
+            get { return a; }
+            set { a = value; }
+        }
+        double b;
+        public double B
+        {
+            get { return b; }
+            set { b = value; }
+        }
+        double c;
+        public double C
+        {
+            get { return c; }
+            set { c = value; }
+        }
+        double d;
+        public double D
+        {
+            get { return d; }
+            set { d = value; }
+        }
+        Point4D plainFormula = new Point4D();
 
         /// <summary>
         /// group的构造函数，会计算一个group的法向量
@@ -74,7 +91,6 @@ namespace Clover.AbstractLayer
             }
         }
 
-        #region 各种函数
 
         /// <summary>
         /// 向一个组中增加面
@@ -91,6 +107,20 @@ namespace Clover.AbstractLayer
             //}
             //return false;
 
+        }
+        /// <summary>
+        /// 逆序组中的面
+        /// </summary>
+        public void RevertFaces()
+        {
+            int layer = 0;
+            SortFace();
+            for ( int i = faceList.Count; i >= 0; i-- )
+            {
+                faceList[ i ].Layer = layer;
+                layer++;
+            }
+            SortFace();
         }
 
         /// <summary>
@@ -132,40 +162,7 @@ namespace Clover.AbstractLayer
         }
 
 
-        /// <summary>
-        /// 判断两个面是否属于一个组
-        /// </summary>
-        /// <param name="f1"></param>
-        /// <param name="f2"></param>
-        /// <returns></returns>
-        bool IsInSameGroup(Face f1, Face f2, double ErrorMargin = 0.00001)
-        {
-            double A1, B1, C1, D1;
-            double A2, B2, C2, D2;
-            f1.UpdateVertices();
-            f2.UpdateVertices();
-            A1 = f1.Normal.X;
-            A2 = f2.Normal.X;
 
-            B1 = f1.Normal.Y;
-            B2 = f2.Normal.Y;
-
-            C1 = f1.Normal.Z;
-            C2 = f2.Normal.Z;
-
-            D1 = -(f1.Vertices[0].X * A1 + f1.Vertices[0].Y * B1 + f1.Vertices[0].Z * C1);
-            D2 = -(f1.Vertices[0].X * A2 + f1.Vertices[0].Y * B2 + f1.Vertices[0].Z * C2);
-            if (
-                (Math.Abs(A1 * B2 - A2 * B1) < ErrorMargin)  &&
-                (Math.Abs(B1 * C2 - B2 * C1) < ErrorMargin)  &&
-                (Math.Abs(C1 * D2 - C2 * D1) < ErrorMargin)
-               )
-            {
-                return true;
-            }
-            else
-                return false;
-        }
 
 
         /// <summary>
@@ -204,23 +201,6 @@ namespace Clover.AbstractLayer
             return faceList[faceList.Count - 1].Layer;
         }
 
-        #endregion
-
-        #region ICloneable 成员
-
-        public object Clone()
-        {
-            FaceGroup newGroup = this.MemberwiseClone() as FaceGroup;
-
-            newGroup.plainFormula = new Point4D(plainFormula.X, plainFormula.Y, plainFormula.Z, plainFormula.W);
-            newGroup.normal = new Vector3D(normal.X, normal.Y, normal.Z);
-            newGroup.faceList = new List<Face>();
-            newGroup.faceList.AddRange(faceList);
-
-            return newGroup;
-        }
-
-        #endregion
     }
 }
 

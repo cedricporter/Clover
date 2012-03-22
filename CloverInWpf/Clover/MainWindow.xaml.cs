@@ -375,6 +375,9 @@ clover.UpdateFaceGroupTable()
                 case Key.F4:
                     cloverController.RenderController.SpreadOutOut();
                     break;
+                case Key.F12:
+                    System.Windows.MessageBox.Show(ScriptGenerator.GetInstance().GetScript());
+                    break;
                 case Key.F11:
                     //cloverController.UpdateVertexPosition(null, 10, 0);
                     //Face f = cloverController.FaceLayer.Leaves[0].Clone() as Face;
