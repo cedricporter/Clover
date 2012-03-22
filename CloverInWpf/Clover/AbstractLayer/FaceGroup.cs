@@ -310,7 +310,7 @@ namespace Clover.AbstractLayer
             }
 
             faceList.Clear();
-            foreach(Face f in faceList)
+            foreach(Face f in fixedFaceGroup.GetFaceList())
             {
                 faceList.Add( f );
             }

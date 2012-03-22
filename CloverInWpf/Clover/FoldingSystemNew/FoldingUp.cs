@@ -27,6 +27,7 @@ namespace Clover
         Point3D projectionPoint;
         Edge currFoldLine = null;
         Edge lastFoldLine = null;
+        bool isPositive = true;
 
         #endregion
 
@@ -40,10 +41,26 @@ namespace Clover
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
             this.pickedVertex = pickedVertex;
             this.baseFace = nearestFace;
-            foreach (Face face in group.GetFaceList())
+
+            // 是正向还是反向
+            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
+            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
+            isPositive = judge < 0 ? false : true;
+            if (isPositive)
             {
-                if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < baseFace.Layer)
-                    baseFace = face;
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < baseFace.Layer)
+                        baseFace = face;
+                }
+            }
+            else
+            {
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > baseFace.Layer)
+                        baseFace = face;
+                }
             }
 
             // 将同Group的面分为在base面之上（含baseFace）和base面之下的两组
@@ -150,11 +167,22 @@ namespace Clover
 
             // 从tempFaces中剔除拥有PickedVertex的那些Face
             // 同时tempFaces里面应该有与该面同组的并在其上层且没有折线经过的面
-            List<Face> facesInSameGroup = cloverController.FaceGroupLookupTable.GetGroup(baseFace).GetFaceList();
-            foreach (Face face in facesInSameGroup)
+            List<Face> facesInSameGroup = facesInSameGroup = cloverController.FaceGroupLookupTable.GetGroup(baseFace).GetFaceList();
+            if (isPositive)
             {
-                if (face.Layer > baseFace.Layer && !facesWithFoldLine.Contains(face))
-                    tempFaces.Add(face);
+                foreach (Face face in facesInSameGroup)
+                {
+                    if (face.Layer > baseFace.Layer && !facesWithFoldLine.Contains(face))
+                        tempFaces.Add(face);
+                }
+            }
+            else
+            {
+                foreach (Face face in facesInSameGroup)
+                {
+                    if (face.Layer < baseFace.Layer && !facesWithFoldLine.Contains(face))
+                        tempFaces.Add(face);
+                }
             }
             
             // 这是一段神奇的算法
@@ -244,9 +272,6 @@ namespace Clover
             }
 
             // 更新组
-            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
-            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
-            bool isPositive = judge < 0 ? false : true;
             cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithFoldLine, facesWithoutFoldLine, fixedFaces, isPositive);
 
             // 饭重叠 very funny. ^_^
