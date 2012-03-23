@@ -85,6 +85,7 @@
     <Compile Include="IO\CloverFileWriter.cs" />
     <Compile Include="IO\FileParser.cs" />
     <Compile Include="IO\IOController.cs" />
+    <Compile Include="IO\ModelExporter.cs" />
     <Compile Include="RenderLayer\PaperVoid.cs" />
     <Compile Include="ScriptEngine\ScriptGenerator.cs" />
     <Compile Include="ShadowSystem\ShadowSystem.cs" />

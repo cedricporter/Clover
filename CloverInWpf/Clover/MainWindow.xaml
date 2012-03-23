@@ -65,7 +65,7 @@
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
-            
+
             <!-- 正方体导航 -->
             <Viewport3D x:Name="CubeNavViewport" Width="100" Height="100" Margin="0,40,15,0"  HorizontalAlignment="Right" VerticalAlignment="Top" Panel.ZIndex="30" ClipToBounds="True">
                 <Viewport3D.Camera>
@@ -412,7 +412,7 @@
                     <MenuItem Header="Save" Click="MenuItem_Click_1"/>
                     <Separator BorderThickness="10" Style="{StaticResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
-                        <MenuItem Header="3D Model"/>
+                        <MenuItem Header="3D Model" Click="ExportModelXamlShow"/>
                         <MenuItem Header="Annotated Paper" Click="ExportTexture_Show"/>
                         <MenuItem Header="Folding Script"/>
                     </MenuItem>

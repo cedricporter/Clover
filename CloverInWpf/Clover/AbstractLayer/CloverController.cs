@@ -532,7 +532,7 @@ namespace Clover
         /// </summary>
         public void UpdateFaceGroupTable()
         {
-            faceGroupLookupTable.UpdateTableAfterFoldUp();
+            //faceGroupLookupTable.UpdateTableAfterFoldUp();
         }
 
         /// <summary>

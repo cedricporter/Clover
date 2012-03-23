@@ -345,14 +345,6 @@ namespace Clover
 
             foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
             {
-
-               // float baseval = 0;
-              //  float step = 6f;
-                //float step = 0.05f;
-
-                Double baseval = 0;
-                //float step = 6f;
-
                 foreach (Face f in g.GetFaceList())
                 {
                     if (faceMeshMap.ContainsKey(f))
@@ -360,7 +352,6 @@ namespace Clover
                         //Vector3D offset = g.Normal * baseval;
                         Vector3D offset = g.Normal * f.Layer * step;
                         faceMeshMap[f].Transform = new TranslateTransform3D(offset);
-                        baseval += step;
                     }
                     else
                     {
@@ -389,79 +380,173 @@ namespace Clover
                     v.RenderPoint = new Point3D(v.X, v.Y, v.Z);
                 }
             }
-           // // 求“中间层”数
-           // Double midLayer = group.GetTopLayer() / 2.0;
-           // // 对group中的每个Face，遍历它们的Vertex，并对每个顶点做如下运算：v.RenderPoint += (f.Layer - midLayer) * g.Normal
-           // foreach (Face face in faceList)
-           // {
-           //     foreach (Vertex v in face.Vertices)
-           //     {
-           //         v.RenderPoint += (face.Layer - midLayer) * group.Normal;
-           //     }
-           // }
 
+            // 从中间向两头逼近的算法
 
-            // 以当前总层数作为依据，指定offset值
-            //int step = 6;
-            int step = 1;
-            int offset = faceList.Count / 2 * step;
-            // 从faceList的两头向中间逼近，逐层计算偏移量
-            Dictionary<Vertex, int> historyOffset = new Dictionary<Vertex, int>();// 这蛋疼的玩意记录了每个点的历史偏移量。一个顶点不可以两次偏向同一方向
-            int bottom = 0;
-            int top = faceList.Count - 1;
-            while (top >= bottom)
+            // 旭瑜你的group里面face的layer不能保证间距均为1
+            // 补丁by kid
+            int lastLayer = faceList[0].Layer;
+            for (int i = 1; i < faceList.Count; i++)
             {
-                Vector3D offVec = group.Normal * -offset;
-                foreach (Vertex v in faceList[bottom].Vertices)
-                {
-                    v.RenderPoint += offVec;
-                    //if (!historyOffset.ContainsKey(v))
-                    //{
-                    //    v.RenderPoint += offVec;
-                    //    historyOffset[v] = -offset;
-                    //}
-                    //else
-                    //{
-                    //    if (historyOffset[v] == 0)
-                    //    {
-                    //        v.RenderPoint += offVec;
-                    //        historyOffset[v] = -offset;
-                    //    }
-                    //    else if (historyOffset[v] + offset == 0)
-                    //    {
-                    //        v.RenderPoint += offVec;
-                    //        historyOffset[v] = 0;
-                    //    }
-                    //}
-                }
+                if (faceList[i].Layer == faceList[i - 1].Layer)
+                    continue;
+                faceList[i].Layer = ++lastLayer;
+            }
 
-                offVec *= -1;
-                foreach (Vertex v in faceList[top].Vertices)
+            int step = 1;
+            int baseval = step;
+            Double pivot = (faceList[faceList.Count - 1].Layer - faceList[0].Layer) / 2.0;
+            int up = 0, down = 0;
+            if (faceList.Count > 1)
+                for (int i = 0; i <= faceList.Count; i++)
+                    if (faceList[i].Layer < pivot && faceList[i + 1].Layer > pivot)
+                    {
+                        down = i;
+                        up = i + 1;
+                        break;
+                    }
+            while (true)
+            {
+                Vector3D offsetVec = group.Normal * (baseval);
+                while (up < faceList.Count)
                 {
-                    v.RenderPoint += offVec;
-                    //if (!historyOffset.ContainsKey(v))
-                    //{
-                    //    v.RenderPoint += offVec;
-                    //    historyOffset[v] = offset;
-                    //}
-                    //else
-                    //{
-                    //    if (historyOffset[v] == 0)
-                    //    {
-                    //        v.RenderPoint += offVec;
-                    //        historyOffset[v] = offset;
-                    //    }
-                    //    else if (historyOffset[v] - offset == 0)
-                    //    {
-                    //        v.RenderPoint += offVec;
-                    //        historyOffset[v] = 0;
-                    //    }
-                    //}
+                    foreach (Vertex v in faceList[up].Vertices)
+                        v.RenderPoint = v.GetPoint3D() + offsetVec;
+                    if (up + 1 == faceList.Count || faceList[up].Layer != faceList[up + 1].Layer)
+                        break;
+                    up++;
                 }
+                up++;
 
-                offset -= step;
-                top--;
-                bottom++;
+                while (down > -1)
+                {
+                    foreach (Vertex v in faceList[down].Vertices)
+                        v.RenderPoint = v.GetPoint3D() - offsetVec;
+                    if (down - 1 == -1 || faceList[down].Layer != faceList[down - 1].Layer)
+                        break;
+                    down--;
+                }
+                down--;
+
+                baseval += step;
+                if (up >= faceList.Count && down <= -1)
+                    break;
+            }
+           
+            //// sb算法
+            //int step = 6;
+            //Vector3D offsetVec = group.Normal * step;
+            //foreach (Face f in faceList)
+            //{
+            //    foreach (Vertex v in f.Vertices)
+            //    {
+            //        v.RenderPoint += f.Layer * offsetVec;
+            //    }
+            //}
+
+
+            //// 以当前总层数作为依据，指定offset值
+            //int step = 6;
+            ////int step = 1;
+
+            //// 从faceList的两头向中间逼近，逐层计算偏移量
+            //Dictionary<Vertex, int> historyOffset = new Dictionary<Vertex, int>();// 这蛋疼的玩意记录了每个点的历史偏移量。一个顶点不可以两次偏向同一方向
+            //int bottom = 0;
+            //int top = faceList.Count - 1;
+            //int offset = (faceList[top].Layer - faceList[bottom].Layer) * step;
+            //while (top >= bottom)
+            //{
+            //    Vector3D offVec = group.Normal * -offset;
+            //    while (true)
+            //    {
+            //        foreach (Vertex v in faceList[bottom].Vertices)
+            //        {
+            //            v.RenderPoint += offVec;
+            //            //if (!historyOffset.ContainsKey(v))
+            //            //{
+            //            //    v.RenderPoint += offVec;
+            //            //    historyOffset[v] = -offset;
+            //            //}
+            //            //else
+            //            //{
+            //            //    if (historyOffset[v] == 0)
+            //            //    {
+            //            //        v.RenderPoint += offVec;
+            //            //        historyOffset[v] = -offset;
+            //            //    }
+            //            //    else if (historyOffset[v] + offset == 0)
+            //            //    {
+            //            //        v.RenderPoint += offVec;
+            //            //        historyOffset[v] = 0;
+            //            //    }
+            //            //}
+            //        }
+            //        bottom++;
+            //        if (bottom + 1 > top || faceList[bottom].Layer != faceList[bottom + 1].Layer)
+            //            break;
+            //    }
+
+            //    offVec *= -1;
+            //    while (true)
+            //    {
+            //        foreach (Vertex v in faceList[top].Vertices)
+            //        {
+            //            v.RenderPoint += offVec;
+            //            //if (!historyOffset.ContainsKey(v))
+            //            //{
+            //            //    v.RenderPoint += offVec;
+            //            //    historyOffset[v] = offset;
+            //            //}
+            //            //else
+            //            //{
+            //            //    if (historyOffset[v] == 0)
+            //            //    {
+            //            //        v.RenderPoint += offVec;
+            //            //        historyOffset[v] = offset;
+            //            //    }
+            //            //    else if (historyOffset[v] - offset == 0)
+            //            //    {
+            //            //        v.RenderPoint += offVec;
+            //            //        historyOffset[v] = 0;
+            //            //    }
+            //            //}
+            //        }
+            //        top--;
+            //        if (top - 1 < bottom || faceList[top].Layer != faceList[top - 1].Layer)
+            //            break;
+            //    }
+
+            //    offset -= step;
+            //}
+        }
+
+        public void DisperseLayer2B(Double step)
+        {
+            FaceGroupLookupTable faceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable;
+
+            foreach (FaceGroup g in CloverController.GetInstance().FaceGroupLookupTable.FaceGroupList)
+            {
+                foreach (Face f in g.GetFaceList())
+                {
+                    if (faceMeshMap.ContainsKey(f))
+                    {
+                        //Vector3D offset = g.Normal * baseval;
+                        Vector3D offset = g.Normal * f.Layer * step;
+                        Point3DCollection pc = (faceMeshMap[f].Geometry as MeshGeometry3D).Positions;
+                        List<Vertex> vl = f.Vertices;
+                        for (int i = 0; i < pc.Count; i++)
+                        {
+                            vl[i].RenderPoint = vl[i].GetPoint3D() + offset;
+                            pc[i] = vl[i].RenderPoint;
+                        }
+                        //faceMeshMap[f].Transform = new TranslateTransform3D(offset);
+                    }
+                    else
+                    {
+                        //int a =1;
+                        System.Windows.MessageBox.Show("你又2B了，faceMeshMap里面没有Group里面的face。");
+                    }
+                }
             }
         }
 
@@ -667,12 +752,14 @@ namespace Clover
                 if (step < 8)
                 {
                     step = (8 - step) / 2;
-                    AntiOverlap(step);
+                    //AntiOverlap(step);
+                    DisperseLayer2B(step);
                 }
                 else
                 {
                     step = 8;
-                    AntiOverlap(8);
+                    //AntiOverlap(8);
+                    DisperseLayer2B(8);
                     spreadOutFlag = 0;
                 }
             }
@@ -681,12 +768,14 @@ namespace Clover
                 if (step > 0.05)
                 {
                     step = (step - 0.05) / 2;
-                    AntiOverlap(step);
+                    //AntiOverlap(step);
+                    DisperseLayer2B(step);
                 }
                 else
                 {
                     step = 0.05;
-                    AntiOverlap(0.05);
+                    //AntiOverlap(0.05);
+                    DisperseLayer2B(0.05);
                     spreadOutFlag = 0;
                 }
             }
