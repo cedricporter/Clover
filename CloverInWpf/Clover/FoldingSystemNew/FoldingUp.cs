@@ -53,6 +53,14 @@ namespace Clover
                     if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < baseFace.Layer)
                         baseFace = face;
                 }
+                // 将同Group的面分为在base面之上（含baseFace）和base面之下的两组
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (face.Layer >= baseFace.Layer)
+                        this.facesAboveBase.Add(face);
+                    else
+                        this.facesBelowBase.Add(face);
+                }
             }
             else
             {
@@ -61,16 +69,16 @@ namespace Clover
                     if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > baseFace.Layer)
                         baseFace = face;
                 }
+                // 将同Group的面分为在base面之上（含baseFace）和base面之下的两组
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (face.Layer <= baseFace.Layer)
+                        this.facesAboveBase.Add(face);
+                    else
+                        this.facesBelowBase.Add(face);
+                }
             }
 
-            // 将同Group的面分为在base面之上（含baseFace）和base面之下的两组
-            foreach (Face face in group.GetFaceList())
-            {
-                if (face.Layer >= baseFace.Layer)
-                    this.facesAboveBase.Add(face);
-                else
-                    this.facesBelowBase.Add(face);
-            }
 
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
