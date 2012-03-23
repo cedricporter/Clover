@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Clover
 {
@@ -22,35 +23,51 @@ namespace Clover
             Initialize();
         }
 
+        StreamWriter writer;
+
         public void Initialize()
         {
-            scripts = "";
+            totalScript = "";
+            if (writer != null)
+                writer.Close();
+            writer = File.CreateText("scripts.txt");
         }
+
+        string totalScript = "";
 
         public void AddTuckingAction(List<Face> faceList, List<Face> rotatedFace, List<Face> fixedFace, 
             Edge edge, Face ceilingFace, Face floorFace, bool isPositive)
         {
-            AddFoldingUpAction(faceList, rotatedFace, fixedFace, edge, isPositive);
-            scripts += "ceilingFace = clover.FindFacesByID(" + ceilingFace.ID.ToString() + ")\n";
-            scripts += "floorFace = clover.FindFacesByID(" + floorFace.ID.ToString() + ")\n";
+            ActionCore(faceList, rotatedFace, fixedFace, edge, isPositive);
+
+            string scripts = "";
+
+            scripts += "ceilingFace = clover.FindFacesByID(" + ceilingFace.ID.ToString() + ")\r\n";
+            scripts += "floorFace = clover.FindFacesByID(" + floorFace.ID.ToString() + ")\r\n";
             scripts += "clover.UpdateTableAfterTucking(ceilingFace, floorFace, edge, "
                 + (isPositive ? "True" : "False")
-                + ")\n";
-            scripts += "clover.AntiOverlap()\n";
+                + ")\r\n";
+            scripts += "clover.AntiOverlap()\r\n";
+
+            totalScript += scripts;
+
+            writer.Write(scripts);
+            writer.Flush();
         }
 
-        string scripts;
-        public void AddFoldingUpAction(List<Face> faceList, List<Face> rotatedFace, List<Face> fixedFace, Edge edge, bool isPositive)
+        public void ActionCore(List<Face> faceList, List<Face> rotatedFace, List<Face> fixedFace, Edge edge, bool isPositive)
         {
-            scripts += "\n#### New\n";
+            string scripts = "";
+
+            scripts += "\r\n#### New\r\n";
             scripts += "edge = Edge(Vertex(" + edge.Vertex1.GetPoint3D().ToString() 
-                + "), Vertex(" + edge.Vertex2.GetPoint3D().ToString() + "))\n";
+                + "), Vertex(" + edge.Vertex2.GetPoint3D().ToString() + "))\r\n";
 
             string strFaceWithFoldLine = "[";
             foreach (Face face in faceList)
             {
-                scripts += "faces = clover.FindFacesByID(" + face.ID.ToString() + ")\n";
-                scripts += "CutFaces(faces, edge)\n";
+                scripts += "faces = clover.FindFacesByID(" + face.ID.ToString() + ")\r\n";
+                scripts += "CutFaces(faces, edge)\r\n";
                 strFaceWithFoldLine += face.ID.ToString() + ",";
             }
             strFaceWithFoldLine = strFaceWithFoldLine.Substring(0, strFaceWithFoldLine.Length - 1);
@@ -64,8 +81,8 @@ namespace Clover
             strfaceWithoutFoldLine = strfaceWithoutFoldLine.Substring(0, strfaceWithoutFoldLine.Length - 1);
             strfaceWithoutFoldLine += "]";
 
-            scripts += "faces = clover.FindFacesByIDs(List[int](" + strfaceWithoutFoldLine + "))\n";
-            scripts += "RotateFaces(faces, edge, 180)\n";
+            scripts += "faces = clover.FindFacesByIDs(List[int](" + strfaceWithoutFoldLine + "))\r\n";
+            scripts += "RotateFaces(faces, edge, 180)\r\n";
 
 
             string strFixFace = "[";
@@ -77,20 +94,34 @@ namespace Clover
             strFixFace= strFixFace.Substring(0, strFixFace.Length - 1);
             strFixFace += "]";
 
-            scripts += "faceWithFoldLine = List[int](" + strFaceWithFoldLine + ")\n";
-            scripts += "faceWithoutFoldLine = List[int](" + strfaceWithoutFoldLine + ")\n";
-            scripts += "fixFace = List[int](" + strFixFace + ")\n";
+            scripts += "faceWithFoldLine = List[int](" + strFaceWithFoldLine + ")\r\n";
+            scripts += "faceWithoutFoldLine = List[int](" + strfaceWithoutFoldLine + ")\r\n";
+            scripts += "fixFace = List[int](" + strFixFace + ")\r\n";
 
             scripts += "clover.UpdateTableAfterFoldUp(faceWithFoldLine, faceWithoutFoldLine, fixFace, " 
                 + (isPositive ? "True" : "False") 
-                + ")\n";
+                + ")\r\n";
 
-            scripts += "clover.AntiOverlap()\n";
+            totalScript += scripts;
+        }
+
+        public void AddFoldingUpAction(List<Face> faceList, List<Face> rotatedFace, List<Face> fixedFace, Edge edge, bool isPositive)
+        {
+            string scripts = "";
+
+            ActionCore(faceList, rotatedFace, fixedFace, edge, isPositive);
+
+            scripts += "clover.AntiOverlap()\r\n";
+
+            totalScript += scripts;
+
+            writer.Write(scripts);
+            writer.Flush();
         }
 
         public string GetScript()
         {
-            return scripts;
+            return totalScript;
         }
 
 
