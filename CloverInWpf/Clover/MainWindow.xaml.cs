@@ -376,7 +376,7 @@ clover.UpdateFaceGroupTable()
                     cloverController.RenderController.SpreadOutOut();
                     break;
                 case Key.F7:
-                    ModelExporter.Export("./");
+                    //ModelExporter.Export("./");
                     break;
                 case Key.F12:
                     string script = ScriptGenerator.GetInstance().GetScript();
@@ -526,6 +526,15 @@ clover.UpdateFaceGroupTable()
         {
             NewPaperTexturePreview.Source = paperSelector.InfoList[0].bmp;
             NewPaper.BeginStoryboard((Storyboard)App.Current.FindResource("WindowFadeIn"));
+        }
+        private void ExportModelXamlShow(Object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "Model Xaml|*.xaml";
+            dialog.ShowDialog();
+            if (dialog.FileName == "")
+                return;
+            ioController.ExportModelXaml(dialog.FileName);
         }
 
         #endregion

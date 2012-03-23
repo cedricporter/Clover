@@ -104,6 +104,15 @@ namespace Clover.IO
         }
 
         /// <summary>
+        /// 导出模型的xaml文件
+        /// </summary>
+        /// <param name="path"></param>
+        public void ExportModelXaml(String path)
+        {
+            ModelExporter.Export(path);
+        }
+
+        /// <summary>
         /// 导出折叠脚本
         /// </summary>
         public void ExportScript(String Path)
