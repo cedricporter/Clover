@@ -226,6 +226,37 @@ namespace Clover
         delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
         delegate void AntiOverlapHandle(double step);
         delegate void AddFoldingLineHandle(List<Edge> edgeList);
+        delegate bool UpdateTableAfterFoldUpHandle(List<Face> cutFaces, List<Face> rotateFaces, List<Face> fixFaceS, bool isPositive);
+        delegate bool UpdateTableAfterTuckingHandle(Face ceilingFace, Face floorFace, Edge edge);
+
+        public void UpdateTableAfterTucking(List<Face> ceilingFace, List<Face> floorFace, Edge edge)
+        {
+            mainWindow.Dispatcher.Invoke(
+                new UpdateTableAfterTuckingHandle(tucking.UpdateLayerInfoAfterTuckIn), ceilingFace[0], floorFace[0], edge);
+        }
+
+        public void UpdateTableAfterFoldUp(List<int> cutFaceIDs, List<int> rotateFaceIDs, List<int> fixFaceIDs, bool isPositive)
+        {
+            List<Face> cutFaces = new List<Face>();
+            List<Face> rotateFaces = new List<Face>();
+            List<Face> fixFaces = new List<Face>();
+
+            foreach (int id in cutFaceIDs)
+            {
+                cutFaces.Add(FindFacesByID(id)[0]);
+            }
+            foreach (int id in rotateFaceIDs)
+            {
+                rotateFaces.Add(FindFacesByID(id)[0]);
+            }
+            foreach (int id in fixFaceIDs)
+            {
+                fixFaces.Add(FindFacesByID(id)[0]);
+            }
+            mainWindow.Dispatcher.Invoke(
+                new UpdateTableAfterFoldUpHandle(
+                    FaceGroupLookupTable.UpdateTableAfterFoldUp), cutFaces, rotateFaces, fixFaces, isPositive);
+        }
 
         public void AntiOverlap()
         {
@@ -519,6 +550,17 @@ namespace Clover
         }
 
         #endregion
+
+        public List<Face> FindFacesByIDs(List<int> idList)
+        {
+            List<Face> list = new List<Face>();
+            foreach (int id in idList)
+            {
+                Face face = faceLayer.FindFaceByID(id);
+                list.Add(face);
+            }
+            return list;
+        }
 
         public List<Face> FindFacesByID(int id)
         {
