@@ -293,7 +293,7 @@ namespace Clover
             }
             else
             {
-                for (int i = 0, j = 1; i < facesAboveCeiling.Count() - 1; i++, j++)
+                for (int i = 0, j = 1; i < facesAboveCeiling.Count(); i++, j++)
                     facesAboveCeiling[i].Layer = floorFace.Layer - j;
             }
 
