@@ -460,11 +460,7 @@ namespace Clover
             FaceGroup movedFaceGroup = new FaceGroup( movedFaces[ 0 ] );
             FaceGroup fixedFaceGroup = new FaceGroup( fixedFaces[0] );
 
-            
-
-
-
-
+          
 
             foreach (Face f in movedFaces)
             {
@@ -482,24 +478,18 @@ namespace Clover
                 }
             }
 
-            bool IsStatic = true;
             foreach ( Face fp in participatedGroup.GetFaceList() )
             {
-                foreach ( Face fm in movedFaceGroup.GetFaceList() )
+                if (fp.LeftChild == null && fp.RightChild == null)
                 {
-                    if ( fp == fm.Parent )
+                    if ( !movedFaceGroup.HasFace(fp) && !fixedFaceGroup.HasFace(fp) )
                     {
-                        IsStatic = false;
+                        fixedFaceGroup.AddFace( fp );
                     }
                 }
-                if ( IsStatic )
-                {
-                    fixedFaceGroup.AddFace( fp );
-                }
-                IsStatic = true;
             }
 
-
+            fixedFaceGroup.SortFace();
             fixedFaceGroup.Normal = participatedGroup.Normal;
             return participatedGroup.UpdateGroupAfterFoldUp( participatedGroup, movedFaceGroup, fixedFaceGroup, IsFacingUser );
            
