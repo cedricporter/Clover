@@ -161,13 +161,16 @@ namespace Clover.AbstractLayer
         public void OnDrag(int offsetX)
         {
             // 未通过验证条件
-            if (checkMask != 63)
-            {
-                //Debug.WriteLine(checkMask);
-                return;
-            }
+            //if (checkMask != 63)
+            //{
+            //    //Debug.WriteLine(checkMask);
+            //    return;
+            //}
             //Debug.WriteLine(offsetX);
-            CloverController.GetInstance().FoldingSystem.RotateFaces(beBlendedFaces, foldLine, offsetX);
+            CloverController cloverController = CloverController.GetInstance();
+            if (cloverController.lastFoldLine == null)
+                return;
+            cloverController.FoldingSystem.RotateFaces(cloverController.lastRotatedFaces, cloverController.lastFoldLine, offsetX);
             //RotateFaces(beBlendedFaces, foldLine, offsetX);
         }
 
@@ -188,6 +191,9 @@ namespace Clover.AbstractLayer
             beBlendedFaces = null;
             faceContainVertex = null;
             checkMask = 0;
+            
+            // 更新组
+
             // 反重叠
             RenderController.GetInstance().AntiOverlap();
         }

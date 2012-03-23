@@ -254,7 +254,7 @@ namespace Clover
 
             return true;
         }
-
+        
         #endregion
 
         #region 退出折叠模式
@@ -289,6 +289,12 @@ namespace Clover
             //group = cloverController.FaceGroupLookupTable.GetGroup(newEdges[0].Face1);
             //RenderController.GetInstance().DisperseLayer(group);
             //RenderController.GetInstance().Update(group, false);
+
+            // Bending作弊……
+            cloverController.lastRotatedFaces.Clear();
+            cloverController.lastRotatedFaces.AddRange(facesWithoutFoldLine);
+            cloverController.lastFoldLine = currFoldLine;
+
 
 
             // 释放资源

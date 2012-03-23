@@ -18,6 +18,13 @@ namespace Clover
 {
     public class CloverController
     {
+        #region bending作弊用
+
+        public List<Face> lastRotatedFaces = new List<Face>();
+        public Edge lastFoldLine = null;
+
+        #endregion
+
         #region 成员变量
         FaceLayer faceLayer;    /// 面层
         EdgeLayer edgeLayer;    /// 边层
