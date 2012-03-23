@@ -61,6 +61,10 @@ namespace Clover.AbstractLayer
             checkMask += 2;
             FindBeBlendedFaces();
             FindFoldLine();
+
+            // 作弊
+            CloverController cloverController = CloverController.GetInstance();
+            cloverController.FaceGroupLookupTable.BeforeBending(cloverController.lastRotatedFaces, 1);
             
             return GetInitialAngle();
         }
@@ -193,6 +197,7 @@ namespace Clover.AbstractLayer
             checkMask = 0;
             
             // 更新组
+            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterBending();
 
             // 反重叠
             RenderController.GetInstance().AntiOverlap();
