@@ -103,6 +103,9 @@ namespace Clover
                 + ")\r\n";
 
             totalScript += scripts;
+
+            writer.Write(scripts);
+            writer.Flush();
         }
 
         public void AddFoldingUpAction(List<Face> faceList, List<Face> rotatedFace, List<Face> fixedFace, Edge edge, bool isPositive)
