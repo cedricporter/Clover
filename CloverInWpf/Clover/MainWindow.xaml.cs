@@ -351,6 +351,10 @@ namespace Clover
         {
             switch (e.Key)
             {
+                case Key.Escape:
+                    ToolFactory.currentTool.exit(true);
+                    break;
+
                 case Key.F2:
 
                     cloverController.ShadowSystem.Undo();

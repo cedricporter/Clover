@@ -124,7 +124,7 @@ namespace Clover.Tool
             }
         }
 
-        protected override void exit()
+        public override void exit(Boolean isCancled)
         {
             if (mode == FoldingMode.TuckingIn)
                 ExitTuckingIn();
@@ -139,7 +139,8 @@ namespace Clover.Tool
             LockViewport(false);
 
             // 向下层传递
-            CloverController.GetInstance().Tucking.ExitTuckingMode();
+            if (!isCancled)
+                CloverController.GetInstance().Tucking.ExitTuckingMode();
 
             // 销毁虚像……
             paperVoid.DestoryShadow(mainWindow.foldingPaperViewport,
@@ -479,13 +480,13 @@ namespace Clover.Tool
 
         }
 
-        protected override void onClick()
+        protected override void onClick(Boolean isCancled)
         {
             if (mode == FoldingMode.DoingNothing)
                 return;
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
-                exit();
+                exit(isCancled);
         }
 
     }

@@ -203,7 +203,7 @@ namespace Clover.Tool
         /// <summary>
         /// 鼠标左键点击时的逻辑
         /// </summary>
-        public void onPress()
+        public void onPress(Boolean isCancled = false)
         {
             #region 可锁部分
             
@@ -254,7 +254,7 @@ namespace Clover.Tool
 
             #endregion
 
-            onClick();
+            onClick(isCancled);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Clover.Tool
         /// </summary>
         public void onDoubleClick()
         {
-            exit();
+            //exit();
         }
 
         /// <summary>
@@ -283,9 +283,9 @@ namespace Clover.Tool
 
         protected abstract void onDrag(Object element);
 
-        protected abstract void onClick();
+        protected abstract void onClick(Boolean isCancled);
 
-        protected abstract void exit();
+        public abstract void exit(Boolean isCancled);
 
         
 

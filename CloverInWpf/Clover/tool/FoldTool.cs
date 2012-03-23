@@ -121,13 +121,13 @@ namespace Clover.Tool
         /// <summary>
         /// 鼠标单击，切换模式
         /// </summary>
-        protected override void onClick()
+        protected override void onClick(Boolean isCancled)
         {
             if (mode == FoldingMode.DoingNothing)
                 return;
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
-                exit();
+                exit(isCancled);
         }
 
         protected override void onUnselectElement(Object element)
@@ -325,7 +325,7 @@ namespace Clover.Tool
         /// <summary>
         /// 退出xx模式
         /// </summary>
-        protected override void exit()
+        public override void exit(Boolean isCancled)
         {
             if (mode == FoldingMode.DoingNothing)
                 return;
@@ -345,7 +345,9 @@ namespace Clover.Tool
             IsOnPressLocked = false;
             LockViewport(false);
 
-            CloverController.GetInstance().FoldingUp.ExitFoldingMode();
+            // 传给下层。。
+            if (!isCancled)
+                CloverController.GetInstance().FoldingUp.ExitFoldingMode();
             // 显示实像
             //RenderController.GetInstance().Entity.Content = RenderController.GetInstance().ModelGroup;
             // 销毁虚像……
