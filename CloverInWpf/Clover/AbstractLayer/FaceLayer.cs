@@ -449,9 +449,12 @@ namespace Clover
 
 
         /// <summary>
-        /// 
+        /// 在foldup后更lookuptable
         /// </summary>
-        /// <param name="IsFacingUser"></param>
+        /// <param name="participatedGroup">参与折叠的面</param>
+        /// <param name="movedFaceGroup">所有移动的面</param>
+        /// <param name="fixedFaceGroup">所有不动的面</param>
+        /// <param name="IsFacingUser">是否组的法线面向用户</param>
         /// <returns></returns>
         public bool UpdateTableAfterFoldUp( List<Face> participatedFaces, List<Face> movedFaces, List<Face> fixedFaces, bool IsFacingUser = true )
         {
@@ -459,8 +462,6 @@ namespace Clover
             FaceGroup participatedGroup = GetGroup( participatedFaces[ 0 ] );
             FaceGroup movedFaceGroup = new FaceGroup( movedFaces[ 0 ] );
             FaceGroup fixedFaceGroup = new FaceGroup( fixedFaces[ 0 ] );
-
-
 
             foreach ( Face f in movedFaces )
             {
@@ -521,6 +522,7 @@ namespace Clover
                 bendingParticipateGroup.AddFace( faces[ i ] );
             }
             bendingParticipateGroup.SortFace();
+
             bendingParticipateGroup.Normal = bendingParticipateGroup.GetFaceList()[ 0 ].Normal;
 
             if ( CloverMath.IsTwoVectorTheSameDir( bendingParticipateGroup.Normal, GetGroup( bendingParticipateGroup.GetFaceList()[ 0 ] ).Normal, true ) )
@@ -592,12 +594,8 @@ namespace Clover
                 {
                     // 逆序从上贴合
                     int layer = 0;
-                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
-                    {
-                        participateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
-                    }
-
+                    int lastlayer = 0;
+                    layer = participateGroup.GetTopLayer() + 1;
                     // 根据是否覆盖来调整layer的值
                     for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
@@ -606,46 +604,68 @@ namespace Clover
                         {
                             layer--;
                         }
+                        else if ( i == participateGroup.GetFaceList().Count - 1 )
+                        {
+                            break;
+                        }
                     }
 
+                    lastlayer = bendingParticipateGroup.GetTopLayer();
                     for ( int i = bendingParticipateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
-
-                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
+                        if ( bendingParticipateGroup.GetFaceList()[ i ].Layer == lastlayer)
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
+                        else
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            layer++;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
                         participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
                     }
-                    RemoveRedundantFaceGroup();
                 }
                 else // 组背向用户
                 {
                     int layer = 0;
-                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
-                    {
-                        participateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
-                    }
-                    layer = participateGroup.GetBottomLayer();
-                    layer--;
+                    int lastlayer = 0;
+                    layer = participateGroup.GetBottomLayer() + 1;
                     for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
                     {
                         if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer++;
                         }
+                        else if (i == 0)
+                        {
+                            break;
+                        }
+
                     }
 
+                    lastlayer = bendingParticipateGroup.GetBottomLayer();
                     for ( int i = 0; i < bendingParticipateGroup.GetFaceList().Count; i++ )
                     {
-                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        if ( bendingParticipateGroup.GetFaceList()[ i ].Layer == lastlayer )
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
+                        else
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            layer--;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
                         participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
-                        layer--;
                     }
-                    RemoveRedundantFaceGroup();
                 }
 
                 faceGroupList.Add( participateGroup );
             }
+
             // 非180度的折叠
             if (bendtype == BendTpye.BlendNormally)
             {
@@ -685,12 +705,7 @@ namespace Clover
                 {
                     // 从上贴合
                     int layer = 0;
-                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
-                    {
-                        participateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
-                    }
-
+                    int lastlayer = 0;
                     // 根据是否覆盖来调整layer的值
                     for ( int i = participateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
@@ -701,53 +716,67 @@ namespace Clover
                         }
                     }
 
+                    layer = participateGroup.GetTopLayer() + 1;
+                    lastlayer = bendingParticipateGroup.GetBottomLayer();
                     for ( int i = 0; i < bendingParticipateGroup.Count; i++ )
                     {
-
-                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
+                        if ( bendingParticipateGroup.GetFaceList()[ i ].Layer == lastlayer)
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
+                        else
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            layer++;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
                         participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
                     }
-                    RemoveRedundantFaceGroup();
                 }
                 else
                 {
                     // 从下贴合
                     int layer = 0;
-                    for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
-                    {
-                        participateGroup.GetFaceList()[ i ].Layer = layer;
-                        layer++;
-                    }
+                    int lastlayer = 0;
                     layer = participateGroup.GetBottomLayer();
                     layer--;
+
                     for ( int i = 0; i < participateGroup.GetFaceList().Count; i++ )
                     {
                         if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( bendingParticipateGroup.GetFaceList()[ 0 ], participateGroup.GetFaceList()[ i ] ) )
                         {
                             layer++;
                         }
+                        else if (i == 0)
+                        {
+                            break;
+                        }
                     }
-
+                    lastlayer = participateGroup.GetTopLayer();
                     for ( int i = bendingParticipateGroup.GetFaceList().Count - 1; i >= 0; i-- )
                     {
-
-                        bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        if (bendingParticipateGroup.GetFaceList()[ i ].Layer == lastlayer)
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
+                        else
+                        {
+                            lastlayer = bendingParticipateGroup.GetFaceList()[ i ].Layer;
+                            layer--;
+                            bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
+                        }
                         participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
-                        layer--;
                     }
 
-                    RemoveRedundantFaceGroup();
                 }
-
                 faceGroupList.Add( participateGroup );
-
             }
             bendtype = BendTpye.BlendZero;
             bendingParticipateGroup = null;
             return true;
         }
-
     }
 
 

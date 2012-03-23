@@ -198,10 +198,14 @@ namespace Clover.AbstractLayer
         }
 
 
+
         /// <summary>
-        /// 
+        /// 在foldup后更新组
         /// </summary>
-        /// <param name="IsFacingUser"></param>
+        /// <param name="participatedGroup">参与折叠的组（old）</param>
+        /// <param name="movedFaceGroup">所有移动的面</param>
+        /// <param name="fixedFaceGroup">所有不动的面</param>
+        /// <param name="IsFacingUser">是否组的法线面向用户</param>
         /// <returns></returns>
         public bool UpdateGroupAfterFoldUp( FaceGroup participatedGroup ,FaceGroup movedFaceGroup, FaceGroup fixedFaceGroup, bool IsFacingUser = true )
         {
@@ -296,13 +300,19 @@ namespace Clover.AbstractLayer
             }
 
 
-                faceList.Clear();
+            faceList.Clear();
             foreach(Face f in fixedFaceGroup.GetFaceList())
             {
                 faceList.Add( f );
             }
             return true;
         }
+
+
+        //public bool UpdateGroupAfterBending()
+        //{
+
+        //}
 
 
     }
