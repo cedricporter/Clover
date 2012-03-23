@@ -36,9 +36,9 @@ namespace Clover.IO
                 indent += 4;
         }
 
-        public static void Export(String path)
+        public static void Export(String file)
         {
-            StreamWriter sw = File.CreateText(path + "/" + IOController.GetInstance().ProjectName + ".xaml");
+            StreamWriter sw = File.CreateText(file);
             Model3DGroup mg = RenderController.GetInstance().ModelGroup;
             String str = "";
             // 头

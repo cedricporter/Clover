@@ -71,17 +71,6 @@
                 <Viewport3D.Camera>
                     <PerspectiveCamera LookDirection="0,0,-1" Position="0,0,40" UpDirection="0,1,0" FieldOfView="60" />
                 </Viewport3D.Camera>
-                <!--<ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <GeometryModel3D>
-                                <GeometryModel3D.Geometry>
-                                    <MeshGeometry3D Positions="1 1 1, 1 1 1" TextureCoordinates="12" TriangleIndices="12" ></MeshGeometry3D>
-                                </GeometryModel3D.Geometry>
-                            </GeometryModel3D>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>-->
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <AmbientLight Color="White"/>
@@ -423,7 +412,7 @@
                     <MenuItem Header="Save" Click="MenuItem_Click_1"/>
                     <Separator BorderThickness="10" Style="{StaticResource SeparatorStyle1}"></Separator>
                     <MenuItem Header="Export...">
-                        <MenuItem Header="3D Model"/>
+                        <MenuItem Header="3D Model" Click="ExportModelXamlShow"/>
                         <MenuItem Header="Annotated Paper" Click="ExportTexture_Show"/>
                         <MenuItem Header="Folding Script"/>
                     </MenuItem>
