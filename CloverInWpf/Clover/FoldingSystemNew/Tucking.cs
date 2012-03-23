@@ -20,8 +20,10 @@ namespace Clover
         List<Face> facesNotInHouse = new List<Face>();
         List<Face> facesWithTuckLine = new List<Face>();
         List<Face> facesWithoutTuckLine = new List<Face>();
+        List<Face> fixedFaces = new List<Face>();
         Point3D projectionPoint;
         Point3D originPoint;
+        bool isPositive;
         Edge currTuckLine = null;
         Edge lastTuckLine = null;
         List<Edge> newEdges = new List<Edge>();
@@ -38,22 +40,49 @@ namespace Clover
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
             this.pickedVertex = pickedVertex;
             this.floorFace = this.ceilingFace = nearestFace;
-            foreach (Face face in group.GetFaceList())
+
+            // 是正向还是反向
+            Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
+            Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
+            isPositive = judge < 0 ? false : true;
+
+            if (isPositive)
             {
-                if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < floorFace.Layer)
-                    floorFace = face;
-                if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > ceilingFace.Layer)
-                    ceilingFace = face;
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < floorFace.Layer)
+                        floorFace = face;
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > ceilingFace.Layer)
+                        ceilingFace = face;
+                }
+                // 将同Group的面分为在floor和ceiling之间和在floor和ceiling之外两组
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (face.Layer >= floorFace.Layer && face.Layer <= ceilingFace.Layer)
+                        this.facesInHouse.Add(face);
+                    else
+                        this.facesNotInHouse.Add(face);
+                }
+            }
+            else
+            {
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer > floorFace.Layer)
+                        floorFace = face;
+                    if (CloverTreeHelper.IsVertexInFace(pickedVertex, face) && face.Layer < ceilingFace.Layer)
+                        ceilingFace = face;
+                }
+                // 将同Group的面分为在floor和ceiling之间和在floor和ceiling之外两组
+                foreach (Face face in group.GetFaceList())
+                {
+                    if (face.Layer <= floorFace.Layer && face.Layer >= ceilingFace.Layer)
+                        this.facesInHouse.Add(face);
+                    else
+                        this.facesNotInHouse.Add(face);
+                }
             }
 
-            // 将同Group的面分为在floor和ceiling之间和在floor和ceiling之外两组
-            foreach (Face face in group.GetFaceList())
-            {
-                if (face.Layer >= floorFace.Layer && face.Layer <= ceilingFace.Layer)
-                    this.facesInHouse.Add(face);
-                else
-                    this.facesNotInHouse.Add(face);
-            }
 
             // 保存pickedVertex的原始位置
             originPoint = new Point3D(pickedVertex.X, pickedVertex.Y, pickedVertex.Z);
@@ -182,6 +211,9 @@ namespace Clover
                     facesWithoutTuckLine.Add(face);
             }
 
+            // 找到所有不动的面
+            fixedFaces = tempFaces.Except(facesWithoutTuckLine).ToList();
+
             return true;
         }
 
@@ -190,6 +222,7 @@ namespace Clover
         /// </summary>
         private bool UpdateLayerInfoAfterTuckIn()
         {
+            Face cf = ceilingFace.LeftChild;
             FaceGroup currGroup = cloverController.FaceGroupLookupTable.GetGroup(ceilingFace.LeftChild);
             List<Face> facesContainsCeiling = currGroup.GetFaceList();
             List<Face> facesAboveCeiling = new List<Face>();
@@ -253,10 +286,7 @@ namespace Clover
             }
 
             // 更新组
-            //Vector3D currNormal = group.Normal * cloverController.RenderController.Entity.Transform.Value;
-            //Double judge = Vector3D.DotProduct(currNormal, new Vector3D(0, 0, 1));
-            //bool isPositive = judge < 0 ? false : true;
-            //cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithTuckLine, facesWithoutTuckLine, fixedFaces, isPositive);
+            cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithTuckLine, facesWithoutTuckLine, fixedFaces, isPositive);
 
             // 更新层信息
             UpdateLayerInfoAfterTuckIn();
