@@ -141,16 +141,16 @@ namespace Clover.Tool
             CloverController.GetInstance().Blending.OnDrag((int)offsetX);
         }
 
-        protected override void onClick()
+        protected override void onClick(Boolean isCancled)
         {
             if (mode == FoldingMode.DoingNothing)
                 return;
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
-                exit();
+                exit(isCancled);
         }
 
-        protected override void exit()
+        public override void exit(Boolean isCancled)
         {
             ExitBlending();
             currSelectedElementVi.End();
