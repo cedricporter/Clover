@@ -227,12 +227,12 @@ namespace Clover
         delegate void AntiOverlapHandle(double step);
         delegate void AddFoldingLineHandle(List<Edge> edgeList);
         delegate bool UpdateTableAfterFoldUpHandle(List<Face> cutFaces, List<Face> rotateFaces, List<Face> fixFaceS, bool isPositive);
-        delegate bool UpdateTableAfterTuckingHandle(Face ceilingFace, Face floorFace, Edge edge);
+        delegate bool UpdateTableAfterTuckingHandle(Face ceilingFace, Face floorFace, Edge edge, bool isPositive);
 
-        public void UpdateTableAfterTucking(List<Face> ceilingFace, List<Face> floorFace, Edge edge)
+        public void UpdateTableAfterTucking(List<Face> ceilingFace, List<Face> floorFace, Edge edge, bool isPositive)
         {
             mainWindow.Dispatcher.Invoke(
-                new UpdateTableAfterTuckingHandle(tucking.UpdateLayerInfoAfterTuckIn), ceilingFace[0], floorFace[0], edge);
+                new UpdateTableAfterTuckingHandle(tucking.UpdateLayerInfoAfterTuckIn), ceilingFace[0], floorFace[0], edge, isPositive);
         }
 
         public void UpdateTableAfterFoldUp(List<int> cutFaceIDs, List<int> rotateFaceIDs, List<int> fixFaceIDs, bool isPositive)

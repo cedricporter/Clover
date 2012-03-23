@@ -231,7 +231,7 @@ namespace Clover
         /// <summary>
         /// 两边对称的进行tuck in层的调整 
         /// </summary>
-        public bool UpdateLayerInfoAfterTuckIn(Face _ceilingFace, Face _floorFace, Edge _currTuckLine)
+        public bool UpdateLayerInfoAfterTuckIn(Face _ceilingFace, Face _floorFace, Edge _currTuckLine, bool _isPositive)
         {
             cloverController = CloverController.GetInstance();
             Face cf = _ceilingFace.LeftChild;
@@ -248,7 +248,7 @@ namespace Clover
                     _floorFace = face; 
             }
 
-            if (isPositive)
+            if (_isPositive)
             {
                 foreach (Face face in facesContainsCeiling)
                 {
@@ -269,7 +269,7 @@ namespace Clover
             // 若_ceilingFace和_floorFace的层数相差超过一层，则不修改
             if (Math.Abs((_ceilingFace.Layer - _floorFace.Layer)) <= 1)
             {
-                if (isPositive)
+                if (_isPositive)
                 {
                     _ceilingFace.Layer += facesAboveCeiling.Count();
                     if (_ceilingFace.Layer % 2 == 0)
@@ -287,7 +287,7 @@ namespace Clover
             facesAboveCeiling.Sort(new layerComparer());
             
             // 将TuckingIn的面进行层排列
-            if (isPositive)
+            if (_isPositive)
             {
                 for (int i = (facesAboveCeiling.Count() - 1), j = 1; i >= 0; i--, j++)
                     facesAboveCeiling[i].Layer = _floorFace.Layer + j;
@@ -334,7 +334,7 @@ namespace Clover
                 currTuckLine, ceilingFace, floorFace, isPositive);
 
             // 更新层信息
-            UpdateLayerInfoAfterTuckIn(ceilingFace, floorFace, currTuckLine);
+            UpdateLayerInfoAfterTuckIn(ceilingFace, floorFace, currTuckLine, isPositive);
 
             // 反重叠
             RenderController.GetInstance().AntiOverlap();

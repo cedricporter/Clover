@@ -33,7 +33,10 @@ namespace Clover
             AddFoldingUpAction(faceList, rotatedFace, fixedFace, edge, isPositive);
             scripts += "ceilingFace = clover.FindFacesByID(" + ceilingFace.ID.ToString() + ")\n";
             scripts += "floorFace = clover.FindFacesByID(" + floorFace.ID.ToString() + ")\n";
-            scripts += "clover.UpdateTableAfterTucking(ceilingFace, floorFace, edge)\n";
+            scripts += "clover.UpdateTableAfterTucking(ceilingFace, floorFace, edge, "
+                + (isPositive ? "True" : "False")
+                + ")\n";
+            scripts += "clover.AntiOverlap()\n";
         }
 
         string scripts;
