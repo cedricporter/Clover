@@ -161,10 +161,6 @@ namespace Clover.AbstractLayer
             faceList.Sort(fc);
         }
 
-
-
-
-
         /// <summary>
         /// 判断一个面是否属于这个组
         /// </summary>
@@ -202,7 +198,6 @@ namespace Clover.AbstractLayer
         }
 
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -227,24 +222,7 @@ namespace Clover.AbstractLayer
             {
                 int layer = 0;
                 int lastlayer = 0;
-                //int hardlayer = 0;
-                //int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
-                //for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
-                //{
-                //    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
-                //    {
-                //        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
-                //        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                //    }
-                //    else
-                //    {
-                //        layer++;
-                //        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
-                //        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                //    }
-                //    hardlayer++;
 
-                //}
                 layer = fixedFaceGroup.GetTopLayer() + 1;
                 // 根据是否覆盖来调整layer的值
                 for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
@@ -260,7 +238,7 @@ namespace Clover.AbstractLayer
                     }
                 }
 
-                lastlayer = movedFaceGroup.GetTopLayer() + 1;
+                lastlayer = movedFaceGroup.GetTopLayer();
                 for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
                 {
 
@@ -283,24 +261,8 @@ namespace Clover.AbstractLayer
 
                 int layer = 0;
                 int lastlayer = 0;
-                //int lastlayer = fixedFaceGroup.GetFaceList()[ 0 ].Layer;
-                //for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
-                //{
-                //    if ( fixedFaceGroup.GetFaceList()[ i ].Layer == lastlayer )
-                //    {
-                //        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
-                //        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                //    }
-                //    else
-                //    {
-                //        layer++;
-                //        lastlayer = fixedFaceGroup.GetFaceList()[ i ].Layer;
-                //        fixedFaceGroup.GetFaceList()[ i ].Layer = layer;
-                //    }
 
-                //}
-                layer = fixedFaceGroup.GetBottomLayer();
-                layer--;
+                layer = fixedFaceGroup.GetBottomLayer() - 1;
                 for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
                 {
                     if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
