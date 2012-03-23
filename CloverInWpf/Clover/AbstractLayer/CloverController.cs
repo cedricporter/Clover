@@ -218,10 +218,23 @@ namespace Clover
         delegate List<Vertex> RotateFacesHandle(List<Face> list, Edge foldLine, double angle);
         delegate List<Edge> CutFacesHandle(List<Face> list, Edge foldLine);
         delegate void AntiOverlapHandle(double step);
+        delegate void AddFoldingLineHandle(List<Edge> edgeList);
 
         public void AntiOverlap()
         {
             mainWindow.Dispatcher.Invoke(new AntiOverlapHandle(renderController.AntiOverlap), 0.05);
+        }
+
+        public void AddFoldingLine(List<Edge> newEdges)
+        {
+            // 添加折线
+            if (newEdges.Count != 0)
+            {
+                foreach (Edge edge in newEdges)
+                {
+                    RenderController.AddFoldingLine(edge.Vertex1.u, edge.Vertex1.v, edge.Vertex2.u, edge.Vertex2.v);
+                }
+            }
         }
 
         System.Diagnostics.Stopwatch animaWatch = new System.Diagnostics.Stopwatch();
@@ -231,7 +244,9 @@ namespace Clover
             List<Face> faceList = new List<Face>();
             faceList.AddRange(beCutFaceList);
 
-            mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge);
+            List<Edge> newEdges = mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge) as List<Edge>;
+            mainWindow.Dispatcher.Invoke(new AddFoldingLineHandle(AddFoldingLine), newEdges);
+            
         }
 
         public void AnimatedRotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
