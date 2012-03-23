@@ -377,6 +377,7 @@ clover.UpdateFaceGroupTable()
                     break;
                 case Key.F7:
                     //ModelExporter.Export("./");
+                    RenderController.GetInstance().DisperseLayer2B(10);
                     break;
                 case Key.F12:
                     string script = ScriptGenerator.GetInstance().GetScript();
