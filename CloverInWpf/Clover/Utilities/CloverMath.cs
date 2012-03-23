@@ -709,6 +709,7 @@ namespace Clover
            
             // 判断两面是否相切
             int overlaynum = 0;
+            int Intersectionnum = 0;
             Edge CommonEdge = null;
             foreach ( Edge e1 in f1.Edges)
             {
@@ -720,6 +721,22 @@ namespace Clover
                         overlaynum++;
                     }
                     if ( overlaynum >= 2 )// 超过两条边重合表明两个面也是相交的
+                    {
+                        return true;
+                    }
+                    Point3D p = new Point3D(); 
+                    if (1 == GetIntersectionOfTwoSegments(e1, e2, ref p))
+                    {
+                        if (!IsTwoPointsEqual(p, e1.Vertex1.GetPoint3D())  &&
+                            !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D()) && 
+                            !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D()) &&
+                            !IsTwoPointsEqual(p, e2.Vertex1.GetPoint3D()) 
+                            )
+                        {
+                            Intersectionnum++;
+                        }
+                    }
+                    if (Intersectionnum >= 2)
                     {
                         return true;
                     }
