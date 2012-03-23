@@ -312,8 +312,21 @@ namespace Clover
             pathFigure.StartPoint = p1;
             pathFigure.Segments.Add(new LineSegment(p2, false));
             Point lastPoint = p2;
+            int deadloop = 0;
             while (ignorePointList.Count < 4)// 这堆写得比较蛋疼，主要功能是让它按顺序地绘制点
             {
+                // 防假死
+                if (deadloop++ > 10)
+                {
+                    foreach (Point p in c)
+                    {
+                        if (!ignorePointList.Contains(p))
+                            ignorePointList.Add(p);
+                        if (ignorePointList.Count >= 4)
+                            break;
+                    }
+                    break;
+                }
                 foreach (Point p in c)
                 {
                     if (ignorePointList.Contains(p))
