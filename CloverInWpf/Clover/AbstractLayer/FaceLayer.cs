@@ -269,150 +269,6 @@ namespace Clover
 
         }
 
-        ///// <summary>
-        ///// 更新lookuptable
-        ///// </summary>
-        //void UpdateLookupTable()
-        //{
-        //    UpdateGroup();
-        //    //RemoveRedundantFaceGroup();
-
-        //}
-
-
-        ///// <summary>
-        ///// 检索group中的组有没有非常靠近的面
-        ///// </summary>
-        ///// <param name="atuofoldinfolist">保存着可以可能会自动贴合的group对</param>
-        ///// <param name="threshold">用弧度表示的角度</param>
-        ///// <returns></returns>
-        //public bool CheckForAutoFoldUp( ref List<FoldUpInfo> atuofoldinfolist, double threshold = 0.174 )
-        //{
-
-        //    foreach ( FaceGroup fgfix in tables )
-        //    {
-        //        foreach ( FaceGroup fgmove in tables )
-        //        {
-        //            if ( fgfix != fgmove )
-        //            {
-        //                double ang = CloverMath.CalculatePlaneAngle( fgfix.GetFaceList()[ 0 ], fgmove.GetFaceList()[ 0 ] );
-        //                if ( ang  < threshold )
-        //                {
-        //                    bool IsContain = false;
-        //                    foreach ( FoldUpInfo info in atuofoldinfolist )
-        //                    {
-        //                        if (info.fgFix == fgfix && info.fgMov == fgmove ||
-        //                            info.fgMov == fgfix && info.fgFix == fgmove 
-        //                            )
-        //                        {
-        //                            IsContain = true;
-        //                            break;
-        //                        }
-        //                    }
-
-        //                    if ( IsContain )
-        //                    {
-        //                        continue;
-        //                    }
-        //                    FoldUpInfo foldupinfo = new FoldUpInfo();
-        //                    foldupinfo.fgFix = fgfix;
-        //                    foldupinfo.fgMov = fgmove;
-        //                    foldupinfo.angle = ang;
-
-        //                    foreach ( Vertex ver in fgfix.GetFaceList()[ 0 ].Vertices )
-        //                    {
-        //                        if ((ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D) > 0)
-        //                        {
-        //                            foldupinfo.IsOver = true;
-        //                            break;
-        //                        }
-
-        //                        if ( ( ver.X * fgfix.A + ver.Y * fgfix.B + ver.Z * fgfix.C + fgfix.D ) < 0 )
-        //                        {
-        //                            foldupinfo.IsOver = false;
-        //                            break;
-        //                        }
-
-        //                    }
-        //                    atuofoldinfolist.Add( foldupinfo );
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    if ( atuofoldinfolist.Count > 0 )
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-
-
-        ///// <summary>
-        ///// 当foldup时调用，以便group排序;注意，一定要先调用后才可以updatelookuptable;
-        ///// </summary>
-        ///// <param name="foldupinfo"></param>
-        //public void FoldUp(FoldUpInfo foldupinfo )
-        //{
-
-        //    if ( foldupinfo.IsOver )
-        //    {
-        //        int layer = 0;
-        //        for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
-        //        {
-        //            foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
-        //            layer++;
-        //        }
-        //        // 根据是否覆盖来调整layer的值
-        //        for ( int i = foldupinfo.fgFix.GetFaceList().Count - 1; i >= 0; i-- )
-        //        {
-
-        //            if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ foldupinfo.fgMov.GetFaceList().Count - 1 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
-        //            {
-        //                layer--;
-        //            }
-        //        }
-
-        //        for ( int i = foldupinfo.fgMov.GetFaceList().Count - 1; i >= 0; i-- )
-        //        {
-
-        //            foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
-        //            layer++;
-        //            foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
-        //        }
-        //        RemoveRedundantFaceGroup();
-
-        //    }
-        //    else
-        //    {
-        //        int layer = 0;
-        //        for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
-        //        {
-        //            foldupinfo.fgFix.GetFaceList()[ i ].Layer = layer;
-        //            layer++;
-        //        }
-        //        layer = foldupinfo.fgFix.GetBottomLayer();
-        //        layer--;
-        //        for ( int i = 0; i < foldupinfo.fgFix.GetFaceList().Count; i++ )
-        //        {
-        //            if ( !CloverMath.IsIntersectionOfTwoFace( foldupinfo.fgMov.GetFaceList()[ 0 ], foldupinfo.fgFix.GetFaceList()[ i ] ) )
-        //            {
-        //                layer++;
-        //            }
-        //        }
-
-        //        for ( int i = 0; i < foldupinfo.fgMov.GetFaceList().Count; i++ )
-        //        {
-        //            foldupinfo.fgMov.GetFaceList()[ i ].Layer = layer;
-        //            foldupinfo.fgFix.AddFace( foldupinfo.fgMov.GetFaceList()[ i ] );
-        //            layer--;
-        //        }
-        //        RemoveRedundantFaceGroup();
-        //    }
-        //}
-
-
 
 
         bool AddGroup( FaceGroup fg )
@@ -430,15 +286,15 @@ namespace Clover
         }
 
 
-        public List<Face> GetFaceExcludeGroupFoundByFace(Face f)
+        public List<Face> GetFaceExcludeGroupFoundByFace( Face f )
         {
             List<Face> result = new List<Face>();
             FaceGroup excludefg = GetGroup( f );
-            foreach (FaceGroup fg in faceGroupList)
+            foreach ( FaceGroup fg in faceGroupList )
             {
-                if(fg != excludefg)
+                if ( fg != excludefg )
                 {
-                    foreach (Face face in fg.GetFaceList())
+                    foreach ( Face face in fg.GetFaceList() )
                     {
                         result.Add( f );
                     }
@@ -503,7 +359,7 @@ namespace Clover
         /// <param name="angle">bend的角度,角度</param>
         public bool BeforeBending(List<Face> faces, double angle)
         {
-            if (faces == null || Math.Abs(angle) > 180 )
+            if ( faces == null || Math.Abs( angle ) > 180 )
             {
                 return false;
             }
@@ -515,11 +371,13 @@ namespace Clover
             {
                 return false;
             }
+
             // 建立bending的临时组
             bendingParticipateGroup = new FaceGroup( faces[ 0 ] );
             for ( int i = 1; i < faces.Count; i++ )
             {
                 bendingParticipateGroup.AddFace( faces[ i ] );
+                RemoveFace( faces[ i ] );
             }
             bendingParticipateGroup.SortFace();
 
@@ -549,7 +407,7 @@ namespace Clover
 
 
         /// <summary>
-        /// bendh后调用来更新lookuptable
+        /// bend后调用来更新lookuptable
         /// </summary>
         /// <returns></returns>
         public bool UpdateTableAfterBending(bool IsFacingUser = true)
@@ -559,6 +417,11 @@ namespace Clover
             {
                 return true;
             }
+
+           // AddGroup( bendingParticipateGroup );
+            //UpdateGroup();
+
+           
 
             FaceGroup participateGroup = null;
             // bend半周即180度
@@ -669,15 +532,18 @@ namespace Clover
             // 非180度的折叠
             if (bendtype == BendTpye.BlendNormally)
             {
-                if ( !IsBasicBendedFaceTheSameNormalWithItsGroup ) // 基层新组与原来的组指向大致相同方向
+                if ( !IsBasicBendedFaceTheSameNormalWithItsGroup ) // 新组与原来的组排序方向不同，里面的面的顺序必须倒置
                 {
                     bendingParticipateGroup.RevertFaces();
                 }
-                
+
+                // 更新参与bend的新组的法线
+                bendingParticipateGroup.Normal = bendingParticipateGroup.GetFaceList()[0].Normal;
+
                 // 寻找是否会和某个组重合
                 foreach (FaceGroup fg in faceGroupList)
                 {
-                    if ( CloverMath.IsTwoVectorTheSameDir( fg.Normal, bendingParticipateGroup.Normal ) )
+                    if ( CloverMath.IsTwoVectorTheSameDir( fg.Normal, bendingParticipateGroup.Normal ))
                     {
                         if ( participateGroup == null )
                         {
@@ -690,10 +556,13 @@ namespace Clover
                     }
                 }
 
+                
                 if (participateGroup == null)
                 {
                     return true; // 很幸运，没有什么组跟你重合
                 }
+
+                // 有和某个组巧妙地重合：
 
                 // 判断自己组的排序方向和对方是不是一样的
                 if ( !CloverMath.IsTwoVectorTheSameDir( participateGroup.Normal, bendingParticipateGroup.Normal, true ) )
@@ -714,6 +583,10 @@ namespace Clover
                         {
                             layer--;
                         }
+                        else if ( i == participateGroup.GetFaceList().Count - 1 )
+                        {
+                            break;
+                        }
                     }
 
                     layer = participateGroup.GetTopLayer() + 1;
@@ -731,6 +604,7 @@ namespace Clover
                             layer++;
                             bendingParticipateGroup.GetFaceList()[ i ].Layer = layer;
                         }
+
                         participateGroup.AddFace( bendingParticipateGroup.GetFaceList()[ i ] );
                     }
                 }
