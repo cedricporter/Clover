@@ -268,7 +268,6 @@ namespace Clover
             newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, currFoldLine);
             FindFaceWithoutFoldLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
-            ScriptGenerator.GetInstance().AddFoldingUpAction(facesWithFoldLine, facesWithoutFoldLine, currFoldLine);
 
             // 添加折线
             if (newEdges.Count != 0)
@@ -281,6 +280,9 @@ namespace Clover
 
             // 更新组
             cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithFoldLine, facesWithoutFoldLine, fixedFaces, isPositive);
+
+            // Generate Script
+            ScriptGenerator.GetInstance().AddFoldingUpAction(facesWithFoldLine, facesWithoutFoldLine, fixedFaces, currFoldLine, isPositive);
 
             // 饭重叠 very funny. ^_^
             RenderController.GetInstance().AntiOverlap();

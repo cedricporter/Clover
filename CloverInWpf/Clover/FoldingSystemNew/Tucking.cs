@@ -231,27 +231,28 @@ namespace Clover
         /// <summary>
         /// 两边对称的进行tuck in层的调整 
         /// </summary>
-        private bool UpdateLayerInfoAfterTuckIn()
+        public bool UpdateLayerInfoAfterTuckIn(Face _ceilingFace, Face _floorFace, Edge _currTuckLine, bool _isPositive)
         {
-            Face cf = ceilingFace.LeftChild;
-            FaceGroup currGroup = cloverController.FaceGroupLookupTable.GetGroup(ceilingFace.LeftChild);
+            cloverController = CloverController.GetInstance();
+            Face cf = _ceilingFace.LeftChild;
+            FaceGroup currGroup = cloverController.FaceGroupLookupTable.GetGroup(_ceilingFace.LeftChild);
             List<Face> facesContainsCeiling = currGroup.GetFaceList();
             List<Face> facesAboveCeiling = new List<Face>();
             
-            // 找到当前正确的ceilingFace和floorFace.
+            // 找到当前正确的_ceilingFace和_floorFace.
             foreach (Face face in facesContainsCeiling)
             {
-                if (face.Layer == ceilingFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, currTuckLine))
-                    ceilingFace = face;
-                if (face.Layer == floorFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, currTuckLine))
-                    floorFace = face; 
+                if (face.Layer == _ceilingFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, _currTuckLine))
+                    _ceilingFace = face;
+                if (face.Layer == _floorFace.Layer && CloverTreeHelper.IsEdgeCrossedFace(face, _currTuckLine))
+                    _floorFace = face; 
             }
 
-            if (isPositive)
+            if (_isPositive)
             {
                 foreach (Face face in facesContainsCeiling)
                 {
-                    if (face.Layer > ceilingFace.Layer)
+                    if (face.Layer > _ceilingFace.Layer)
                         facesAboveCeiling.Add(face);
                 }
             }
@@ -259,42 +260,42 @@ namespace Clover
             {
                 foreach (Face face in facesContainsCeiling)
                 {
-                    if (face.Layer < ceilingFace.Layer)
+                    if (face.Layer < _ceilingFace.Layer)
                         facesAboveCeiling.Add(face);
                 }
             }
 
-            // 修订ceilingFace的层数到最高层, 且ceilingFace的层数一定为奇数
-            // 若ceilingFace和floorFace的层数相差超过一层，则不修改
-            if (Math.Abs((ceilingFace.Layer - floorFace.Layer)) <= 1)
+            // 修订_ceilingFace的层数到最高层, 且_ceilingFace的层数一定为奇数
+            // 若_ceilingFace和_floorFace的层数相差超过一层，则不修改
+            if (Math.Abs((_ceilingFace.Layer - _floorFace.Layer)) <= 1)
             {
-                if (isPositive)
+                if (_isPositive)
                 {
-                    ceilingFace.Layer += facesAboveCeiling.Count();
-                    if (ceilingFace.Layer % 2 == 0)
+                    _ceilingFace.Layer += facesAboveCeiling.Count();
+                    if (_ceilingFace.Layer % 2 == 0)
                         return false;
                 }
                 else
                 {
-                    ceilingFace.Layer -= facesAboveCeiling.Count();
-                    if (ceilingFace.Layer % 2 != 0)
+                    _ceilingFace.Layer -= facesAboveCeiling.Count();
+                    if (_ceilingFace.Layer % 2 != 0)
                         return false;
                 }
             }
 
-            // 先将所有高于ceilingFace的面按照层进行排序
+            // 先将所有高于_ceilingFace的面按照层进行排序
             facesAboveCeiling.Sort(new layerComparer());
             
             // 将TuckingIn的面进行层排列
-            if (isPositive)
+            if (_isPositive)
             {
                 for (int i = (facesAboveCeiling.Count() - 1), j = 1; i >= 0; i--, j++)
-                    facesAboveCeiling[i].Layer = floorFace.Layer + j;
+                    facesAboveCeiling[i].Layer = _floorFace.Layer + j;
             }
             else
             {
                 for (int i = 0, j = 1; i < facesAboveCeiling.Count(); i++, j++)
-                    facesAboveCeiling[i].Layer = floorFace.Layer - j;
+                    facesAboveCeiling[i].Layer = _floorFace.Layer - j;
             }
 
             currGroup.SortFace();
@@ -327,8 +328,13 @@ namespace Clover
             // 更新组
             cloverController.FaceGroupLookupTable.UpdateTableAfterFoldUp(facesWithTuckLine, facesWithoutTuckLine, fixedFaces, isPositive);
 
+            // Generate Script
+            ScriptGenerator.GetInstance().AddTuckingAction(
+                facesWithTuckLine, facesWithoutTuckLine, fixedFaces, 
+                currTuckLine, ceilingFace, floorFace, isPositive);
+
             // 更新层信息
-            UpdateLayerInfoAfterTuckIn();
+            UpdateLayerInfoAfterTuckIn(ceilingFace, floorFace, currTuckLine, isPositive);
 
             // 反重叠
             RenderController.GetInstance().AntiOverlap();

@@ -721,14 +721,28 @@ namespace Clover
 
         }
 
+        void Travel(Face root, int ID, ref Face target)
+        {
+            if (root == null)
+                return;
+
+            if (root.ID == ID)
+            {
+                target = root;
+                return;
+            }
+
+            Travel(root.LeftChild, ID, ref target);
+            Travel(root.RightChild, ID, ref target);
+        }
+
         public Face FindFaceByID(int id)
         {
-            foreach (Face face in facecellTree.Leaves)
-            {
-                if (face.ID == id)
-                    return face;
-            }
-            return null;
+            Face face = null;
+
+            Travel(root, id, ref face);
+
+            return face;
         }
 
         public void UpdateLeaves( Face oldFace = null )
