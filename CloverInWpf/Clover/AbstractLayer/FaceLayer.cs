@@ -123,7 +123,6 @@ namespace Clover
     public class FaceGroupLookupTable : ICloneable
     {
         List<FaceGroup> faceGroupList = new List<FaceGroup>();
-        BendTpye bendtype;
         FaceGroup bendingParticipateGroup = null;
         bool IsBasicBendedFaceTheSameNormalWithItsGroup = false;
 
@@ -357,9 +356,9 @@ namespace Clover
         /// </summary>
         /// <param name="faces">要bend的所有面</param>
         /// <param name="angle">bend的角度,角度</param>
-        public bool BeforeBending(List<Face> faces, double angle)
+        public bool BeforeBending(List<Face> faces)
         {
-            if ( faces == null || Math.Abs( angle ) > 180 )
+            if ( faces == null )
             {
                 return false;
             }
@@ -374,10 +373,10 @@ namespace Clover
 
             // 建立bending的临时组
             bendingParticipateGroup = new FaceGroup( faces[ 0 ] );
+            
             for ( int i = 1; i < faces.Count; i++ )
             {
                 bendingParticipateGroup.AddFace( faces[ i ] );
-                RemoveFace( faces[ i ] );
             }
             bendingParticipateGroup.SortFace();
 
@@ -387,9 +386,24 @@ namespace Clover
             {
                 IsBasicBendedFaceTheSameNormalWithItsGroup = true;
             }
-
+            for ( int i = 0; i < faces.Count; i++ )
+            {
+                RemoveFace( faces[ i ] );
+            }
+            UpdateGroup();
             // 判断折叠样式
-            if (Math.Abs(angle) < 0.00001) // 适应误差
+            return true;
+        }
+
+
+        /// <summary>
+        /// bend后调用来更新lookuptable
+        /// </summary>
+        /// <returns></returns>
+        public bool UpdateTableAfterBending(double angle, bool IsFacingUser = true)
+        {
+            BendTpye bendtype;
+            if ( Math.Abs( angle ) < 0.00001 ) // 适应误差
             {
                 bendtype = BendTpye.BlendZero;
             }
@@ -402,32 +416,15 @@ namespace Clover
                 bendtype = BendTpye.BlendNormally;
             }
 
-            return true;
-        }
-
-
-        /// <summary>
-        /// bend后调用来更新lookuptable
-        /// </summary>
-        /// <returns></returns>
-        public bool UpdateTableAfterBending(bool IsFacingUser = true)
-        {
-            
             if (bendtype == BendTpye.BlendZero)
             {
                 return true;
             }
 
-           // AddGroup( bendingParticipateGroup );
-            //UpdateGroup();
-
-           
-
             FaceGroup participateGroup = null;
             // bend半周即180度
             if (bendtype == BendTpye.BlendSemiCycle)
             {
-                bendtype = BendTpye.BlendZero;
                 // 找到相关的组
                 foreach (FaceGroup fg in faceGroupList)
                 {
@@ -443,6 +440,7 @@ namespace Clover
                         }
                     }
                 }
+
                 faceGroupList.Remove( participateGroup );
                 bendingParticipateGroup.RevertFaces();
 
@@ -559,6 +557,7 @@ namespace Clover
                 
                 if (participateGroup == null)
                 {
+                    AddGroup( bendingParticipateGroup );
                     return true; // 很幸运，没有什么组跟你重合
                 }
 
