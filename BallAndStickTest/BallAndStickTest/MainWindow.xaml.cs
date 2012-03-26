@@ -27,9 +27,13 @@ namespace BallAndStickTest
         Ellipse[,] drawingBalls;
         Stick[] sticks;
 
-        Int32 width = 10;
-        Int32 height = 1;
+        Int32 width = 100;
+        Int32 height = 100;
         Int32 numOfSticks = 0;
+        WriteableBitmap bmp;
+        UseGpu testGpu = new UseGpu();
+        Image testImg = new Image();
+        ImageBrush testBrush = new ImageBrush();
 
         #endregion
 
@@ -48,6 +52,32 @@ namespace BallAndStickTest
             CompositionTarget.Rendering += MainLoop;
             this.MouseLeftButtonUp += onRelease;
             this.MouseMove += onMove;
+
+            bmp = new WriteableBitmap(width, height, 96, 96, PixelFormats.Pbgra32, null);
+
+            //bmp.Lock();
+
+            //unsafe
+            //{
+            //    int pBackBuffer = (int)bmp.BackBuffer;
+
+            //    for (int j = 0; j < height; j++)
+            //    {
+            //        for (int i = 0; i < width; i++)
+            //        {
+            //            pBackBuffer += 4;
+            //            int col = 255;
+            //            *(int*)pBackBuffer = col;
+            //        }
+            //    }
+
+            //    int fuck = *(int*)pBackBuffer;
+            //}
+
+            //bmp.Unlock();
+            testBrush.ImageSource = bmp;
+            //testImg.Source = bmp;
+            //testImg.Effect = testGpu;
         }
 
         void InitializeBalls()
@@ -136,7 +166,7 @@ namespace BallAndStickTest
         void MainLoop(Object sender, EventArgs e)
         {
             UpdateDrawing();
-            UpdatePhysics();
+            //UpdatePhysics();
         }
 
         void UpdateDrawing()
@@ -177,7 +207,6 @@ namespace BallAndStickTest
         }
 
         #endregion
-
 
         #region 小球鼠标响应函数
 
@@ -221,6 +250,37 @@ namespace BallAndStickTest
                 dragingBall.isDraging = false;
             dragingBall = null;
             dragingElli = null;
+        }
+
+        #endregion
+        #region 鼠标响应函数
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F1:
+                    //bmp.Lock();
+                    //unsafe
+                    //{
+                    //    int p = (int)bmp.BackBuffer;
+                    //    p += 4;
+                    //    int val = *(int*)p;
+                    //}
+                    //bmp.Unlock();
+                    //testGpu.Input = testBrush;
+                    Box.Effect = testGpu;
+                    //testGpu.UpdateGpu();
+                   // bmp.Lock();
+                   // unsafe
+                   // {
+                   //     int p2 = (int)bmp.BackBuffer;
+                   //     p2 += 4;
+                   //     int shit = *(int*)p2;
+                   // }
+                   // bmp.Unlock();
+                    break;
+            }
         }
 
         #endregion
