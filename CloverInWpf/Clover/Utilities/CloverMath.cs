@@ -1047,6 +1047,24 @@ namespace Clover
             return false;
         }
 
+        /// <summary>
+        /// 判断一个3D点是否处在由points围成的平面内
+        /// </summary>
+        /// <param name="point">要检查的点</param>
+        /// <param name="points">平面的边界</param>
+        /// <returns>返回true如果点在平面内或平面边界上</returns>
+        /// <author>kid</author>
+        public static Boolean IsPointInAreaWithoutEdge(Point3D pe, Face f)
+        {
+            for (int i = 0; i < f.Vertices.Count; i++)
+            {
+                 Vector3D v1 = pe - f.Vertices[i].GetPoint3D();
+                 Vector3D v2 = f.Vertices[(i + 1) % f.Vertices.Count].GetPoint3D() - f.Vertices[i].GetPoint3D();
+                 if (Vector3D.DotProduct(v1, v2) <= 0)
+                     return false;
+            }
+            return true;
+        }
     }
 }
 
