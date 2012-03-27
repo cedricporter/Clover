@@ -128,6 +128,9 @@ namespace Clover.Tool
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
                 exit(isCancled);
+            else if (Mouse.MiddleButton == MouseButtonState.Pressed)
+                CloverController.GetInstance().FoldingUp.CutFoldLine(Get3DProjectionPoint());
+
         }
 
         protected override void onUnselectElement(Object element)

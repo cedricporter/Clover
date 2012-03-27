@@ -313,6 +313,9 @@ namespace Clover
         /// <returns></returns>
         public bool UpdateTableAfterFoldUp( List<Face> participatedFaces, List<Face> movedFaces, List<Face> fixedFaces, bool IsFacingUser = true )
         {
+            if (movedFaces.Count == 0)
+                return false;
+
             RemoveRedundantFaceGroup();
             FaceGroup participatedGroup = GetGroup( participatedFaces[ 0 ] );
             FaceGroup movedFaceGroup = new FaceGroup( movedFaces[ 0 ] );
@@ -347,6 +350,7 @@ namespace Clover
 
             fixedFaceGroup.SortFace();
             fixedFaceGroup.Normal = participatedGroup.Normal;
+
             return participatedGroup.UpdateGroupAfterFoldUp( participatedGroup, movedFaceGroup, fixedFaceGroup, IsFacingUser );
         }
 

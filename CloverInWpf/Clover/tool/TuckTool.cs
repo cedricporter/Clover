@@ -487,6 +487,8 @@ namespace Clover.Tool
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
                 exit(isCancled);
+            else if (Mouse.MiddleButton == MouseButtonState.Pressed)
+                CloverController.GetInstance().Tucking.CutFoldLine(Get3DProjectionPoint());
         }
 
     }

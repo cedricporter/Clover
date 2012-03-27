@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Media.Media3D;
 using Clover.AbstractLayer;
+using System.Diagnostics;
 
 namespace Clover
 {
@@ -354,5 +355,41 @@ namespace Clover
 
         #endregion
 
+        #region 2b截折线
+
+        int howMany = 0;
+        Point3D cutFoldLineP1, cutFoldLineP2;
+
+        public void CutFoldLine(Point3D point)
+        {
+            if (CloverMath.IsPointInTwoPoints(point, currTuckLine.Vertex2.GetPoint3D(), currTuckLine.Vertex1.GetPoint3D(), 2))
+            {
+                Debug.WriteLine("howMany " + howMany.ToString());
+                if (howMany == 0)
+                {
+                    cutFoldLineP1 = point;
+                    howMany++;
+                }
+                else if (howMany == 1)
+                {
+                    cutFoldLineP2 = point;
+                    howMany = 0;
+                    currTuckLine = new Edge(new Vertex(cutFoldLineP1), new Vertex(cutFoldLineP2));
+
+                    facesWithTuckLine.Clear();
+                    // 第二步，在facesAboveBase中找出所有被折线切过的面。如果没有任何面被切过，则判定失败。
+                    foreach (Face face in facesInHouse)
+                    {
+                        if (CloverTreeHelper.IsEdgeCrossedFace(face, currTuckLine))
+                            facesWithTuckLine.Add(face);
+                    }
+                    if (facesWithTuckLine.Count == 0)
+                        return;
+
+                }
+            }
+        }
+
+        #endregion
     }
 }
