@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Clover.AbstractLayer;
 using System.Windows.Media.Media3D;
+using System.Diagnostics;
 
 
 namespace Clover
@@ -306,6 +307,32 @@ namespace Clover
             facesWithoutFoldLine.Clear();
             newEdges.Clear();
             lastFoldLine = currFoldLine = null;
+        }
+
+        #endregion
+
+        #region 2b截折线
+
+        int howMany = 0;
+        Point3D cutFoldLineP1, cutFoldLineP2;
+
+        public void CutFoldLine(Point3D point)
+        {
+            if (CloverMath.IsPointInTwoPoints(point, currFoldLine.Vertex2.GetPoint3D(), currFoldLine.Vertex1.GetPoint3D(), 2))
+            {
+                Debug.WriteLine("howMany " + howMany.ToString());
+                if (howMany == 0)
+                {
+                    cutFoldLineP1 = point;
+                    howMany++;
+                }
+                else if (howMany == 1)
+                {
+                    cutFoldLineP2 = point;
+                    currFoldLine = new Edge(new Vertex(cutFoldLineP1), new Vertex(cutFoldLineP2));
+                    howMany = 0;
+                }
+            }
         }
 
         #endregion
