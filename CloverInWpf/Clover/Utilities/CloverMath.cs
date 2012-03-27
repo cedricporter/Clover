@@ -715,6 +715,7 @@ namespace Clover
             {
                 foreach(Edge e2 in f2.Edges)
                 {
+                    // 记录两条线段重叠的个数
                     if ( IsTwoSegmentOverlay(e1, e2) )
                     {
                         CommonEdge = e1;
@@ -724,7 +725,8 @@ namespace Clover
                     {
                         return true;
                     }
-                    Point3D p = new Point3D(); 
+
+                    Point3D p = new Point3D(); // 判断两条线段相交的个数
                     if (1 == GetIntersectionOfTwoSegments(e1, e2, ref p))
                     {
                         if (!IsTwoPointsEqual(p, e1.Vertex1.GetPoint3D())  &&
@@ -749,6 +751,10 @@ namespace Clover
             // 有可能相切
             if (overlaynum == 1)
             {
+                if ( Intersectionnum >= 1)// 有线段重叠且有线段相交必然重叠
+                {
+                    return true;
+                }
                 foreach (Vertex v1 in f1.Vertices)
                 {
                     if (IsPointInArea(v1.GetPoint3D(), f2))

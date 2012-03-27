@@ -350,6 +350,7 @@ namespace Clover
 
             fixedFaceGroup.SortFace();
             fixedFaceGroup.Normal = participatedGroup.Normal;
+
             return participatedGroup.UpdateGroupAfterFoldUp( participatedGroup, movedFaceGroup, fixedFaceGroup, IsFacingUser );
         }
 
