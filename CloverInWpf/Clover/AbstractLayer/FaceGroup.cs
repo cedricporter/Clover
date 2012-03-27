@@ -248,6 +248,7 @@ namespace Clover.AbstractLayer
                 List<bool> IsIntersectionList = new List<bool>();
                 bool IsFirst = true;
                 bool IsIntersection = false;
+
                 // 对固定面，从上到下取出每一层，判断和移动面是否有相交
                 for ( int i = fixedFaceGroup.GetTopLayer(); i != fixedFaceGroup.GetBottomLayer() - 1; i-- )
                 {
