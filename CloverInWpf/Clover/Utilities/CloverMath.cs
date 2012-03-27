@@ -687,18 +687,51 @@ namespace Clover
 
             // 判断是不是相离
             bool IsOutside = true;
+            List<bool> IsInsideList = new List<bool>();
+            
             foreach ( Vertex v1 in f1.Vertices )
             {
                 if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
+                {
                     IsOutside = false;
+                    foreach (Edge e2 in f2.Edges)
+                    {
+                        if ( IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) )
+                        {
+                            IsInsideList.Add( false );
+                        }
+                        else
+                            IsInsideList.Add( true );
+                    }
+                }
+                    
             }
+
+            if ( !IsInsideList.Contains( false ) )
+                return true;
+
 
 
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
+                {
                     IsOutside = false;
+                    foreach ( Edge e1 in f1.Edges )
+                    {
+                        if ( IsPointInTwoPoints( v2.GetPoint3D(), e1.Vertex1.GetPoint3D(), e1.Vertex2.GetPoint3D() ) )
+                        {
+                            IsInsideList.Add( false );
+                        }
+                        else
+                            IsInsideList.Add( true );
+                    }
+                }
+                    
             }
+
+            if ( !IsInsideList.Contains( false ) )
+                return true;
 
             // 相离的面不可能相交
             if ( IsOutside )
@@ -729,14 +762,14 @@ namespace Clover
                     Point3D p = new Point3D(); // 判断两条线段相交的个数
                     if (1 == GetIntersectionOfTwoSegments(e1, e2, ref p))
                     {
-                        if (!IsTwoPointsEqual(p, e1.Vertex1.GetPoint3D())  &&
-                            !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D()) && 
-                            !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D()) &&
-                            !IsTwoPointsEqual(p, e2.Vertex1.GetPoint3D()) 
-                            )
-                        {
+                        //if ( !IsTwoPointsEqual( p, e1.Vertex1.GetPoint3D() )  &&
+                        //    !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D() ) && 
+                        //    !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D() ) &&
+                        //    !IsTwoPointsEqual( p, e2.Vertex1.GetPoint3D() ) 
+                        //    )
+                        //{
                             Intersectionnum++;
-                        }
+                       // }
                     }
                     if (Intersectionnum >= 2)
                     {
