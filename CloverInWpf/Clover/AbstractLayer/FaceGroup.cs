@@ -200,7 +200,18 @@ namespace Clover.AbstractLayer
             return faceList[0].Layer;
         }
 
-
+        public List<Face> GetFacesByLayer(int layer)
+        {
+            List<Face> l = new List<Face>();
+            foreach (Face f in faceList)
+            {
+                if (f.Layer == layer)
+                {
+                    l.Add( f );
+                }
+            }
+            return l;
+        }
 
         /// <summary>
         /// 在foldup后更新组
@@ -213,6 +224,7 @@ namespace Clover.AbstractLayer
         public bool UpdateGroupAfterFoldUp( FaceGroup participatedGroup ,FaceGroup movedFaceGroup, FaceGroup fixedFaceGroup, bool IsFacingUser = true )
         {
 
+            CloverController clovercontroller = CloverController.GetInstance();
             // 发现不是foldup操作，直接返回
             if ( !CloverMath.IsTwoVectorTheSameDir( movedFaceGroup.Normal, fixedFaceGroup.Normal ) )
             {
@@ -232,18 +244,52 @@ namespace Clover.AbstractLayer
 
                 layer = fixedFaceGroup.GetTopLayer() + 1;
                 // 根据是否覆盖来调整layer的值
-                for ( int i = fixedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
+                List<Face> listInOneLayer = null;
+                List<bool> IsIntersectionList = new List<bool>();
+                bool IsFirst = true;
+                bool IsIntersection = false;
+                // 对固定面，从上到下取出每一层，判断和移动面是否有相交
+                for ( int i = fixedFaceGroup.GetTopLayer(); i != fixedFaceGroup.GetBottomLayer() - 1; i-- )
                 {
-
-                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    listInOneLayer = fixedFaceGroup.GetFacesByLayer( i );
+                    if (listInOneLayer != null)
                     {
-                        layer--;
+                        for ( int j = 0; j < listInOneLayer.Count; j++ )
+                        {
+                            if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( listInOneLayer[ j ], movedFaceGroup.GetFaceList()[ movedFaceGroup.GetFaceList().Count - 1 ] ) )
+                            {
+                                IsFirst = false;
+                                IsIntersectionList.Add(false);
+                            }
+                            else
+                                IsIntersectionList.Add( true );
+                        }
                     }
-                    else if ( i == fixedFaceGroup.GetFaceList().Count - 1 )
+
+                    if (IsFirst)
                     {
                         break;
                     }
+
+                    // 判断是否和某一层的所有面都没有相交
+                    foreach (bool b in IsIntersectionList)
+                    {
+                        if (b)
+                        {
+                            IsIntersection = true;
+                        }
+                    }
+
+                    if (!IsIntersection)
+                    {
+                        layer--;
+                    }
+
+                    IsIntersectionList.Clear();
+                    listInOneLayer = null;
+                    IsIntersection = false;
                 }
+
 
                 lastlayer = movedFaceGroup.GetTopLayer();
                 for ( int i = movedFaceGroup.GetFaceList().Count - 1; i >= 0; i-- )
@@ -263,23 +309,59 @@ namespace Clover.AbstractLayer
                     fixedFaceGroup.AddFace( movedFaceGroup.GetFaceList()[ i ] );
                 }
             }
-            else
+            else // 用户往背向组法向的方向折叠
             {
 
                 int layer = 0;
                 int lastlayer = 0;
 
                 layer = fixedFaceGroup.GetBottomLayer() - 1;
-                for ( int i = 0; i < fixedFaceGroup.GetFaceList().Count; i++ )
+
+                // 根据是否覆盖来调整layer的值
+                List<Face> listInOneLayer = null;
+                List<bool> IsIntersectionList = new List<bool>();
+                bool IsFirst = true;
+                bool IsIntersection = false;
+                // 对固定面，从上到下取出每一层，判断和移动面是否有相交
+                for ( int i = fixedFaceGroup.GetBottomLayer(); i != fixedFaceGroup.GetTopLayer() + 1; i++ )
                 {
-                    if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( movedFaceGroup.GetFaceList()[ 0 ], fixedFaceGroup.GetFaceList()[ i ] ) )
+                    listInOneLayer = fixedFaceGroup.GetFacesByLayer( i );
+                    if ( listInOneLayer != null )
                     {
-                        layer++;
+                        for ( int j = 0; j < listInOneLayer.Count; j++ )
+                        {
+                            if ( !CloverMath.IsIntersectionOfTwoFaceOnOnePlane( listInOneLayer[ j ], movedFaceGroup.GetFaceList()[ 0 ] ) )
+                            {
+                                IsFirst = false;
+                                IsIntersectionList.Add( false );
+                            }
+                            else
+                                IsIntersectionList.Add( true );
+                        }
                     }
-                    else if ( i == 0 )
+
+                    if ( IsFirst )
                     {
                         break;
                     }
+
+                    // 判断是否和某一层的所有面都没有相交
+                    foreach ( bool b in IsIntersectionList )
+                    {
+                        if ( b )
+                        {
+                            IsIntersection = true;
+                        }
+                    }
+
+                    if ( !IsIntersection )
+                    {
+                        layer++;
+                    }
+
+                    IsIntersectionList.Clear();
+                    listInOneLayer = null;
+                    IsIntersection = false;
                 }
 
                 lastlayer = movedFaceGroup.GetFaceList()[ 0 ].Layer;

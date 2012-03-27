@@ -641,21 +641,21 @@ namespace Clover
             p21 = e2.Vertex1.GetPoint3D();
             p22 = e2.Vertex2.GetPoint3D();
             
-            p11.X = Math.Round(p11.X, 3);
-            p11.Y = Math.Round(p11.Y, 3);
-            p11.Z = Math.Round(p11.Z, 3);
+            p11.X = Math.Round(p11.X, 5);
+            p11.Y = Math.Round(p11.Y, 5);
+            p11.Z = Math.Round(p11.Z, 5);
 
-            p12.X = Math.Round(p12.X, 3);
-            p12.Y = Math.Round(p12.Y, 3);
-            p12.Z = Math.Round(p12.Z, 3);
+            p12.X = Math.Round(p12.X, 5);
+            p12.Y = Math.Round(p12.Y, 5);
+            p12.Z = Math.Round(p12.Z, 5);
 
-            p21.X = Math.Round(p21.X, 3);
-            p21.Y = Math.Round(p21.Y, 3);
-            p21.Z = Math.Round(p21.Z, 3);
+            p21.X = Math.Round(p21.X, 5);
+            p21.Y = Math.Round(p21.Y, 5);
+            p21.Z = Math.Round(p21.Z, 5);
 
-            p22.X = Math.Round(p22.X, 3);
-            p22.Y = Math.Round(p22.Y, 3);
-            p22.Z = Math.Round(p22.Z, 3);
+            p22.X = Math.Round(p22.X, 5);
+            p22.Y = Math.Round(p22.Y, 5);
+            p22.Z = Math.Round(p22.Z, 5);
 
             Vector3D v1 = p11 - p12;
             Vector3D v2 = p21 - p22;
@@ -972,6 +972,14 @@ namespace Clover
         /// <returns></returns>
         public static bool AreTwoPointsSameWithDeviation(Point3D p1, Point3D p2)
         {
+            p1.X = Math.Round( p1.X, 5 );
+            p1.Y = Math.Round( p1.Y, 5 );
+            p1.Z = Math.Round( p1.Z, 5 );
+
+            p2.X = Math.Round( p2.X, 5 );
+            p2.Y = Math.Round( p2.Y, 5 );
+            p2.Z = Math.Round( p2.Z, 5 );
+
             Vector3D v = p1 - p2;
             return v.Length > 0.001 ? false : true;
         }
