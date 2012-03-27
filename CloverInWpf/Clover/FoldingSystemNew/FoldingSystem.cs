@@ -338,14 +338,21 @@ namespace Clover
         {
             // 切割面
             List<Edge> newEdges = new List<Edge>();
+            List<Edge> cutEdges = new List<Edge>();
+
             foreach (Face face in faceList)
             {
                 Edge edge = CloverTreeHelper.GetEdgeCrossedFace(face, foldingLine);
 
-                Debug.Assert(edge != null);
+                if (edge == null)
+                    return newEdges;
 
-                newEdges.Add(CutFace(face, edge));
-                
+                cutEdges.Add(edge);
+            }
+
+            for (int i = 0; i < faceList.Count; i++)
+            {
+                newEdges.Add(CutFace(faceList[i], cutEdges[i]));
             }
 
             return newEdges;
