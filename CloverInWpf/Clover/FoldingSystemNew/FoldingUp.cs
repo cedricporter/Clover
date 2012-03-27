@@ -329,8 +329,19 @@ namespace Clover
                 else if (howMany == 1)
                 {
                     cutFoldLineP2 = point;
-                    currFoldLine = new Edge(new Vertex(cutFoldLineP1), new Vertex(cutFoldLineP2));
                     howMany = 0;
+                    currFoldLine = new Edge(new Vertex(cutFoldLineP1), new Vertex(cutFoldLineP2));
+
+                    facesWithFoldLine.Clear();
+                    // 第二步，在facesAboveBase中找出所有被折线切过的面。如果没有任何面被切过，则判定失败。
+                    foreach (Face face in facesAboveBase)
+                    {
+                        if (CloverTreeHelper.IsEdgeCrossedFace(face, currFoldLine))
+                            facesWithFoldLine.Add(face);
+                    }
+                    if (facesWithFoldLine.Count == 0)
+                        return;
+
                 }
             }
         }
