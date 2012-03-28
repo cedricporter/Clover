@@ -1012,15 +1012,18 @@ namespace Clover
         /// <returns></returns>
         public static bool AreTwoPointsSameWithDeviation(Point3D p1, Point3D p2)
         {
-            p1.X = Math.Round( p1.X, 5 );
-            p1.Y = Math.Round( p1.Y, 5 );
-            p1.Z = Math.Round( p1.Z, 5 );
+            Point3D ptemp1 = new Point3D();
+            Point3D ptemp2 = new Point3D();
 
-            p2.X = Math.Round( p2.X, 5 );
-            p2.Y = Math.Round( p2.Y, 5 );
-            p2.Z = Math.Round( p2.Z, 5 );
+            ptemp1.X = Math.Round( p1.X, 5 );
+            ptemp1.Y = Math.Round( p1.Y, 5 );
+            ptemp1.Z = Math.Round( p1.Z, 5 );
 
-            Vector3D v = p1 - p2;
+            ptemp2.X = Math.Round( p2.X, 5 );
+            ptemp2.Y = Math.Round( p2.Y, 5 );
+            ptemp2.Z = Math.Round( p2.Z, 5 );
+
+            Vector3D v = ptemp1 - ptemp2;
             return v.Length > 0.001 ? false : true;
         }
 
