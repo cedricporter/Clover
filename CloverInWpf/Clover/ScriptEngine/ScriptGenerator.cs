@@ -102,6 +102,9 @@ namespace Clover
                 + (isPositive ? "True" : "False") 
                 + ")\r\n";
 
+            scripts += "clover.lastRotatedFaces = faces\n";
+            scripts += "clover.lastFoldLine = edge\n";
+
             totalScript += scripts;
 
             writer.Write(scripts);
