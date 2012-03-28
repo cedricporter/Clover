@@ -113,15 +113,15 @@ namespace Clover.AbstractLayer
         /// </summary>
         public void RevertFaces()
         {
-            List<Face> tflist = new List<Face>();
-            foreach(Face f in faceList)
-            {
-                tflist.Add( f );
-            }
             SortFace();
+            List<int> layerlist = new List<int>();
+            foreach (Face f in faceList)
+            {
+                layerlist.Add( f.Layer );
+            }
             for ( int i = 0; i < faceList.Count; i++ )
             {
-                faceList[ i ].Layer = tflist[ faceList.Count - i - 1].Layer;
+                faceList[ i ].Layer = layerlist[faceList.Count - 1 - i];
             }
             SortFace();
         }

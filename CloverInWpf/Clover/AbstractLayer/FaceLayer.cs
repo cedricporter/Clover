@@ -454,6 +454,7 @@ namespace Clover
                 }
 
                 participateGroup.SortFace();
+                bendingParticipateGroup.SortFace();
                 // 判断用户的方向：
                 if ( IsFacingUser ) // 组的正面面向用户
                 {
@@ -547,6 +548,11 @@ namespace Clover
                 {
                     if ( CloverMath.IsTwoVectorTheSameDir( fg.Normal, bendingParticipateGroup.Normal ))
                     {
+                        if ( fg == bendingParticipateGroup)
+                        {
+                            continue;
+                        }
+
                         if ( participateGroup == null )
                         {
                             participateGroup = fg;
@@ -592,7 +598,7 @@ namespace Clover
                         }
                     }
 
-                    layer = participateGroup.GetTopLayer() + 1;
+                    layer = bendingParticipateGroup.GetTopLayer() + 1;
                     lastlayer = bendingParticipateGroup.GetBottomLayer();
                     for ( int i = 0; i < bendingParticipateGroup.Count; i++ )
                     {
