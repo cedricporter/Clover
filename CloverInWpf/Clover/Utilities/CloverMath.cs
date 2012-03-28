@@ -707,11 +707,10 @@ namespace Clover
                     
             }
 
-            if ( !IsInsideList.Contains( false ) )
+            if ( IsInsideList.Count > 0 && !IsInsideList.Contains( false ) )
                 return true;
 
-
-
+            IsInsideList.Clear();
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
@@ -727,18 +726,18 @@ namespace Clover
                             IsInsideList.Add( true );
                     }
                 }
-                    
             }
 
-            if ( !IsInsideList.Contains( false ) )
+
+            if ( IsInsideList.Count > 0 && !IsInsideList.Contains( false ) )
                 return true;
+
 
             // 相离的面不可能相交
             if ( IsOutside )
             {
                 return false;
             }
-
            
             // 判断两面是否相切
             int overlaynum = 0;
@@ -749,7 +748,8 @@ namespace Clover
                 foreach(Edge e2 in f2.Edges)
                 {
                     // 记录两条线段重叠的个数
-                    if ( IsTwoSegmentOverlay(e1, e2) )
+                    bool IsOverlay = IsTwoSegmentOverlay(e1, e2);
+                    if ( IsOverlay )
                     {
                         CommonEdge = e1;
                         overlaynum++;
@@ -762,14 +762,15 @@ namespace Clover
                     Point3D p = new Point3D(); // 判断两条线段相交的个数
                     if (1 == GetIntersectionOfTwoSegments(e1, e2, ref p))
                     {
-                        //if ( !IsTwoPointsEqual( p, e1.Vertex1.GetPoint3D() )  &&
-                        //    !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D() ) && 
-                        //    !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D() ) &&
-                        //    !IsTwoPointsEqual( p, e2.Vertex1.GetPoint3D() ) 
-                        //    )
-                        //{
+                        if ( IsOverlay  &&
+                            !IsTwoPointsEqual( p, e1.Vertex1.GetPoint3D() )  &&
+                            !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D() ) && 
+                            !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D() ) &&
+                            !IsTwoPointsEqual( p, e2.Vertex1.GetPoint3D() ) || !IsOverlay
+                            )
+                        {
                             Intersectionnum++;
-                       // }
+                        }
                     }
                     if (Intersectionnum >= 2)
                     {
