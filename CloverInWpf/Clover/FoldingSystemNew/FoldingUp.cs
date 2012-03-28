@@ -228,7 +228,7 @@ namespace Clover
                                     break;
                                 }
                             }
-                            if (!onFoldingLine && CloverMath.IsPointInArea(v.GetPoint3D(), faceWPV))
+                            if (!onFoldingLine && CloverMath.IsPointInAreaWithoutEdge(v.GetPoint3D(), faceWPV))
                             {
                                 isClosed = true;
                                 break;
