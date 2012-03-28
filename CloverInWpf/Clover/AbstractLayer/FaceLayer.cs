@@ -567,7 +567,10 @@ namespace Clover
                 
                 if (participateGroup == null)
                 {
-                    AddGroup( bendingParticipateGroup );
+                    FaceGroup newgroup = (FaceGroup)bendingParticipateGroup.Clone();
+                    AddGroup( newgroup );
+                    bendtype = BendTpye.BlendZero;
+                    bendingParticipateGroup = null;
                     return true; // 很幸运，没有什么组跟你重合
                 }
 

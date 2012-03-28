@@ -33,7 +33,7 @@ namespace Clover.AbstractLayer
     /// <summary>
     /// 面组，里面的face都位于同一个plane上
     /// </summary>
-    public class FaceGroup
+    public class FaceGroup : ICloneable
     {
         List<Face> faceList;
         Vector3D normal = new Vector3D(); // 组的法向量
@@ -90,6 +90,19 @@ namespace Clover.AbstractLayer
                 d = -(f.Vertices[0].X * a + f.Vertices[0].Y * b + f.Vertices[0].Z * c);
             }
         }
+
+        public object Clone()
+        {
+            FaceGroup newgroup = new FaceGroup( faceList[0] );
+            newgroup.faceList.Clear();
+            newgroup.Normal = normal;
+            foreach ( Face f in faceList )
+            {
+                newgroup.faceList.Add( f );
+            }
+            return newgroup;
+        }
+
 
 
         /// <summary>
