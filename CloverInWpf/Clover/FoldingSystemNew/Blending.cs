@@ -64,7 +64,7 @@ namespace Clover.AbstractLayer
 
             // 作弊
             CloverController cloverController = CloverController.GetInstance();
-            cloverController.FaceGroupLookupTable.BeforeBending(cloverController.lastRotatedFaces);
+           
             
             return GetInitialAngle();
         }
@@ -175,6 +175,9 @@ namespace Clover.AbstractLayer
             if (cloverController.lastFoldLine == null)
                 return;
             cloverController.FoldingSystem.RotateFaces(cloverController.lastRotatedFaces, cloverController.lastFoldLine, offsetX);
+            
+            cloverController.FaceGroupLookupTable.BeforeBending( cloverController.lastRotatedFaces );
+
             //RotateFaces(beBlendedFaces, foldLine, offsetX);
         }
 
@@ -197,7 +200,7 @@ namespace Clover.AbstractLayer
             checkMask = 0;
             
             // 更新组
-            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterBending(90);
+            CloverController.GetInstance().FaceGroupLookupTable.UpdateTableAfterBending(11);
 
             // 反重叠
             RenderController.GetInstance().AntiOverlap();

@@ -635,12 +635,24 @@ namespace Clover
             Point3D p12 = new Point3D();
             Point3D p21 = new Point3D();
             Point3D p22 = new Point3D();
-            p11 = e1.Vertex1.GetPoint3D();
-            p12 = e1.Vertex2.GetPoint3D();
 
-            p21 = e2.Vertex1.GetPoint3D();
-            p22 = e2.Vertex2.GetPoint3D();
-            
+            p11.X = e1.Vertex1.GetPoint3D().X;
+            p11.Y = e1.Vertex1.GetPoint3D().Y;
+            p11.Z = e1.Vertex1.GetPoint3D().Z;
+
+            p12.X = e1.Vertex2.GetPoint3D().X;
+            p12.Y = e1.Vertex2.GetPoint3D().Y;
+            p12.Z = e1.Vertex2.GetPoint3D().Z;
+
+            p21.X = e2.Vertex1.GetPoint3D().X;
+            p21.Y = e2.Vertex1.GetPoint3D().Y;
+            p21.Z = e2.Vertex1.GetPoint3D().Z;
+
+            p22.X = e2.Vertex2.GetPoint3D().X;
+            p22.Y = e2.Vertex2.GetPoint3D().Y;
+            p22.Z = e2.Vertex2.GetPoint3D().Z;
+
+
             p11.X = Math.Round(p11.X, 5);
             p11.Y = Math.Round(p11.Y, 5);
             p11.Z = Math.Round(p11.Z, 5);
@@ -694,6 +706,7 @@ namespace Clover
                 if ( IsPointInArea( v1.GetPoint3D(), f2 ) )
                 {
                     IsOutside = false;
+
                     foreach (Edge e2 in f2.Edges)
                     {
                         if ( IsPointInTwoPoints( v1.GetPoint3D(), e2.Vertex1.GetPoint3D(), e2.Vertex2.GetPoint3D() ) )
@@ -707,11 +720,10 @@ namespace Clover
                     
             }
 
-            if ( !IsInsideList.Contains( false ) )
+            if ( IsInsideList.Count > 0 && !IsInsideList.Contains( false ) )
                 return true;
 
-
-
+            IsInsideList.Clear();
             foreach ( Vertex v2 in f2.Vertices )
             {
                 if ( IsPointInArea( v2.GetPoint3D(), f1 ) )
@@ -727,10 +739,10 @@ namespace Clover
                             IsInsideList.Add( true );
                     }
                 }
-                    
             }
 
-            if ( !IsInsideList.Contains( false ) )
+
+            if ( IsInsideList.Count > 0 && !IsInsideList.Contains( false ) )
                 return true;
 
             // 相离的面不可能相交
@@ -738,8 +750,8 @@ namespace Clover
             {
                 return false;
             }
-
            
+
             // 判断两面是否相切
             int overlaynum = 0;
             int Intersectionnum = 0;
@@ -749,7 +761,8 @@ namespace Clover
                 foreach(Edge e2 in f2.Edges)
                 {
                     // 记录两条线段重叠的个数
-                    if ( IsTwoSegmentOverlay(e1, e2) )
+                    bool IsOverlay = IsTwoSegmentOverlay(e1, e2);
+                    if ( IsOverlay )
                     {
                         CommonEdge = e1;
                         overlaynum++;
@@ -762,14 +775,15 @@ namespace Clover
                     Point3D p = new Point3D(); // 判断两条线段相交的个数
                     if (1 == GetIntersectionOfTwoSegments(e1, e2, ref p))
                     {
-                        //if ( !IsTwoPointsEqual( p, e1.Vertex1.GetPoint3D() )  &&
-                        //    !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D() ) && 
-                        //    !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D() ) &&
-                        //    !IsTwoPointsEqual( p, e2.Vertex1.GetPoint3D() ) 
-                        //    )
-                        //{
+                        if ( !IsOverlay  &&
+                            !IsTwoPointsEqual( p, e1.Vertex1.GetPoint3D() )  &&
+                            !IsTwoPointsEqual( p, e1.Vertex2.GetPoint3D() ) && 
+                            !IsTwoPointsEqual( p, e2.Vertex2.GetPoint3D() ) &&
+                            !IsTwoPointsEqual( p, e2.Vertex1.GetPoint3D() )
+                            )
+                        {
                             Intersectionnum++;
-                       // }
+                        }
                     }
                     if (Intersectionnum >= 2)
                     {
@@ -1011,15 +1025,18 @@ namespace Clover
         /// <returns></returns>
         public static bool AreTwoPointsSameWithDeviation(Point3D p1, Point3D p2)
         {
-            p1.X = Math.Round( p1.X, 5 );
-            p1.Y = Math.Round( p1.Y, 5 );
-            p1.Z = Math.Round( p1.Z, 5 );
+            Point3D ptemp1 = new Point3D();
+            Point3D ptemp2 = new Point3D();
 
-            p2.X = Math.Round( p2.X, 5 );
-            p2.Y = Math.Round( p2.Y, 5 );
-            p2.Z = Math.Round( p2.Z, 5 );
+            ptemp1.X = Math.Round( p1.X, 5 );
+            ptemp1.Y = Math.Round( p1.Y, 5 );
+            ptemp1.Z = Math.Round( p1.Z, 5 );
 
-            Vector3D v = p1 - p2;
+            ptemp2.X = Math.Round( p2.X, 5 );
+            ptemp2.Y = Math.Round( p2.Y, 5 );
+            ptemp2.Z = Math.Round( p2.Z, 5 );
+
+            Vector3D v = ptemp1 - ptemp2;
             return v.Length > 0.001 ? false : true;
         }
 

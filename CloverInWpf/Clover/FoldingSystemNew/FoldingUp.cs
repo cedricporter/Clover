@@ -217,24 +217,24 @@ namespace Clover
                             }
                         }
 
-                        foreach (Vertex v in face.Vertices)
-                        {
-                            bool onFoldingLine = false;
-                            foreach (Edge e in newEdges)
-                            {
-                                if (CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), e.Vertex1.GetPoint3D()) ||
-                                    CloverMath.AreTwoPointsSameWithDeviation(v.GetPoint3D(), e.Vertex2.GetPoint3D()))
-                                {
-                                    onFoldingLine = true; 
-                                    break;
-                                }
-                            }
-                            if (!onFoldingLine && CloverMath.IsPointInAreaWithoutEdge(v.GetPoint3D(), faceWPV))
-                            {
-                                isClosed = true;
-                                break;
-                            }
-                        }
+                        //foreach ( Vertex v in face.Vertices )
+                        //{
+                        //    bool onFoldingLine = false;
+                        //    foreach ( Edge e in newEdges )
+                        //    {
+                        //        if ( CloverMath.IsTwoPointsEqual( v.GetPoint3D(), e.Vertex1.GetPoint3D() ) ||
+                        //            CloverMath.IsTwoPointsEqual( v.GetPoint3D(), e.Vertex2.GetPoint3D() ) )
+                        //        {
+                        //            onFoldingLine = true;
+                        //            break;
+                        //        }
+                        //    }
+                        //    if ( !onFoldingLine && CloverMath.IsPointInAreaWithoutEdge( v.GetPoint3D(), faceWPV ) )
+                        //    {
+                        //        isClosed = true;
+                        //        break;
+                        //    }
+                        //}
 
                         if (isClosed)
                         {
