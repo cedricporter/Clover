@@ -77,6 +77,7 @@ namespace Clover.Tool
             // 将视角变换到与当前纸张平行
             if (element.GetType().ToString() == "Clover.Vertex")
             {
+                //CloverController.GetInstance().ShadowSystem.CheckUndoTree();
                 pickedVertex = (Vertex)element;
                 // 寻找所有拥有该点的面的集合
                 List<Face> faces = CloverTreeHelper.GetReferenceFaces(pickedVertex);

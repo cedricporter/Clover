@@ -189,6 +189,7 @@ namespace Clover
             node.Type = SnapshotNodeKind.CutKind;
             node.OriginVertexListCount = vertexLayer.VertexCellTable.Count;
             node.OriginEdgeListCount = edgeLayer.Count;
+            node.FaceGroupLookupTable = CloverController.GetInstance().FaceGroupLookupTable.Clone() as FaceGroupLookupTable;
             return node;
         }
 

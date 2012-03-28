@@ -85,6 +85,8 @@ namespace Clover
 
             UndoFaceLayer();
 
+            UndoGroup(node);
+
             // 修改操作层数
             operationLevel--;
         }
@@ -141,6 +143,14 @@ namespace Clover
             {
                 pair.Key.Layer = pair.Value;
             }
+        }
+
+        /// <summary>
+        /// 重新将组设置到过去
+        /// </summary>
+        private void UndoGroup(SnapshotNode node)
+        {
+            CloverController.GetInstance().FaceGroupLookupTable = node.FaceGroupLookupTable;
         }
 
 
