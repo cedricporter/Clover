@@ -37,6 +37,7 @@ namespace Clover
         public List<Face> EnterFoldingMode(Vertex pickedVertex, Face nearestFace)
         {
             this.cloverController = CloverController.GetInstance();
+            cloverController.ShadowSystem.CheckUndoTree();
 
             // 寻找同group面中拥有pickedVertex的面中最下面的那个面作为baseFace
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
@@ -266,7 +267,11 @@ namespace Clover
             //Edge foldLine = CloverTreeHelper.GetEdgeCrossedFace(baseFace, currFoldLine);
             if (currFoldLine == null)
                 return;
+
+            SnapshotNode node = cloverController.SnapshotBeforeCut();
             newEdges = cloverController.FoldingSystem.CutFaces(facesWithFoldLine, currFoldLine);
+            cloverController.SnapshotAfterCut(node, newEdges);
+
             FindFaceWithoutFoldLine();
             cloverController.FoldingSystem.RotateFaces(facesWithoutFoldLine, currFoldLine, 180);
 

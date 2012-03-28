@@ -697,7 +697,6 @@ namespace Clover
         #endregion
 
         FacecellTree facecellTree;
-        FaceGroupLookupTable lookupTable;
         CloverController controller;
         Face root;
 
@@ -711,7 +710,6 @@ namespace Clover
             root.UpdateVertices();
 
             facecellTree = new FacecellTree( root );
-            lookupTable = new FaceGroupLookupTable( root );
             this.controller = CloverController.GetInstance();
         }
 

@@ -36,6 +36,7 @@ namespace Clover
         public List<Face> EnterTuckingMode(Vertex pickedVertex, Face nearestFace)
         {
             this.cloverController = CloverController.GetInstance();
+            cloverController.ShadowSystem.CheckUndoTree();
 
             // 寻找同group面中拥有pickedVertex的面中最下面的那个面作为floorFace,最上面的那个面作为ceilingFace
             this.group = cloverController.FaceGroupLookupTable.GetGroup(nearestFace);
