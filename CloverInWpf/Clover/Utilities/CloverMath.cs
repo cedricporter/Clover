@@ -345,7 +345,8 @@ namespace Clover
                 }
             }
             //判断两线段是否平行
-            if (Math.Abs(D) < Double.MinValue)
+            if (Math.Abs(D) < 0.00001)
+            //if (Math.Abs(D) < Double.MinValue)
             {
                 if (PerpProduct(u, w) != 0 || PerpProduct(v, w) != 0)
                 {

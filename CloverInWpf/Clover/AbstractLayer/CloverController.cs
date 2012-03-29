@@ -201,10 +201,18 @@ namespace Clover
 
         public List<Edge> CutFaces(List<Face> faces, Edge edge)
         {
-            SnapshotNode node = SnapshotBeforeCut();
-            // 割面
-            List<Edge> newEdges = foldingSystem.CutFaces(faces, edge);
-            SnapshotAfterCut(node, newEdges);
+            List<Edge> newEdges = new List<Edge>();
+            try
+            { 
+                SnapshotNode node = SnapshotBeforeCut();
+                // 割面
+                newEdges = foldingSystem.CutFaces(faces, edge);
+                SnapshotAfterCut(node, newEdges);
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.ToString());
+            }
 
             return newEdges;
         }
@@ -280,56 +288,71 @@ namespace Clover
         long animationDuration = 1000;
         public void AnimatedCutFaces(List<Face> beCutFaceList, Edge edge)
         {
-            List<Face> faceList = new List<Face>();
-            faceList.AddRange(beCutFaceList);
+            try
+            {
+                List<Face> faceList = new List<Face>();
+                faceList.AddRange(beCutFaceList);
 
-            List<Edge> newEdges = mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge) as List<Edge>;
-            mainWindow.Dispatcher.Invoke(new AddFoldingLineHandle(AddFoldingLine), newEdges);
-            
+                List<Edge> newEdges = mainWindow.Dispatcher.Invoke(new CutFacesHandle(CutFaces), faceList, edge) as List<Edge>;
+                mainWindow.Dispatcher.Invoke(new AddFoldingLineHandle(AddFoldingLine), newEdges);
+            }
+            catch (System.Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.ToString()); 
+            }
+
+
         }
 
         public void AnimatedRotateFaces(List<Face> beRotatedFaceList, Edge foldingLine, double angle)
         {
-            List<Face> faceList = new List<Face>();
-            faceList.AddRange(beRotatedFaceList);
-            List<Vertex> movedVertexList = null;
-
-            AutoCamera(beRotatedFaceList[0]);
-
-            // 控制时间
-            animaWatch.Restart();
-            long lastTime = 0;
-            long thisTime = 0;
-            double interval = angle / animationDuration; //0.5秒
-            while (thisTime <= animationDuration)
+            try
             {
-                thisTime = animaWatch.ElapsedMilliseconds;
-                double step;
-                if (thisTime <= animationDuration)
-                    step = interval * (thisTime - lastTime);
-                else
-                    step = interval * (animationDuration - lastTime);
-                List<Vertex> list = mainWindow.Dispatcher.Invoke(
-                    new RotateFacesHandle(foldingSystem.RotateFaces),
-                     faceList, foldingLine, step) as List<Vertex>;
+                List<Face> faceList = new List<Face>();
+                faceList.AddRange(beRotatedFaceList);
+                List<Vertex> movedVertexList = null;
 
-                // 取第一次的移动的顶点列表
-                if (movedVertexList == null)
+                AutoCamera(beRotatedFaceList[0]);
+
+                // 控制时间
+                animaWatch.Restart();
+                long lastTime = 0;
+                long thisTime = 0;
+                double interval = angle / animationDuration; //0.5秒
+                while (thisTime <= animationDuration)
                 {
-                    movedVertexList = list;
+                    thisTime = animaWatch.ElapsedMilliseconds;
+                    double step;
+                    if (thisTime <= animationDuration)
+                        step = interval * (thisTime - lastTime);
+                    else
+                        step = interval * (animationDuration - lastTime);
+                    List<Vertex> list = mainWindow.Dispatcher.Invoke(
+                        new RotateFacesHandle(foldingSystem.RotateFaces),
+                         faceList, foldingLine, step) as List<Vertex>;
+
+                    // 取第一次的移动的顶点列表
+                    if (movedVertexList == null)
+                    {
+                        movedVertexList = list;
+                    }
+
+                    lastTime = thisTime;
                 }
+                animaWatch.Stop();
 
-                lastTime = thisTime;
+                // 快照
+                SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
+                node.MovedVertexList = movedVertexList;
+                node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
+                node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
+                node.Type = SnapshotNodeKind.RotateKind;
+                shadowSystem.Snapshot(node);
             }
-            animaWatch.Stop();
-
-            // 快照
-            SnapshotNode node = new SnapshotNode(CloverController.GetInstance().FaceLayer.Leaves);
-            node.MovedVertexList = movedVertexList;
-            node.OriginEdgeListCount = CloverController.GetInstance().EdgeLayer.Count;
-            node.OriginVertexListCount = CloverController.GetInstance().VertexLayer.VertexCellTable.Count;
-            node.Type = SnapshotNodeKind.RotateKind;
-            shadowSystem.Snapshot(node);
+            catch (System.Exception ex)
+            {
+                System.Windows.MessageBox.Show(ex.ToString());
+            }
         }
 
         /// <summary>

@@ -165,6 +165,7 @@
     <Content Include="Folding Scripts\test cut 1.py" />
     <Content Include="Folding Scripts\Test.py" />
     <Content Include="Folding Scripts\test2.py" />
+    <Content Include="Folding Scripts\副本 BasicCrane.py" />
     <Content Include="Folding Scripts\副本 plane.py" />
     <Content Include="Folding Scripts\副本 test cut 1.py" />
     <Resource Include="Logo256.ico" />

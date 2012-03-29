@@ -340,19 +340,27 @@ namespace Clover
             List<Edge> newEdges = new List<Edge>();
             List<Edge> cutEdges = new List<Edge>();
 
-            foreach (Face face in faceList)
+            try
             {
-                Edge edge = CloverTreeHelper.GetEdgeCrossedFace(face, foldingLine);
+                foreach (Face face in faceList)
+                {
+                    Edge edge = CloverTreeHelper.GetEdgeCrossedFace(face, foldingLine);
 
-                if (edge == null)
-                    return newEdges;
+                    if (edge == null)
+                        return newEdges;
 
-                cutEdges.Add(edge);
+                    cutEdges.Add(edge);
+                }
+
+                for (int i = 0; i < faceList.Count; i++)
+                {
+                    newEdges.Add(CutFace(faceList[i], cutEdges[i]));
+                }
+
             }
-
-            for (int i = 0; i < faceList.Count; i++)
+            catch (System.Exception ex)
             {
-                newEdges.Add(CutFace(faceList[i], cutEdges[i]));
+                System.Windows.MessageBox.Show(ex.ToString()); 
             }
 
             return newEdges;
@@ -388,89 +396,96 @@ namespace Clover
             FaceGroupLookupTable table = CloverController.GetInstance().FaceGroupLookupTable;
 
             List<Vertex> movedVertexList = new List<Vertex>();
-            shadowSystem.CheckUndoTree();
-
-            angle *= sign;
-
-            Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
-            foreach (Face f in beRotatedFaceList)
+            try
             {
-                //foreach (Edge e in f.Edges)
-                //{
+                shadowSystem.CheckUndoTree();
+
+                angle *= sign;
+
+                Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
+                foreach (Face f in beRotatedFaceList)
+                {
+                    //foreach (Edge e in f.Edges)
+                    //{
                     foreach (Vertex v in f.Vertices)
                         movedVertexDict[v.Index] = false;
-                //}
-            }
-
-            // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
-            foreach (Face f in beRotatedFaceList)
-            {
-                foreach (Edge e in f.Edges)
-                {
-                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex1, foldingLine) && !movedVertexDict[e.Vertex1.Index] )
-                    {
-                        CloneAndUpdateVertex(e.Vertex1);
-
-                        e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
-
-                        Vector3D axis = new Vector3D();
-                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
-                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
-                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
-                        axis.Normalize();
-
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
-                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
-                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
-                        e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
-
-                        movedVertexDict[e.Vertex1.Index] = true; 
-                        movedVertexList.Add(e.Vertex1);
-                    }
-
-                    if (!CloverTreeHelper.IsVertexInEdge(e.Vertex2, foldingLine) && !movedVertexDict[e.Vertex2.Index])
-                    {
-                        CloneAndUpdateVertex(e.Vertex2);
-
-                        e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
-
-                        Vector3D axis = new Vector3D();
-                        axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
-                        axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
-                        axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
-                        axis.Normalize();
-
-                        AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
-                        RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
-                        rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
-                        rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
-                        rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
-
-                        e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
-
-                        movedVertexDict[e.Vertex2.Index] = true; 
-                        movedVertexList.Add(e.Vertex2); 
-                    } 
+                    //}
                 }
-            }
 
-            // 因为顶点克隆过了，所以所有的面的边都要更新到引用最新的顶点
-            foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
+                // 根据鼠标位移修正所有移动面中不属于折线顶点的其他顶点
+                foreach (Face f in beRotatedFaceList)
+                {
+                    foreach (Edge e in f.Edges)
+                    {
+                        if (!CloverTreeHelper.IsVertexInEdge(e.Vertex1, foldingLine) && !movedVertexDict[e.Vertex1.Index])
+                        {
+                            CloneAndUpdateVertex(e.Vertex1);
+
+                            e.Vertex1 = vertexLayer.GetVertex(e.Vertex1.Index);
+
+                            Vector3D axis = new Vector3D();
+                            axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                            axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                            axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                            axis.Normalize();
+
+                            AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+                            RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+                            rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                            rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                            rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
+                            e.Vertex1.SetPoint3D(rotateTransform.Transform(e.Vertex1.GetPoint3D()));
+
+                            movedVertexDict[e.Vertex1.Index] = true;
+                            movedVertexList.Add(e.Vertex1);
+                        }
+
+                        if (!CloverTreeHelper.IsVertexInEdge(e.Vertex2, foldingLine) && !movedVertexDict[e.Vertex2.Index])
+                        {
+                            CloneAndUpdateVertex(e.Vertex2);
+
+                            e.Vertex2 = vertexLayer.GetVertex(e.Vertex2.Index);
+
+                            Vector3D axis = new Vector3D();
+                            axis.X = foldingLine.Vertex1.X - foldingLine.Vertex2.X;
+                            axis.Y = foldingLine.Vertex1.Y - foldingLine.Vertex2.Y;
+                            axis.Z = foldingLine.Vertex1.Z - foldingLine.Vertex2.Z;
+                            axis.Normalize();
+
+                            AxisAngleRotation3D rotation = new AxisAngleRotation3D(axis, angle);
+                            RotateTransform3D rotateTransform = new RotateTransform3D(rotation);
+                            rotateTransform.CenterX = (foldingLine.Vertex1.X + foldingLine.Vertex2.X) / 2;
+                            rotateTransform.CenterY = (foldingLine.Vertex1.Y + foldingLine.Vertex2.Y) / 2;
+                            rotateTransform.CenterZ = (foldingLine.Vertex1.Z + foldingLine.Vertex2.Z) / 2;
+
+                            e.Vertex2.SetPoint3D(rotateTransform.Transform(e.Vertex2.GetPoint3D()));
+
+                            movedVertexDict[e.Vertex2.Index] = true;
+                            movedVertexList.Add(e.Vertex2);
+                        }
+                    }
+                }
+
+                // 因为顶点克隆过了，所以所有的面的边都要更新到引用最新的顶点
+                foreach (Face f in CloverController.GetInstance().FaceLayer.Leaves)
+                {
+                    CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
+                }
+
+                // 必须先更新group后更新render
+                //table.UpdateLookupTable();
+                // 你们在滥用UpdateAll…… ---kid
+                //render.UpdateAll();
+                foreach (Face face in beRotatedFaceList)
+                {
+                    render.Update(face);
+                }
+
+            }
+            catch (System.Exception ex)
             {
-                CloverTreeHelper.UpdateFaceVerticesToLastedVersion(f);
+                System.Windows.MessageBox.Show(ex.ToString());
             }
-
-            // 必须先更新group后更新render
-            //table.UpdateLookupTable();
-            // 你们在滥用UpdateAll…… ---kid
-            //render.UpdateAll();
-            foreach (Face face in beRotatedFaceList)
-            {
-                render.Update(face);
-            }
-
             return movedVertexList;
         }
 
