@@ -217,6 +217,12 @@ fixFace = List[int]([60,61,64,66,67,70,71,73,76,77,80])
 clover.UpdateTableAfterFoldUp(faceWithFoldLine, faceWithoutFoldLine, fixFace, True)
 clover.AntiOverlap()
 
+# fix 
+edge = Edge(Vertex(72583.7464189419,68790.973930311,3.16385112553164E-12), Vertex(-72541.8171767765,-68826.5060314477,3.16385112553164E-12))
+faces = clover.FindFacesByIDs(List[int]([62,65,68,69,72,74,75,78,79,59,63]))
+clover.lastRotatedFaces = faces
+clover.lastFoldLine = edge
+
 #### New
 edge = Edge(Vertex(72416.85484861,68966.3957905198,3.93948762500429E-12), Vertex(-72374.1002612103,-69003.0911201229,3.93948762500429E-12))
 faces = clover.FindFacesByID(57)
@@ -248,3 +254,9 @@ faceWithoutFoldLine = List[int]([81,84,85,88,90,91,94,95,99,97,102])
 fixFace = List[int]([82,83,86,87,89,92,93,96,98,100,101])
 clover.UpdateTableAfterFoldUp(faceWithFoldLine, faceWithoutFoldLine, fixFace, False)
 clover.AntiOverlap()
+
+#fix
+edge = Edge(Vertex(72416.85484861,68966.3957905198,3.93948762500429E-12), Vertex(-72374.1002612103,-69003.0911201229,3.93948762500429E-12))
+faces = clover.FindFacesByIDs(List[int]([81,84,85,88,90,91,94,95,99,97,102]))
+clover.lastRotatedFaces = faces
+clover.lastFoldLine = edge

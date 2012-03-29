@@ -372,6 +372,8 @@ namespace Clover
             vertexLayer.UpdateVertex(v.Clone() as Vertex, v.Index);
         }
 
+        public int sign = 1;
+
         /// <summary>
         /// 旋转一个面表中除去折痕的所有点 
         /// </summary>
@@ -387,6 +389,8 @@ namespace Clover
 
             List<Vertex> movedVertexList = new List<Vertex>();
             shadowSystem.CheckUndoTree();
+
+            angle *= sign;
 
             Dictionary<int, bool> movedVertexDict = new Dictionary<int, bool>();
             foreach (Face f in beRotatedFaceList)

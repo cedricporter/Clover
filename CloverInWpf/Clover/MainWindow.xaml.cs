@@ -379,6 +379,9 @@ clover.UpdateFaceGroupTable()
                 case Key.F4:
                     cloverController.RenderController.SpreadOutOut();
                     break;
+                case Key.F6:
+                    cloverController.FoldingSystem.sign *= -1;
+                    break;
                 case Key.F7:
                     //ModelExporter.Export("./");
                     RenderController.GetInstance().DisperseLayer2B(10);
